@@ -10,13 +10,13 @@ import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
-import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
-import com.jetbrains.edu.ai.ui.AINotificationManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.translation.format.CourseTranslationResponse
 import com.jetbrains.educational.translation.format.TranslatedText
@@ -42,9 +43,6 @@ import java.io.IOException
 @Service(Service.Level.PROJECT)
 class TranslationLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
-
-  private val notificationManager: AINotificationManager
-    get() = AINotificationManager.getInstance(project)
 
   init {
     scope.launch {
@@ -128,12 +126,20 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
       }
       val translationSettings = TranslationProjectSettings.getInstance(project)
       if (version == translation.version) {
-        notificationManager.showInfoTranslationNotification(EduAIBundle.message("ai.translation.translation.is.up.to.date"))
+        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+          TRANSLATION_NOTIFICATION_ID,
+          EditorNotificationPanel.Status.Info,
+          EduAIBundle.message("ai.translation.translation.is.up.to.date")
+        )
         return@withBackgroundProgress
       }
       course.saveTranslation(translation)
       translationSettings.setTranslation(translation.toTranslationProperties())
-      notificationManager.showInfoTranslationNotification(EduAIBundle.message("ai.translation.translation.has.been.updated"))
+      TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+        TRANSLATION_NOTIFICATION_ID,
+        EditorNotificationPanel.Status.Info,
+        EduAIBundle.message("ai.translation.translation.has.been.updated")
+      )
       EduAIFeaturesCounterUsageCollector.translationUpdated(course, translation.language)
     }
 
@@ -164,7 +170,11 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
         }
       }
       else {
-        notificationManager.showErrorTranslationNotification(lockNotAcquiredNotificationText)
+        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+          TRANSLATION_NOTIFICATION_ID,
+          EditorNotificationPanel.Status.Error,
+          lockNotAcquiredNotificationText
+        )
       }
     }
   }
@@ -183,7 +193,12 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             fetchAndApplyTranslation(course, language)
           }
         )
-        notificationManager.showErrorTranslationNotification(message = translation.error.message(), actionLabel = actionLabel)
+        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+          TRANSLATION_NOTIFICATION_ID,
+          EditorNotificationPanel.Status.Error,
+          translation.error.message(),
+          actionLabel
+        )
       }
       return@withContext translation
     }

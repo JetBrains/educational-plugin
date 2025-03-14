@@ -1,11 +1,12 @@
 package com.jetbrains.edu.ai.translation.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.jetbrains.edu.ai.translation.TRANSLATION_NOTIFICATION_ID
 import com.jetbrains.edu.ai.translation.TranslationLoader
-import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
@@ -16,7 +17,7 @@ class UpdateCourseTranslation : AITranslationActionBase() {
     if (isActionUnavailable(project, course)) return
 
     val translationProperties = TranslationProjectSettings.getInstance(project).translationProperties.value ?: return
-    AINotificationManager.getInstance(project).closeExistingTranslationNotifications()
+    TaskToolWindowView.getInstance(project).closeExistingTaskDescriptionNotifications(TRANSLATION_NOTIFICATION_ID)
     TranslationLoader.getInstance(project).updateTranslation(course, translationProperties)
   }
 
