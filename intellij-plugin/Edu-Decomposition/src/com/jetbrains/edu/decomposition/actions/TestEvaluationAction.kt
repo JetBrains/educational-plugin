@@ -10,6 +10,7 @@ import com.jetbrains.edu.decomposition.test.TestDependenciesManager
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.kotlin.asJava.classes.runReadAction
+import kotlin.coroutines.cancellation.CancellationException
 
 @Suppress("ComponentNotRegistered")
 class TestEvaluationAction : CheckActionBase() {
@@ -28,21 +29,25 @@ class TestEvaluationAction : CheckActionBase() {
       val files = task.taskFiles.values.filter { it.isVisible }
       val functionNames = runReadAction { FunctionParser.extractFunctionModels(files, project, language) }.map { it.name }
       val testManager = TestDependenciesManager.getInstance(project)
-      if (!testManager.isTestGenerated(task.id, functionNames)) return@withBackgroundProgress false // TODO("There are no generated tests")
+      if (!testManager.isTestGenerated(task.id, functionNames)) {
+        try {
+          testManager.waitForTestGeneration(task.id, functionNames)
+        } catch (e: CancellationException) {
+          return@withBackgroundProgress false
+        }
+      }
       val generatedDependencies = testManager.getTest(task.id) ?: return@withBackgroundProgress false
       val dependencies = runReadAction { FunctionDependenciesParser.extractFunctionDependencies(files, project, language) }
 
       // TODO("Call to test evaluator and handle result")
 
-      val result =
-        if (TestDependenciesEvaluator.evaluate(generatedDependencies, dependencies)) {
-          checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.success")
-          true
-        } else {
-          checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.failure")
-          false
-        }
-      return@withBackgroundProgress result
+      return@withBackgroundProgress  if (TestDependenciesEvaluator.evaluate(generatedDependencies, dependencies)) {
+        checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.success")
+        true
+      } else {
+        checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.failure")
+        false
+      }
     }
   }
 }

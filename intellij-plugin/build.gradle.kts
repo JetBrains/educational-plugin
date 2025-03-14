@@ -1105,9 +1105,8 @@ project("Edu-Decomposition") {
     }
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-
+    testImplementation(project(":intellij-plugin:Edu-Kotlin"))
   }
-
 }
 
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
