@@ -6,4 +6,8 @@ import org.jetbrains.annotations.PropertyKey
 enum class CommonAIServiceError(@PropertyKey(resourceBundle = BUNDLE) override val messageKey: String) : AIServiceError {
   CONNECTION_ERROR("ai.service.could.not.connect"),
   SERVICE_UNAVAILABLE("ai.service.is.currently.unavailable");
+
+  companion object {
+    const val NOTIFICATION_ID = "CommonAIServiceError"
+  }
 }

@@ -12,6 +12,7 @@ import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.error.AIServiceError
+import com.jetbrains.edu.ai.error.CommonAIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.connector.TranslationServiceConnector
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
@@ -193,12 +194,24 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
             fetchAndApplyTranslation(course, language)
           }
         )
-        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
-          TRANSLATION_NOTIFICATION_ID,
-          EditorNotificationPanel.Status.Error,
-          translation.error.message(),
-          actionLabel
-        )
+        when (translation.error) {
+          is TranslationError -> {
+            TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+              TRANSLATION_NOTIFICATION_ID,
+              EditorNotificationPanel.Status.Error,
+              translation.error.message(),
+              actionLabel
+            )
+          }
+          is CommonAIServiceError -> {
+            TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+              CommonAIServiceError.NOTIFICATION_ID,
+              EditorNotificationPanel.Status.Error,
+              translation.error.message(),
+              actionLabel
+            )
+          }
+        }
       }
       return@withContext translation
     }
