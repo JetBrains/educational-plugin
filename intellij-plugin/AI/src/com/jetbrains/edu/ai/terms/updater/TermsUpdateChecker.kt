@@ -13,8 +13,10 @@ import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.TranslationProperties
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProperties
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
@@ -24,10 +26,15 @@ import com.jetbrains.educational.core.format.enum.TranslationLanguage
 @Service(Service.Level.PROJECT)
 class TermsUpdateChecker(private val project: Project) {
   suspend fun checkUpdate(course: EduCourse) {
-    val theoryLookupSettings = TheoryLookupSettings.getInstance()
-    if (!theoryLookupSettings.isTheoryLookupEnabled) return
+    val theoryLookupProperties = TheoryLookupSettings.getInstance().theoryLookupProperties.value
+    val translationProperties = TranslationProjectSettings.getInstance(project).translationProperties.value
+    checkUpdate(course, theoryLookupProperties, translationProperties)
+  }
 
-    val translationLanguage = TranslationProjectSettings.getInstance(project).translationLanguage
+  suspend fun checkUpdate(course: EduCourse, theoryLookupProperties: TheoryLookupProperties?, translationProperties: TranslationProperties?) {
+    if (theoryLookupProperties?.isEnabled == false) return
+
+    val translationLanguage = translationProperties?.language
     if (translationLanguage != null && !translationLanguage.isSameLanguage(course)) return
 
     val termsProperties = TermsProjectSettings.getInstance(project).termsProperties.value
