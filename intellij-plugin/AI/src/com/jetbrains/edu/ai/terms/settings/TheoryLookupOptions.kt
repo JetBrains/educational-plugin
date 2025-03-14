@@ -10,8 +10,7 @@ import com.jetbrains.edu.learning.ai.terms.TheoryLookupProperties
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 
 class TheoryLookupOptions : BoundConfigurable(EduAIBundle.message("settings.ai.terms.display.name")), AIOptionsProvider {
-  private val settings = TheoryLookupSettings.getInstance()
-  private var isEnabled: Boolean = settings.isTheoryLookupEnabled
+  private var isEnabled: Boolean = TheoryLookupSettings.getInstance().isTheoryLookupEnabled
 
   override fun createPanel(): DialogPanel = panel {
     group(displayName) {

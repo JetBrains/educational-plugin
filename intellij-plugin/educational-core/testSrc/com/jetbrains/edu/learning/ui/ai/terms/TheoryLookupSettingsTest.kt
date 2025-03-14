@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.terms.settings
+package com.jetbrains.edu.learning.ui.ai.terms
 
 import com.jetbrains.edu.learning.EduSettingsServiceTestBase
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
