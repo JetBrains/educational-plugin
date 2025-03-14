@@ -12,7 +12,7 @@ private const val Y = "y"
 private const val BOTTOM = "bottomOfTermRect"
 private const val TOP = "topOfTermRect"
 
-class JsEventData private constructor(
+data class JsEventData(
   @JsonProperty(TERM)
   val term: String,
 
