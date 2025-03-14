@@ -1,7 +1,7 @@
 package com.jetbrains.edu.ai.connector
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.error.CommonAIServiceError
 import com.jetbrains.edu.ai.host.EduAIServiceHost
@@ -26,7 +26,7 @@ abstract class AIServiceConnector : Disposable {
     val code = code()
     val errorMessage = errorBody()?.string()
     if (!errorMessage.isNullOrEmpty()) {
-      LOG.error("Request failed. Status code: $code. Error message: $errorMessage")
+      LOG.warn("Request failed. Status code: $code. Error message: $errorMessage")
     }
     val result = body()
     return parseResponseCode(code, result)
@@ -45,6 +45,6 @@ abstract class AIServiceConnector : Disposable {
     }
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(AIServiceConnector::class.java)
+    private val LOG = logger<AIServiceConnector>()
   }
 }

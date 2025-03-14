@@ -7,21 +7,17 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface TermsService {
-  @GET("$API_TERMS/{marketplaceId}/{updateVersion}/{language}/latest")
+  @GET("/api/terms/{marketplaceId}/{updateVersion}/{language}/latest")
   suspend fun getLatestCourseTermsVersion(
     @Path("marketplaceId") marketplaceId: Int,
     @Path("updateVersion") updateVersion: Int,
     @Path("language") language: String,
   ): Response<TermsVersion>
 
-  @GET("$API_TERMS/{marketplaceId}/{updateVersion}/{language}")
+  @GET("/api/terms/{marketplaceId}/{updateVersion}/{language}")
   suspend fun getCourseTerms(
     @Path("marketplaceId") marketplaceId: Int,
     @Path("updateVersion") updateVersion: Int,
     @Path("language") language: String
   ): Response<CourseTermsResponse>
-
-  companion object {
-    private const val API_TERMS = "/api/terms"
-  }
 }
