@@ -18,11 +18,17 @@ import javax.swing.JButton
 
 class LikeBlock(
   @NlsContexts.Label private val label: String,
-  private val jsonElementName: String
+  private val jsonElementName: String,
+  defaultLikeness: FeedbackLikenessAnswer = FeedbackLikenessAnswer.NO_ANSWER
 ) : FeedbackBlock, TextDescriptionProvider, JsonDataProvider {
-  private var answer: FeedbackLikenessAnswer = FeedbackLikenessAnswer.NO_ANSWER
-  private val likeOption = LikeOption()
-  private val dislikeOption = DislikeOption()
+  var answer: FeedbackLikenessAnswer = defaultLikeness
+    private set
+  private val likeOption = LikeOption().apply {
+    isSelected = defaultLikeness == FeedbackLikenessAnswer.LIKE
+  }
+  private val dislikeOption = DislikeOption().apply {
+    isSelected = defaultLikeness == FeedbackLikenessAnswer.DISLIKE
+  }
 
   override fun addToPanel(panel: Panel) {
     panel.apply {
@@ -107,7 +113,7 @@ class LikeBlock(
     }
   }
 
-  private enum class FeedbackLikenessAnswer(val result: String) {
+  enum class FeedbackLikenessAnswer(val result: String) {
     NO_ANSWER("no answer"),
     LIKE("like"),
     DISLIKE("dislike")
