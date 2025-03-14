@@ -50,6 +50,13 @@ abstract class TaskToolWindowView(val project: Project) : EduTestAware {
     notificationId: String,
     status: EditorNotificationPanel.Status,
     message: @NotificationContent String,
+    actionLabel: ActionLabel? = null,
+  )
+
+  abstract fun showTaskDescriptionNotificationIfAbsent(
+    notificationId: String,
+    status: EditorNotificationPanel.Status,
+    message: @NotificationContent String,
     actionLabel: ActionLabel? = null
   )
 

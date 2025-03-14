@@ -356,6 +356,25 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     notificationsPanel.add(notification)
   }
 
+  override fun showTaskDescriptionNotificationIfAbsent(
+    notificationId: String,
+    status: EditorNotificationPanel.Status,
+    message: @NotificationContent String,
+    actionLabel: ActionLabel?
+  ) = runInEdt {
+    val notificationsPanel = getTaskDescriptionNotificationsPanel() ?: return@runInEdt
+    val notification = TaskToolWindowNotification(notificationId, status, message, notificationsPanel)
+    actionLabel?.let { notification.addActionLabel(it) }
+
+    val existingNotifications = notificationsPanel
+      .components
+      .filterIsInstance<TaskToolWindowNotification>()
+      .filter { it.id == notificationId }
+
+    if (existingNotifications.isNotEmpty()) return@runInEdt
+    notificationsPanel.add(notification)
+  }
+
   override fun closeExistingTaskDescriptionNotifications(notificationId: String) = runInEdt {
     val notificationsPanel = getTaskDescriptionNotificationsPanel() ?: return@runInEdt
     val existingNotifications = notificationsPanel
