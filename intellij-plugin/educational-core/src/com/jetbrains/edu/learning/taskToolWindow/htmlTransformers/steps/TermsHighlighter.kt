@@ -32,7 +32,7 @@ object TermsHighlighter : HtmlTransformer {
     if (language != null && (language.code != TranslationLanguage.ENGLISH.code || language.code != task.course.languageCode)) return html
     val terms = TermsProjectSettings.getInstance(context.project).getTaskTerms(task)?.map { it.value }
     if (terms.isNullOrEmpty()) return html
-    for (termTitle in terms) {
+    for (termTitle in terms.sortedBy { it.length }.reversed()) {
       formatTermOccurrences(html, termTitle)
     }
     return html
@@ -44,25 +44,28 @@ object TermsHighlighter : HtmlTransformer {
       .filter { it.isValidTag() }
       .flatMap { it.textNodes() }
       .filter { it.text().contains(termTitle) }
-      .toList()
     for (node in nodes) {
       val termElement = getDashedUnderlineElement(html, termTitle)
-      var currentNode: TextNode? = node
-      while (currentNode != null) {
-        currentNode = formatNextOccurrence(currentNode, termTitle, termElement)
-      }
-    }
-  }
 
-  private fun formatNextOccurrence(textNode: TextNode, termTitle: String, dashedTermElement: Element): TextNode? {
-    val text = textNode.wholeText
-    if (!text.contains(termTitle)) return null
-    val startIdx = text.indexOf(termTitle)
-    val endIdx = startIdx + termTitle.length
-    val tail = if (endIdx < text.length) textNode.splitText(endIdx) else null
-    val middle = textNode.splitText(startIdx)
-    middle.after(dashedTermElement.clone())
-    middle.remove()
-    return tail
+      val text = node.wholeText
+      val startIdx = text.indexOf(termTitle)
+      // if there is no occurrence in the node -> continue
+      if (startIdx == -1) continue
+
+      // if the char before the occurrence is a letter -> continue
+      if (startIdx > 0 && text[startIdx - 1].isLetter()) continue
+
+      val endIdx = startIdx + termTitle.length
+      val tail = if (endIdx < text.length) node.splitText(endIdx) else null
+
+      // if the char after the occurrence is a letter -> continue
+      if (tail?.wholeText?.firstOrNull()?.isLetter() == true) continue
+
+      // then we found the occurrence
+      val middle = node.splitText(startIdx)
+      middle.after(termElement.clone())
+      middle.remove()
+      return
+    }
   }
 }
