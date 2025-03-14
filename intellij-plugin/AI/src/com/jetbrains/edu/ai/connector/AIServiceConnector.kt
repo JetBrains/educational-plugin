@@ -41,6 +41,7 @@ abstract class AIServiceConnector : Disposable {
       }
     }
     catch (exception: IOException) {
+      LOG.warn("Network call to Educational AI Service failed", exception)
       CommonAIServiceError.CONNECTION_ERROR.asErr()
     }
 
