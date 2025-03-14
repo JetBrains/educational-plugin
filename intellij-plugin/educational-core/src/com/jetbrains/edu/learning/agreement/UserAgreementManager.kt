@@ -28,11 +28,11 @@ class UserAgreementManager(private val scope: CoroutineScope) {
     scope.launch {
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }
-          .runningFold<_, StateEvent<UserAgreementSettings.UserAgreementProperties>>(StateEvent.Uninitialized) { acc, new ->
+          .runningFold<_, StateEvent<UserAgreementState>>(StateEvent.Uninitialized) { acc, new ->
             when (acc) {
-              is StateEvent.Uninitialized -> StateEvent.FirstState(new)
-              is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new)
-              is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new)
+              is StateEvent.Uninitialized -> StateEvent.FirstState(new.pluginAgreement)
+              is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new.pluginAgreement)
+              is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new.pluginAgreement)
             }
           }.collectLatest {
             if (it !is StateEvent.TransitionState) return@collectLatest
@@ -40,15 +40,7 @@ class UserAgreementManager(private val scope: CoroutineScope) {
              * Let's avoid reloading Edu projects if the previous agreement state is [UserAgreementState.NOT_SHOWN]
              * and the new one is [UserAgreementState.ACCEPTED], which means a new user's just accepted it.
              */
-            if (it.previous.pluginAgreement == UserAgreementState.NOT_SHOWN && it.current.pluginAgreement == UserAgreementState.ACCEPTED) {
-              /**
-               * If this is the first time user accept the agreement, send the statistics about it to remote (regardless of their login).
-               */
-              if (it.current.isChangedByUser) {
-                submitAgreementAcceptanceAnonymously()
-              }
-              return@collectLatest
-            }
+            if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) return@collectLatest
             reloadEduProjects()
           }
       }
@@ -57,11 +49,35 @@ class UserAgreementManager(private val scope: CoroutineScope) {
          * When either [UserAgreementSettings.UserAgreementProperties.pluginAgreement]
          * or [UserAgreementSettings.UserAgreementProperties.aiServiceAgreement] changes by user, send it to remote
          */
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement to it.aiServiceAgreement }.collectLatest {
-          if (it.isChangedByUser) {
-            submitAgreements(it.pluginAgreement, it.aiServiceAgreement)
+        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement to it.aiServiceAgreement }
+          .runningFold<_, StateEvent<UserAgreementSettings.UserAgreementProperties>>(StateEvent.Uninitialized) { acc, new ->
+            when (acc) {
+              is StateEvent.Uninitialized -> StateEvent.FirstState(new)
+              is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new)
+              is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new)
+            }
+          }.collectLatest {
+            val currentState = when (it) {
+              is StateEvent.Uninitialized -> return@collectLatest
+              is StateEvent.FirstState -> it.current
+              is StateEvent.TransitionState -> it.current
+            }
+            if (!currentState.isChangedByUser) return@collectLatest
+
+            if (isJBALoggedIn()) {
+              submitAgreements(currentState.pluginAgreement, currentState.aiServiceAgreement)
+              return@collectLatest
+            }
+
+            // When user is not logged in, we can only collect something when it's their first time of acceptance the agreement
+            val previousState = when (it) {
+              is StateEvent.TransitionState -> it.previous
+              else -> return@collectLatest
+            }
+            if (currentState.pluginAgreement == UserAgreementState.ACCEPTED && previousState.pluginAgreement == UserAgreementState.NOT_SHOWN) {
+              submitAgreementAcceptanceAnonymously()
+            }
           }
-        }
       }
       launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {

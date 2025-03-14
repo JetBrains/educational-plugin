@@ -43,7 +43,7 @@ class UserAgreementManagerTest : EduTestCase() {
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.ACCEPTED, UserAgreementState.DECLINED) }
     coVerify(exactly = 1) { mockedService.updateSubmissionsServiceAgreement(UserAgreementState.ACCEPTED) }
     coVerify(exactly = 0) { MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(any()) }
-    coVerify(exactly = 1) { mockedService.submitAgreementAcceptanceAnonymously() }
+    coVerify(exactly = 0) { mockedService.submitAgreementAcceptanceAnonymously() }
   }
 
   @Test
@@ -62,7 +62,7 @@ class UserAgreementManagerTest : EduTestCase() {
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.ACCEPTED, UserAgreementState.ACCEPTED) }
     coVerify(exactly = 1) { mockedService.updateSubmissionsServiceAgreement(UserAgreementState.ACCEPTED) }
     coVerify(exactly = 0) { MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(any()) }
-    coVerify(exactly = 1) { mockedService.submitAgreementAcceptanceAnonymously() }
+    coVerify(exactly = 0) { mockedService.submitAgreementAcceptanceAnonymously() }
   }
 
   @Test

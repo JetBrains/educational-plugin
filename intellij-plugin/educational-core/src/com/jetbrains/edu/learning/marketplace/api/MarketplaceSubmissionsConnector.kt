@@ -80,20 +80,20 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(SubmissionsService::class.java)
   }
 
-  private val submissionsServiceInternal: SubmissionsServiceInternal
-    get() = submissionsServiceInternal()
+  private val remoteStatisticsService: RemoteStatisticsService
+    get() = remoteStatisticsService()
 
-  private fun submissionsServiceInternal(): SubmissionsServiceInternal {
+  private fun remoteStatisticsService(): RemoteStatisticsService {
     val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool)
       .addConverterFactory(converterFactory)
       .build()
 
-    return retrofit.create(SubmissionsServiceInternal::class.java)
+    return retrofit.create(RemoteStatisticsService::class.java)
   }
 
   suspend fun submitAgreementAcceptanceAnonymously() {
     try {
-      val response = submissionsServiceInternal.saveAgreementAcceptanceAnonymously()
+      val response = remoteStatisticsService.saveAgreementAcceptanceAnonymously()
       if (!response.isSuccessful) {
         LOG.warn("Failed to send anonymous plugin agreement statistics: ${response.errorBody()?.string()}")
       }
