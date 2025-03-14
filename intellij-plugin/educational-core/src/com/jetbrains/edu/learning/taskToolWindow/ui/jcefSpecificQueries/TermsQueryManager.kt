@@ -32,6 +32,7 @@ import java.awt.Point
 // TODO: Implement an analogue for Swing
 class TermsQueryManager private constructor(
   private val project: Project,
+  private val task: Task,
   private val taskJBCefBrowser: JBCefBrowserBase
 ) : Disposable {
   private val jsQueryMouseOverListener = JBCefJSQuery.create(taskJBCefBrowser)
@@ -104,7 +105,6 @@ class TermsQueryManager private constructor(
     val component = taskJBCefBrowser.component ?: return
     val termTitle = parsedData.term
 
-    val task = project.selectedTaskFile?.task ?: return
     val definition = TermsProjectSettings.getInstance(project).getTaskTerms(task)?.find { it.value == termTitle }?.definition ?: return
 
     val isBelowMiddle = parsedData.y < component.height / 2
@@ -138,7 +138,7 @@ class TermsQueryManager private constructor(
       if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled || task !is TheoryTask) return null
       val language = TranslationProjectSettings.getInstance(project).translationLanguage
       if (language != null && (language.code != TranslationLanguage.ENGLISH.code || language.code != task.course.languageCode)) return null
-      return TermsQueryManager(project, taskJBCefBrowser)
+      return TermsQueryManager(project, task, taskJBCefBrowser)
     }
   }
 }
