@@ -9,16 +9,18 @@ enum class TranslationErrorEnumFormat {
   NO_TRANSLATION,
   SERVICE_UNAVAILABLE,
   TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS;
-}
 
-fun AIServiceError.toStatisticsFormat(): TranslationErrorEnumFormat = when (this) {
-  is CommonAIServiceError -> when (this) {
-    CommonAIServiceError.CONNECTION_ERROR -> TranslationErrorEnumFormat.CONNECTION_ERROR
-    CommonAIServiceError.SERVICE_UNAVAILABLE -> TranslationErrorEnumFormat.SERVICE_UNAVAILABLE
+  companion object {
+    fun from(error: AIServiceError): TranslationErrorEnumFormat = when (error) {
+      is CommonAIServiceError -> when (error) {
+        CommonAIServiceError.CONNECTION_ERROR -> CONNECTION_ERROR
+        CommonAIServiceError.SERVICE_UNAVAILABLE -> SERVICE_UNAVAILABLE
+      }
+      is TranslationError -> when (error) {
+        TranslationError.NO_TRANSLATION -> NO_TRANSLATION
+        TranslationError.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS -> TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS
+      }
+      else -> error("Unexpected error type for translation: $error")
+    }
   }
-  is TranslationError -> when (this) {
-    TranslationError.NO_TRANSLATION -> TranslationErrorEnumFormat.NO_TRANSLATION
-    TranslationError.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS -> TranslationErrorEnumFormat.TRANSLATION_UNAVAILABLE_FOR_LEGAL_REASONS
-  }
-  else -> error("Unexpected error type for translation: $this")
 }

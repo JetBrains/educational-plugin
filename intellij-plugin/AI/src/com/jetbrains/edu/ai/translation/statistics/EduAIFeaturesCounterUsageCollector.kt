@@ -159,7 +159,7 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
       COURSE_ID_FIELD.with(course.id),
       ORIGINAL_LANG_FIELD.with(course.languageCode),
       TRANSLATION_LANG_FIELD.with(translationLanguage),
-      TRANSLATION_ERROR_FIELD.with(translationError.toStatisticsFormat())
+      TRANSLATION_ERROR_FIELD.with(TranslationErrorEnumFormat.from(translationError))
     )
 
     fun translationLanguagePickerOpened(course: EduCourse) = TRANSLATION_LANGUAGE_PICKER_OPENED_EVENT.log(course.id)
@@ -169,7 +169,7 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
         COURSE_ID_FIELD.with(course.id),
         ORIGINAL_LANG_FIELD.with(course.languageCode),
         TRANSLATION_LANG_FIELD.with(translationLanguage),
-        TRANSLATION_ERROR_FIELD.with(translationError.toStatisticsFormat()),
+        TRANSLATION_ERROR_FIELD.with(TranslationErrorEnumFormat.from(translationError)),
       )
 
     fun translationStarted(course: EduCourse, translationLanguage: TranslationLanguage) =
