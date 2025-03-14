@@ -63,13 +63,8 @@ class UserAgreementManager(private val scope: CoroutineScope) {
               is StateEvent.TransitionState -> it.current
             }
             if (!currentState.isChangedByUser) return@collectLatest
+            submitAgreements(currentState.pluginAgreement, currentState.aiServiceAgreement)
 
-            if (isJBALoggedIn()) {
-              submitAgreements(currentState.pluginAgreement, currentState.aiServiceAgreement)
-              return@collectLatest
-            }
-
-            // When user is not logged in, we can only collect something when it's their first time of acceptance the agreement
             val previousState = when (it) {
               is StateEvent.TransitionState -> it.previous
               else -> return@collectLatest
@@ -104,7 +99,7 @@ class UserAgreementManager(private val scope: CoroutineScope) {
 
   private fun submitAgreementAcceptanceAnonymously() {
     scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().submitAgreementAcceptanceAnonymously()
+      MarketplaceSubmissionsConnector.getInstance().submitAgreementAcceptanceAnonymously(isJBALoggedIn())
     }
   }
 

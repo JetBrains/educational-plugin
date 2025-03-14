@@ -91,9 +91,9 @@ class MarketplaceSubmissionsConnector {
     return retrofit.create(RemoteStatisticsService::class.java)
   }
 
-  suspend fun submitAgreementAcceptanceAnonymously() {
+  suspend fun submitAgreementAcceptanceAnonymously(isLoggedIn: Boolean) {
     try {
-      val response = remoteStatisticsService.saveAgreementAcceptanceAnonymously()
+      val response = remoteStatisticsService.saveAgreementAcceptanceAnonymously(isLoggedIn)
       if (!response.isSuccessful) {
         LOG.warn("Failed to send anonymous plugin agreement statistics: ${response.errorBody()?.string()}")
       }

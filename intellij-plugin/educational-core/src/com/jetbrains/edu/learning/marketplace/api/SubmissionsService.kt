@@ -79,5 +79,5 @@ interface SubmissionsService {
  */
 interface RemoteStatisticsService {
   @POST("/api/v2/agreement/save-anonymously")
-  suspend fun saveAgreementAcceptanceAnonymously(): Response<Unit>
+  suspend fun saveAgreementAcceptanceAnonymously(@Query(value = "isLoggedIn") isLoggedIn: Boolean): Response<Unit>
 }
