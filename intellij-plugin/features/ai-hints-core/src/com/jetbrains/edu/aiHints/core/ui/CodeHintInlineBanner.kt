@@ -4,6 +4,7 @@ import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
+import com.jetbrains.edu.ai.translation.ui.LikeBlock
 import com.jetbrains.edu.aiHints.core.feedback.dialog.CodeHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.course
@@ -34,11 +35,16 @@ class CodeHintInlineBanner(
     return this
   }
 
-  fun addFeedbackLink(task: Task, studentSolution: String, textHint: TextHint, codeHint: CodeHint): CodeHintInlineBanner {
+  fun addFeedbackLikenessButtons(task: Task, studentSolution: String, textHint: TextHint, codeHint: CodeHint): CodeHintInlineBanner {
     val project = task.project ?: return this
     val course = project.course.asSafely<EduCourse>() ?: return this
-    addAction(EduAIHintsCoreBundle.message("hints.feedback.action.link")) {
-      CodeHintFeedbackDialog(project, course, task, studentSolution, textHint, codeHint).show()
+    addLikeDislikeActions {
+      val dialog = CodeHintFeedbackDialog(project, course, task, studentSolution, textHint, codeHint, likeness)
+      if (dialog.showAndGet()) {
+        dialog.getLikenessAnswer() ?: likeness
+      } else {
+        LikeBlock.FeedbackLikenessAnswer.NO_ANSWER
+      }
     }
     return this
   }
