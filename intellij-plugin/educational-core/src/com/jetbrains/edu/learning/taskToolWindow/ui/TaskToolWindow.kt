@@ -51,7 +51,7 @@ abstract class TaskToolWindow(protected val project: Project) : Disposable {
 
   open fun updateTaskSpecificPanel(task: Task?) {}
 
-  fun setTaskText(task: Task?) {
+  fun update(task: Task?) {
     updateQueue.queue(Update.create(TASK_DESCRIPTION_UPDATE) {
       updateTaskInfoPanel(task)
       updateTaskSpecificPanel(task)
