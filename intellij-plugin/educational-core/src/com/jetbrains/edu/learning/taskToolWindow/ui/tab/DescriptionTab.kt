@@ -52,7 +52,7 @@ class DescriptionTab(project: Project) : TaskToolWindowTab(project, TabType.DESC
   }
 
   override fun update(task: Task) {
-    taskTextToolWindow.setTaskText(task)
+    taskTextToolWindow.update(task)
   }
 
   fun addInlineBanner(inlineBanner: InlineBanner) {
