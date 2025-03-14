@@ -1,10 +1,11 @@
 package com.jetbrains.edu.ai.terms.action
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.jetbrains.edu.ai.terms.TERMS_NOTIFICATION_ID
 import com.jetbrains.edu.ai.terms.TermsLoader
-import com.jetbrains.edu.ai.ui.AINotificationManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 @Suppress("ComponentNotRegistered")
@@ -14,7 +15,7 @@ class ResetCourseTerms : AITheoryLookupActionBase() {
     val course = project.course as? EduCourse ?: return
     if (isActionUnavailable(project, course)) return
 
-    AINotificationManager.getInstance(project).closeExistingTermsNotifications()
+    TaskToolWindowView.getInstance(project).closeExistingTaskDescriptionNotifications(TERMS_NOTIFICATION_ID)
     TermsLoader.getInstance(project).resetTerms()
   }
 

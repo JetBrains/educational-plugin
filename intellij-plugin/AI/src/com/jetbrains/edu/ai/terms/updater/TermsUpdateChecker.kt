@@ -4,19 +4,21 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.messages.EduAIBundle
+import com.jetbrains.edu.ai.terms.TERMS_NOTIFICATION_ID
 import com.jetbrains.edu.ai.terms.TermsLoader
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
 import com.jetbrains.edu.ai.translation.isSameLanguage
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
-import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
-import com.jetbrains.edu.ai.ui.AINotificationManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
 @Service(Service.Level.PROJECT)
@@ -58,9 +60,11 @@ class TermsUpdateChecker(private val project: Project) {
       name = EduCoreBundle.message("update.action"),
       action = updateAction
     )
-    AINotificationManager.getInstance(project).showInfoTermsNotification(
-      message = EduAIBundle.message("ai.terms.an.updated.version.of.the.terms.is.available"),
-      actionLabel = actionLabel
+    TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+      TERMS_NOTIFICATION_ID,
+      EditorNotificationPanel.Status.Info,
+      EduAIBundle.message("ai.terms.an.updated.version.of.the.terms.is.available"),
+      actionLabel
     )
   }
 

@@ -1,15 +1,15 @@
-package com.jetbrains.edu.ai.ui
+package com.jetbrains.edu.learning.taskToolWindow.ui.notification
 
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.NlsContexts.LinkLabel
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.ui.EditorNotificationPanel
-import javax.swing.JComponent
 
-class AINotification(
+class TaskToolWindowNotification(
   val id: String,
   status: Status,
   @NotificationContent private val messageText: String,
-  private val parentComponent: JComponent
+  private val parentComponent: javax.swing.JComponent
 ) : EditorNotificationPanel(status) {
   init {
     text = "<html>$messageText</html>"
@@ -34,9 +34,4 @@ class AINotification(
     @LinkLabel val name: String,
     val action: () -> Unit
   )
-
-  companion object {
-    const val TRANSLATION_NOTIFICATION_ID = "translation"
-    const val TERMS_NOTIFICATION_ID = "terms"
-  }
 }

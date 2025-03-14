@@ -6,11 +6,11 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
-import com.jetbrains.edu.ai.ui.AINotification.ActionLabel
-import com.jetbrains.edu.ai.ui.AINotificationManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.ai.terms.TermsProperties
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import com.jetbrains.educational.terms.format.CourseTermsResponse
 import kotlinx.coroutines.CoroutineScope
@@ -29,9 +30,6 @@ import kotlinx.coroutines.withContext
 @Service(Service.Level.PROJECT)
 class TermsLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
-
-  private val notificationManager: AINotificationManager
-    get() = AINotificationManager.getInstance(project)
 
   fun updateTerms(course: EduCourse, termsProperties: TermsProperties) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.update.is.not.possible")) {
@@ -103,11 +101,19 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       val termsProjectSettings = TermsProjectSettings.getInstance(project)
       if (version == termsResponse.termsVersion) {
-        notificationManager.showInfoTermsNotification(EduAIBundle.message("ai.terms.terms.is.up.to.date"))
+        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+          TERMS_NOTIFICATION_ID,
+          EditorNotificationPanel.Status.Info,
+          EduAIBundle.message("ai.terms.terms.is.up.to.date")
+        )
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
-      notificationManager.showInfoTermsNotification(EduAIBundle.message("ai.terms.terms.has.been.updated"))
+      TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+        TERMS_NOTIFICATION_ID,
+        EditorNotificationPanel.Status.Info,
+        EduAIBundle.message("ai.terms.terms.has.been.updated")
+      )
       //TODO(add statistics (update finished))
     }
   }
@@ -126,7 +132,12 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
             fetchAndApplyTerms(course, languageCode)
           }
         )
-        notificationManager.showErrorTermsNotification(message = courseTerms.error.message(), actionLabel = actionLabel)
+        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+          TERMS_NOTIFICATION_ID,
+          EditorNotificationPanel.Status.Error,
+          courseTerms.error.message(),
+          actionLabel
+        )
       }
       courseTerms
     }
@@ -147,7 +158,11 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       else {
         if (lockNotAcquiredNotificationText != null) {
-          notificationManager.showErrorTermsNotification(lockNotAcquiredNotificationText)
+          TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
+            TERMS_NOTIFICATION_ID,
+            EditorNotificationPanel.Status.Error,
+            lockNotAcquiredNotificationText
+          )
         }
       }
     }

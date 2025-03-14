@@ -12,6 +12,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+const val TERMS_NOTIFICATION_ID = "terms"
+
+// TODO(implement tests)
 fun CoroutineScope.observeAndLoadCourseTerms(project: Project) {
   launch {
     val combinedStateFlow = combineStateFlow(

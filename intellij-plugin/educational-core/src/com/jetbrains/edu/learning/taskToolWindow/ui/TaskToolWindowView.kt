@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.ui.InlineBannerBase
 import com.intellij.util.ui.UIUtil
@@ -11,6 +13,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isHeadlessEnvironment
+import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import org.jetbrains.annotations.TestOnly
 import java.awt.Color
@@ -42,6 +45,15 @@ abstract class TaskToolWindowView(val project: Project) : EduTestAware {
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
   abstract fun addInlineBanner(inlineBanner: InlineBanner)
   abstract fun addInlineBannerToCheckPanel(inlineBanner: InlineBannerBase)
+
+  abstract fun showTaskDescriptionNotification(
+    notificationId: String,
+    status: EditorNotificationPanel.Status,
+    message: @NotificationContent String,
+    actionLabel: ActionLabel? = null
+  )
+
+  abstract fun closeExistingTaskDescriptionNotifications(notificationId: String)
 
   @TestOnly
   override fun cleanUpState() {
