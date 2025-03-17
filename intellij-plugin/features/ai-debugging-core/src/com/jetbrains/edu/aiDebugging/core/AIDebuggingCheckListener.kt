@@ -25,7 +25,6 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.descripti
 class AIDebuggingCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     if (!isAvailable(task, result)) return
-    val testDescription = (result.details ?: result.message) + (result.diff ?: "")
     val textToShow = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.text")
 
     val aiDebuggingHintBanner = AIDebuggingHintInlineBanner(textToShow).apply {
@@ -36,14 +35,12 @@ class AIDebuggingCheckListener : CheckListener {
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(aiDebuggingHintBanner)
   }
 
-  // TODO replace testDescription to some data class with test information
   private fun showDebugNotification(task: Task, testResult: CheckResult, closeAIDebuggingHint: () -> Unit) {
     val project = task.project ?: error("Project is missing")
     val virtualFiles = task.taskFiles.values.filter { it.isVisible }.mapNotNull { it.getVirtualFile(project) }
     if (virtualFiles.isEmpty()) return
     val taskDescription = task.getTaskDescription(project)
-    val service = project.service<AIDebugSessionService>()
-    service.runDebuggingSession(task, taskDescription, virtualFiles, testResult, closeAIDebuggingHint)
+    project.service<AIDebugSessionService>().runDebuggingSession(task, taskDescription, virtualFiles, testResult, closeAIDebuggingHint)
   }
 
   // TODO: when should we show this button?
