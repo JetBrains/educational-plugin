@@ -73,3 +73,11 @@ interface SubmissionsService {
     @Query("aiAgreement") aiAgreement: String
   ): Response<Unit>
 }
+
+/**
+ * A separate interface with the API that doesn't require an authorization.
+ */
+interface RemoteStatisticsService {
+  @POST("/api/v2/agreement/save-anonymously")
+  suspend fun saveAgreementAcceptanceAnonymously(@Query(value = "isLoggedIn") isLoggedIn: Boolean): Response<Unit>
+}
