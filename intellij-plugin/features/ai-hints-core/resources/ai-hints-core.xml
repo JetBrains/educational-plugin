@@ -19,6 +19,14 @@
             class="com.jetbrains.edu.aiHints.core.action.CancelHint">
       <add-to-group group-id="Diff.ViewerToolbar" anchor="after" relative-to-action="Educational.Hints.AcceptHint"/>
     </action>
+
+    <action id="Educational.Hints.ShowCodeHintExample"
+            class="com.jetbrains.edu.aiHints.core.action.internal.ShowCodeHintExample"
+            internal="true"/>
+
+    <action id="Educational.Hints.ShowTextHintExample"
+            class="com.jetbrains.edu.aiHints.core.action.internal.ShowTextHintExample"
+            internal="true"/>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
