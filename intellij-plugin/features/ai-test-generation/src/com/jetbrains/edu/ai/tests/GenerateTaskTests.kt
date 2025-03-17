@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -32,8 +33,17 @@ class GenerateTaskTests : AnAction() {
 
   override fun update(e: AnActionEvent) {
     val data = e.dataContext.getData(CommonDataKeys.VIRTUAL_FILE)
-    val hasTaskFile = (data?.findChild("task.md") ?: data?.findChild("task.html")) != null
-    e.presentation.isVisible = hasTaskFile
+    val project = e.project
+    if (data == null || project == null) {
+      e.presentation.isVisible = false
+      return
+    }
+
+    val task = data.getTask(project)
+    val isEduTask = task is EduTask
+    val isKotlinOrPythonTask = task?.course?.languageId?.lowercase() in setOf("kotlin", "python")
+
+    e.presentation.isVisible = isEduTask && isKotlinOrPythonTask
     e.presentation.icon = AllIcons.RunConfigurations.TestState.Run_run
   }
 
