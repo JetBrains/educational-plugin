@@ -1,49 +1,43 @@
 package com.jetbrains.edu.aiDebugging.core.session
 
-import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.executors.DefaultDebugExecutor
-import com.intellij.execution.runners.ExecutionEnvironmentBuilder
-import com.intellij.execution.runners.ProgramRunner
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.platform.ide.progress.withModalProgress
-import com.intellij.util.messages.MessageBusConnection
-import com.intellij.xdebugger.*
 import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.aiDebugging.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.aiDebugging.core.messages.EduAIDebuggingCoreBundle
-import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.checker.CheckUtils.createTests
-import com.jetbrains.edu.learning.checker.CheckUtils.deleteTests
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
-import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
+import com.intellij.lang.Language
+import com.intellij.openapi.application.readAction
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
-import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.educational.ml.ai.debugger.prompt.core.FixCodeForTestAssistant
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.description.TaskDescription
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import com.jetbrains.edu.aiDebugging.core.ui.AIBreakpointHint
+import com.jetbrains.educational.ml.ai.debugger.prompt.core.BreakpointHintAssistant
+import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.FinalBreakpoint
+import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
+import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
+import com.intellij.openapi.diagnostic.Logger
+import java.util.concurrent.atomic.AtomicBoolean
 
 
 @Service(Service.Level.PROJECT)
 class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) {
 
-  private var breakpointHint: AIBreakpointHint? = null
-  private var connection: MessageBusConnection? = null
+  private val lock = AtomicBoolean(false)
+
+  fun unlock() {
+    lock.set(false)
+  }
 
   fun runDebuggingSession(
     task: Task,
@@ -53,126 +47,134 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     closeAIDebuggingHint: () -> Unit
   ) {
     coroutineScope.launch {
-      withModalProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
-        FixCodeForTestAssistant.getCodeFix(
-          description,
-          virtualFiles.toNumberedLineMap(),
-          testResult.details ?: testResult.message
-        )
-      }.onSuccess { fixes ->
-        val language = project.course?.languageById ?: error("Language is not found")
-        val settings = getRunSettingsForFailedTest(task, testResult)
-        fixes.groupBy { it.fileName }.forEach { (fileName, fixesForFile) ->
-          val virtualFile = virtualFiles.firstOrNull { file -> file.name == fileName } ?: error("Virtual file is not found")
-          fixesForFile.forEach {
-            project.getService(AIBreakPointService::class.java).toggleLineBreakpoint(language, virtualFile, it.wrongCodeLineNumber)
-          }
-          runReadAction {
-            IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
-              virtualFile,
-              fixesForFile.map { it.wrongCodeLineNumber }.toList(),
+      if (!lock.compareAndSet(false, true)) {
+        LOG.error("AI Debug session is already running")
+        return@launch
+      }
+      try {
+        withBackgroundProgress(project, EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")) {
+          FixCodeForTestAssistant.getCodeFix(
+            description,
+            virtualFiles.toNumberedLineMap(),
+            testResult.details ?: testResult.message
+          )
+        }.onSuccess { fixes ->
+          val language = project.course?.languageById ?: error("Language is not found")
+          val fileMap = virtualFiles.associateBy { it.name }
+          val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
+          fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
+          intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
+          val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints)
+          if (breakpointHints == null) {
+            EduNotificationManager.showErrorNotification(
               project,
-              language
+              content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
             )
-          }.forEach { position ->
-            // TODO: should be placed on the references or on the next line?
-            project.getService(AIBreakPointService::class.java).toggleLineBreakpoint(language, virtualFile, position)
+            return@onSuccess
           }
+          AIDebugSessionRunner(project, task, closeAIDebuggingHint).apply {
+            runDebuggingSession(testResult)
+            subscribeToDebuggerEvents(fixes, breakpointHints)
+          }
+        }.onFailure {
+          unlock()
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
+          )
         }
-        runWithTests(task, closeAIDebuggingHint) {
-          startDebugSession(settings)
-        }
-        subscribeToDebuggerEvents(task, closeAIDebuggingHint, fixes)
-      }.onFailure {
-        EduNotificationManager.showErrorNotification(
+      } catch (e: Exception) {
+        unlock()
+        LOG.error("An error occurred in the ai debugging session", e)
+      }
+    }
+  }
+
+  private fun FixCodeForTestResponse.toBreakpointPositionsByFileMap() =
+    groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+      fileName to fixesForFile.map { it.wrongCodeLineNumber }
+    }.toMap()
+
+  private fun calculateIntermediateBreakpointPositions(
+    fixes: FixCodeForTestResponse,
+    fileMap: Map<String, VirtualFile>,
+    language: Language
+  ) =
+    fixes.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+      val virtualFile = fileMap[fileName] ?: return@mapNotNull null
+      fileName to runReadAction {
+        IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
+          virtualFile,
+          fixesForFile.map { it.wrongCodeLineNumber }.toList(),
           project,
-          content = EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session.fail")
+          language
         )
       }
+    }.toMap()
+
+  private fun Map<String, List<Int>>.toggleLineBreakpoint(fileMap: Map<String, VirtualFile>, language: Language) {
+    forEach { (fileName, positions) ->
+      val virtualFile = fileMap[fileName] ?: error("Virtual file is not found")
+      positions.forEach { position ->
+        project.getService(AIBreakPointService::class.java)
+          .toggleLineBreakpoint(language, virtualFile, position)
+      }
     }
   }
 
-  private fun List<VirtualFile>.toNumberedLineMap() = runReadAction {
-    associate { it.name to it.document.text.lines().mapIndexed { index, line -> "$index: $line" }.joinToString(System.lineSeparator()) }
+  private suspend fun generateIntermediateBreakpointHints(
+    fileMap: Map<String, VirtualFile>,
+    fixes: FixCodeForTestResponse,
+    intermediateBreakpointPositions: Map<String, List<Int>>
+  ): BreakpointHintsResponse? {
+    val finalBreakpoints = fixes.mapNotNull {
+      val virtualFile = fileMap[it.fileName] ?: return@mapNotNull null
+      val line = virtualFile.getLine(it.wrongCodeLineNumber)
+      FinalBreakpoint(it.fileName, it.wrongCodeLineNumber, line, it.breakpointHint)
+    }
+    val intermediateBreakpoint = intermediateBreakpointPositions.map { (fileName, positions) ->
+      positions.mapNotNull { position ->
+        val virtualFile = fileMap[fileName] ?: return@mapNotNull null
+        val line = virtualFile.getLine(position)
+        IntermediateBreakpoint(fileName, position, line)
+      }
+    }.flatten()
+    return withBackgroundProgress(
+      project,
+      EduAIDebuggingCoreBundle.message("action.Educational.AiDebuggingNotification.modal.session")
+    ) {
+      BreakpointHintAssistant.getBreakpointHints(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
+    }.getOrNull()
   }
 
-  private fun runWithTests(task: Task, closeAIDebuggingHint: () -> Unit, execution: () -> Unit) {
-    createTests(task.getInvisibleTestFiles(), project)
-    try {
-      execution()
-    } catch (_: Throwable) {
-      debugStopped(task, closeAIDebuggingHint)
+  private suspend fun VirtualFile.getLine(line: Int): String {
+    val document = readAction { FileDocumentManager.getInstance().getDocument(this) } ?: error("Document is not found")
+    if (line < 0 || line >= document.lineCount) {
+      error("Line number $line is out of bounds")
+    }
+    return document.text.substring(document.getLineStartOffset(line), document.getLineEndOffset(line)).trim()
+  }
+
+  private fun List<VirtualFile>.toNumberedLineMap() = toNumberedLineMap { list ->
+    list.asSequence().map { it.name to it }
+  }
+
+  private fun Map<String, VirtualFile>.toNumberedLineMap() = toNumberedLineMap { map ->
+    map.asSequence().map { (name, virtualFile) -> name to virtualFile }
+  }
+
+  private fun <T> T.toNumberedLineMap(getVirtualFile: (T) -> Sequence<Pair<String, VirtualFile>>) = runReadAction {
+    getVirtualFile(this).associate { (name, virtualFile) ->
+      name to virtualFile.document.text.lines()
+        .mapIndexed { index, line -> "$index: $line" }
+        .joinToString(System.lineSeparator())
     }
   }
 
-  private fun debugStopped(task: Task, closeAIDebuggingHint: () -> Unit) {
-    deleteTests(task.getInvisibleTestFiles(), project)
-    closeAIDebuggingHint()
-    connection?.disconnect()
-    // TODO: make breakpoints regular
+  companion object {
+    private val LOG = Logger.getInstance(AIDebugSessionService::class.java)
+
+    fun getInstance(project: Project): AIDebugSessionService = project.getService(AIDebugSessionService::class.java)
   }
 
-  private fun subscribeToDebuggerEvents(task: Task, closeAIDebuggingHint: () -> Unit, fixes: FixCodeForTestResponse) {
-    connection = project.messageBus.connect()
-    connection?.subscribe(XDebuggerManager.TOPIC, object : XDebuggerManagerListener {
-      override fun processStopped(debugProcess: XDebugProcess) {
-        debugStopped(task, closeAIDebuggingHint)
-      }
-
-      override fun processStarted(debugProcess: XDebugProcess) {
-        super.processStarted(debugProcess)
-        subscribeToSessionEvents(debugProcess.session, fixes)
-      }
-    })
-  }
-
-  private fun subscribeToSessionEvents(session: XDebugSession, fixes: FixCodeForTestResponse) {
-    session.addSessionListener(object : XDebugSessionListener {
-      override fun sessionPaused() {
-        super.sessionPaused()
-        val position = session.currentPosition ?: return
-        val editor = position.file.getEditor(project) ?: return
-        val message = fixes.firstOrNull {
-          it.fileName == position.file.name && it.wrongCodeLineNumber == position.line
-        }?.breakpointHint ?: return
-        breakpointHint?.close()
-        breakpointHint = AIBreakpointHint(message, editor, getTextStartOffset(editor, position.line))
-      }
-
-      override fun sessionResumed() {
-        super.sessionResumed()
-        breakpointHint?.close()
-      }
-    })
-  }
-
-  private fun getTextStartOffset(editor: Editor, line: Int): Int {
-    val document = editor.document
-    val lineStartOffset = document.getLineStartOffset(line)
-    val lineText = document.getText(TextRange(lineStartOffset, document.getLineEndOffset(line)))
-    return lineStartOffset + (lineText.indexOfFirst { !it.isWhitespace() }.takeIf { it != -1 } ?: 0)
-  }
-
-  private fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
-    EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible
-  }
-
-  private fun getRunSettingsForFailedTest(task: Task, testResult: CheckResult): RunnerAndConfigurationSettings {
-    val methodName = testResult.executedTestsInfo.firstFailed()?.name?.replace(":", ".") ?: error("Method name is not found")
-    val settings = runReadAction { task.getAllTestDirectories(project).firstNotNullOfOrNull {
-                       ConfigurationContext(it).configurationsFromContext?.firstOrNull()?.configurationSettings
-    } } ?: error("No configuration is found")
-
-    val configuration = settings.configuration
-    if (configuration is ExternalSystemRunConfiguration) {
-      val settingsData = configuration.settings
-      settingsData.taskNames = settingsData.taskNames + listOf("--tests", "\"$methodName\"")
-    }
-    return settings
-  }
-
-  private fun startDebugSession(settings: RunnerAndConfigurationSettings) = runInEdt {
-    val environment = ExecutionEnvironmentBuilder.create(DefaultDebugExecutor.getDebugExecutorInstance(), settings).activeTarget().build()
-    ProgramRunner.getRunner(DefaultDebugExecutor.EXECUTOR_ID, settings.configuration)?.execute(environment)
-  }
 }
