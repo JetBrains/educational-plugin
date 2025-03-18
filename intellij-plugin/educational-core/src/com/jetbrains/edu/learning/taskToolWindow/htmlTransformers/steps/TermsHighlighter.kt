@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.nodes.TextNode
 
 /**
  * Highlights terms in an HTML document by adding dashed underline style to the occurrences of the terms.
@@ -20,10 +19,16 @@ import org.jsoup.nodes.TextNode
  * @see TermsProjectSettings
  */
 object TermsHighlighter : HtmlTransformer {
-  // TODO: filter code blocks and other tags
-  private val INVALID_TAGS = setOf(CODE_TAG, A_TAG, IMG_TAG)
+  private val INVALID_TAGS = setOf(A_TAG, IMG_TAG)
+  private val INVALID_CLASSES = setOf(TERM_CLASS)
 
   private fun Element.isValidTag(): Boolean = tagName() !in INVALID_TAGS
+  private fun Element.isValidClass(): Boolean = classNames().all { it !in INVALID_CLASSES }
+
+  private fun Element.isNotInsideCodeBlock(): Boolean {
+    if (classNames().contains(CODE_BLOCK_CLASS) || classNames().contains(CODE_CLASS)) return false
+    return parents().map { it.classNames() }.all { !it.contains(CODE_BLOCK_CLASS) && !it.contains(CODE_CLASS)}
+  }
 
   override fun transform(html: Document, context: HtmlTransformerContext): Document {
     if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled || context.task !is TheoryTask) return html
@@ -41,7 +46,7 @@ object TermsHighlighter : HtmlTransformer {
   private fun formatTermOccurrences(html: Document, termTitle: String) {
     val nodes = html.getElementsContainingOwnText(termTitle)
       .asSequence()
-      .filter { it.isValidTag() }
+      .filter { it.isValidTag() && it.isValidClass() && it.isNotInsideCodeBlock() }
       .flatMap { it.textNodes() }
       .filter { it.text().contains(termTitle) }
     for (node in nodes) {
