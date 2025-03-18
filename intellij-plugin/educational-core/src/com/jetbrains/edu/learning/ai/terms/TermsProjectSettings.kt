@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings.TermsProjectStat
 import com.jetbrains.educational.terms.format.Term
 import com.jetbrains.educational.terms.format.domain.TermsVersion
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
@@ -21,7 +22,7 @@ import kotlin.collections.set
 @State(name = "TermsProjectSettings", reloadable = true, storages = [Storage("edu_terms.xml")])
 class TermsProjectSettings : PersistentStateComponent<TermsProjectState>, EduTestAware {
   private val _termsProperties = MutableStateFlow<TermsProperties?>(null)
-  val termsProperties = _termsProperties.asStateFlow()
+  val termsProperties: StateFlow<TermsProperties?> = _termsProperties.asStateFlow()
   private val termsPropertiesByLanguage = ConcurrentHashMap<String, TermsProperties>()
 
   fun getTaskTerms(task: Task): List<Term>? = termsProperties.value?.terms?.get(task.id)
@@ -105,9 +106,5 @@ class TermsProjectSettings : PersistentStateComponent<TermsProjectState>, EduTes
     fun getInstance(project: Project): TermsProjectSettings = project.service()
 
     fun areCourseTermsLoaded(project: Project): Boolean = getInstance(project).termsProperties.value != null
-
-    fun areCourseTermsLoaded(project: Project, languageCode: String): Boolean {
-      return getInstance(project).termsProperties.value?.languageCode == languageCode
-    }
   }
 }
