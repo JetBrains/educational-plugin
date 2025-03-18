@@ -1,18 +1,19 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.jetbrains.edu.learning.taskToolWindow.ui.JsEventData
-import junit.framework.TestCase
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @RunWith(Parameterized::class)
-class JsEventDataTest(private val jsEventDataJson: String, private val expected: JsEventData) : TestCase() {
+class JsEventDataTest(private val jsEventDataJson: String, private val expected: JsEventData) {
 
   @Test
   fun `test JsEventData deserialization`() {
     val jsEventData = JsEventData.fromJson(jsEventDataJson)
-    kotlin.test.assertNotNull(jsEventData)
+    assertNotNull(jsEventData)
     assertEquals(jsEventData, expected)
   }
 
