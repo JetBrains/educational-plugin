@@ -178,10 +178,12 @@ object YamlLoader {
   private fun StudyItem.getParentItem(project: Project, parentDir: VirtualFile): ItemContainer {
     val course = StudyTaskManager.getInstance(project).course
     val itemContainer = when (this) {
-      is Section -> course
-      is Lesson -> {
-        val section = course?.let { parentDir.getSection(project) }
-        section ?: course
+      is Section -> if (project.courseDir == parentDir) course else null
+      is Lesson -> if (project.courseDir == parentDir) {
+        course
+      }
+      else {
+        course?.let { parentDir.getSection(project) }
       }
 
       is Task -> course?.let { parentDir.getLesson(project) }
