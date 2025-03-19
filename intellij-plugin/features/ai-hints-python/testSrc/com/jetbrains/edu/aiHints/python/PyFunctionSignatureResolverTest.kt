@@ -7,6 +7,7 @@ import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -14,6 +15,7 @@ import org.junit.runners.Parameterized.Parameters
 
 @Suppress("Junit4RunWithInspection")
 @RunWith(Parameterized::class)
+@Ignore /** [com.jetbrains.edu.aiHints.core.EduAIHintsProcessor] is not registered for Python yet */
 class PyFunctionSignatureResolverTest(
   private val functionName: String,
   private val code: String
