@@ -15,6 +15,7 @@ include(
   "intellij-plugin:code-insight:markdown",
   "intellij-plugin:code-insight:yaml",
   "intellij-plugin:jvm-core",
+  "intellij-plugin:remote-env",
   "intellij-plugin:AI",
   "intellij-plugin:Edu-Java",
   "intellij-plugin:Edu-Kotlin",
@@ -42,12 +43,6 @@ include(
   "intellij-plugin:features:ai-hints-python",
   "intellij-plugin:features:ai-test-generation"
 )
-
-// Temporary workaround to make it work with 2025.1.
-// Will be fixed automatically after migration to IJPGP 2.4
-if (settings.providers.gradleProperty("environmentName").get().toInt() < 251) {
-  include("intellij-plugin:remote-env")
-}
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
