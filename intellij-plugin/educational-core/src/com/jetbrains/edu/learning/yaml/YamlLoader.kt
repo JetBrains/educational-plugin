@@ -170,8 +170,9 @@ object YamlLoader {
     items = deserializeContent(project, items, mapper)
     // set parent to deserialize content correctly
     items.forEach { it.init(this, false) }
-    items.filterIsInstance(ItemContainer::class.java).forEach {
-      it.items = it.deserializeContent(project, it.items, mapper)
+    items.filterIsInstance<ItemContainer>().forEach { item ->
+      item.items = item.deserializeContent(project, item.items, mapper)
+      item.items.forEach { it.init(item, false) }
     }
   }
 
