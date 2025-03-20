@@ -863,8 +863,6 @@ project("Edu-Go") {
       if (isAtLeast243) {
         intellijPlugins(jsonPlugin)
       }
-      // TODO: check if it's still needed with IJPGP 2.4
-      bundledModules("com.intellij.modules.ultimate")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -882,8 +880,6 @@ project("Edu-Php") {
       if (isAtLeast243) {
         intellijPlugins(jsonPlugin)
       }
-      // TODO: check if it's still needed with IJPGP 2.4
-      bundledModules("com.intellij.modules.ultimate")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
