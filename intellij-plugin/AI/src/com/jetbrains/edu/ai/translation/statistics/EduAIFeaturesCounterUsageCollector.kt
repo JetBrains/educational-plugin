@@ -4,10 +4,13 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventPair
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.jetbrains.edu.ai.error.AIServiceError
+import com.jetbrains.edu.ai.terms.statistics.TermsErrorEnumFormat
 import com.jetbrains.edu.ai.translation.settings.TranslationSettings
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.ALWAYS_TRANSLATE_FIELD
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.HINTS_BANNER_TYPE_FIELD
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.ORIGINAL_LANG_FIELD
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.THEORY_LOOKUP_ERROR_FIELD
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.THEORY_LOOKUP_LANG_FIELD
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.TRANSLATION_ERROR_FIELD
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.TRANSLATION_LANG_FIELD
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -27,7 +30,7 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.ai.features",
       "The metric is reported in case a user has called the corresponding JetBrains Academy AI features.",
-      3,
+      4,
     )
 
     private val TRANSLATION_BUTTON_CLICKED_EVENT = GROUP.registerEvent(
@@ -137,6 +140,59 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
       COURSE_UPDATE_VERSION_FIELD,
       TASK_ID_FIELD,
     )
+    private val THEORY_LOOKUP_TERM_HOVERED_EVENT = GROUP.registerEvent(
+      "theory.lookup.term.hovered",
+      "The event is recorded when the user hovers over the highlighted term in the theory lookup.",
+      COURSE_ID_FIELD,
+      TASK_ID_FIELD
+    )
+    private val THEORY_LOOKUP_TERM_VIEWED_EVENT = GROUP.registerEvent(
+      "theory.lookup.term.viewed",
+      "The event is recorded when the user keeps the term tooltip open for more than 2 second.",
+      COURSE_ID_FIELD,
+      TASK_ID_FIELD
+    )
+    private val THEORY_LOOKUP_DISABLED_EVENT = GROUP.registerEvent(
+      "theory.lookup.disabled",
+      "The event is recorded when the theory lookup is disabled by the user.",
+    )
+    private val THEORY_LOOKUP_STARTED_EVENT = GROUP.registerEvent(
+      "theory.lookup.started",
+      "The event is recorded when the theory lookup process starts.",
+      COURSE_ID_FIELD,
+      ORIGINAL_LANG_FIELD,
+      THEORY_LOOKUP_LANG_FIELD,
+    )
+    private val THEORY_LOOKUP_FINISHED_EVENT = GROUP.registerEvent(
+      "theory.lookup.finished",
+      "The event is recorded when the theory lookup is successfully completed.",
+      COURSE_ID_FIELD,
+      ORIGINAL_LANG_FIELD,
+      THEORY_LOOKUP_LANG_FIELD
+    )
+    private val THEORY_LOOKUP_FINISHED_WITH_ERROR_EVENT = GROUP.registerVarargEvent(
+      "theory.lookup.finished.with.error",
+      "The event is recorded in case an error occurs during theory lookup.",
+      COURSE_ID_FIELD,
+      ORIGINAL_LANG_FIELD,
+      THEORY_LOOKUP_LANG_FIELD,
+      THEORY_LOOKUP_ERROR_FIELD,
+    )
+    private val THEORY_LOOKUP_RETRIED_EVENT = GROUP.registerVarargEvent(
+      "theory.lookup.retried",
+      "The event is recorded when a retry of the theory lookup process is initiated.",
+      COURSE_ID_FIELD,
+      ORIGINAL_LANG_FIELD,
+      THEORY_LOOKUP_LANG_FIELD,
+      THEORY_LOOKUP_ERROR_FIELD,
+    )
+    private val THEORY_LOOKUP_UPDATED_EVENT = GROUP.registerEvent(
+      "theory.lookup.updated",
+      "The event is recorded when the course terms are successfully updated.",
+      COURSE_ID_FIELD,
+      ORIGINAL_LANG_FIELD,
+      THEORY_LOOKUP_LANG_FIELD,
+    )
 
     fun translationButtonClicked(course: EduCourse) = TRANSLATION_BUTTON_CLICKED_EVENT.log(course.id)
 
@@ -209,5 +265,36 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
     fun codeHintAccepted(task: Task) = HINTS_CODE_HINT_ACCEPTED_EVENT.log(task.course.id, task.course.marketplaceCourseVersion, task.id)
 
     fun codeHintCancelled(task: Task) = HINTS_CODE_HINT_CANCELLED_EVENT.log(task.course.id, task.course.marketplaceCourseVersion, task.id)
+
+    fun theoryLookupTermHovered(task: Task) = THEORY_LOOKUP_TERM_HOVERED_EVENT.log(task.course.id, task.id)
+
+    fun theoryLookupTermViewed(task: Task) = THEORY_LOOKUP_TERM_VIEWED_EVENT.log(task.course.id, task.id)
+
+    fun theoryLookupDisabled() = THEORY_LOOKUP_DISABLED_EVENT.log()
+
+    fun theoryLookupStarted(course: EduCourse, languageCode: String) =
+      THEORY_LOOKUP_STARTED_EVENT.log(course.id, course.languageCode, languageCode)
+
+    fun theoryLookupFinishedSuccessfully(course: EduCourse, languageCode: String) =
+      THEORY_LOOKUP_FINISHED_EVENT.log(course.id, course.languageCode, languageCode)
+
+    fun theoryLookupFinishedWithError(course: EduCourse, languageCode: String, termsError: AIServiceError) =
+      THEORY_LOOKUP_FINISHED_WITH_ERROR_EVENT.log(
+        COURSE_ID_FIELD.with(course.id),
+        ORIGINAL_LANG_FIELD.with(course.languageCode),
+        THEORY_LOOKUP_LANG_FIELD.with(languageCode),
+        THEORY_LOOKUP_ERROR_FIELD.with(TermsErrorEnumFormat.from(termsError))
+      )
+
+    fun theoryLookupRetried(course: EduCourse, languageCode: String, termsError: AIServiceError) =
+      THEORY_LOOKUP_RETRIED_EVENT.log(
+        COURSE_ID_FIELD.with(course.id),
+        ORIGINAL_LANG_FIELD.with(course.languageCode),
+        THEORY_LOOKUP_LANG_FIELD.with(languageCode),
+        THEORY_LOOKUP_ERROR_FIELD.with(TermsErrorEnumFormat.from(termsError)),
+      )
+
+    fun theoryLookupUpdated(course: EduCourse, languageCode: String) =
+      THEORY_LOOKUP_UPDATED_EVENT.log(course.id, course.languageCode, languageCode)
   }
 }

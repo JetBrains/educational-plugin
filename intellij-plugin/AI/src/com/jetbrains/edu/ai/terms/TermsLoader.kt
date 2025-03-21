@@ -11,6 +11,7 @@ import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.error.CommonAIServiceError
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Result
@@ -80,23 +81,22 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         termsProjectSettings.setTerms(properties)
         return@withBackgroundProgress
       }
-      //TODO(add statistics (fetch started))
+      EduAIFeaturesCounterUsageCollector.theoryLookupStarted(course, languageCode)
       val termsResponse = fetchTerms(course, languageCode).onError { error ->
-        //TODO(add statistics (fetch failed))
+        EduAIFeaturesCounterUsageCollector.theoryLookupFinishedWithError(course, languageCode, error)
         LOG.warn("Failed to fetch terms for ${course.name} in $languageCode: $error")
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
-      //TODO(add statistics (fetch finished))
+      EduAIFeaturesCounterUsageCollector.theoryLookupFinishedSuccessfully(course, languageCode)
     }
   }
 
   private suspend fun doUpdateTerms(course: EduCourse, termsProperties: TermsProperties) {
     withBackgroundProgress(project, EduAIBundle.message("ai.terms.update.course.terms")) {
       val (language, _, version) = termsProperties
-      //TODO(add statistics (update started))
       val termsResponse = fetchTerms(course, language).onError { error ->
-        //TODO(add statistics (update failed))
+        EduAIFeaturesCounterUsageCollector.theoryLookupFinishedWithError(course, language, error)
         LOG.warn("Failed to update terms for ${course.name} in $language: $error")
         return@withBackgroundProgress
       }
@@ -115,7 +115,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         EditorNotificationPanel.Status.Info,
         EduAIBundle.message("ai.terms.terms.has.been.updated")
       )
-      //TODO(add statistics (update finished))
+      EduAIFeaturesCounterUsageCollector.theoryLookupUpdated(course, language)
     }
   }
 
@@ -129,7 +129,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         val actionLabel = ActionLabel(
           name = EduCoreBundle.message("retry"),
           action = {
-            // TODO(add statistics (fetch failed))
+            EduAIFeaturesCounterUsageCollector.theoryLookupRetried(course, languageCode, courseTerms.error)
             fetchAndApplyTerms(course, languageCode)
           }
         )
