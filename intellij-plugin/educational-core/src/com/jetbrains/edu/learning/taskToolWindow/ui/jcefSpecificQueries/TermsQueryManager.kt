@@ -8,7 +8,9 @@ import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
+import com.intellij.util.Alarm
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.terms.TermsInteractionListener
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.taskToolWindow.TERM_CLASS
@@ -38,6 +40,8 @@ class TermsQueryManager private constructor(
   private val jsQueryMouseOutListener = JBCefJSQuery.create(taskJBCefBrowser)
   private val jsQueryScrollListener = JBCefJSQuery.create(taskJBCefBrowser)
   private var gotItTooltip: Balloon? = null
+  // TODO(use coroutines instead of alarm after moving to ai package)
+  private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
 
   private val termListenerLoadHandler = object : CefLoadHandlerAdapter() {
 
@@ -82,11 +86,11 @@ class TermsQueryManager private constructor(
       null
     }
     jsQueryMouseOutListener.addHandler { data ->
-      closeDefinitionOfTerm(data)
+      disposeExistingTooltip()
       null
     }
     jsQueryScrollListener.addHandler {
-      gotItTooltip?.let { Disposer.dispose(it) }
+      disposeExistingTooltip()
       null
     }
     Disposer.register(this) {
@@ -99,7 +103,7 @@ class TermsQueryManager private constructor(
 
   private fun showDefinitionOfTerm(data: String) {
     if (data.isBlank()) return
-    gotItTooltip?.let { Disposer.dispose(it) }
+    disposeExistingTooltip()
     val parsedData = JsEventData.fromJson(data) ?: return
     val component = taskJBCefBrowser.component ?: return
     val termTitle = parsedData.term
@@ -119,19 +123,33 @@ class TermsQueryManager private constructor(
       .apply {
         show(RelativePoint(component, preferredPoint), position)
       }
+    sendTermHoveredEvent(task)
+    alarm.cancelAllRequests()
+    alarm.addRequest({ sendTermViewedEvent(task) }, TERM_VIEW_DELAY)
   }
 
-  private fun closeDefinitionOfTerm(data: String) {
-    if (data.isBlank()) return
+  private fun sendTermHoveredEvent(task: Task) {
+    project.messageBus.syncPublisher(TermsInteractionListener.TOPIC).termHovered(task)
+  }
+
+  private fun sendTermViewedEvent(task: Task) {
+    project.messageBus.syncPublisher(TermsInteractionListener.TOPIC).termViewed(task)
+  }
+
+  private fun disposeExistingTooltip() {
     gotItTooltip?.let { Disposer.dispose(it) }
+    alarm.cancelAllRequests()
+    gotItTooltip = null
   }
 
   override fun dispose() {
-    gotItTooltip?.let { Disposer.dispose(it) }
+    disposeExistingTooltip()
     taskJBCefBrowser.jbCefClient.removeLoadHandler(termListenerLoadHandler, taskJBCefBrowser.cefBrowser)
   }
 
   companion object {
+    private const val TERM_VIEW_DELAY: Long = 2000L
+
     @JvmStatic
     fun getTermsQueryManager(project: Project, task: Task?, taskJBCefBrowser: JBCefBrowserBase): TermsQueryManager? {
       if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled || task !is TheoryTask) return null

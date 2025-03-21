@@ -62,5 +62,7 @@
   <projectListeners>
     <listener class="com.jetbrains.edu.ai.update.EduCourseUpdateListener"
               topic="com.jetbrains.edu.learning.CourseUpdateListener"/>
+    <listener class="com.jetbrains.edu.ai.terms.statistics.StatsCounterTermInteractionListener"
+              topic="com.jetbrains.edu.learning.ai.terms.TermsInteractionListener"/>
   </projectListeners>
 </idea-plugin>
