@@ -6,6 +6,7 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.settings.AIOptionsProvider
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupProperties
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 
@@ -23,6 +24,10 @@ class TheoryLookupOptions : BoundConfigurable(EduAIBundle.message("settings.ai.t
 
   override fun apply() {
     super.apply()
+    val wasEnabled = TheoryLookupSettings.getInstance().isTheoryLookupEnabled
+    if (wasEnabled && !isEnabled) {
+      EduAIFeaturesCounterUsageCollector.theoryLookupDisabled()
+    }
     val theoryLookupProperties = TheoryLookupProperties(isEnabled)
     TheoryLookupSettings.getInstance().setTheoryLookupProperties(theoryLookupProperties)
   }
