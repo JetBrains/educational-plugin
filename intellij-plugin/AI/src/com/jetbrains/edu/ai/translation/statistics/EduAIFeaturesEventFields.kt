@@ -1,12 +1,15 @@
 package com.jetbrains.edu.ai.translation.statistics
 
 import com.intellij.internal.statistic.eventLog.events.EventFields
+import com.jetbrains.edu.ai.terms.statistics.TermsErrorEnumFormat
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.util.*
 
 object EduAIFeaturesEventFields {
   private const val ALWAYS_TRANSLATE: String = "always_translate"
   private const val ORIGINAL_LANG: String = "original_lang"
+  private const val THEORY_LOOKUP_ERROR: String = "theory_lookup_error"
+  private const val THEORY_LOOKUP_LANG: String = "theory_lookup_lang"
   private const val TRANSLATION_ERROR: String = "translation_error"
   private const val TRANSLATION_LANG: String = "translation_lang"
   private const val TYPE: String = "type"
@@ -24,4 +27,6 @@ object EduAIFeaturesEventFields {
   val TRANSLATION_ERROR_FIELD = EventFields.Enum<TranslationErrorEnumFormat>(TRANSLATION_ERROR) { it.name.lowercase(Locale.getDefault()) }
   val TRANSLATION_LANG_FIELD = EventFields.Enum<TranslationLanguage>(TRANSLATION_LANG) { it.code }
   val HINTS_BANNER_TYPE_FIELD = EventFields.Enum<HintBannerType>(TYPE)
+  val THEORY_LOOKUP_ERROR_FIELD = EventFields.Enum<TermsErrorEnumFormat>(THEORY_LOOKUP_ERROR) { it.name.lowercase(Locale.getDefault()) }
+  val THEORY_LOOKUP_LANG_FIELD = EventFields.String(THEORY_LOOKUP_LANG, allowedLanguages)
 }
