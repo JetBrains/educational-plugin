@@ -21,10 +21,7 @@ import com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager
 import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
 import com.jetbrains.edu.cognifire.highlighting.prompttocode.PromptToCodeHighlighter
-import com.jetbrains.edu.cognifire.log.ActionData
-import com.jetbrains.edu.cognifire.log.CognifireStudyLogEntry
-import com.jetbrains.edu.cognifire.log.Logger
-import com.jetbrains.edu.cognifire.log.PromptData
+import com.jetbrains.edu.cognifire.log.*
 import com.jetbrains.edu.cognifire.manager.PromptActionManager
 import com.jetbrains.edu.cognifire.manager.PromptCodeState
 import com.jetbrains.edu.cognifire.messages.EduCognifireBundle
@@ -133,8 +130,11 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
     codeExpression: CodeExpression?
   ) {
     val promptActionManager = PromptActionManager.getInstance(project)
+    val previousPromptToCode = promptActionManager.getAction(prodeId)?.promptToCode
+    val prodeLoggerManager = ProdeLoggerManager.getInstance(project)
+
     val codeGenerator =
-      CodeGenerator(promptExpression, project, element.language, promptActionManager.getAction(prodeId)?.promptToCode, codeExpression)
+      CodeGenerator(promptExpression, project, element.language, previousPromptToCode, codeExpression)
 
     invokeLater {
       val generatedCode = codeGenerator.generatedCode
@@ -162,7 +162,7 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
         """.trimMargin()
       )
       val currentFile = FileEditorManager.getInstance(project).selectedEditor?.file?.name ?: ""
-
+      val (oldPrompt, oldCode) = prodeLoggerManager.getProdeData(prodeId)
       val logEntry = CognifireStudyLogEntry(
         courseId = task.course.id,
         lessonId = task.lesson.id,
@@ -171,14 +171,21 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
         actionId = prodeId,
         fileName = currentFile,
         data = ActionData(
-          givenPrompt = PromptData(newPromptExpression.prompt, newPromptExpression.code, newPromptExpression.functionSignature.toString()),
-          generatedCode = newCodeExpression.code,
-          promptToCode = codeGenerator.finalPromptToCodeTranslation
+          userPrompt = promptExpression.toPromptData(),
+          userCode = codeExpression.toCodeData(),
+          generatedPrompt = newPromptExpression.toPromptData(),
+          generatedCode = newCodeExpression.toCodeData(),
+          promptToCode = codeGenerator.finalPromptToCodeTranslation,
+          oldPrompt = oldPrompt,
+          oldGeneratedCode = oldCode,
+          oldPromptToCode = previousPromptToCode ?: emptyList(),
+          isPromptChanged = isPromptChanged(codeGenerator.finalPromptToCodeTranslation, previousPromptToCode),
+          isGeneratedCodeChanged = isGeneratedCodeChanged(codeGenerator.finalPromptToCodeTranslation, previousPromptToCode),
         )
       ).toString()
 
       Logger.cognifireStudyLogger.info(logEntry)
-
+      prodeLoggerManager.addProdeData(prodeId, newPromptExpression.toPromptData(), newCodeExpression.toCodeData())
       promptActionManager.updateAction(prodeId, state, codeGenerator.finalPromptToCodeTranslation)
       project.getCurrentTask()?.let {
         it.isPromptActionsGeneratedSuccessfully = promptActionManager.generatedSuccessfully(task.id)

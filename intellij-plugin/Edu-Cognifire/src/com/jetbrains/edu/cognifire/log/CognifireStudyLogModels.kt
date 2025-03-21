@@ -16,13 +16,24 @@ data class CognifireStudyLogEntry(
 }
 
 data class ActionData(
-  val givenPrompt: PromptData,
-  val generatedCode: String,
-  val promptToCode: PromptToCodeContent
+  val userPrompt: PromptData,
+  val userCode: CodeData,
+  val generatedPrompt: PromptData,
+  val generatedCode: CodeData,
+  val promptToCode: PromptToCodeContent,
+  val oldPrompt: PromptData,
+  val oldGeneratedCode: CodeData,
+  val oldPromptToCode: PromptToCodeContent,
+  val isPromptChanged: Boolean,
+  val isGeneratedCodeChanged: Boolean,
 )
 
 data class PromptData(
   val prompt: String,
   val code: String,
   val functionSignature: String,
+)
+
+data class CodeData(
+  val code: String,
 )
