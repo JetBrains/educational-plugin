@@ -23,7 +23,7 @@ abstract class UpdateTestBase<T : Course> : NavigationTestBase() {
     val updates = runBlocking {
       updater.collect(remoteCourse)
     }
-    assertEquals("Updates are " + if (isShouldBeUpdated) "" else "not" + " available", isShouldBeUpdated, updates.isNotEmpty())
+    assertEquals("Updates are" + (if (isShouldBeUpdated) " not" else "") + " available", isShouldBeUpdated, updates.isNotEmpty())
     val isUpdateSucceed = runBlocking {
       try {
         updater.update(remoteCourse)
