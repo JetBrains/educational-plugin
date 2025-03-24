@@ -69,8 +69,17 @@ class UserAgreementManager(private val scope: CoroutineScope) {
               is StateEvent.TransitionState -> it.previous
               else -> return@collectLatest
             }
-            if (currentState.pluginAgreement == UserAgreementState.ACCEPTED && previousState.pluginAgreement == UserAgreementState.NOT_SHOWN) {
-              submitAgreementAcceptanceAnonymously()
+
+            if (currentState.pluginAgreement != UserAgreementState.ACCEPTED) return@collectLatest
+            when (previousState.pluginAgreement) {
+              /**
+               * When User Agreement is accepted for the very first time, i.e.
+               * when previously it was either not shown at all, or declined.
+               */
+              UserAgreementState.NOT_SHOWN, UserAgreementState.DECLINED -> {
+                submitAgreementAcceptanceAnonymously()
+              }
+              else -> return@collectLatest
             }
           }
       }
