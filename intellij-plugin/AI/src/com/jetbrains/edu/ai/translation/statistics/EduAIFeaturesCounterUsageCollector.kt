@@ -186,13 +186,6 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
       THEORY_LOOKUP_LANG_FIELD,
       THEORY_LOOKUP_ERROR_FIELD,
     )
-    private val THEORY_LOOKUP_UPDATED_EVENT = GROUP.registerEvent(
-      "theory.lookup.updated",
-      "The event is recorded when the course terms are successfully updated.",
-      COURSE_ID_FIELD,
-      ORIGINAL_LANG_FIELD,
-      THEORY_LOOKUP_LANG_FIELD,
-    )
 
     fun translationButtonClicked(course: EduCourse) = TRANSLATION_BUTTON_CLICKED_EVENT.log(course.id)
 
@@ -293,8 +286,5 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
         THEORY_LOOKUP_LANG_FIELD.with(languageCode),
         THEORY_LOOKUP_ERROR_FIELD.with(TermsErrorEnumFormat.from(termsError)),
       )
-
-    fun theoryLookupUpdated(course: EduCourse, languageCode: String) =
-      THEORY_LOOKUP_UPDATED_EVENT.log(course.id, course.languageCode, languageCode)
   }
 }
