@@ -95,6 +95,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
   private suspend fun doUpdateTerms(course: EduCourse, termsProperties: TermsProperties) {
     withBackgroundProgress(project, EduAIBundle.message("ai.terms.update.course.terms")) {
       val (language, _, version) = termsProperties
+      EduAIFeaturesCounterUsageCollector.theoryLookupStarted(course, language)
       val termsResponse = fetchTerms(course, language).onError { error ->
         EduAIFeaturesCounterUsageCollector.theoryLookupFinishedWithError(course, language, error)
         LOG.warn("Failed to update terms for ${course.name} in $language: $error")
@@ -107,6 +108,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
           EditorNotificationPanel.Status.Info,
           EduAIBundle.message("ai.terms.terms.is.up.to.date")
         )
+        EduAIFeaturesCounterUsageCollector.theoryLookupFinishedSuccessfully(course, language)
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
@@ -115,7 +117,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         EditorNotificationPanel.Status.Info,
         EduAIBundle.message("ai.terms.terms.has.been.updated")
       )
-      EduAIFeaturesCounterUsageCollector.theoryLookupUpdated(course, language)
+      EduAIFeaturesCounterUsageCollector.theoryLookupFinishedSuccessfully(course, language)
     }
   }
 
