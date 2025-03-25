@@ -23,9 +23,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   val pluginAgreement: Boolean
     get() = _userAgreementProperties.value.pluginAgreement == UserAgreementState.ACCEPTED
 
-  val submissionsServiceAgreement: Boolean
-    get() = _userAgreementProperties.value.submissionsServiceAgreement == UserAgreementState.ACCEPTED
-
   val aiServiceAgreement: Boolean
     get() = _userAgreementProperties.value.aiServiceAgreement == UserAgreementState.ACCEPTED
 
@@ -35,10 +32,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   val solutionSharing: Boolean
     get() = _userAgreementProperties.value.solutionSharingPreference == SolutionSharingPreference.ALWAYS
 
-  fun enableSubmissions() {
-    _userAgreementProperties.value = _userAgreementProperties.value.copy(submissionsServiceAgreement = UserAgreementState.ACCEPTED)
-  }
-
   fun setSolutionSharing(solutionSharingPreference: SolutionSharingPreference = SolutionSharingPreference.ALWAYS) {
     _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = solutionSharingPreference)
   }
@@ -47,7 +40,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     _userAgreementProperties.value = UserAgreementProperties(
       pluginAgreement = agreementState.pluginAgreement,
       aiServiceAgreement = agreementState.aiAgreement,
-      submissionsServiceAgreement = agreementState.pluginAgreement,
       isChangedByUser = true
     )
   }
@@ -60,13 +52,11 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   fun updatePluginAgreementState(
     pluginAgreement: UserAgreementState,
     aiServiceAgreement: UserAgreementState,
-    submissionsServiceAgreement: UserAgreementState,
     solutionSharingPreference: SolutionSharingPreference
   ) {
     _userAgreementProperties.value = UserAgreementProperties(
       pluginAgreement = pluginAgreement,
       aiServiceAgreement = aiServiceAgreement,
-      submissionsServiceAgreement = submissionsServiceAgreement,
       solutionSharingPreference = solutionSharingPreference,
       isChangedByUser = true
     )
@@ -78,7 +68,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
 
   data class UserAgreementProperties(
     val pluginAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
-    val submissionsServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val aiServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val solutionSharingPreference: SolutionSharingPreference = SolutionSharingPreference.NEVER,
     val isChangedByUser: Boolean = false
@@ -86,7 +75,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
 
   class State : BaseState() {
     var pluginAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
-    var submissionsServiceAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
     var aiServiceAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
     var solutionSharingPreference by enum<SolutionSharingPreference>(SolutionSharingPreference.NEVER)
   }
@@ -94,7 +82,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   override fun getState(): State {
     val state = State()
     state.pluginAgreement = _userAgreementProperties.value.pluginAgreement
-    state.submissionsServiceAgreement = _userAgreementProperties.value.submissionsServiceAgreement
     state.aiServiceAgreement = _userAgreementProperties.value.aiServiceAgreement
     state.solutionSharingPreference = _userAgreementProperties.value.solutionSharingPreference
     return state
@@ -103,7 +90,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   override fun loadState(state: State) {
     _userAgreementProperties.value = UserAgreementProperties(
       state.pluginAgreement,
-      state.submissionsServiceAgreement,
       state.aiServiceAgreement,
       state.solutionSharingPreference
     )

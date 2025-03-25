@@ -84,17 +84,6 @@ class UserAgreementManager(private val scope: CoroutineScope) {
           }
       }
       launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.submissionsServiceAgreement }.collectLatest {
-          if (it.isChangedByUser) {
-            submitSubmissionsServiceAgreement(it.submissionsServiceAgreement)
-            if (it.submissionsServiceAgreement != UserAgreementState.ACCEPTED) {
-              // Disable Solution Sharing on remote, when user disables Submissions functionality
-              submitSharingPreference(false)
-            }
-          }
-        }
-      }
-      launch {
         userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharingPreference }.collectLatest {
           if (it.isChangedByUser) {
             val isSolutionSharingEnabled = it.solutionSharingPreference == SolutionSharingPreference.ALWAYS
@@ -125,13 +114,12 @@ class UserAgreementManager(private val scope: CoroutineScope) {
         return@launch
       }
     }
-  }
-
-  private fun submitSubmissionsServiceAgreement(state: UserAgreementState) {
-    if (!isJBALoggedIn()) return
+    /**
+     * For backward compatibility, we must send the submissions service agreement that equals to the current state of plugin agreement
+     */
     scope.launch(Dispatchers.IO) {
-      MarketplaceSubmissionsConnector.getInstance().updateSubmissionsServiceAgreement(state).onError {
-        LOG.error("Failed to submit Submissions Service Agreement state $state to remote: $it")
+      MarketplaceSubmissionsConnector.getInstance().updateSubmissionsServiceAgreement(pluginAgreement).onError {
+        LOG.error("Failed to submit Submissions Service Agreement state $pluginAgreement to remote: $it")
         return@launch
       }
     }

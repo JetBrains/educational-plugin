@@ -80,7 +80,7 @@ class UserAgreementManagerTest : EduTestCase() {
     val mockedService = MarketplaceSubmissionsConnector.getInstance()
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.DECLINED, UserAgreementState.DECLINED) }
     coVerify(exactly = 1) { mockedService.updateSubmissionsServiceAgreement(UserAgreementState.DECLINED) }
-    coVerify(exactly = 1) { mockedService.changeSharingPreference(false) }
+    coVerify(exactly = 0) { mockedService.changeSharingPreference(any()) }
     coVerify(exactly = 0) { mockedService.submitAgreementAcceptanceAnonymously(any()) }
   }
 
@@ -153,7 +153,7 @@ class UserAgreementManagerTest : EduTestCase() {
     val mockedService = MarketplaceSubmissionsConnector.getInstance()
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.DECLINED, UserAgreementState.DECLINED) }
     coVerify(exactly = 1) { mockedService.updateSubmissionsServiceAgreement(UserAgreementState.DECLINED) }
-    coVerify(exactly = 1) { mockedService.changeSharingPreference(state = false) }
+    coVerify(exactly = 0) { mockedService.changeSharingPreference(any()) }
     coVerify(exactly = 0) { mockedService.submitAgreementAcceptanceAnonymously(any()) }
 
     // when
@@ -167,7 +167,7 @@ class UserAgreementManagerTest : EduTestCase() {
     // then
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.ACCEPTED, UserAgreementState.DECLINED) }
     coVerify(exactly = 1) { mockedService.updateSubmissionsServiceAgreement(newState = UserAgreementState.ACCEPTED) }
-    coVerify(exactly = 1) { mockedService.changeSharingPreference(state = false) }
+    coVerify(exactly = 0) { mockedService.changeSharingPreference(any()) }
     coVerify(exactly = 1) { mockedService.submitAgreementAcceptanceAnonymously(isLoggedIn = true) }
   }
 
