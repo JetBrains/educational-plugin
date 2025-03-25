@@ -71,10 +71,6 @@ open class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project,
       }
     }
 
-    if (!submissionsManager.isSubmissionDownloadAllowed()) {
-      return LoginLinkHandler.getAgreementPromptText() to LoginLinkHandler(project, submissionsManager)
-    }
-
     if (submissionsList.isEmpty()) {
       return emptySubmissionsMessage() to null
     }

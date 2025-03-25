@@ -9,7 +9,6 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -22,7 +21,6 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
 
   private val pluginAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.pluginAgreement)
   private val aiAgreementAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.aiServiceAgreement)
-  private val submissionsServiceAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.submissionsServiceAgreement)
   private val solutionSharingAccepted: MutableBooleanProperty = AtomicBooleanProperty(userAgreementSettings.solutionSharing)
 
   override fun createPanel(): DialogPanel = panel {
@@ -36,7 +34,6 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
           .onChanged {
             if (!it.isSelected) {
               aiAgreementAccepted.set(false)
-              submissionsServiceAccepted.set(false)
               solutionSharingAccepted.set(false)
             }
           }
@@ -52,22 +49,10 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
             .align(AlignY.TOP)
           aiAgreementCheckBoxText()
         }
-        if (!RemoteEnvHelper.isRemoteDevServer()) {
-          row {
-            checkBox(EduCoreBundle.message("marketplace.options.user.agreement.checkbox"))
-              .bindSelected(submissionsServiceAccepted)
-              .enabledIf(pluginAgreementAccepted)
-              .onChanged {
-                if (!it.isSelected) {
-                  solutionSharingAccepted.set(false)
-                }
-              }
-          }
-        }
         row {
           checkBox(EduCoreBundle.message("marketplace.options.solutions.sharing.checkbox"))
             .bindSelected(solutionSharingAccepted)
-            .enabledIf(submissionsServiceAccepted)
+            .enabledIf(pluginAgreementAccepted)
         }
       }
     }
@@ -77,7 +62,6 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
     return super<BoundConfigurable>.isModified()
            || pluginAgreementAccepted.get() != userAgreementSettings.pluginAgreement
            || aiAgreementAccepted.get() != userAgreementSettings.aiServiceAgreement
-           || submissionsServiceAccepted.get() != userAgreementSettings.submissionsServiceAgreement
            || solutionSharingAccepted.get() != userAgreementSettings.solutionSharing
   }
 
@@ -86,21 +70,17 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
     if (!isModified) return
 
     val pluginAgreementAccepted = pluginAgreementAccepted.get()
-    val submissionsServiceAccepted = submissionsServiceAccepted.get()
     val solutionSharingAccepted = solutionSharingAccepted.get()
     val pluginAgreementState =
       if (pluginAgreementAccepted) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
     val aiServiceAgreementState =
       if (aiAgreementAccepted.get() && pluginAgreementAccepted) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
-    val submissionsServiceAgreementState =
-      if (submissionsServiceAccepted && pluginAgreementAccepted) UserAgreementState.ACCEPTED else UserAgreementState.TERMINATED
-    val solutionSharingPreference = if (solutionSharingAccepted && submissionsServiceAccepted && pluginAgreementAccepted)
+    val solutionSharingPreference = if (solutionSharingAccepted && pluginAgreementAccepted)
       SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
 
     userAgreementSettings.updatePluginAgreementState(
       pluginAgreementState,
       aiServiceAgreementState,
-      submissionsServiceAgreementState,
       solutionSharingPreference
     )
   }

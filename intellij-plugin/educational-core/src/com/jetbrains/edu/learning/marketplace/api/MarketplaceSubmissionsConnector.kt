@@ -410,25 +410,6 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun updateSubmissionsServiceAgreement(newState: UserAgreementState): Result<Unit, String> {
-    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
-    val newStateName = newState.name
-    LOG.info("Changing User Agreement state to $newStateName for user $loginName")
-    return try {
-      val response = submissionsService.changeUserAgreementState(newStateName)
-      if (response.isSuccessful) {
-        Ok(Unit)
-      }
-      else {
-        Err("Failed to change User Agreement state: ${response.errorBody()}. Response code: ${response.code()}")
-      }
-    }
-    catch (e: Exception) {
-      LOG.error("Error occurred while changing User Agreement state to $newStateName for user $loginName", e)
-      Err(e.message ?: "Failed to update User Agreement state")
-    }
-  }
-
   suspend fun updateUserAgreements(pluginAgreement: UserAgreementState, aiAgreement: UserAgreementState): Result<Unit, String> {
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     LOG.info("Changing user $loginName plugin agreement to $pluginAgreement, AI agreement to $aiAgreement")

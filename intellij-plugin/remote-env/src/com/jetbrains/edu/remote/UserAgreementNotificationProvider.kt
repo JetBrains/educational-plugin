@@ -18,7 +18,7 @@ class UserAgreementNotificationProvider : EditorNotificationProvider, DumbAware 
 
   override fun collectNotificationData(project: Project, file: VirtualFile): Function<in FileEditor, out JComponent?>? {
     if (!RemoteEnvHelper.isRemoteDevServer() || !project.isMarketplaceStudentCourse()) return null
-    val agreementState = UserAgreementSettings.getInstance().submissionsServiceAgreement
+    val agreementState = UserAgreementSettings.getInstance().pluginAgreement
     if (agreementState) return null
 
     return Function {

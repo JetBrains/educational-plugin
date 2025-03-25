@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.submissions.ui.linkHandler
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.learning.RemoteEnvHelper
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings
-import com.jetbrains.edu.learning.agreement.UserAgreementUtil.showEnableSubmissionsDialog
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab.Companion.SUBMISSION_PROTOCOL
@@ -23,19 +21,11 @@ class LoginLinkHandler(
       true
     }
 
-    url.startsWith(SUBMISSION_USER_AGREEMENT) -> {
-      if (showEnableSubmissionsDialog(project)) {
-        UserAgreementSettings.getInstance().enableSubmissions()
-      }
-      true
-    }
-
     else -> false
   }
 
   companion object {
     private const val SUBMISSION_LOGIN_URL = "${SUBMISSION_PROTOCOL}login/"
-    private const val SUBMISSION_USER_AGREEMENT = "${SUBMISSION_PROTOCOL}agreement/"
 
     fun getLoginText(): String = if (!RemoteEnvHelper.isRemoteDevServer()) {
       "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
@@ -44,13 +34,5 @@ class LoginLinkHandler(
     else {
       EduCoreBundle.message("submissions.wait.user.data.being.retrieved")
     }
-
-    fun getAgreementPromptText(): String =
-      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_USER_AGREEMENT>" +
-      EduCoreBundle.message("submissions.tab.agreement") + "</a>"
-
-    fun getSolutionSharingAgreementPromptText(): String =
-      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_USER_AGREEMENT>" +
-      EduCoreBundle.message("submissions.tab.solution.sharing.agreement") + "</a>"
   }
 }
