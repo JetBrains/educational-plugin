@@ -12,9 +12,11 @@ class ProgrammingLanguageFilterDropdown(
 ) : FilterDropdown(supportedLanguages, filterCourses) {
   override val popupSize: Dimension = JBUI.size(210, 170)
   override var selectedItems: Set<String> = supportedLanguages
+  override val defaultTitle: String
+    get() = EduCoreBundle.message("course.dialog.filter.programming.languages")
 
   init {
-    text = defaultTitle()
+    text = defaultTitle
   }
 
   override fun updateItems(items: Set<String>) {
@@ -22,15 +24,14 @@ class ProgrammingLanguageFilterDropdown(
     super.updateItems(items)
     if (allSelected) {
       selectedItems = items
+      text = allSelectedTitle()
     }
   }
 
   override fun resetSelection() {
     selectedItems = allItems
-    text = defaultTitle()
+    text = allSelectedTitle()
   }
-
-  override fun defaultTitle() = EduCoreBundle.message("course.dialog.filter.programming.languages")
 
   override fun isAccepted(course: Course): Boolean = course.supportedTechnologies.intersect(selectedItems).isNotEmpty()
 }

@@ -28,18 +28,15 @@ abstract class FilterDropdown(
 ) : JBLabel(AllIcons.General.LinkDropTriangle, SwingConstants.LEFT) {
   abstract val popupSize: Dimension
   abstract var selectedItems: Set<String>
-  private var rootTitle: String
+  abstract val defaultTitle: String
 
   init {
     horizontalTextPosition = SwingConstants.LEFT
     iconTextGap = 2
     border = JBUI.Borders.empty(0, 15)
-    rootTitle = EduCoreBundle.message("course.dialog.filter.root.title", this.defaultTitle())
 
     this.addMouseListener(ShowPopupAdapter())
   }
-
-  abstract fun defaultTitle(): String
 
   abstract fun isAccepted(course: Course): Boolean
 
@@ -69,7 +66,7 @@ abstract class FilterDropdown(
     }
 
     private fun createTree(): CheckboxTree {
-      val root = CheckedTreeNode(rootTitle)
+      val root = CheckedTreeNode(allSelectedTitle())
       for (node in nodes()) {
         root.add(node)
       }
@@ -97,7 +94,7 @@ abstract class FilterDropdown(
       if (node.isRoot) {
         if (node.isChecked) {
           selectedItems = node.children().toList().map { (it as CheckedTreeNode).userObject as String }.toSet()
-          text = defaultTitle()
+          text = allSelectedTitle()
         }
         else {
           selectedItems = emptySet()
@@ -108,7 +105,7 @@ abstract class FilterDropdown(
         val checkedItems = optionsTree.getCheckedNodes(String::class.java, null)
         text = when {
           checkedItems.isEmpty() -> EduCoreBundle.message("course.dialog.filter.nothing.selected")
-          checkedItems.size == root.childCount -> defaultTitle()
+          checkedItems.size == root.childCount -> allSelectedTitle()
           else -> checkedItems.joinToString(limit = 2)
         }
         selectedItems = checkedItems.toSet()
@@ -117,6 +114,8 @@ abstract class FilterDropdown(
       filterCourses()
     }
   }
+
+  protected fun allSelectedTitle(): String = EduCoreBundle.message("course.dialog.filter.root.title", defaultTitle)
 }
 
 private class OptionNameCellRenderer : CheckboxTree.CheckboxTreeCellRenderer() {
