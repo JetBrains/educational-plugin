@@ -36,9 +36,8 @@ class ChoiceTask : Task {
   override val isChangedOnFailed: Boolean
     get() = !canCheckLocally
 
-  override val supportSubmissions: Boolean
-    get() = true
-
+  // submissions are only sent for authors' statistics,
+  // the diff is not supported hence submission tab is disabled
   override val isToSubmitToRemote: Boolean
     get() = status != CheckStatus.Unchecked
 
