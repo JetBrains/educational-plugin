@@ -4,10 +4,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
-import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
-import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
-import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
-import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
