@@ -22,7 +22,7 @@ class TaskProcessorTest : EduTestCase() {
     registerPlainTextEduAiHintsProcessor(testRootDisposable)
   }
 
-  private val taskProcessor by lazy { TaskProcessorImpl(findTask(0, 0)) }
+  private val taskProcessor by lazy { TaskProcessor(findTask(0, 0)) }
 
   @Test
   fun `test getting functions from task without ReadLock`() {

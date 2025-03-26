@@ -62,8 +62,8 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
       }
       try {
         val launchId = launchId.incrementAndGet()
-        val taskProcessor = TaskProcessorImpl(task)
-        val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
+        val taskProcessor = TaskProcessor(task)
+        val taskFile = project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
         val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
         val taskFileText = taskVirtualFile.getTextFromTaskTextFile() ?: error("TaskFile text for ${taskFile.name} not found")
 

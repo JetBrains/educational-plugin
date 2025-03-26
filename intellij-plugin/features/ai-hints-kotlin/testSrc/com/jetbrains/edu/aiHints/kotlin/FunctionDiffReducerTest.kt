@@ -1,6 +1,6 @@
 package com.jetbrains.edu.aiHints.kotlin
 
-import com.jetbrains.edu.aiHints.core.TaskProcessorImpl
+import com.jetbrains.edu.aiHints.core.TaskProcessor
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
@@ -623,7 +623,7 @@ class FunctionDiffReducerTest : EduTestCase() {
   private fun reduceChangesInCodeHint(codeStr: String, codeHint: String, updatedCodeHint: String, functionName: String = MAIN_FUNCTION_NAME) {
     val course = project.course ?: error("Course was not found")
     val task = course.findTask("lesson1", "task1")
-    val taskProcessor = TaskProcessorImpl(task)
+    val taskProcessor = TaskProcessor(task)
     assertEquals(
       updatedCodeHint.reformatCode(project),
       taskProcessor.reduceChangesInCodeHint(codeStr, codeHint, functionName).reformatCode(project)
