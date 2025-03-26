@@ -5,8 +5,7 @@
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
 
-<!-- Not yet ready (see https://youtrack.jetbrains.com/issue/EDU-7486) -->
-<!--  <extensions defaultExtensionNs="Educational">-->
-<!--    <aiHintsProcessor language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyEduAiHintsProcessor"/>-->
-<!--  </extensions>-->
+  <extensions defaultExtensionNs="Educational">
+    <aiHintsProcessor language="Python" implementationClass="com.jetbrains.edu.aiHints.python.PyEduAiHintsProcessor"/>
+  </extensions>
 </idea-plugin>
