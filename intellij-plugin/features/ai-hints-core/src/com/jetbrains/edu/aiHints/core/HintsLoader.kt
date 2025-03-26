@@ -1,13 +1,9 @@
 package com.jetbrains.edu.aiHints.core
 
-import com.intellij.diff.DiffContentFactory
 import com.intellij.diff.DiffDialogHints
 import com.intellij.diff.DiffManager
-import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy
-import com.intellij.diff.editor.ChainDiffVirtualFile
-import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -20,7 +16,6 @@ import com.intellij.openapi.progress.DumbProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.aiHints.core.generator.AiCodeHintGenerator
 import com.jetbrains.edu.aiHints.core.generator.AiTextHintGenerator
@@ -28,7 +23,8 @@ import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.aiHints.core.ui.CodeHintInlineBanner
 import com.jetbrains.edu.aiHints.core.ui.ErrorHintInlineBanner
 import com.jetbrains.edu.aiHints.core.ui.TextHintInlineBanner
-import com.jetbrains.edu.learning.actions.ApplyCodeAction
+import com.jetbrains.edu.aiHints.core.util.createCodeHintDiff
+import com.jetbrains.edu.aiHints.core.util.findCodeHintDiffFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
@@ -121,27 +117,20 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
   }
 
   @RequiresEdt
-  private fun showInCodeAction(project: Project, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
+  private fun showInCodeAction(
+    project: Project,
+    taskVirtualFile: VirtualFile,
+    taskFileText: String,
+    codeHint: String
+  ) {
     // Open the existing Diff if possible
-    val getHintDiff = FileEditorManager.getInstance(project).openFiles.firstOrNull {
-      it.asSafely<ChainDiffVirtualFile>()?.chain?.getUserData(ApplyCodeAction.GET_HINT_DIFF) == true
-    }
-    if (getHintDiff != null) {
-      FileEditorManager.getInstance(project).openFile(getHintDiff, true)
+    val codeHintDiffFile = findCodeHintDiffFile(project)
+    if (codeHintDiffFile != null) {
+      FileEditorManager.getInstance(project).openFile(codeHintDiffFile, true)
       return
     }
     // Create and open new Diff
-    val diffRequestChain = SimpleDiffRequestChain(
-      SimpleDiffRequest(
-        EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.diff.title"),
-        DiffContentFactory.getInstance().create(taskFileText, taskVirtualFile.fileType),
-        DiffContentFactory.getInstance().create(codeHint, taskVirtualFile.fileType),
-        EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.current.solution"),
-        EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.solution.after.changes")
-      )
-    )
-    diffRequestChain.putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, listOf(taskVirtualFile.path))
-    diffRequestChain.putUserData(ApplyCodeAction.GET_HINT_DIFF, true)
+    val diffRequestChain = createCodeHintDiff(taskFileText, taskVirtualFile, codeHint)
     DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
   }
 
