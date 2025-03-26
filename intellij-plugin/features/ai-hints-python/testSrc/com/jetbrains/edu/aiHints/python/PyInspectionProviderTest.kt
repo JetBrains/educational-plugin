@@ -1,6 +1,6 @@
 package com.jetbrains.edu.aiHints.python
 
-import com.jetbrains.edu.aiHints.core.TaskProcessorImpl.Companion.applyInspections
+import com.jetbrains.edu.aiHints.core.TaskProcessor
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
@@ -32,7 +32,7 @@ class PyInspectionProviderTest(
   @Test
   fun `test applying inspections`() {
     val psiFile = getPsiFile(project, PY_LESSON, PY_TASK, PY_TASK_FILE)
-    assertEquals(expectedResult, applyInspections(psiFile.text, project, PythonLanguage.INSTANCE))
+    assertEquals(expectedResult, TaskProcessor(findTask(0, 0)).applyInspections(psiFile.text))
   }
 
   companion object {
