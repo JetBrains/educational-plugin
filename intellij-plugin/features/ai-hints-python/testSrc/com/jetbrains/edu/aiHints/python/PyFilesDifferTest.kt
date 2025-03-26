@@ -8,14 +8,12 @@ import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @Suppress("JUnit4RunWithInspection")
 @RunWith(Parameterized::class)
-@Ignore /** [com.jetbrains.edu.aiHints.core.EduAIHintsProcessor] is not registered for Python yet */
 class PyFilesDifferTest(
   private val testCase: PyFilesDifferTestCase
 ) : EduTestCase() {

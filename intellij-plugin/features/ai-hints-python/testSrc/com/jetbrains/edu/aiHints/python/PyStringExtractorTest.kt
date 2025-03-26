@@ -9,10 +9,8 @@ import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.getPsiFile
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.python.PythonLanguage
-import org.junit.Ignore
 import org.junit.Test
 
-@Ignore /** [com.jetbrains.edu.aiHints.core.EduAIHintsProcessor] is not registered for Python yet */
 class PyStringExtractorTest : EduTestCase() {
   override fun createCourse() {
     courseWithFiles(language = PythonLanguage.INSTANCE) {
