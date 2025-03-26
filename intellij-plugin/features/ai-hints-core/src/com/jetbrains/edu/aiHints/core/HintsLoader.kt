@@ -70,7 +70,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         val hintsAssistant = AiHintsAssistant.getAssistant(taskProcessor, AiCodeHintGenerator(taskProcessor), AiTextHintGenerator())
         val hint = withBackgroundProgress(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.progress.text"), cancellable = true) {
           withContext(Dispatchers.IO) {
-            hintsAssistant.getHint(taskProcessor.getSubmissionTextRepresentation() ?: "")
+            hintsAssistant.getHint(taskProcessor.getFullTaskFileText())
           }
         }.getOrElse {
           withContext(Dispatchers.EDT) {
