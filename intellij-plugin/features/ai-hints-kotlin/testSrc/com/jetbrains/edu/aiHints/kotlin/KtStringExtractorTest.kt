@@ -25,7 +25,7 @@ class KtStringExtractorTest : EduTestCase() {
                 println(a)
                 println("Hello!")
             }
-          """.trimIndent()
+          """
           )
         }
       }
@@ -35,12 +35,12 @@ class KtStringExtractorTest : EduTestCase() {
   override fun runInDispatchThread(): Boolean = false
 
   @Test
-  fun testStringsFromSolution() {
+  fun `test strings from author solution`() {
     assertEquals(expectedStrings, AuthorSolutionContext.create(project, currentTask()).functionsToStringMap.values.flatten())
   }
 
   @Test
-  fun testStringsFromUserSolution() {
+  fun `test strings from the task`() {
     assertEquals(expectedStrings, TaskProcessorImpl(currentTask()).getStringsFromTask())
   }
 
