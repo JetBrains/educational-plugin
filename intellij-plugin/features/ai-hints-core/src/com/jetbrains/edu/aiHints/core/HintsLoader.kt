@@ -6,6 +6,7 @@ import com.intellij.diff.DiffManager
 import com.intellij.diff.chains.SimpleDiffRequestChain
 import com.intellij.diff.comparison.ComparisonManager
 import com.intellij.diff.comparison.ComparisonPolicy
+import com.intellij.diff.editor.ChainDiffVirtualFile
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
@@ -19,6 +20,7 @@ import com.intellij.openapi.progress.DumbProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.aiHints.core.generator.AiCodeHintGenerator
 import com.jetbrains.edu.aiHints.core.generator.AiTextHintGenerator
@@ -120,6 +122,15 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
 
   @RequiresEdt
   private fun showInCodeAction(project: Project, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
+    // Open the existing Diff if possible
+    val getHintDiff = FileEditorManager.getInstance(project).openFiles.firstOrNull {
+      it.asSafely<ChainDiffVirtualFile>()?.chain?.getUserData(ApplyCodeAction.GET_HINT_DIFF) == true
+    }
+    if (getHintDiff != null) {
+      FileEditorManager.getInstance(project).openFile(getHintDiff, true)
+      return
+    }
+    // Create and open new Diff
     val diffRequestChain = SimpleDiffRequestChain(
       SimpleDiffRequest(
         EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.diff.title"),
