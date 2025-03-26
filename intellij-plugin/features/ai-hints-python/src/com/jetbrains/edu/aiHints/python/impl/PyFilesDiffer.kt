@@ -13,7 +13,7 @@ object PyFilesDiffer : FilesDiffer {
     val afterFunctions = after.functions().associateBy { it.fqName }
 
     return afterFunctions.values.filterNot { function ->
-      // Include function in the result if there's no corresponding function from the original file
+      // Include a function in the result if there's no corresponding function from the original file
       val originalFunction = beforeFunctions[function.fqName] ?: return@filterNot false
       function hasSameBodyAs originalFunction && (!considerParameters || function hasSameParametersAs originalFunction)
     }.mapNotNull { it.name }
@@ -21,8 +21,6 @@ object PyFilesDiffer : FilesDiffer {
 
   private val PyFunction.fqName: String
     get() = buildString {
-      append(containingFile)
-      append(":")
       if (containingClass != null) {
         append(containingClass)
         append(":")
