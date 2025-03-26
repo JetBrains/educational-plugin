@@ -1,23 +1,16 @@
 package com.jetbrains.edu.aiHints.core
 
-import com.intellij.codeInsight.daemon.impl.DaemonProgressIndicator
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalInspectionEP
-import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
-import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.context.*
+import com.jetbrains.edu.aiHints.core.util.createPsiFileForSolution
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -32,8 +25,10 @@ import com.jetbrains.rd.util.firstOrNull
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class TaskProcessorImpl(val task: Task) : TaskProcessor {
-  var currentTaskFile: TaskFile? = null
+fun TaskProcessor(task: Task): TaskProcessor = TaskProcessorImpl(task)
+
+private class TaskProcessorImpl(val task: Task) : TaskProcessor {
+  private var currentTaskFile: TaskFile? = null
 
   private val myEduAIHintsProcessor = EduAIHintsProcessor.forCourse(task.course)
 
@@ -244,7 +239,9 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
     return psiFileCopy.text
   }
 
-  override fun applyInspections(code: String) = applyInspections(code, project, language)
+  override fun applyInspections(code: String): String {
+    return com.jetbrains.edu.aiHints.core.util.applyInspections(code, project, language)
+  }
 
   override fun containsGeneratedCodeStructures(code: String): Boolean =
     !getFunctionSignaturesFromGeneratedCode(code, project, language).isNullOrEmpty()
@@ -298,48 +295,6 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
   }
 
   companion object {
-    fun applyInspections(code: String, project: Project, language: Language): String {
-      val course = project.course ?: return code
-      val inspectionIds = EduAIHintsProcessor.forCourse(course)?.getInspectionsProvider()?.inspectionIds ?: return code
-      val inspections = getInspections(language, inspectionIds)
-      val psiFile = runReadAction { PsiFileFactory.getInstance(project).createFileFromText("file", language, code) }
-      for (inspection in inspections) {
-        psiFile.applyLocalInspection(inspection).forEach { descriptor ->
-          descriptor.fixes?.firstOrNull()?.let { quickFix ->
-            WriteCommandAction.runWriteCommandAction(project, null, null, {
-              quickFix.applyFix(project, descriptor) }, psiFile)
-          }
-        }
-      }
-      return runReadAction<String> { psiFile.text }
-    }
-
-    private fun getInspections(language: Language, inspections: Set<String>): List<LocalInspectionTool> {
-      return LocalInspectionEP.LOCAL_INSPECTION.extensions
-        .filter { it.language == language.id }
-        .mapNotNull { it.instantiateTool().asSafely<LocalInspectionTool>() }
-        .filter { it.id in inspections }
-    }
-
-    private fun PsiFile.applyLocalInspection(inspection: LocalInspectionTool): List<ProblemDescriptor> {
-      val problems = mutableListOf<ProblemDescriptor>()
-      val inspectionManager = InspectionManager.getInstance(project)
-      ProgressManager.getInstance().executeProcessUnderProgress(
-        {
-          problems.addAll(
-            runReadAction<List<ProblemDescriptor>> {
-              inspection.processFile(this, inspectionManager)
-            })
-        },
-        DaemonProgressIndicator()
-      )
-      return problems
-    }
-
-    fun String.createPsiFileForSolution(project: Project, language: Language): PsiFile = PsiFileFactory.getInstance(project).createFileFromText(
-      "solution", language, this
-    )
-
     private const val MAX_BODY_LINES_IN_SHORT_FUNCTION = 3
     private const val CODE_HINT_PSI_FILE_NAME = "codeHintPsiFile"
     private const val CODE_PSI_FILE_NAME = "codePsiFile"

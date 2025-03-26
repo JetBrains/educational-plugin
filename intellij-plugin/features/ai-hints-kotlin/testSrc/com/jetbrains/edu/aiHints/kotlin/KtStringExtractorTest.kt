@@ -1,6 +1,6 @@
 package com.jetbrains.edu.aiHints.kotlin
 
-import com.jetbrains.edu.aiHints.core.TaskProcessorImpl
+import com.jetbrains.edu.aiHints.core.TaskProcessor
 import com.jetbrains.edu.aiHints.core.context.AuthorSolutionContext
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -41,7 +41,7 @@ class KtStringExtractorTest : EduTestCase() {
 
   @Test
   fun `test strings from the task`() {
-    assertEquals(expectedStrings, TaskProcessorImpl(currentTask()).getStringsFromTask())
+    assertEquals(expectedStrings, TaskProcessor(currentTask()).getStringsFromTask())
   }
 
   private fun currentTask(): Task = getCourse().findTask("lesson1", "task1")

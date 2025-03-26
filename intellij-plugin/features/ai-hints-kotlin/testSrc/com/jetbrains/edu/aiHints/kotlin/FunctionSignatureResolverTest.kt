@@ -1,10 +1,10 @@
 package com.jetbrains.edu.aiHints.kotlin
 
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
-import com.jetbrains.edu.aiHints.core.TaskProcessorImpl.Companion.createPsiFileForSolution
 import com.jetbrains.edu.aiHints.core.context.FunctionParameter
 import com.jetbrains.edu.aiHints.core.context.FunctionSignature
 import com.jetbrains.edu.aiHints.core.context.SignatureSource
+import com.jetbrains.edu.aiHints.core.util.createPsiFileForSolution
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import org.junit.Test

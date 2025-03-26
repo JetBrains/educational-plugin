@@ -1,6 +1,6 @@
 package com.jetbrains.edu.aiHints.python
 
-import com.jetbrains.edu.aiHints.core.TaskProcessorImpl.Companion.applyInspections
+import com.jetbrains.edu.aiHints.core.util.applyInspections
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_LESSON
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK
 import com.jetbrains.edu.aiHints.python.PyHintsTestUtils.PY_TASK_FILE

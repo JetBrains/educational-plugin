@@ -4,7 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
-import com.jetbrains.edu.aiHints.core.TaskProcessorImpl.Companion.createPsiFileForSolution
+import com.jetbrains.edu.aiHints.core.util.createPsiFileForSolution
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getSolution
