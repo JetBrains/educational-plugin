@@ -1,11 +1,16 @@
 package com.jetbrains.edu.decomposition.actions
 
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.actions.ActionWithProgressIcon
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
@@ -21,17 +26,14 @@ import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class CheckActionBase: ActionWithProgressIcon() {
-  init {
-    setUpSpinnerPanel(spinnerPanelMessage)
-  }
-
-  abstract val spinnerPanelMessage: String
 
   abstract val actionAlreadyRunningMessage: String
 
   abstract val templatePresentationMessage: String
 
-  abstract val checkResultMessage: String
+  abstract val checkFailureMessage: String
+
+  abstract val checkingProgressTitle: String
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -41,8 +43,11 @@ abstract class CheckActionBase: ActionWithProgressIcon() {
     CheckActionState.getScope(project).launch {
       if (CheckActionState.getInstance(project).doLock()) {
         try {
-          if (performCheck(project, task)) {
-            checkIsPassed(project, task)
+          val isCheckSuccessful = withBackgroundProgress(project, checkingProgressTitle, cancellable = true) {
+            performCheck(project, task)
+          }
+          if (!isCheckSuccessful) {
+            checkIsFailed(project, task)
           }
         } finally {
           CheckActionState.getInstance(project).unlock()
@@ -61,8 +66,18 @@ abstract class CheckActionBase: ActionWithProgressIcon() {
     templatePresentation.text = templatePresentationMessage
   }
 
-  fun checkIsPassed(project: Project, task: Task) {
-    val checkResult = CheckResult(CheckStatus.Solved, checkResultMessage)
+  protected fun invokeNextAction(action: ActionWithProgressIcon, project: Project) {
+    runInEdt {
+      ActionUtil.invokeAction(
+        action,
+        AnActionEvent.createEvent(action, SimpleDataContext.getProjectContext(project), null, "", ActionUiKind.NONE, null),
+        null
+      )
+    }
+  }
+
+  private fun checkIsFailed(project: Project, task: Task) {
+    val checkResult = CheckResult(CheckStatus.Failed, checkFailureMessage)
     task.status = checkResult.status
     task.feedback = CheckFeedback(Date(), checkResult)
     TaskToolWindowView.getInstance(project).apply {
