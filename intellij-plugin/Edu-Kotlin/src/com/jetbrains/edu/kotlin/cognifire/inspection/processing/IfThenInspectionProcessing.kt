@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
-abstract class IfThenInspectionProcessing(private val project: Project, private val element: KtIfExpression) : InspectionProcessing {
+abstract class IfThenInspectionProcessing(private val project: Project, private val element: KtIfExpression)
+  : BaseInspectionProcessing(element) {
   abstract val inspection: AbstractApplicabilityBasedInspection<KtIfExpression>
 
   override fun isApplicable(): Boolean = runReadAction {
-    if (!element.isValid) return@runReadAction false
+    super.isApplicable()
     inspection.isApplicable(element)
   }
 

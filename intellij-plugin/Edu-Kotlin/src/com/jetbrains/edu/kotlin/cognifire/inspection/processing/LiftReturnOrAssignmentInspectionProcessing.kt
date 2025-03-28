@@ -4,7 +4,6 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.jetbrains.educational.ml.cognifire.responses.PromptToCodeContent
-import org.jetbrains.kotlin.idea.base.plugin.KotlinPluginModeProvider
 import org.jetbrains.kotlin.idea.inspections.LiftReturnOrAssignmentInspection
 import org.jetbrains.kotlin.idea.inspections.LiftReturnOrAssignmentInspection.Util.LiftType.LIFT_ASSIGNMENT_OUT
 import org.jetbrains.kotlin.idea.inspections.LiftReturnOrAssignmentInspection.Util.LiftType.LIFT_RETURN_OUT
@@ -12,11 +11,11 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFold
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
-class LiftReturnOrAssignmentInspectionProcessing(private val project: Project, private val element: KtExpression) : InspectionProcessing {
+class LiftReturnOrAssignmentInspectionProcessing(private val project: Project, private val element: KtExpression) :
+  BaseInspectionProcessing(element) {
 
   override fun isApplicable(): Boolean = runReadAction {
-    if (KotlinPluginModeProvider.isK2Mode()) return@runReadAction false
-    if (!element.isValid) return@runReadAction false
+    super.isApplicable()
     if (element !is KtIfExpression && element !is KtWhenExpression && element !is KtTryExpression) return@runReadAction false
     val state = LiftReturnOrAssignmentInspection.Util.getState(element, skipLongExpressions = false) ?: return@runReadAction false
     state.any { (it.liftType == LIFT_RETURN_OUT || it.liftType == LIFT_ASSIGNMENT_OUT) && it.isSerious }
