@@ -4,9 +4,11 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.readText
+import com.jetbrains.edu.aiDebugging.core.api.TestFinder
 import com.jetbrains.edu.aiDebugging.core.messages.EduAIDebuggingCoreBundle
 import com.jetbrains.edu.aiDebugging.core.session.AIDebugSessionService
 import com.jetbrains.edu.aiDebugging.core.ui.AIDebuggingHintInlineBanner
+import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.failedTestName
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -40,7 +42,9 @@ class AIDebuggingCheckListener : CheckListener {
     val virtualFiles = task.taskFiles.values.filter { it.isVisible }.mapNotNull { it.getVirtualFile(project) }
     if (virtualFiles.isEmpty()) return
     val taskDescription = task.getTaskDescription(project)
-    project.service<AIDebugSessionService>().runDebuggingSession(task, taskDescription, virtualFiles, testResult, closeAIDebuggingHint)
+    val testText = runReadAction { TestFinder.findTestByName(project, task, testResult.failedTestName()) } ?: ""
+    project.service<AIDebugSessionService>()
+      .runDebuggingSession(task, taskDescription, virtualFiles, testResult, testText, closeAIDebuggingHint)
   }
 
   // TODO: when should we show this button?

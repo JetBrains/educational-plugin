@@ -29,5 +29,11 @@
       <with attribute="implementationClass"
             implements="com.jetbrains.edu.aiDebugging.core.slicing.SliceManager"/>
     </extensionPoint>
+    <extensionPoint qualifiedName="aiDebugging.testFinder"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.aiDebugging.core.api.TestFinder"/>
+    </extensionPoint>
   </extensionPoints>
 </idea-plugin>

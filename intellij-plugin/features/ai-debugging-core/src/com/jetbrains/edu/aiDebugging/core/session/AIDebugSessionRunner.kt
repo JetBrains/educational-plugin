@@ -7,18 +7,15 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.xdebugger.*
 import com.jetbrains.edu.aiDebugging.core.ui.AIBreakpointHint
-import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.checker.CheckUtils.createTests
-import com.jetbrains.edu.learning.checker.CheckUtils.deleteTests
+import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.runWithTests
+import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.failedTestName
 import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getEditor
@@ -32,23 +29,10 @@ class AIDebugSessionRunner(
 ) {
 
   fun runDebuggingSession(testResult: CheckResult) {
-    runWithTests {
-      startDebugSession(getRunSettingsForFailedTest(testResult))
-    }
-  }
-
-  private fun runWithTests(execution: () -> Unit) {
-    createTests(getInvisibleTestFiles(), project)
-    try {
-      execution()
-    } catch (e: Throwable) {
-      LOG.error("Failed to start debugger session", e)
-      debugStopped()
-    }
+    runWithTests(project, task, { startDebugSession(getRunSettingsForFailedTest(testResult)) }, { debugStopped() })
   }
 
   private fun debugStopped() {
-    deleteTests(getInvisibleTestFiles(), project)
     closeAIDebuggingHint()
     AIDebugSessionService.getInstance(project).unlock()
     // TODO: make breakpoints regular
@@ -106,13 +90,8 @@ class AIDebugSessionRunner(
     return lineStartOffset + contentStartOffset
   }
 
-  private fun getInvisibleTestFiles() = task.taskFiles.values.filter {
-    EduUtilsKt.isTestsFile(task, it.name) && !it.isVisible
-  }
-
   private fun getRunSettingsForFailedTest(testResult: CheckResult): RunnerAndConfigurationSettings {
-    val firstFailedTest = testResult.executedTestsInfo.firstFailed() ?: error("No failed test is found")
-    val methodName = firstFailedTest.name.replace(":", ".")
+    val methodName = testResult.failedTestName().replace(":", ".")
     val testDirectories = runReadAction { task.getAllTestDirectories(project) }
       .ifEmpty { error("Test directories are not found") }
 
@@ -131,9 +110,5 @@ class AIDebugSessionRunner(
   private fun startDebugSession(settings: RunnerAndConfigurationSettings) = runInEdt {
     val environment = ExecutionEnvironmentBuilder.create(DefaultDebugExecutor.getDebugExecutorInstance(), settings).activeTarget().build()
     ProgramRunner.getRunner(DefaultDebugExecutor.EXECUTOR_ID, settings.configuration)?.execute(environment)
-  }
-
-  companion object {
-    private val LOG: Logger = Logger.getInstance(AIDebugSessionRunner::class.java)
   }
 }
