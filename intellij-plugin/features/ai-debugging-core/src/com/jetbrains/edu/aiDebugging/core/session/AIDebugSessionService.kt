@@ -44,6 +44,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     description: TaskDescription,
     virtualFiles: List<VirtualFile>,
     testResult: CheckResult,
+    testText: String, // TODO: add a test to the request?
     closeAIDebuggingHint: () -> Unit
   ) {
     coroutineScope.launch {
