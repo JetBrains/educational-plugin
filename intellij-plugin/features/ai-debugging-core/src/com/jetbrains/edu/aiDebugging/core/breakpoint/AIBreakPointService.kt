@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.JBColor
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.breakpoints.*
@@ -82,6 +83,6 @@ class AIBreakPointService(private val project: Project, private val scope: Corou
       .findBreakpointType(BreakpointTypeManager.getInstance(this).getBreakPointType()::class.java)
 
   companion object {
-    private val HIGHLIGHTING_COLOR: Color = Color.getHSBColor(0.74f, 1.0f, 0.97f)
+    private val HIGHLIGHTING_COLOR: Color = JBColor(Color(109, 0, 247, 77), Color(135, 49, 247, 77))
   }
 }
