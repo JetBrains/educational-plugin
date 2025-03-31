@@ -54,12 +54,16 @@ class CodeGenerator(
   private fun updatePromptToCode(): PromptToCodeContent {
     val promptToCodeClearedFromWrongTodos =
       RedundantTodoCleaner.deleteWrongTodo(generatePromptToCode().content, promptExpression.functionSignature)
-    return InspectionProcessor.applyInspections(
-      promptToCodeClearedFromWrongTodos,
-      promptExpression.functionSignature.toString(),
-      project,
-      language
-    ) ?: promptToCodeClearedFromWrongTodos
+    return try {
+      InspectionProcessor.applyInspections(
+        promptToCodeClearedFromWrongTodos,
+        promptExpression.functionSignature.toString(),
+        project,
+        language
+      ) ?: promptToCodeClearedFromWrongTodos
+    } catch (_: Throwable) {
+      promptToCodeClearedFromWrongTodos
+    }
   }
 
   private fun getCodeFromPrompt(functionSignature: String, enumeratedPromptLines: String) = runBlockingCancellable {

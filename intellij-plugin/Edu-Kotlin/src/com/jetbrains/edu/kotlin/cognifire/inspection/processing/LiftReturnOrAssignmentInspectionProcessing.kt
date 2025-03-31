@@ -16,8 +16,13 @@ class LiftReturnOrAssignmentInspectionProcessing(private val project: Project, p
   override fun isApplicable(): Boolean = runReadAction {
     if (!element.isValid) return@runReadAction false
     if (element !is KtIfExpression && element !is KtWhenExpression && element !is KtTryExpression) return@runReadAction false
-    val state = LiftReturnOrAssignmentInspection.Util.getState(element, skipLongExpressions = false) ?: return@runReadAction false
-    state.any { (it.liftType == LIFT_RETURN_OUT || it.liftType == LIFT_ASSIGNMENT_OUT) && it.isSerious }
+    try {
+      val state = LiftReturnOrAssignmentInspection.Util.getState(element, skipLongExpressions = false)
+      ?: return@runReadAction false
+      state.any { (it.liftType == LIFT_RETURN_OUT || it.liftType == LIFT_ASSIGNMENT_OUT) && it.isSerious }
+    } catch (_: Throwable) {
+      return@runReadAction false
+    }
   }
 
   override fun apply() {
