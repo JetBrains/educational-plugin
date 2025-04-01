@@ -4,8 +4,10 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.messages.EduAIBundle
+import com.jetbrains.edu.ai.terms.TERMS_NOTIFICATION_ENABLED_REGISTRY_ID
 import com.jetbrains.edu.ai.terms.TERMS_NOTIFICATION_ID
 import com.jetbrains.edu.ai.terms.TermsLoader
 import com.jetbrains.edu.ai.terms.connector.TermsServiceConnector
@@ -63,6 +65,10 @@ class TermsUpdateChecker(private val project: Project) {
   }
 
   private fun showUpdateAvailableNotification(updateAction: () -> Unit) {
+    if (!Registry.`is`(TERMS_NOTIFICATION_ENABLED_REGISTRY_ID, false)) {
+      updateAction()
+      return
+    }
     val actionLabel = ActionLabel(
       name = EduCoreBundle.message("update.action"),
       action = updateAction

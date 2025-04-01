@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val TERMS_NOTIFICATION_ID = "terms"
+const val TERMS_NOTIFICATION_ENABLED_REGISTRY_ID = "edu.theory.lookup.update.notifications.enabled"
 
 // TODO(implement tests)
 fun CoroutineScope.observeAndLoadCourseTerms(project: Project) {

@@ -52,6 +52,9 @@
     <registryKey key="edu.ai.service.update.check.interval"
                  description="Specifies the update check interval for the translation and theory lookup services, in seconds"
                  defaultValue="3600"/>
+    <registryKey key="edu.theory.lookup.update.notifications.enabled"
+                 description="Specifies whether theory lookup update notifications will be displayed in the task description"
+                 defaultValue="false"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
