@@ -18,8 +18,7 @@ class CascadeIfInspectionProcessing(private val project: Project, private val el
   BaseInspectionProcessing(element) {
   private val inspection = IfToWhenIntention()
 
-  override fun isApplicable(): Boolean = runReadAction {
-    super.isApplicable()
+  override fun isApplicableLocal(): Boolean = runReadAction {
     val branches = element.branches
     if (branches.size <= 2) return@runReadAction false
     if (element.isOneLiner()) return@runReadAction false

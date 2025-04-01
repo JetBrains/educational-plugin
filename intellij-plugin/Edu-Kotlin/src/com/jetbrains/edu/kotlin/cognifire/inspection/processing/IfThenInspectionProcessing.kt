@@ -15,8 +15,7 @@ abstract class IfThenInspectionProcessing(private val project: Project, private 
   : BaseInspectionProcessing(element) {
   abstract val inspection: AbstractApplicabilityBasedInspection<KtIfExpression>
 
-  override fun isApplicable(): Boolean = runReadAction {
-    super.isApplicable()
+  override fun isApplicableLocal(): Boolean = runReadAction {
     inspection.isApplicable(element)
   }
 

@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.scripting.definitions.runReadAction
 class LiftReturnOrAssignmentInspectionProcessing(private val project: Project, private val element: KtExpression) :
   BaseInspectionProcessing(element) {
 
-  override fun isApplicable(): Boolean = runReadAction {
-    super.isApplicable()
+  override fun isApplicableLocal(): Boolean = runReadAction {
     if (element !is KtIfExpression && element !is KtWhenExpression && element !is KtTryExpression) return@runReadAction false
     val state = LiftReturnOrAssignmentInspection.Util.getState(element, skipLongExpressions = false) ?: return@runReadAction false
     state.any { (it.liftType == LIFT_RETURN_OUT || it.liftType == LIFT_ASSIGNMENT_OUT) && it.isSerious }

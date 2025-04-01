@@ -16,8 +16,7 @@ class JoinDeclarationAndAssignmentInspectionProcessing(private val project: Proj
   BaseInspectionProcessing(element) {
   private val intention = JoinDeclarationAndAssignmentIntention()
 
-  override fun isApplicable(): Boolean = runReadAction {
-    super.isApplicable()
+  override fun isApplicableLocal(): Boolean = runReadAction {
     intention.applicabilityRange(element) != null
   }
 

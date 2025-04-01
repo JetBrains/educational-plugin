@@ -17,8 +17,7 @@ class FoldInitializerAndIfToElvisInspectionProcessing(private val project: Proje
   : BaseInspectionProcessing(element) {
   private val inspection = FoldInitializerAndIfToElvisInspection()
 
-  override fun isApplicable(): Boolean = runReadAction {
-    super.isApplicable()
+  override fun isApplicableLocal(): Boolean = runReadAction {
     inspection.isApplicable(element)
   }
 

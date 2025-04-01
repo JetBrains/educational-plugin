@@ -8,5 +8,8 @@ abstract class BaseInspectionProcessing(private val element: KtElement) : Inspec
   override fun isApplicable(): Boolean =
     if (KotlinPluginModeProvider.isK2Mode()) false
     else if (!element.isValid) false
+    else if (!isApplicableLocal()) false
     else true
+
+  abstract fun isApplicableLocal(): Boolean
 }
