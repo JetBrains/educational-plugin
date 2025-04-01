@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
@@ -20,7 +21,7 @@ import com.jetbrains.edu.cognifire.highlighting.GuardedBlockManager
 import com.jetbrains.edu.cognifire.highlighting.HighlighterManager
 import com.jetbrains.edu.cognifire.highlighting.ListenerManager
 import com.jetbrains.edu.cognifire.highlighting.prompttocode.PromptToCodeHighlighter
-import com.jetbrains.edu.cognifire.log.Logger
+import com.jetbrains.edu.cognifire.log.*
 import com.jetbrains.edu.cognifire.manager.PromptActionManager
 import com.jetbrains.edu.cognifire.manager.PromptCodeState
 import com.jetbrains.edu.cognifire.messages.EduCognifireBundle
@@ -52,7 +53,6 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: error("Project was not found")
     val document = getDocument() ?: return
-
     HighlighterManager.getInstance().clearAll(prodeId)
     ListenerManager.getInstance(project).clearAll(prodeId)
     GuardedBlockManager.getInstance().removeGuardedBlock(prodeId, document)
@@ -130,8 +130,10 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
     codeExpression: CodeExpression?
   ) {
     val promptActionManager = PromptActionManager.getInstance(project)
+    val previousPromptToCode = promptActionManager.getAction(prodeId)?.promptToCode
+
     val codeGenerator =
-      CodeGenerator(promptExpression, project, element.language, promptActionManager.getAction(prodeId)?.promptToCode, codeExpression)
+      CodeGenerator(promptExpression, project, element.language, previousPromptToCode, codeExpression)
 
     invokeLater {
       val generatedCode = codeGenerator.generatedCode
@@ -158,6 +160,26 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
            | Has TODO blocks: ${state == PromptCodeState.CodeFailed}
         """.trimMargin()
       )
+      val currentFile = FileEditorManager.getInstance(project).selectedEditor?.file?.name ?: ""
+      val logEntry = CognifireStudyLogEntry(
+        courseId = task.course.id,
+        lessonId = task.lesson.id,
+        taskId = task.id,
+        actionType = "code generation",
+        actionId = prodeId,
+        fileName = currentFile,
+        data = ActionData(
+          userPrompt = promptExpression.toPromptData(),
+          userCode = codeExpression.toCodeData(),
+          generatedPrompt = newPromptExpression.toPromptData(),
+          generatedCode = newCodeExpression.toCodeData(),
+          promptToCode = codeGenerator.finalPromptToCodeTranslation,
+          oldPromptToCode = previousPromptToCode ?: emptyList(),
+          isGeneratedCodeChanged = codeGenerator.isCodeChanged(),
+        )
+      ).toString()
+
+      Logger.cognifireStudyLogger.info(logEntry)
       promptActionManager.updateAction(prodeId, state, codeGenerator.finalPromptToCodeTranslation)
       project.getCurrentTask()?.let {
         it.isPromptActionsGeneratedSuccessfully = promptActionManager.generatedSuccessfully(task.id)

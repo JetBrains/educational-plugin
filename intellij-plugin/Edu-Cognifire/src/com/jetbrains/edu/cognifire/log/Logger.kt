@@ -8,6 +8,10 @@ object Logger {
   private val default: Logger = LoggerFactory().getLoggerInstance("Cognifire")
 
   val cognifireLogger: Logger by lazyPub {
-    BaseCognifireLoggerFactory("Cognifire").getLoggerInstanceOrNull() ?: default
+    CognifireLoggerFactory().getLoggerInstanceOrNull() ?: default
+  }
+
+  val cognifireStudyLogger: Logger by lazyPub {
+    CognifireStudyLoggerFactory().getLoggerInstanceOrNull() ?: default
   }
 }

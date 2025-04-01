@@ -95,7 +95,7 @@ class CodeGenerator(
       .joinToString(System.lineSeparator())
   }
 
-  private fun isCodeChanged() =
+  fun isCodeChanged() =
     previousPromptToCode != null && codeExpression?.code != null
     && previousPromptToCode.toGeneratedCode() != codeExpression.code.trimStartLines()
     && previousPromptToCode.toPrompt().trim() == promptExpression.prompt.trim()

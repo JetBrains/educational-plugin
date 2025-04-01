@@ -9,13 +9,12 @@ import com.intellij.openapi.util.io.findOrCreateFile
 import java.nio.file.Path
 import java.util.logging.Formatter
 import java.util.logging.Level
-import java.util.logging.LogRecord
 import kotlin.io.path.div
 import kotlin.io.path.exists
 
-class BaseCognifireLoggerFactory(private val category: String) : Logger.Factory {
-  private val basePath: Path = Path.of(PathManager.getPluginsPath()) / "cognifire.log"
-
+abstract class BaseCognifireLoggerFactory(private val category: String, fileName: String) : Logger.Factory {
+  protected abstract val formatter: Formatter
+  private val basePath: Path = Path.of(PathManager.getPluginsPath()) / fileName
   private val appender: RollingFileHandler = RollingFileHandler(basePath, 20_000_000, 50, false)
 
   init {
@@ -33,9 +32,7 @@ class BaseCognifireLoggerFactory(private val category: String) : Logger.Factory 
     require(category == this.category)
     val logger = java.util.logging.Logger.getLogger(category)
     logger.addHandler(appender)
-    appender.formatter = object : Formatter() {
-      override fun format(record: LogRecord) = String.format("%1\$10tT %2\$-5s - %3\$s%n", record.millis, record.level, record.message)
-    }
+    appender.formatter = formatter
     logger.useParentHandlers = false
     logger.level = Level.INFO
     return JulLogger(logger)
