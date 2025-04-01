@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.ui.EditorNotificationPanel
 import com.jetbrains.edu.ai.error.AIServiceError
@@ -32,6 +33,9 @@ import kotlinx.coroutines.withContext
 @Service(Service.Level.PROJECT)
 class TermsLoader(private val project: Project, private val scope: CoroutineScope) {
   private val mutex = Mutex()
+
+  private val areTermsNotificationsEnabled: Boolean
+    get() = Registry.`is`(TERMS_NOTIFICATION_ENABLED_REGISTRY_ID, false)
 
   fun updateTerms(course: EduCourse, termsProperties: TermsProperties) {
     runInBackgroundExclusively(EduAIBundle.message("ai.translation.update.is.not.possible")) {
@@ -103,20 +107,12 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       val termsProjectSettings = TermsProjectSettings.getInstance(project)
       if (version == termsResponse.termsVersion) {
-        TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
-          TERMS_NOTIFICATION_ID,
-          EditorNotificationPanel.Status.Info,
-          EduAIBundle.message("ai.terms.terms.is.up.to.date")
-        )
+        showTaskDescriptionNotification(EditorNotificationPanel.Status.Info, EduAIBundle.message("ai.terms.terms.is.up.to.date"))
         EduAIFeaturesCounterUsageCollector.theoryLookupFinishedSuccessfully(course, language)
         return@withBackgroundProgress
       }
       termsProjectSettings.setTerms(termsResponse.toTermsProperties())
-      TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
-        TERMS_NOTIFICATION_ID,
-        EditorNotificationPanel.Status.Info,
-        EduAIBundle.message("ai.terms.terms.has.been.updated")
-      )
+      showTaskDescriptionNotification(EditorNotificationPanel.Status.Info, EduAIBundle.message("ai.terms.terms.has.been.updated"))
       EduAIFeaturesCounterUsageCollector.theoryLookupFinishedSuccessfully(course, language)
     }
   }
@@ -127,7 +123,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
   ): Result<CourseTermsResponse, AIServiceError> {
     return withContext(Dispatchers.IO) {
       val courseTerms = downloadTerms(course, languageCode)
-      if (courseTerms is Err) {
+      if (courseTerms is Err && areTermsNotificationsEnabled) {
         val actionLabel = ActionLabel(
           name = EduCoreBundle.message("retry"),
           action = {
@@ -137,8 +133,7 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
         )
         when (courseTerms.error) {
           is TermsError -> {
-            TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
-              TERMS_NOTIFICATION_ID,
+            showTaskDescriptionNotification(
               EditorNotificationPanel.Status.Error,
               courseTerms.error.message(),
               actionLabel
@@ -178,14 +173,19 @@ class TermsLoader(private val project: Project, private val scope: CoroutineScop
       }
       else {
         if (lockNotAcquiredNotificationText != null) {
-          TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(
-            TERMS_NOTIFICATION_ID,
-            EditorNotificationPanel.Status.Error,
-            lockNotAcquiredNotificationText
-          )
+          showTaskDescriptionNotification(EditorNotificationPanel.Status.Error, lockNotAcquiredNotificationText)
         }
       }
     }
+  }
+
+  private fun showTaskDescriptionNotification(
+    status: EditorNotificationPanel.Status,
+    @NotificationContent message: String,
+    actionLabel: ActionLabel? = null
+  ) {
+    if (!areTermsNotificationsEnabled) return
+    TaskToolWindowView.getInstance(project).showTaskDescriptionNotification(TERMS_NOTIFICATION_ID, status, message, actionLabel)
   }
 
   private suspend fun downloadTerms(course: EduCourse, languageCode: String): Result<CourseTermsResponse, AIServiceError> {
