@@ -12,8 +12,7 @@ class IntroduceWhenSubjectInspectionProcessing(private val project: Project, pri
   BaseInspectionProcessing(element) {
   private val inspection = IntroduceWhenSubjectInspection()
 
-  override fun isApplicable(): Boolean = runReadAction {
-    super.isApplicable()
+  override fun isApplicableLocal(): Boolean = runReadAction {
     inspection.isApplicable(element)
   }
 
