@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -41,9 +42,20 @@ class MarketplaceUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   }
 
   @Test
-  fun `test no isUpToDate check for newly created course at project opening`() {
+  fun `test isUpToDate check invoked for newly created course at project opening`() {
     createCourse(isNewlyCreated = true, courseVersion = 3)
-    testNoCheck(MarketplaceUpdateChecker.getInstance(project))
+    val updateChecker = MarketplaceUpdateChecker.getInstance(project)
+
+    updateChecker.check()
+    repeat(10) {
+      Thread.sleep(50)
+      UIUtil.dispatchAllInvocationEvents()
+      if (updateChecker.invocationNumber >= 1) {
+        return
+      }
+    }
+
+    fail("Tired of waiting for update checker invoked")
   }
 
   @Test
