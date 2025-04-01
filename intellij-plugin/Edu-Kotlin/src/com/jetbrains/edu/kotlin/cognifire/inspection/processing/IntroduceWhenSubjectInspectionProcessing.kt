@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
 class IntroduceWhenSubjectInspectionProcessing(private val project: Project, private val element: KtWhenExpression) :
-  InspectionProcessing {
+  BaseInspectionProcessing(element) {
   private val inspection = IntroduceWhenSubjectInspection()
 
   override fun isApplicable(): Boolean = runReadAction {
-    if (!element.isValid) return@runReadAction false
+    super.isApplicable()
     inspection.isApplicable(element)
   }
 

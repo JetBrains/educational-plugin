@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class FoldInitializerAndIfToElvisInspectionProcessing(private val project: Project, private val element: KtIfExpression)
-  : InspectionProcessing {
+  : BaseInspectionProcessing(element) {
   private val inspection = FoldInitializerAndIfToElvisInspection()
 
   override fun isApplicable(): Boolean = runReadAction {
-    if (!element.isValid) return@runReadAction false
+    super.isApplicable()
     inspection.isApplicable(element)
   }
 
