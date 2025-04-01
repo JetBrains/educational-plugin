@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
 class JoinDeclarationAndAssignmentInspectionProcessing(private val project: Project, private val element: KtProperty) :
-  InspectionProcessing {
+  BaseInspectionProcessing(element) {
   private val intention = JoinDeclarationAndAssignmentIntention()
 
   override fun isApplicable(): Boolean = runReadAction {
-    if (!element.isValid) return@runReadAction false
+    super.isApplicable()
     intention.applicabilityRange(element) != null
   }
 

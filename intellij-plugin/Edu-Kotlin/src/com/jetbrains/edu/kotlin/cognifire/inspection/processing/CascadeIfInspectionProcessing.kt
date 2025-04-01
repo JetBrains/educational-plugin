@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
 class CascadeIfInspectionProcessing(private val project: Project, private val element: KtIfExpression) :
-  InspectionProcessing {
+  BaseInspectionProcessing(element) {
   private val inspection = IfToWhenIntention()
 
   override fun isApplicable(): Boolean = runReadAction {
-    if (!element.isValid) return@runReadAction false
+    super.isApplicable()
     val branches = element.branches
     if (branches.size <= 2) return@runReadAction false
     if (element.isOneLiner()) return@runReadAction false
