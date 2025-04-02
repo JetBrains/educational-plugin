@@ -67,7 +67,10 @@ class UserAgreementDialog(project: Project) : DialogWrapper(project) {
   fun showWithResult(): UserAgreementSettings.AgreementStateResponse {
     val result = showAndGet()
     if (!result) {
-      return UserAgreementSettings.AgreementStateResponse()
+      return UserAgreementSettings.AgreementStateResponse(
+        pluginAgreement = if (UserAgreementSettings.getInstance().pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED,
+        aiAgreement = if (UserAgreementSettings.getInstance().aiServiceAgreement) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
+      )
     }
     val pluginAgreementState =
       if (pluginAgreementAccepted.get()) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
