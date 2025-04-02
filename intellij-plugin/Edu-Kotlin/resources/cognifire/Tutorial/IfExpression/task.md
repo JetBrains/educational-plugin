@@ -1,5 +1,9 @@
 ### What if...
-Then, depending on the returned value, calculate the result and output the answer.
+Then, **if** the function `verifyHumanYearsInput` returned true, cast `humanYearsInput` to an integer and save it to `humanYears`.\
+Calculate the age in dog years and save it to a variable `dogYeas`.\
+Output the message "Your dog's age in dog years is: `dogYears`". \
+However, if the function `verifyHumanYearsInput` returned false, output  
+`Oops! That doesn't look like a valid age.`
 
 <div class="hint" title="How to calculate age in dog years?">
 

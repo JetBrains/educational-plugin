@@ -4,11 +4,11 @@ import org.jetbrains.academy.cognifire.dsl.*
 
 fun calculateDogAgeInDogYears() {
   prompt("""
-        Get the user input and save the result to a variable named `humanYears`.
+        Get the user input and save the result to `humanYearsInput`.
     """)
 }
 
-fun verifyHumanYearsInput(humanYears: Int): Boolean {
+fun verifyHumanYearsInput(humanYearsInput: String): Boolean {
   TODO("Not implemented yet")
 }
 

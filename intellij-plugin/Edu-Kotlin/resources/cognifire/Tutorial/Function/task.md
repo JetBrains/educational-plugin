@@ -7,9 +7,8 @@ Functions provide a way to break our code into manageable, reusable, and testabl
 
 Let's implement the task by declaring **two** functions:
 1. The function `calculateDogAgeInDogYears`. It doesn't depend on any parameters, and it doesn't return any values.
-2. The function to verify the input `verifyHumanYearsInput`. 
-This function should have a parameter `humanYears` with type `Int` and it should return a `Boolean` value.
-
+2. The function to verify the input `verifyHumanYearsInput`.
+   This function should have a parameter `humanYearshumanYearsInput` with type `IntString` and it should return a `Boolean` value.
 Call the function `calculateDogAgeInDogYears` from the `main` function.
 
 <div class="hint" title="The basic syntax for declaring a function in Kotlin">

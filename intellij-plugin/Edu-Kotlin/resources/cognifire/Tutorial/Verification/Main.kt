@@ -4,14 +4,15 @@ import org.jetbrains.academy.cognifire.dsl.*
 
 fun calculateDogAgeInDogYears() {
   prompt("""
-        Get the user input and save the result to a variable named `humanYears`.
-        Call the function `verifyHumanYearsInput` with `humanYears`. 
-        If the function returns true, set `dogYears` equal to `humanYears` multiplied by 7 and print the message "Your dog's age in dog years is: dogYears", 
-        otherwise print the message "Oops! That doesn't look like a valid age.".
+        Get the user input and save the result to `humanYearsInput`.
+        Call the function `verifyHumanYearsInput` with `humanYearsInput`. 
+        If the function returns true, set `humanYears` equal to `humanYearsInput` interpreted as an integer. 
+        Then, initialize `dogYears` to `humanYears` multiplied by 7 and output the message "Your dog's age in dog years is: `dogYears`".
     """)
   code {
-    val humanYears = readlnOrNull()?.toIntOrNull()
-    if (humanYears != null && verifyHumanYearsInput(humanYears)) {
+    val humanYearsInput = readln()
+    if (verifyHumanYearsInput(humanYearsInput)) {
+      val humanYears = humanYearsInput.toInt()
       val dogYears = humanYears * 7
       println("Your dog's age in dog years is: $dogYears")
     } else {
@@ -20,16 +21,11 @@ fun calculateDogAgeInDogYears() {
   }
 }
 
-fun verifyHumanYearsInput(humanYears: Int): Boolean {
+fun verifyHumanYearsInput(humanYearsInput: String): Boolean {
   prompt("""
-        return the following:
-    """) {
-    if(humanYears > 0) {
-      true
-    } else {
-      false
-    }
-  }
+        If `humanYearsInput.toIntOrNull()` is greater than zero and not null, return true,
+        Otherwise return false.
+    """)
 }
 
 fun main() {

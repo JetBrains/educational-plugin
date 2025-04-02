@@ -21,7 +21,7 @@ class Test : BaseIjTestClass() {
     }
 
     @Test
-    fun testHumanYearsVariable() {
+    fun testHumanYearsInputVariable()() {
         setUp()
         myFixture.configureByText("Task.kt", sourceText)
 
@@ -29,8 +29,8 @@ class Test : BaseIjTestClass() {
         Assertions.assertNotNull(argument) {
             "Please, create a prompt block."
         }
-        Assertions.assertTrue(argument?.contains("humanYears") == true) {
-            "Please, save the age into a variable named humanYears."
+        Assertions.assertTrue(argument?.contains("humanYearsInput") == true) {
+            "Please, save the age into a variable named humanYearsInput."
         }
     }
 
@@ -43,7 +43,7 @@ class Test : BaseIjTestClass() {
         Assertions.assertNotNull(argument) {
             "Please, create a prompt block."
         }
-        Assertions.assertNotNull(Regex("`[^`]*`").findAll(argument!!).map { it.value }.find { it == "`humanYears`" }) {
+        Assertions.assertNotNull(Regex("`[^`]*`").findAll(argument!!).map { it.value }.find { it == "`humanYearsInput`" }) {
             "Please, wrap all identifiers in backticks (``)."
         }
     }

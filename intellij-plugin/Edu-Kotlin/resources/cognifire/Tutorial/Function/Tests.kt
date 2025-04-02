@@ -28,7 +28,7 @@ class Test {
             "verifyHumanYearsInput",
             TestKotlinType("Boolean"),
             listOf(
-                TestVariable("humanYears", "Int"),
+                TestVariable("humanYearsInput", "String"),
             ),
         )
 

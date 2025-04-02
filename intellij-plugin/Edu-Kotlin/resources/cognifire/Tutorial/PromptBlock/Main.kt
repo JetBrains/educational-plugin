@@ -8,7 +8,7 @@ fun calculateDogAgeInDogYears() {
     """)
 }
 
-fun verifyHumanYearsInput(humanYears: Int): Boolean {
+fun verifyHumanYearsInput(humanYearsInput: String): Boolean {
   TODO("Not implemented yet")
 }
 
