@@ -8,3 +8,9 @@ prompt("""
 
 """)
 ```
+
+You will need to import Cognifire. To do that, add the following lines to the top of this file:
+```kt
+import org.jetbrains.academy.cognifire.dsl.prompt
+import org.jetbrains.academy.cognifire.dsl.code
+```

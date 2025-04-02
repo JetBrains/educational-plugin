@@ -7,8 +7,8 @@ Next, check that the input is correct by calling the `verifyHumanYearsInput` fun
 ```kotlin
 fun calculateDogAgeInDogYears() {
     prompt("""
-        Get the user input and save the result to a variable named `humanYears`.
-        Call the function `verifyHumanYearsInput` with `humanYears`. 
+        Get the user input and save the result to a variable named `humanYearsInput`.
+        Call the function `verifyHumanYearsInput` with `humanYearsInput`. 
     """)
 }
 ```
