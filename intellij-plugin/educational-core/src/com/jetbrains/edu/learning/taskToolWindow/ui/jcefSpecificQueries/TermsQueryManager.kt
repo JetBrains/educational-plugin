@@ -117,7 +117,6 @@ class TermsQueryManager private constructor(
     val preferredPoint = Point(parsedData.x, pointY ?: parsedData.y)
 
     gotItTooltip = GotItComponentBuilder(definition)
-      .withHeader(termTitle)
       .showButton(false)
       .build(this)
       .apply {
