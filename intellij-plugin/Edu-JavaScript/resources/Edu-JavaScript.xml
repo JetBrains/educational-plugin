@@ -8,6 +8,12 @@
 
   <xi:include href="/META-INF/Hyperskill-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="edu.js.ecmascript.modules"
+                 defaultValue="true"
+                 description="Enable ECMAScript modules support for Jest run configurations to check tasks"/>
+  </extensions>
+
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.javascript.learning.JsConfigurator" language="JavaScript"/>
   </extensions>
