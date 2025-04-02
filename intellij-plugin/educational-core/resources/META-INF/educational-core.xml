@@ -299,7 +299,7 @@
             class="com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.CommentTask"/>
 
-    <group id="Educational.CheckPanel.Running">
+    <group id="Educational.CheckPanel.Left">
       <reference id="Educational.Run"/>
     </group>
 
