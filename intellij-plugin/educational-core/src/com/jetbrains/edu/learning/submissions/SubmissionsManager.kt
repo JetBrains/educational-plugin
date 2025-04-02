@@ -277,6 +277,11 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
   }
 
   @TestOnly
+  override fun restoreState() {
+    submissions.clear()
+  }
+
+  @TestOnly
   override fun cleanUpState() {
     submissions.clear()
   }
