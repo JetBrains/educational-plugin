@@ -40,21 +40,25 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
-  private val leftActionsToolbar: JPanel = JPanel()
+  /**
+   * FIXME: Should be removed in favor of the [CheckPanel.leftActionsToolbar]
+   * @see <a href="https://youtrack.jetbrains.com/issue/EDU-7584">EDU-7584</a>
+   */
+  private val leftActionsPanel: JPanel = JPanel()
   private val checkButtonWrapper = JPanel(BorderLayout())
   private val getHintButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar: ActionToolbar = createRightActionToolbar()
-  private val runActionsToolbar: ActionToolbar = createRunActionToolbar()
+  private val leftActionsToolbar: ActionToolbar = createLeftActionToolbar()
   private val course = project.course
   private val checkTimeAlarm: Alarm = Alarm(parentDisposable)
   private val asyncProcessIcon = AsyncProcessIcon("Submitting...")
 
   init {
-    leftActionsToolbar.layout = BoxLayout(leftActionsToolbar, BoxLayout.X_AXIS)
-    leftActionsToolbar.add(checkButtonWrapper)
-    leftActionsToolbar.add(getHintButtonWrapper)
-    leftActionsToolbar.add(runActionsToolbar.component)
-    checkActionsPanel.add(leftActionsToolbar, BorderLayout.WEST)
+    leftActionsPanel.layout = BoxLayout(leftActionsPanel, BoxLayout.X_AXIS)
+    leftActionsPanel.add(checkButtonWrapper)
+    leftActionsPanel.add(getHintButtonWrapper)
+    leftActionsPanel.add(leftActionsToolbar.component)
+    checkActionsPanel.add(leftActionsPanel, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(rightActionsToolbar.component, BorderLayout.EAST)
     checkActionsPanel.add(linkPanel, BorderLayout.NORTH)
@@ -136,8 +140,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     }
   }
 
-  private fun createRunActionToolbar(): ActionToolbar {
-    val actionGroup = ActionManager.getInstance().getAction("Educational.CheckPanel.Running") as ActionGroup
+  private fun createLeftActionToolbar(): ActionToolbar {
+    val actionGroup = ActionManager.getInstance().getAction("Educational.CheckPanel.Left") as ActionGroup
     return ActionToolbarImpl(ACTION_PLACE, actionGroup, true).apply {
       targetComponent = this@CheckPanel
       minimumButtonSize = JBDimension(28, 28)
