@@ -13,13 +13,9 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction
+import com.jetbrains.edu.learning.marketplace.actions.*
 import com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionActionTest.Companion.putCommunityData
 import com.jetbrains.edu.learning.marketplace.api.*
-import com.jetbrains.edu.learning.marketplace.deleteSubmissions.AdvancedSubmissionsDeleteDialog
-import com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction
-import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDeleteDialog
-import com.jetbrains.edu.learning.marketplace.deleteSubmissions.deleteSubmissionsWithTestDialog
 import com.jetbrains.edu.learning.simpleDiffRequestChain
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionFile
