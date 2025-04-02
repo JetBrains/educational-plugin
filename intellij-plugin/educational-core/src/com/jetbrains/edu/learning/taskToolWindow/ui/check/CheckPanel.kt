@@ -11,8 +11,6 @@ import com.intellij.ui.InlineBannerBase
 import com.intellij.util.Alarm
 import com.intellij.util.ui.*
 import com.jetbrains.edu.learning.actions.*
-import com.jetbrains.edu.learning.actions.EduAIHintsUtils.GET_HINT_ACTION_ID
-import com.jetbrains.edu.learning.actions.EduAIHintsUtils.getHintActionPresentation
 import com.jetbrains.edu.learning.checker.CheckUtils.getCustomRunConfigurationForRunner
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -46,7 +44,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
    */
   private val leftActionsPanel: JPanel = JPanel()
   private val checkButtonWrapper = JPanel(BorderLayout())
-  private val getHintButtonWrapper = JPanel(BorderLayout())
   private val rightActionsToolbar: ActionToolbar = createRightActionToolbar()
   private val leftActionsToolbar: ActionToolbar = createLeftActionToolbar()
   private val course = project.course
@@ -56,7 +53,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   init {
     leftActionsPanel.layout = BoxLayout(leftActionsPanel, BoxLayout.X_AXIS)
     leftActionsPanel.add(checkButtonWrapper)
-    leftActionsPanel.add(getHintButtonWrapper)
     leftActionsPanel.add(leftActionsToolbar.component)
     checkActionsPanel.add(leftActionsPanel, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
@@ -78,7 +74,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
   fun checkStarted(startSpinner: Boolean) {
     readyToCheck()
-    getHintButtonWrapper.removeAll()
     updateBackground()
     if (startSpinner) {
       checkFinishedPanel.add(asyncProcessIcon, BorderLayout.WEST)
@@ -86,7 +81,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun updateCheckDetails(task: Task, result: CheckResult? = null) {
-    updateGetHintButtonWrapper()
     checkFinishedPanel.removeAll()
     checkFinishedPanel.addNextTaskButton(task)
     checkFinishedPanel.addRetryButton(task)
@@ -186,14 +180,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
                                                        isDefault = true)
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
-    }
-  }
-
-  private fun updateGetHintButtonWrapper() {
-    getHintButtonWrapper.removeAll()
-    if (getHintActionPresentation(project).isEnabledAndVisible()) {
-      val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID) as ActionWithProgressIcon
-      getHintButtonWrapper.add(CheckPanelButtonComponent(action = action), BorderLayout.WEST)
     }
   }
 

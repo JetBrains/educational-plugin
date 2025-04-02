@@ -8,7 +8,9 @@
 
   <actions>
     <action id="Educational.Hints.GetHint"
-            class="com.jetbrains.edu.aiHints.core.action.GetHint"/>
+            class="com.jetbrains.edu.aiHints.core.action.GetHint">
+      <add-to-group group-id="Educational.CheckPanel.Left" anchor="last"/>
+    </action>
 
     <action id="Educational.Hints.AcceptHint"
             class="com.jetbrains.edu.aiHints.core.action.AcceptHint">
