@@ -28,7 +28,7 @@ class GetHintTest : EduActionTestCase() {
   @Test
   fun `GetHint action NOT available by default`() {
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
   }
 
   @Test
@@ -38,7 +38,7 @@ class GetHintTest : EduActionTestCase() {
     registerPlainTextEduAiHintsProcessor(testRootDisposable)
 
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
   }
 
   @Test
@@ -49,7 +49,7 @@ class GetHintTest : EduActionTestCase() {
     registerPlainTextEduAiHintsProcessor(testRootDisposable)
 
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
   }
 
   @Test
@@ -64,9 +64,8 @@ class GetHintTest : EduActionTestCase() {
     HintStateManager.getInstance(project).acceptHint()
 
     // then
-    testGetHintAction(shouldBeEnabled = true, shouldBeVisible = false)
+    testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
     assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
-    assertTrue(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
   }
 
   @Test
@@ -77,8 +76,20 @@ class GetHintTest : EduActionTestCase() {
     selectCurrentEduTask(course)
 
     // then
-    testGetHintAction(shouldBeEnabled = false, shouldBeVisible = true)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabled())
+    testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+  }
+
+  @Test
+  fun `GetHint action is still available when missing AI agreement`() {
+    // when only
+    val course = getCourse().apply { isMarketplace = true }
+    registerPlainTextEduAiHintsProcessor(testRootDisposable)
+    selectCurrentEduTask(course)
+
+    // then
+    testGetHintAction(shouldBeEnabled = true, shouldBeVisible = true)
+    assertTrue(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
   }
 
   @Test

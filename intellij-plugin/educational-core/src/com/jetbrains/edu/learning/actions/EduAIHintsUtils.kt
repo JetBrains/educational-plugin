@@ -40,15 +40,16 @@ object EduAIHintsUtils {
     return when {
       anActionEvent.presentation.isEnabledAndVisible -> GetHintActionPresentation.ENABLED_AND_VISIBLE
       anActionEvent.presentation.isEnabled -> GetHintActionPresentation.ENABLED
+      anActionEvent.presentation.isVisible -> GetHintActionPresentation.VISIBLE
       else -> GetHintActionPresentation.OTHER
     }
   }
 
   enum class GetHintActionPresentation {
-    ENABLED_AND_VISIBLE, ENABLED, OTHER;
+    ENABLED_AND_VISIBLE, ENABLED, VISIBLE, OTHER;
 
     fun isEnabledAndVisible(): Boolean = this == ENABLED_AND_VISIBLE
 
-    fun isEnabled(): Boolean = this == ENABLED || this == ENABLED_AND_VISIBLE
+    fun isVisible(): Boolean = this == VISIBLE || this == ENABLED_AND_VISIBLE
   }
 }
