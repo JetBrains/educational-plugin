@@ -34,7 +34,7 @@
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.RateCourse">
       <add-to-group group-id="Educational.CheckPanel.Right" anchor="last"/>
     </action>
-    <action id="Educational.Student.DeleteAllSubmissions" class="com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmissionsAction"/>
+    <action id="Educational.Student.DeleteAllSubmissions" class="com.jetbrains.edu.learning.marketplace.actions.DeleteAllSubmissionsAction"/>
     <action id="Educational.Student.ShareMySolutions" class="com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction">
       <add-to-group group-id="Educational.CourseView.SecondaryActions" relative-to-action="Educational.HideSolvedLessons" anchor="after"/>
     </action>

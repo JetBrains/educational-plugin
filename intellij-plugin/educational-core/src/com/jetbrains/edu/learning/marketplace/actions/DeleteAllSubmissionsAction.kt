@@ -1,12 +1,16 @@
-package com.jetbrains.edu.learning.marketplace.deleteSubmissions
+package com.jetbrains.edu.learning.marketplace.actions
 
 import com.intellij.CommonBundle
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.JBAccountInfoService
+import com.intellij.ui.dsl.builder.BottomGap
+import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
@@ -16,9 +20,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
+import javax.swing.JComponent
 
 class DeleteAllSubmissionsAction : DumbAwareAction() {
-
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     val presentationText = e.presentation.text
@@ -103,5 +109,66 @@ class DeleteAllSubmissionsAction : DumbAwareAction() {
   companion object {
     @NonNls
     const val ACTION_ID = "Educational.Student.DeleteAllSubmissions"
+  }
+}
+
+interface SubmissionsDeleteDialog {
+  fun showWithResult(): Int
+}
+
+@TestOnly
+fun deleteSubmissionsWithTestDialog(dialog: SubmissionsDeleteDialog, action: () -> Unit) = try {
+  AdvancedSubmissionsDeleteDialog.testDialog = dialog
+  action()
+}
+finally {
+  AdvancedSubmissionsDeleteDialog.testDialog = null
+}
+
+@VisibleForTesting
+class AdvancedSubmissionsDeleteDialog(private val project: Project) : DialogWrapper(project), SubmissionsDeleteDialog {
+
+  init {
+    init()
+    setOKButtonText(CommonBundle.message("button.delete"))
+    isResizable = false
+    title = EduCoreBundle.message("marketplace.delete.submissions.advanced.dialog.title")
+  }
+
+  private var checkBoxSelected: Boolean = false
+
+  override fun createCenterPanel(): JComponent = panel {
+    row {
+      icon(AllIcons.General.WarningDialog)
+      text(EduCoreBundle.message("marketplace.delete.submissions.advanced.dialog.text", project.course?.name ?: ""))
+    }.bottomGap(BottomGap.MEDIUM)
+    row {
+      checkBox(EduCoreBundle.message("marketplace.delete.submissions.advanced.dialog.checkbox.text")).comment(
+        EduCoreBundle.message(
+          "marketplace.delete.submissions.advanced.dialog.checkbox.comment"
+        )
+      ).onChanged { checkBoxSelected = it.isSelected }
+    }
+  }
+
+  override fun showWithResult(): Int {
+    if (!super.showAndGet()) return CANCEL
+
+    return if (checkBoxSelected) ALL else COURSE
+  }
+
+  companion object {
+    const val COURSE: Int = 0
+    const val ALL: Int = 1
+    const val CANCEL: Int = 2
+
+    fun showConfirmationDialog(project: Project): Int = if (isUnitTestMode) {
+      testDialog?.showWithResult() ?: error("No test dialog specified")
+    }
+    else {
+      AdvancedSubmissionsDeleteDialog(project).showWithResult()
+    }
+
+    var testDialog: SubmissionsDeleteDialog? = null
   }
 }
