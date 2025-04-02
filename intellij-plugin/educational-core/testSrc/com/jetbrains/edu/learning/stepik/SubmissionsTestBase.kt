@@ -34,9 +34,9 @@ abstract class SubmissionsTestBase : EduTestCase() {
     assertEquals(checkStatus, submissions[0].status)
   }
 
-  protected fun checkSubmissionsPresent(submissionsManager: SubmissionsManager,
-                                        taskId: Int,
-                                        submissionsNumber: Int = 1) {
+  private fun checkSubmissionsPresent(submissionsManager: SubmissionsManager,
+                                      taskId: Int,
+                                      submissionsNumber: Int = 1) {
     val submissions = submissionsManager.getSubmissionsFromMemory(setOf(taskId))
     assertNotEmpty(submissions)
     assertTrue(submissions.size == submissionsNumber)
