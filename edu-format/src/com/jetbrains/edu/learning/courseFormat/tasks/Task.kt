@@ -58,8 +58,17 @@ abstract class Task : StudyItem {
 
   open val isPluginTaskType: Boolean
     get() = true
+
+  /**
+   * Enables/disables submission tab and local storage of submissions
+   */
   open val supportSubmissions: Boolean
     get() = false
+
+  /**
+   * Determines whether submissions are sent to a remote server.
+   * Works independently of [supportSubmissions].
+   */
   open val isToSubmitToRemote: Boolean
     get() = false
   open val isChangedOnFailed: Boolean // For retry button: true means task description changes after failing
