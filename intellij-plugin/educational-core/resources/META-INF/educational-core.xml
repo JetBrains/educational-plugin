@@ -148,6 +148,9 @@
     </action>
     <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction">
     </action>
+    <action id="Educational.UpdateCoursePreview"
+            class="com.jetbrains.edu.coursecreator.actions.CCUpdateCoursePreview"
+            internal="true"/>
 
     <!-- IMPORTANT: don't change the action id, it's used in monorepo-->
     <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>

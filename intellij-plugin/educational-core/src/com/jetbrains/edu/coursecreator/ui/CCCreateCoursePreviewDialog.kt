@@ -11,6 +11,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.PreviewInfo
+import com.jetbrains.edu.coursecreator.actions.previewInfo
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.archive.showNotification
 import com.jetbrains.edu.learning.EduNames
@@ -133,6 +135,9 @@ class CCCreateCoursePreviewDialog(
             )
             return
           }
+
+          previewProject.previewInfo = PreviewInfo(archiveLocation, project.basePath)
+
           RecentProjectsManager.getInstance().removePath(location.absolutePath)
           EduCounterUsageCollector.createCoursePreview()
         }

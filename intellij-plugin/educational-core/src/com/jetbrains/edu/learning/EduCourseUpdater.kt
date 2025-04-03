@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpda
 import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.net.URISyntaxException
 
@@ -55,7 +54,6 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     updateCourseWithRemote(courseFromServer)
   }
 
-  @VisibleForTesting
   fun updateCourseWithRemote(courseFromServer: EduCourse) {
     doUpdate(courseFromServer)
 
