@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.updatetester.PreviewArchiveManager
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.archive.showNotification
 import com.jetbrains.edu.learning.EduNames
@@ -29,6 +30,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.event.ActionEvent
 import java.io.IOException
+import java.nio.file.Path
 import javax.swing.AbstractAction
 import javax.swing.Action
 import javax.swing.JComponent
@@ -133,6 +135,9 @@ class CCCreateCoursePreviewDialog(
             )
             return
           }
+
+          updatePreviewArchiveManager(previewProject, archiveLocation)
+
           RecentProjectsManager.getInstance().removePath(location.absolutePath)
           EduCounterUsageCollector.createCoursePreview()
         }
@@ -152,6 +157,12 @@ class CCCreateCoursePreviewDialog(
         error.showNotification(project, EduCoreBundle.message("course.creator.create.course.preview.failed.title"))
       }
     }
+  }
+
+  private fun updatePreviewArchiveManager(previewProject: Project, archiveLocation: Path) {
+    val previewArchiveManager = PreviewArchiveManager.getInstance(previewProject)
+    previewArchiveManager.previewLoadedFrom = archiveLocation
+    previewArchiveManager.sourceProjectBasePath = project.basePath
   }
 
   companion object {
