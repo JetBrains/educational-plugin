@@ -76,9 +76,12 @@ class CodeGenerator(
     }
 
   private fun getSetOfModifiedCodeLines(code: String, modifiedCode: String): Set<Int> {
-    return code.lines()
-      .zip(modifiedCode.lines()) { old, new -> old.trim() != new.trim() }
-      .mapIndexedNotNull { index, changed -> index.takeIf { changed } }
+    val oldLines = code.lines()
+    val newLines = modifiedCode.lines()
+    val maxLength = maxOf(oldLines.size, newLines.size)
+
+    return (0 until maxLength)
+      .filter { i -> oldLines.getOrNull(i) != newLines.getOrNull(i) }
       .toSet()
   }
 
