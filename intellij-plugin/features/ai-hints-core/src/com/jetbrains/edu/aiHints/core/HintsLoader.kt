@@ -18,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.DumbProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.asSafely
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import java.awt.Font
+import java.util.concurrent.atomic.AtomicInteger
 
 @Service(Service.Level.PROJECT)
 class HintsLoader(private val project: Project, private val scope: CoroutineScope) {
@@ -55,6 +57,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
         return@launch
       }
       try {
+        val launchId = launchId.incrementAndGet()
         val taskProcessor = TaskProcessorImpl(task)
         val taskFile = taskProcessor.currentTaskFile ?: project.selectedTaskFile ?: error("TaskFile for ${task.name} not found")
         val taskVirtualFile = taskFile.getVirtualFile(project) ?: error("VirtualFile for ${taskFile.name} not found")
@@ -80,7 +83,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
           withContext(Dispatchers.EDT) {
             val highlighter = highlightFirstCodeDiffPositionOrNull(project, taskVirtualFile, taskFileText, codeHint.code)
             CodeHintInlineBanner(project, task, hint.textHint.text, highlighter)
-              .addCodeHint { showInCodeAction(project, taskVirtualFile, taskFileText, codeHint.code) }
+              .addCodeHint { showInCodeAction(project, launchId, taskVirtualFile, taskFileText, codeHint.code) }
               .addFeedbackLikenessButtons(task, taskFileText, hint.textHint, codeHint)
               .display()
           }
@@ -97,6 +100,8 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
       }
     }
   }
+
+  private val launchId = AtomicInteger(0)
 
   private val mutex = Mutex()
 
@@ -121,10 +126,11 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
   }
 
   @RequiresEdt
-  private fun showInCodeAction(project: Project, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
+  private fun showInCodeAction(project: Project, launchId: Int, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
     // Open the existing Diff if possible
     val getHintDiff = FileEditorManager.getInstance(project).openFiles.firstOrNull {
-      it.asSafely<ChainDiffVirtualFile>()?.chain?.getUserData(ApplyCodeAction.GET_HINT_DIFF) == true
+      val diffRequestChain = it.asSafely<ChainDiffVirtualFile>()?.chain ?: return@firstOrNull false
+      diffRequestChain.getUserData(ApplyCodeAction.GET_HINT_DIFF) == true && diffRequestChain.getUserData(LAUNCH_ID) == launchId
     }
     if (getHintDiff != null) {
       FileEditorManager.getInstance(project).openFile(getHintDiff, true)
@@ -142,6 +148,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
     )
     diffRequestChain.putUserData(ApplyCodeAction.VIRTUAL_FILE_PATH_LIST, listOf(taskVirtualFile.path))
     diffRequestChain.putUserData(ApplyCodeAction.GET_HINT_DIFF, true)
+    diffRequestChain.putUserData(LAUNCH_ID, launchId)
     DiffManager.getInstance().showDiff(project, diffRequestChain, DiffDialogHints.FRAME)
   }
 
@@ -149,5 +156,7 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
     fun getInstance(project: Project): HintsLoader = project.service()
 
     fun isRunning(project: Project): Boolean = getInstance(project).mutex.isLocked
+
+    private val LAUNCH_ID: Key<Int> = Key.create("launchId")
   }
 }
