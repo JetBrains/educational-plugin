@@ -28,10 +28,16 @@ class CodeHintInlineBanner(
   }
 
   fun addCodeHint(showInCodeAction: () -> Unit): CodeHintInlineBanner {
-    addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text")) {
+    val dependantActions = listOf(
+      ActionLink("Accept") {},
+      ActionLink("Cancel") {
+        close()
+      }
+    )
+    addAction(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.show.code.text"), {
       EduAIFeaturesCounterUsageCollector.hintShowInCodeClicked(task)
       showInCodeAction()
-    }
+    }, dependantActions)
     return this
   }
 

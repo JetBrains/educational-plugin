@@ -126,7 +126,29 @@ open class HintInlineBanner(
 
   fun addAction(name: @Nls String, action: Runnable): InlineBannerBase {
     actionsPanel.isVisible = true
-    linkActionPanel.add(object : LinkLabel<Runnable>(name, null, { _, action -> action.run() }, action) {
+    linkActionPanel.add(object : LinkLabel<Runnable>(name, null, { _, runnable -> runnable.run() }, action) {
+      override fun getTextColor() = JBUI.CurrentTheme.Link.Foreground.ENABLED
+    }, linkActionPanel.componentCount - 1)
+    return this
+  }
+
+  /**
+   * Adds an action link with optional dependent actions.
+   * When the action is clicked, if dependent actions are provided, they will replace the current action.
+   */
+  fun addAction(name: @Nls String, action: Runnable, dependentActions: List<ActionLink>): InlineBannerBase {
+    actionsPanel.isVisible = true
+    linkActionPanel.add(object : LinkLabel<Runnable>(name, null, { _, runnable ->
+      // Clear existing actions
+      linkActionPanel.removeAll()
+      // Add dependent actions
+      for (dependentAction in dependentActions) {
+        addAction(dependentAction.name, dependentAction.action)
+      }
+      linkActionPanel.revalidate()
+      linkActionPanel.repaint()
+      runnable.run()
+    }, action) {
       override fun getTextColor() = JBUI.CurrentTheme.Link.Foreground.ENABLED
     }, linkActionPanel.componentCount - 1)
     return this
@@ -325,6 +347,8 @@ open class HintInlineBanner(
     button.isVisible = true
     return button
   }
+
+  data class ActionLink(val name: @Nls String, val action: Runnable)
 
   companion object {
     private const val BORDER_OFFSET: Int = 10
