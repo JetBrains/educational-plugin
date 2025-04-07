@@ -1,15 +1,10 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
-import com.intellij.openapi.components.ComponentManagerEx
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.platform.util.coroutines.childScope
 import com.intellij.testFramework.executeSomeCoroutineTasksAndDispatchAllInvocationEvents
-import com.intellij.testFramework.replaceService
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.findTask
@@ -181,21 +176,6 @@ class TaskToolWindowStateTest : EduTestCase() {
     // then
     assertEquals(TaskToolWindowView.getInstance(project).currentTask, course.findTask("lesson1", "task1"))
     assertTrue("Task tool window should be shown", toolWindow.isVisible)
-  }
-
-  /**
-   * Temporarily replace test implementation of `FileEditorManager` with `PsiAwareFileEditorManagerImpl`
-   * which is async and used in production
-   */
-  private fun setProductionFileEditorManager() {
-    project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, true)
-    Disposer.register(testRootDisposable) { project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, null) }
-
-    project.replaceService(
-      FileEditorManager::class.java,
-      PsiAwareFileEditorManagerImpl(project, (project as ComponentManagerEx).getCoroutineScope().childScope(name)),
-      testRootDisposable
-    )
   }
 
   private fun createTestCourse(): Course = courseWithFiles {

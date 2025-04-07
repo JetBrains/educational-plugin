@@ -7,9 +7,11 @@ import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.components.ComponentManagerEx
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
@@ -17,6 +19,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.platform.util.coroutines.childScope
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.replaceService
@@ -43,6 +46,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.taskToolWindow.ALLOW_IN_LIGHT_PROJECT_KEY
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -422,5 +426,22 @@ abstract class EduTestCase : BasePlatformTestCase() {
 
   protected fun registerTaskDescriptionToolWindow() {
     registerToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
+  }
+
+  /**
+   * Temporarily replace test implementation of `FileEditorManager` with `PsiAwareFileEditorManagerImpl`
+   * which is async and used in production
+   *
+   * @see com.intellij.testFramework.executeSomeCoroutineTasksAndDispatchAllInvocationEvents
+   */
+  protected fun setProductionFileEditorManager() {
+    project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, true)
+    Disposer.register(testRootDisposable) { project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, null) }
+
+    project.replaceService(
+      FileEditorManager::class.java,
+      PsiAwareFileEditorManagerImpl(project, (project as ComponentManagerEx).getCoroutineScope().childScope(name)),
+      testRootDisposable
+    )
   }
 }
