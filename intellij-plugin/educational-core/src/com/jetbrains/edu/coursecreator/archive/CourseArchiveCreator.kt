@@ -25,7 +25,8 @@ import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
 import com.jetbrains.edu.coursecreator.actions.TextualContentsFromDisk
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.cipher.Cipher
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSE_META_FILE
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -354,8 +355,9 @@ class CourseArchiveCreator(
           throw FileNotFoundException(EduCoreBundle.message("error.additional.file.does.not.exist", additionalFile.name))
         }
 
+        val fsFileAttributes = configurator.courseFileAttributes(courseInfoHolder, fsFile)
         if (
-          !configurator.excludeFromArchive(courseInfoHolder, fsFile) && // TODO: EDU-7821
+          fsFileAttributes.archiveInclusionPolicy > ArchiveInclusionPolicy.MUST_EXCLUDE &&
           fsFile.getContainingTask(courseInfoHolder) == null
         ) {
           filteredAdditionalFiles += additionalFile

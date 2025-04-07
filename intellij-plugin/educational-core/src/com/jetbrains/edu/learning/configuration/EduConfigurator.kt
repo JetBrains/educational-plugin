@@ -46,6 +46,12 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
 
     dirAndChildren(PROFILE_DIR, "scopes") {
       includeIntoArchive()
+      archiveInclusionPolicy(ArchiveInclusionPolicy.AUTHOR_DECISION)
+    }
+
+    // Don't allow putting files from the .idea folder to the archive. Will be changed after EDU-1335: Export ide settings action
+    any {
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     rulesForDotFilesAndFolders()

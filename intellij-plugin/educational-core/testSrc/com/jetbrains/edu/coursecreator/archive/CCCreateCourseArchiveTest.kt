@@ -710,11 +710,14 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     createUserFile(".idea/subfolder/important_settings_in_subfolder.xml", """
       some additional file that should not go into archive
     """.trimIndent())
-    createUserFile(".idea/scopes/.dont include me.xml", """
-      some hidden additional file that should not go into archive
+    createUserFile(".idea/subfolder/.excluded_as_all_other_files_from_idea.xml", """
+      some additional file that should not go into archive
     """.trimIndent())
-    createUserFile(".idea/scopes/.dont include folder/x.xml", """
-      some additional file inside a hidden folder that should not go into archive
+    createUserFile(".idea/scopes/.include me.xml", """
+      some hidden additional file that should go into archive
+    """.trimIndent())
+    createUserFile(".idea/scopes/.include folder/x.xml", """
+      some additional file inside a hidden folder that should go into archive
     """.trimIndent())
     createUserFile(".idea/scopes/level_up.xml", """
       <component name="DependencyValidationManager">
@@ -879,7 +882,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
-  fun `additional files are not written if they are excludedFromArchive`() {
+  fun `additional files are not written if they have the MUST_EXCLUDE attribute`() {
     val courseIgnoreIgnoredFile = "courseignore-ignored-file.txt"
 
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
@@ -892,11 +895,11 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("some-config.yaml")
       // the file is additional, thus it should go to the archive even if it is excluded by .courseignore
       additionalFile(courseIgnoreIgnoredFile)
+      // EduConfigurator.excludeFromArchive(".file") == true, it used to be a reason to not include the file, but now we must include it
+      additionalFile(".file_starting_with_dot.txt")
 
       // Must NOT be added to the course archive, even if listed as additional
 
-      // EduConfigurator.excludeFromArchive(".file") == true TODO: include in archive EDU-7821
-      additionalFile(".excluded_file_starting_with_dot")
       // this and the following files: EduConfigurator.excludeFromArchive(file) == true
       additionalFile("course-info.yaml")
       additionalFile("course-remote-info.yaml")
@@ -944,6 +947,15 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
     doTest(course = course, cipher = TestCipher())
+  }
+
+  @Test
+  fun `test files starting with dot are added to the archive and iml files are excluded`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+     additionalFile(".hidden_file") // such files could go to the archive, if they are listed as additional
+     additionalFile("must_not_be_included.iml") // must not go to the archive even if the file is listed in a list of additional files
+    }
+    doTest(course = course)
   }
 
   /**
