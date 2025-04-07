@@ -41,6 +41,11 @@
       "name" : "courseignore-ignored-file",
       "is_visible" : true,
       "is_binary" : false
+    },
+    {
+      "name" : ".file_starting_with_dot",
+      "is_visible" : true,
+      "is_binary" : false
     }
   ],
   "version" : <last version>,
