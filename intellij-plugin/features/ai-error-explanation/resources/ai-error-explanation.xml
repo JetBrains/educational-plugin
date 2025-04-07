@@ -1,4 +1,11 @@
 <!--suppress PluginXmlValidity -->
 <idea-plugin package="com.jetbrains.edu.ai.error.explanation">
   <resource-bundle>messages.EduAIErrorExplanationBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--suppress PluginXmlValidity -->
+    <experimentalFeature id="edu.learning.ai.error.explanation" percentOfUsers="100" internalFeature="true">
+      <description>Enables error explanation</description>
+    </experimentalFeature>
+  </extensions>
 </idea-plugin>
