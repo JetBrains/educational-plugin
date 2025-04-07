@@ -1,0 +1,3 @@
+<!--suppress PluginXmlValidity -->
+<idea-plugin package="com.jetbrains.edu.ai.error.explanation">
+</idea-plugin>

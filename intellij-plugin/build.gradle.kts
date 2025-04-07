@@ -324,6 +324,7 @@ dependencies {
       pluginModule(implementation(project("remote-env")))
     }
     pluginModule(implementation(project("features:command-line")))
+    pluginModule(implementation(project("features:ai-error-explanation")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
     pluginModule(implementation(project("features:ai-hints-python")))
@@ -984,6 +985,18 @@ project("features:command-line") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementationWithoutKotlin(rootProject.libs.clikt.core)
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:ai-error-explanation") {
+  dependencies {
+    intellijPlatform {
+      intellijIde(project, baseVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
