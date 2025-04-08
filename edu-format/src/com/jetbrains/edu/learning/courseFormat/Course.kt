@@ -73,6 +73,11 @@ abstract class Course : LessonContainer() {
     }
 
   /**
+   * Specifies the shift of the lessons relative to the parent study item
+   */
+  var contentShift: String = ""
+
+  /**
    * Programming language ID from [com.intellij.lang.Language.getID]
    * also see [com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getLanguageById]
    */

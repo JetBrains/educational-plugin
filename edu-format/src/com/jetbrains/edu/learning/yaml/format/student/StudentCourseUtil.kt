@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.MODE
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT_SHIFT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
@@ -28,6 +29,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
   PROGRAMMING_LANGUAGE_VERSION,
   ENVIRONMENT,
   CONTENT,
+  CONTENT_SHIFT,
   ADDITIONAL_FILES,
   MODE,
   TAGS

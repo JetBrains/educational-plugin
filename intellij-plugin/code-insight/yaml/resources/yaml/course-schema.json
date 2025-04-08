@@ -108,6 +108,10 @@
       "items": {
         "$ref": "#/definitions/file"
       }
+    },
+    "content_shift": {
+      "description": "Path to the content inside of the course",
+      "type": "string"
     }
   },
   "required": [

@@ -18,6 +18,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.languageId = deserializedItem.languageId
     existingItem.languageVersion = deserializedItem.languageVersion
     existingItem.additionalFiles = deserializedItem.additionalFiles
+    existingItem.contentShift = deserializedItem.contentShift
     if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
       existingItem.submitManually = deserializedItem.submitManually
     }

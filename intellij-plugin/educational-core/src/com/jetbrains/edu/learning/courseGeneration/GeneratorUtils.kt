@@ -76,7 +76,10 @@ object GeneratorUtils {
   @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createSection(holder: CourseInfoHolder<out Course?>, item: Section, baseDir: VirtualFile): VirtualFile {
-    val sectionDir = createUniqueDir(baseDir, item)
+    val parentDirShifted = runInWriteActionAndWait {
+      VfsUtil.createDirectoryIfMissing(baseDir, holder.course?.contentShift ?: "")
+    }
+    val sectionDir = createUniqueDir(parentDirShifted, item)
 
     for (lesson in item.lessons) {
       createLesson(holder, lesson, sectionDir)
@@ -94,7 +97,12 @@ object GeneratorUtils {
   @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createLesson(holder: CourseInfoHolder<out Course?>, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
-    val lessonDir = createUniqueDir(parentDir, lesson)
+    val parentDirShifted = if (parentDir == holder.courseDir) runInWriteActionAndWait {
+      VfsUtil.createDirectoryIfMissing(parentDir, holder.course?.contentShift ?: "")
+    }
+    else parentDir
+
+    val lessonDir = createUniqueDir(parentDirShifted, lesson)
     val taskList = lesson.taskList
     for (task in taskList) {
       createTask(holder, task, lessonDir)

@@ -193,10 +193,12 @@ abstract class EduTestCase : BasePlatformTestCase() {
     courseVendor: Vendor? = null,
     courseProducer: () -> Course = ::EduCourse,
     createYamlConfigs: Boolean = false,
+    shift: String = "",
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
     val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
       vendor = courseVendor
+      contentShift = shift
 
       initializeCourse(project, course)
       createCourseFiles(project)
