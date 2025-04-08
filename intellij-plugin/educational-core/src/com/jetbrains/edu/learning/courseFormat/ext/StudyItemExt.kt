@@ -2,15 +2,8 @@ package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.StudyItemType.COURSE_TYPE
-import com.jetbrains.edu.coursecreator.StudyItemType.LESSON_TYPE
-import com.jetbrains.edu.coursecreator.StudyItemType.SECTION_TYPE
-import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.LessonContainer
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.coursecreator.StudyItemType.*
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val StudyItem.studyItemType: StudyItemType
@@ -27,8 +20,14 @@ val StudyItem.studyItemType: StudyItemType
 fun StudyItem.getDir(courseDir: VirtualFile): VirtualFile? {
   return when (this) {
     is Course -> courseDir
-    is Section -> courseDir.findChild(name)
-    is Lesson -> parent.getDir(courseDir)?.findChild(name)
+    is Section -> {
+      courseDir.findFileByRelativePath(parent.getPathToChildren())?.findChild(name)
+    }
+
+    is Lesson -> {
+      parent.getDir(courseDir)?.findFileByRelativePath(parent.getPathToChildren())?.findChild(name)
+    }
+
     is Task -> findDir(lesson.getDir(courseDir))
     else -> error("Can't find directory for the item $itemType")
   }
@@ -41,3 +40,6 @@ fun StudyItem.visitTasks(action: (Task) -> Unit) {
     is Task -> action(this)
   }
 }
+
+fun StudyItem.getPathToChildren(customContentPath: String = ""): String =
+  if (this is Course) customContentPath.ifBlank { course.customContentPath } else ""

@@ -40,6 +40,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
+import com.jetbrains.edu.learning.courseFormat.ext.customContentPath
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -178,7 +179,11 @@ abstract class EduTestCase : BasePlatformTestCase() {
    * because [com.intellij.testFramework.fixtures.CodeInsightTestFixture.configureFromExistingVirtualFile] loads selection and caret from markup in text
    */
   protected fun configureByTaskFile(lessonIndex: Int, taskIndex: Int, taskFileName: String) {
-    val fileName = "lesson$lessonIndex/task$taskIndex/$taskFileName"
+    var contentPath = myFixture.project.course.customContentPath
+    if (contentPath.isNotEmpty()) {
+      contentPath = contentPath.trimEnd { it == '/' } + '/'
+    }
+    val fileName = "${contentPath}lesson$lessonIndex/task$taskIndex/$taskFileName"
     val file = myFixture.findFileInTempDir(fileName)
     myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
@@ -199,10 +204,12 @@ abstract class EduTestCase : BasePlatformTestCase() {
     courseVendor: Vendor? = null,
     courseProducer: () -> Course = ::EduCourse,
     createYamlConfigs: Boolean = false,
+    customPath: String = "",
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
     val course = course(name, language, description, environment, courseMode, courseProducer, buildCourse).apply {
       vendor = courseVendor
+      customContentPath = customPath
 
       initializeCourse(project, course)
       createCourseFiles(project)

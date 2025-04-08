@@ -981,10 +981,6 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     return createdFile
   }
 
-  override fun getTestDataPath(): String {
-    return super.getTestDataPath() + "/archive/createCourseArchive"
-  }
-
   private class PlainTextCompatibilityProvider : CourseCompatibilityProvider {
     override val technologyName: String get() = "Plain Text"
     override fun requiredPlugins(): List<PluginInfo> = listOf(PluginInfo(PLAIN_TEXT_PLUGIN_ID))

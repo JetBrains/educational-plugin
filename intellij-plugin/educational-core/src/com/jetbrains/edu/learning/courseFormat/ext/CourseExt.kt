@@ -217,3 +217,5 @@ fun Course.visitItems(action: (StudyItem) -> Unit) {
 
   items.forEach(::walk)
 }
+
+val Course?.customContentPath: String get() = this?.customContentPath ?: ""

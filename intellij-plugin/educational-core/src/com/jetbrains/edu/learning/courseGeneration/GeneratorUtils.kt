@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
+import com.jetbrains.edu.learning.courseFormat.ext.getPathToChildren
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -76,7 +77,10 @@ object GeneratorUtils {
   @RequiresBlockingContext
   @Throws(IOException::class)
   private fun createSection(holder: CourseInfoHolder<out Course?>, item: Section, baseDir: VirtualFile): VirtualFile {
-    val sectionDir = createUniqueDir(baseDir, item)
+    val parentDir = runInWriteActionAndWait {
+      VfsUtil.createDirectoryIfMissing(baseDir, item.parent.getPathToChildren())
+    }
+    val sectionDir = createUniqueDir(parentDir, item)
 
     for (lesson in item.lessons) {
       createLesson(holder, lesson, sectionDir)
@@ -93,7 +97,11 @@ object GeneratorUtils {
 
   @RequiresBlockingContext
   @Throws(IOException::class)
-  private fun createLesson(holder: CourseInfoHolder<out Course?>, lesson: Lesson, parentDir: VirtualFile): VirtualFile {
+  private fun createLesson(holder: CourseInfoHolder<out Course?>, lesson: Lesson, baseDir: VirtualFile): VirtualFile {
+    val parentDir = runInWriteActionAndWait {
+      VfsUtil.createDirectoryIfMissing(baseDir, lesson.parent.getPathToChildren())
+    }
+
     val lessonDir = createUniqueDir(parentDir, lesson)
     val taskList = lesson.taskList
     for (task in taskList) {

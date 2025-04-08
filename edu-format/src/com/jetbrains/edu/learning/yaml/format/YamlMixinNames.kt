@@ -23,6 +23,7 @@ object YamlMixinNames {
   const val ENVIRONMENT = JsonMixinNames.ENVIRONMENT
   const val ENVIRONMENT_SETTINGS = JsonMixinNames.ENVIRONMENT_SETTINGS
   const val ADDITIONAL_FILES = JsonMixinNames.ADDITIONAL_FILES
+  const val CUSTOM_CONTENT_PATH = JsonMixinNames.CUSTOM_CONTENT_PATH
 
   const val YAML_VERSION = "yaml_version"
 

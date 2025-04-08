@@ -83,7 +83,7 @@ fun VirtualFile.getSection(project: Project): Section? {
 fun VirtualFile.getSection(holder: CourseInfoHolder<out Course?>): Section? {
   val course = holder.course ?: return null
   if (!isDirectory) return null
-  return if (holder.courseDir == parent) course.getSection(name) else null
+  return if (holder.courseDir.findFileByRelativePath(course.customContentPath) == parent) course.getSection(name) else null
 }
 
 fun VirtualFile.isSectionDirectory(project: Project): Boolean {
@@ -103,7 +103,7 @@ fun VirtualFile.getLesson(holder: CourseInfoHolder<out Course?>): Lesson? {
   if (section != null) {
     return section.getLesson(name)
   }
-  return if (holder.courseDir == parent) course.getLesson(name) else null
+  return if (holder.courseDir.findFileByRelativePath(course.customContentPath) == parent) course.getLesson(name) else null
 }
 
 fun VirtualFile.isLessonDirectory(project: Project): Boolean {

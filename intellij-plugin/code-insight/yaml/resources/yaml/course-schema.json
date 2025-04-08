@@ -108,6 +108,10 @@
       "items": {
         "$ref": "#/definitions/file"
       }
+    },
+    "custom_content_path": {
+      "description": "Path to the content inside the course",
+      "type": "string"
     }
   },
   "required": [

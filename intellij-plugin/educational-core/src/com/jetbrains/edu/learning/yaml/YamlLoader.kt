@@ -6,26 +6,21 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.messages.Topic
-import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.customContentPath
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getPathToChildren
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
-import com.jetbrains.edu.learning.yaml.errorHandling.RemoteYamlLoadingException
-import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
-import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
-import com.jetbrains.edu.learning.yaml.errorHandling.noDirForItemMessage
-import com.jetbrains.edu.learning.yaml.errorHandling.unknownConfigMessage
+import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
 import com.jetbrains.edu.learning.yaml.format.getChangeApplierForItem
 import org.jetbrains.annotations.NonNls
@@ -60,7 +55,8 @@ object YamlLoader {
 
     val existingItem = getStudyItemForConfig(project, configFile)
     val deserializedItem = deserializeItemProcessingErrors(configFile, project, loadFromVFile, mapper) ?: return
-    deserializedItem.ensureChildrenExist(configFile.parent)
+    val customContentPath = existingItem?.course.customContentPath
+    deserializedItem.ensureChildrenExist(configFile.parent, customContentPath)
 
     if (existingItem == null) {
       // this code is called if item wasn't loaded because of broken config
@@ -111,8 +107,10 @@ object YamlLoader {
   }
 
   fun StudyItem.getConfigFileForChild(project: Project, childName: String): VirtualFile? {
-    val dir = getDir(project.courseDir) ?: error(noDirForItemMessage(name))
-    val itemDir = dir.findChild(childName)
+    val courseDir = project.courseDir
+    val dir = getDir(courseDir) ?: error(noDirForItemMessage(name))
+    val itemDir = dir.findFileByRelativePath(getPathToChildren())?.findChild(childName)
+
     val configFile = childrenConfigFileNames.map { itemDir?.findChild(it) }.firstOrNull { it != null }
     if (configFile != null) {
       return configFile
@@ -178,9 +176,10 @@ object YamlLoader {
 
   private fun StudyItem.getParentItem(project: Project, parentDir: VirtualFile): ItemContainer {
     val course = StudyTaskManager.getInstance(project).course
+    val customContentPath = course.customContentPath
     val itemContainer = when (this) {
-      is Section -> if (project.courseDir == parentDir) course else null
-      is Lesson -> if (project.courseDir == parentDir) {
+      is Section -> if (project.courseDir.findFileByRelativePath(customContentPath) == parentDir) course else null
+      is Lesson -> if (project.courseDir.findFileByRelativePath(customContentPath) == parentDir) {
         course
       }
       else {
@@ -217,14 +216,17 @@ object YamlLoader {
 
 }
 
-private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile) {
+private fun StudyItem.ensureChildrenExist(itemDir: VirtualFile, customContentPath: String) {
   when (this) {
     is ItemContainer -> {
       items.forEach {
         val itemTypeName = if (it is Task) TASK else EduNames.ITEM
-        itemDir.findChild(it.name) ?: loadingError(noDirForItemMessage(it.name, itemTypeName))
+        itemDir.findFileByRelativePath(this.getPathToChildren(customContentPath))?.findChild(it.name) ?: loadingError(
+          noDirForItemMessage(it.name, itemTypeName)
+        )
       }
     }
+
     is Task -> {
       taskFiles.forEach { (name, _) ->
         itemDir.findFileByRelativePath(name) ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.format.no.file", name))

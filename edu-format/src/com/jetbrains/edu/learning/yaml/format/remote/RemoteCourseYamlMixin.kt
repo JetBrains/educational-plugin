@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.CourseBuilder
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_CONTENT_PATH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
@@ -50,6 +51,7 @@ class RemoteCourseBuilder(
   @JsonProperty(SUBMIT_MANUALLY) courseraSubmitManually: Boolean?,
   @JsonProperty(SOLUTIONS_HIDDEN) areSolutionsHidden: Boolean?,
   @JsonProperty(TAGS) yamlContentTags: List<String> = emptyList(),
+  @JsonProperty(CUSTOM_CONTENT_PATH) customContentPath: String = "",
 ) : CourseBuilder(
   courseType,
   title,
@@ -65,7 +67,8 @@ class RemoteCourseBuilder(
   content,
   courseraSubmitManually,
   areSolutionsHidden,
-  yamlContentTags
+  yamlContentTags,
+  pathToContent = customContentPath,
 ) {
 
   override fun makeCourse(): Course {

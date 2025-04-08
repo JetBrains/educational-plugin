@@ -23,6 +23,7 @@ object JsonMixinNames {
   const val DESCRIPTION_TEXT = "description_text"
   const val DESCRIPTION_FORMAT = "description_format"
   const val ADDITIONAL_FILES = "additional_files"
+  const val CUSTOM_CONTENT_PATH = "custom_content_path"
   const val SOLUTIONS_HIDDEN = "solutions_hidden"
   const val VERSION = "version"
   const val PLUGINS = "plugins"

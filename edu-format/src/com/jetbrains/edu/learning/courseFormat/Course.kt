@@ -73,6 +73,11 @@ abstract class Course : LessonContainer() {
     }
 
   /**
+   * Specifies the path to sections/lessons relative to the course
+   */
+  var customContentPath: String = ""
+
+  /**
    * Programming language ID from [com.intellij.lang.Language.getID]
    * also see [com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getLanguageById]
    */

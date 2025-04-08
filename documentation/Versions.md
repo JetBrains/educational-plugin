@@ -1049,6 +1049,14 @@
      ```
     And the file should be located in the archive, in the `[task folder]/src/Main.kt`.
 
+
+20. The "custom_content_path" field was introduced allowing specifying the path to the sections/lessons. Thus, sections or lessons don't have to be direct
+    children of the course directory anymore but can rather be placed in any of its subdirectories. Is only needed for Unity support, can be omitted.
+    Does not affect the way items are stored in the archive, has an effect only when we unpack the archive to open the course.
+    ```json
+       "custom_content_path": "some/path/to"
+     ```
+
 ### Yaml format version
 
 The YAML version is written in the `course-info.yaml` in the `yaml_version` field. For example:
@@ -1068,13 +1076,13 @@ To pass some data to migrator, unavailable in the `edu-format` module, use
 
 0. In the old versions of the plugin there was no `yaml_version` field. Such YAMLs are considered to have version 0. 
 1. The `yaml_version` field MUST be present:
-   ```
+   ```yaml
    yaml_version: 1
    ```
-2. The property `additiona_files` with a list of files appears.
+2. The property `additional_files` with a list of files appears.
    Each file has the field `name` and the optional field `is_binary` with the default value `false`.
 
-   ```
+   ```yaml
    additional_files:
      - name: file1.txt
      - name: folder/file2.txt
@@ -1083,6 +1091,13 @@ To pass some data to migrator, unavailable in the `edu-format` module, use
        is_binary: true
    yaml_version: 2
    ``` 
+3. The "custom_content_path" field was introduced allowing specifying the path to the sections/lessons. Thus, sections or lessons don't have to be direct
+   children of the course directory anymore but can rather be placed in any of its subdirectories. Is only needed for Unity support.
+    ```yaml
+    "custom_content_path": "some/path/to"
+    "yaml_version": 3
+     ```
+
 
 ### Courseignore format version
 

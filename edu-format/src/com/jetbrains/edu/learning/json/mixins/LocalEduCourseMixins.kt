@@ -58,6 +58,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MESSAGE_INCORRECT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MIN_VERSION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.OFFSET
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_CONTENT_PATH
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDER_TEXT
@@ -87,7 +88,7 @@ private val LOG = logger<LocalEduCourseMixin>()
 
 @JsonPropertyOrder(
   ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE_ID, PROGRAMMING_LANGUAGE_VERSION, LANGUAGE,
-  COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, VERSION
+  COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, CUSTOM_CONTENT_PATH, VERSION
 )
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -140,6 +141,10 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(ADDITIONAL_FILES)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private lateinit var additionalFiles: List<EduFile>
+
+  @JsonProperty(CUSTOM_CONTENT_PATH)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  lateinit var customContentPath: String
 
   @JsonProperty(PLUGINS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
