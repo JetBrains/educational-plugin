@@ -37,8 +37,6 @@ class LinkedInUserInfo : UserInfo {
   @JsonProperty("name")
   var name: String = ""
 
-  override var isGuest: Boolean = false
-
   override fun getFullName(): String {
     return name
   }

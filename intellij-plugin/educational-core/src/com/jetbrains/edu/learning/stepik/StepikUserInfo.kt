@@ -19,7 +19,7 @@ class StepikUserInfo private constructor() : UserInfo {
   var lastName = ""
 
   @JsonProperty(IS_GUEST)
-  override var isGuest = false
+  var isGuest = false
 
   @TestOnly
   constructor(fullName: String) : this() {

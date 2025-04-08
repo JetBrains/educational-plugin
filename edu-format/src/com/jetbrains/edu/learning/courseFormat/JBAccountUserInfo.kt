@@ -17,8 +17,6 @@ class JBAccountUserInfo() : UserInfo {
   @JsonProperty(JBA_LOGIN)
   var jbaLogin: String = ""
 
-  override var isGuest: Boolean = false
-
   override fun getFullName(): String {
     return name
   }

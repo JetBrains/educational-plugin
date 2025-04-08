@@ -103,7 +103,7 @@ class HyperskillUserInfo : UserInfo {
   var fullname: String = ""
 
   @JsonProperty(IS_GUEST)
-  override var isGuest: Boolean = false
+  var isGuest: Boolean = false
 
   @JsonProperty(PROJECT)
   var hyperskillProjectId: Int? = null
