@@ -77,12 +77,12 @@ class AIBreakPointService(private val project: Project, private val scope: Corou
     breakpointManager.addBreakpointListener(type, listener)
   }
 
-  private fun Language.getAIBreakpointType() =
-    XDebuggerUtil
-      .getInstance()
-      .findBreakpointType(BreakpointTypeManager.getInstance(this).getBreakPointType()::class.java)
-
   companion object {
     private val HIGHLIGHTING_COLOR: Color = JBColor(Color(109, 0, 247, 77), Color(135, 49, 247, 77))
+
+    fun Language.getAIBreakpointType(): XLineBreakpointType<XBreakpointProperties<*>> =
+      XDebuggerUtil
+        .getInstance()
+        .findBreakpointType(BreakpointTypeManager.getInstance(this).getBreakPointType()::class.java)
   }
 }
