@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.agreement
 
+import com.intellij.testFramework.executeSomeCoroutineTasksAndDispatchAllInvocationEvents
 import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Ok
@@ -31,16 +32,14 @@ class UserAgreementManagerTest : EduTestCase() {
     // when user logged in
     mockJBAccount(testRootDisposable)
     // and
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.ACCEPTED,
+      UserAgreementState.DECLINED
     )
 
     val mockedService = MarketplaceSubmissionsConnector.getInstance()
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.ACCEPTED, UserAgreementState.DECLINED) }
-    coVerify(exactly = 0) { MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(any()) }
+    coVerify(exactly = 0) { mockedService.changeSharingPreference(any()) }
     coVerify(exactly = 1) { mockedService.submitAgreementAcceptanceAnonymously(true) }
   }
 
@@ -49,16 +48,14 @@ class UserAgreementManagerTest : EduTestCase() {
     // when user logged in
     mockJBAccount(testRootDisposable)
     // and
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED,
-        UserAgreementState.ACCEPTED
-      )
+    setAgreementState(
+      UserAgreementState.ACCEPTED,
+      UserAgreementState.ACCEPTED
     )
 
     val mockedService = MarketplaceSubmissionsConnector.getInstance()
     coVerify(exactly = 1) { mockedService.updateUserAgreements(UserAgreementState.ACCEPTED, UserAgreementState.ACCEPTED) }
-    coVerify(exactly = 0) { MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(any()) }
+    coVerify(exactly = 0) { mockedService.changeSharingPreference(any()) }
     coVerify(exactly = 1) { mockedService.submitAgreementAcceptanceAnonymously(true) }
   }
 
@@ -67,11 +64,9 @@ class UserAgreementManagerTest : EduTestCase() {
     // when user logged in
     mockJBAccount(testRootDisposable)
     // and
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.DECLINED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.DECLINED,
+      UserAgreementState.DECLINED
     )
 
     val mockedService = MarketplaceSubmissionsConnector.getInstance()
@@ -83,11 +78,9 @@ class UserAgreementManagerTest : EduTestCase() {
   @Test
   fun `test plugin agreement accepted (ai declined) when user is not logged in`() {
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.ACCEPTED,
+      UserAgreementState.DECLINED
     )
 
     // then
@@ -100,11 +93,9 @@ class UserAgreementManagerTest : EduTestCase() {
   @Test
   fun `test plugin & ai agreements are accepted when user is not logged in`() {
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED,
-        UserAgreementState.ACCEPTED
-      )
+    setAgreementState(
+      UserAgreementState.ACCEPTED,
+      UserAgreementState.ACCEPTED
     )
 
     // then
@@ -117,11 +108,9 @@ class UserAgreementManagerTest : EduTestCase() {
   @Test
   fun `test plugin & ai agreements are declined when user is not logged in`() {
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.DECLINED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.DECLINED,
+      UserAgreementState.DECLINED
     )
 
     // then
@@ -135,11 +124,9 @@ class UserAgreementManagerTest : EduTestCase() {
   fun `test plugin agreement declined and then accepted for logged in user`() {
     // when
     mockJBAccount(testRootDisposable)
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.DECLINED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.DECLINED,
+      UserAgreementState.DECLINED
     )
 
     // then
@@ -165,11 +152,9 @@ class UserAgreementManagerTest : EduTestCase() {
   @Test
   fun `test plugin agreement declined and then accepted for unlogged in user`() {
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.DECLINED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.DECLINED,
+      UserAgreementState.DECLINED
     )
 
     // then
@@ -179,16 +164,28 @@ class UserAgreementManagerTest : EduTestCase() {
     coVerify(exactly = 0) { mockedService.submitAgreementAcceptanceAnonymously(any()) }
 
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED,
-        UserAgreementState.DECLINED
-      )
+    setAgreementState(
+      UserAgreementState.ACCEPTED,
+      UserAgreementState.DECLINED
     )
 
     // then
     coVerify(exactly = 0) { mockedService.updateUserAgreements(any(), any()) }
     coVerify(exactly = 0) { mockedService.changeSharingPreference(any()) }
     coVerify(exactly = 1) { mockedService.submitAgreementAcceptanceAnonymously(isLoggedIn = false) }
+  }
+
+  private fun setAgreementState(pluginAgreementState: UserAgreementState, aiAgreementState: UserAgreementState) {
+    UserAgreementSettings.getInstance().setAgreementState(
+      UserAgreementSettings.AgreementStateResponse(
+        pluginAgreementState,
+        aiAgreementState
+      )
+    )
+    /**
+     * [UserAgreementManager] listens for the events from [UserAgreementSettings] and executes some async logic in its coroutine scope,
+     * so let's wait for the async code to complete before verifying
+     */
+    executeSomeCoroutineTasksAndDispatchAllInvocationEvents(project)
   }
 }
