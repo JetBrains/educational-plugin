@@ -42,6 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.VisibleForTesting
 import java.awt.Font
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -124,8 +125,9 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
     return editor.markupModel.addLineHighlighter(startLine, 0, attributes)
   }
 
+  @VisibleForTesting
   @RequiresEdt
-  private fun showInCodeAction(project: Project, launchId: Int, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
+  fun showInCodeAction(project: Project, launchId: Int, taskVirtualFile: VirtualFile, taskFileText: String, codeHint: String) {
     // Open the existing Diff if possible
     val getHintDiff = FileEditorManager.getInstance(project).openFiles.firstOrNull {
       val diffRequestChain = it.asSafely<ChainDiffVirtualFile>()?.chain ?: return@firstOrNull false
@@ -156,6 +158,6 @@ class HintsLoader(private val project: Project, private val scope: CoroutineScop
 
     fun isRunning(project: Project): Boolean = getInstance(project).mutex.isLocked
 
-    private val LAUNCH_ID: Key<Int> = Key.create("launchId")
+    val LAUNCH_ID: Key<Int> = Key.create("launchId")
   }
 }
