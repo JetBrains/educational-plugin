@@ -1,0 +1,28 @@
+<idea-plugin package="com.jetbrains.edu.uiOnboarding">
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.ide.eduUiOnboarding.step"
+                    beanClass="com.intellij.util.KeyedLazyInstanceEP"
+                    dynamic="true">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="com.intellij.ide.eduUiOnboarding"
+                    beanClass="com.jetbrains.edu.uiOnboarding.EduUiOnboardingBean"
+                    dynamic="true">
+    </extensionPoint>
+  </extensionPoints>
+
+  <actions>
+    <action id="StartNewUiOnboardingAction"
+            class="com.jetbrains.edu.uiOnboarding.StartEduUiOnboardingAction">
+    </action>
+  </actions>
+  <resource-bundle>messages.EduUiOnboardingTourBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij.ide.eduUiOnboarding">
+    <step key="welcome" implementationClass="com.jetbrains.edu.uiOnboarding.steps.WelcomeStep"/>
+    <step key="courseView" implementationClass="com.jetbrains.edu.uiOnboarding.steps.CourseViewStep"/>
+    <step key="taskDescription" implementationClass="com.jetbrains.edu.uiOnboarding.steps.TaskDescriptionStep"/>
+    <step key="codeEditor" implementationClass="com.jetbrains.edu.uiOnboarding.steps.CodeEditorStep"/>
+    <step key="checkSolution" implementationClass="com.jetbrains.edu.uiOnboarding.steps.CheckSolutionStep"/>
+  </extensions>
+</idea-plugin>

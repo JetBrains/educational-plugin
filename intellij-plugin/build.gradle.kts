@@ -342,6 +342,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-kotlin")))
     pluginModule(implementation(project("features:ai-hints-python")))
     pluginModule(implementation(project("features:ai-test-generation")))
+    pluginModule(implementation(project("features:ide-onboarding")))
     pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
@@ -1087,6 +1088,20 @@ project("features:ai-test-generation") {
 
     implementation(project(":intellij-plugin:educational-core"))
     implementation(project(":intellij-plugin:AI"))
+
+    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  }
+}
+
+project("features:ide-onboarding") {
+  dependencies {
+    intellijPlatform {
+      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
+      intellijIde(project, ideVersion)
+    }
+
+    implementation(project(":intellij-plugin:educational-core"))
+    implementationWithoutKotlin(rootProject.libs.clikt.core)
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
