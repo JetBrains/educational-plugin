@@ -205,7 +205,7 @@ class TaskProcessorImpl(val task: Task) : TaskProcessor {
    */
   override fun reduceChangesInCodeHint(code: String, modifiedCode: String, functionName: String): String {
     val functionFromCode = getFunctionPsiWithName(code, functionName, project, language)
-    val functionFromCodeHint = getFunctionPsiWithName(modifiedCode, functionName, project, language)?.copy()
+    val functionFromCodeHint = getFunctionPsiWithName(modifiedCode, functionName, project, language)
                                ?: error("Function with the name $functionName in the code hint is not found")
     val reducedCodeHint = myEduAIHintsProcessor?.getFunctionDiffReducer()?.reduceDiffFunctions(functionFromCode, functionFromCodeHint)
     return runReadAction { reducedCodeHint?.text ?: modifiedCode }
