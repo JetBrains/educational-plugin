@@ -45,7 +45,7 @@ class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCour
     }
 
     assertTaskFolder {
-      file("Task.kt", "fun task() {}")
+      file("Task.kt", "fun task() {solution2}")
       file("NonEdit.kt", "val p = 42")
       file("Tests2.kt", "fun test2() {}")
     }

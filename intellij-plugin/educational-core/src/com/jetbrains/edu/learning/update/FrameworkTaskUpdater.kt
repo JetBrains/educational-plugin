@@ -42,7 +42,9 @@ abstract class FrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
     val remoteLesson = remoteItems.getOrNull(0)?.lesson as? FrameworkLesson ?: return result
 
     val taskHistory = FrameworkLessonTaskHistory(project, localLesson, remoteLesson)
-    val isTemplateBased = localLesson.isTemplateBased && localLesson.course !is HyperskillCourse
+    val course = localLesson.course
+    val isNonTemplateBased = !localLesson.isTemplateBased || course is HyperskillCourse && !course.isTemplateBased
+    val isTemplateBased = !isNonTemplateBased
     for ((localTask, remoteTask) in localItems.zip(remoteItems)) {
       // current task for non-template based FL should always be updated because the "task" folder could change because of propagation
       if (localTask.shouldBeUpdated(remoteTask) || localTask == lesson.currentTask()) {
