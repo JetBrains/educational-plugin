@@ -53,6 +53,15 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     return@runWriteCommandAction current
   }
 
+  private fun <R> runWriteCommandAction(project: Project, action: () -> R): R {
+    var result: R? = null
+    WriteCommandAction.runWriteCommandAction(project, null, null, {
+      result = action()
+    })
+    @Suppress("UNCHECKED_CAST")
+    return result as R
+  }
+
   private fun PyStatementList.addReduced(statement: PyStatement) {
     when (statement) {
       is PyWhileStatement -> {
@@ -182,7 +191,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
   }
 
   private fun PyParameterList.replaceIfNeeded(codeHintParameterList: PyParameterList): Boolean {
-    if (text != codeHintParameterList.text) {
+    if (!compareNormalized(codeHintParameterList)) {
       replace(codeHintParameterList)
       return true
     }
@@ -195,19 +204,16 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
       currentAnnotation.delete()
       return true
     }
-    if (currentAnnotation.text != codeHintAnnotation.text) {
+    if (!compareNormalized(codeHintAnnotation)) {
       currentAnnotation.replace(codeHintAnnotation)
       return true
     }
     return false
   }
 
-  private fun <R> runWriteCommandAction(project: Project, action: () -> R): R {
-    var result: R? = null
-    WriteCommandAction.runWriteCommandAction(project, null, null, {
-      result = action()
-    })
-    @Suppress("UNCHECKED_CAST")
-    return result as R
+  private fun PsiElement.compareNormalized(psiElement: PsiElement): Boolean {
+    val currentTextNormalized = text.replace(" ", "")
+    val anotherTextNormalized = psiElement.text.replace(" ", "")
+    return currentTextNormalized == anotherTextNormalized
   }
 }

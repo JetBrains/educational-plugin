@@ -168,6 +168,23 @@ class PyFunctionDiffReducerTest(
         """.trimIndent()
       ),
 
+      // Empty spaces in the parameter list
+      arrayOf(
+        "parameter_list_spaces",
+        """
+          def parameter_list_spaces(a , b):
+              return a + b
+        """.trimIndent(),
+        """
+          def parameter_list_spaces(    a     , b     ):
+              return a + b + 42
+        """.trimIndent(),
+        """
+          def parameter_list_spaces(a , b):
+              return a + b + 42
+        """.trimIndent()
+      ),
+
       // Complete parameter list
       arrayOf(
         "param_change",
@@ -233,6 +250,24 @@ class PyFunctionDiffReducerTest(
         """
           def return_type_change(a: int, b: int) -> float:
               return a + b
+        """.trimIndent()
+      ),
+
+      // Empty spaces in the return type
+      arrayOf(
+        "foo",
+        """
+          def foo() -> int   :
+              # TODO
+        """.trimIndent(),
+        """
+          def foo()     ->     int:
+              csv = pd.read_csv("file.csv")
+              return csv['col_name']
+        """.trimIndent(),
+        """
+          def foo() -> int   :
+              csv = pd.read_csv("file.csv")
         """.trimIndent()
       ),
 
