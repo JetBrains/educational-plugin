@@ -48,7 +48,7 @@ data class FrameworkTaskUpdateInfo(
       val taskDir = localItem.getDir(project.courseDir) ?: return
 
       for ((fileName, fileHistory) in taskHistory.taskFileHistories) {
-        val fileContents = fileHistory.evaluateContents(localLesson.currentTaskIndex, isTemplateBased)
+        val fileContents = fileHistory.evaluateContents(localLesson.currentTaskIndex)
         if (fileContents == null) {
           removeFile(taskDir, fileName)
         }

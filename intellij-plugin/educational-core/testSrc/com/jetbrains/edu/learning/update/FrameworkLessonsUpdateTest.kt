@@ -7,11 +7,13 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
 import org.junit.Before
@@ -62,7 +64,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
 
     next()
     assertTaskFolder {
-      file("Task.kt", "/*comment*/fun task() {}") // this propagatable file is already changed by user, so it is not updated
+      file("Task.kt", "/*comment*/fun task() {}") // this propagatable file is already changed by a user, so it is not updated
       file("NonEdit.kt", "val p = 141")
       file("Tests2.kt", "fun test2() {}")
     }
@@ -278,12 +280,6 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
 
   @Test
   fun `new tasks in the end of framework lessons update correctly`() {
-    with (localCourse) {
-      task1.status = CheckStatus.Solved
-      task2.status = CheckStatus.Solved
-      task3.status = CheckStatus.Solved
-    }
-
     updateCourse {
       val newTask = EduTask("task4").apply {
         id = 4
@@ -312,6 +308,170 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     }
   }
 
+  @Test
+  fun `modifying non-propagatable file only on the 3 step`() {
+    next()
+    next()
+
+    updateCourse {
+      // This file was not modified by a user in the first and the second step
+      // Its new text must be propagated from the first to the third step
+      task1.mainFile.textContents = "fun task() {text_for_learner_updated}"
+    }
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {text_for_learner_updated}")
+      file("NonEdit.kt", "val p = 43")
+      file("Tests3.kt", "fun test3() {}")
+    }
+  }
+
+  @Test
+  fun `file is removed, but has changes on the 1st step`() {
+    with (localCourse) {
+      task1.addTaskFile(TaskFile("Task2.kt", "boo 1"))
+      task2.addTaskFile(TaskFile("Task2.kt", "boo 2"))
+      task3.addTaskFile(TaskFile("Task2.kt", "boo 3"))
+    }
+    createChildFile(project, project.courseDir.findFileByRelativePath("lesson1/task")!!, "Task2.kt", InMemoryTextualContents("boo 1"))
+    typeText("Task2.kt")
+
+    next()
+    next()
+    updateCourse {
+      // the Task2.kt file is removed, but it was changed by a user, so we expect it to stay
+      task1.removeTaskFile("Task2.kt")
+      task2.removeTaskFile("Task2.kt")
+      task3.removeTaskFile("Task2.kt")
+    }
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 43")
+      file("Tests3.kt", "fun test3() {}")
+
+      // Task2.kt is propagated
+      file("Task2.kt", "/*comment*/boo 1")
+    }
+
+    previous()
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 42")
+      file("Tests2.kt", "fun test2() {}")
+
+      // Task2.kt is propagated
+      file("Task2.kt", "/*comment*/boo 1")
+    }
+
+    previous()
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 41")
+      file("Tests1.kt", "fun test1() {}")
+
+      // Although Task2.kt is removed from the course, it is here because the user had modifications for it
+      file("Task2.kt", "/*comment*/boo 1")
+    }
+  }
+
+  @Test
+  fun `file is removed but has changes on the 1rst and 3rd step`() {
+    with (localCourse) {
+      task1.addTaskFile(TaskFile("Task2.kt", "boo 1"))
+      task2.addTaskFile(TaskFile("Task2.kt", "boo 2"))
+      task3.addTaskFile(TaskFile("Task2.kt", "boo 3"))
+    }
+    createChildFile(project, project.courseDir.findFileByRelativePath("lesson1/task")!!, "Task2.kt", InMemoryTextualContents("boo 1"))
+
+    typeText("Task2.kt")
+    next()
+    next()
+    typeText("Task2.kt")
+
+    updateCourse {
+      // the Task2.kt file is removed, but it was changed by a user, so we expect it to stay
+      task1.removeTaskFile("Task2.kt")
+      task2.removeTaskFile("Task2.kt")
+      task3.removeTaskFile("Task2.kt")
+    }
+
+    // 3rd step
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 43")
+      file("Tests3.kt", "fun test3() {}")
+
+      // file Task2.kt is here because it has modifications of it by user on the third step
+      file("Task2.kt", "/*comment*//*comment*/boo 1")
+    }
+
+    previous()
+
+    // 2nd step
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 42")
+      file("Tests2.kt", "fun test2() {}")
+
+      // Task2.kt is propagated
+      file("Task2.kt", "/*comment*/boo 1")
+    }
+
+    previous()
+
+    // 1st step
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 41")
+      file("Tests1.kt", "fun test1() {}")
+
+      // file Task2.kt is here because it has modifications of it by the user on the first step
+      file("Task2.kt", "/*comment*/boo 1")
+    }
+  }
+
+  @Test
+  fun `user creates file and then gets the same on update`() {
+    withVirtualFileListener(localCourse) {
+      val taskDir = project.courseDir.findFileByRelativePath("lesson1/task")!!
+      createChildFile(project, taskDir, "NewFile.kt", InMemoryTextualContents("user contents"))
+    }
+
+    next()
+    typeText("NewFile.kt")
+
+    updateCourse {
+      task1.addTaskFile(TaskFile("NewFile.kt", "author contents 1"))
+      task2.addTaskFile(TaskFile("NewFile.kt", "author contents 2"))
+      task3.addTaskFile(TaskFile("NewFile.kt", "author contents 3"))
+    }
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 42")
+      file("Tests2.kt", "fun test2() {}")
+      file("NewFile.kt", "/*comment*/user contents")
+    }
+
+    previous()
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("NonEdit.kt", "val p = 41")
+      file("Tests1.kt", "fun test1() {}")
+      file("NewFile.kt", "user contents")
+    }
+
+    // TODO after revert action we should see the contents from the course update. Now just test what is inside:
+
+    assertContentsEqual(localCourse.task1, "NewFile.kt", InMemoryUndeterminedContents("author contents 1"))
+    assertContentsEqual(localCourse.task2, "NewFile.kt", InMemoryUndeterminedContents("author contents 2"))
+    assertContentsEqual(localCourse.task3, "NewFile.kt", InMemoryUndeterminedContents("author contents 3"))
+  }
+
   protected abstract fun produceCourse(): T
 
   protected abstract fun setupLocalCourse(course: T)
@@ -329,12 +489,12 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
           taskFile("Tests1.kt", "fun test1() {}", visible = false, editable = false)
         }
         eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("Task.kt", "fun task() {}", visible = true, editable = true)
+          taskFile("Task.kt", "fun task() {solution2}", visible = true, editable = true)
           taskFile("NonEdit.kt", "val p = 42", visible = true, editable = false)
           taskFile("Tests2.kt", "fun test2() {}", visible = false, editable = false)
         }
         eduTask("task3", stepId = 3, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("Task.kt", "fun task() {}", visible = true, editable = true)
+          taskFile("Task.kt", "fun task() {solution3}", visible = true, editable = true)
           taskFile("NonEdit.kt", "val p = 43", visible = true, editable = false)
           taskFile("Tests3.kt", "fun test3() {}", visible = false, editable = false)
         }
@@ -383,6 +543,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
   }
 
   protected fun next() = runInEdtAndWait {
+    currentTask.status = CheckStatus.Solved // for Hyperskill to allow moving forward
     openTaskInEditor()
     withVirtualFileListener(localCourse) {
       testAction(NextTaskAction.ACTION_ID)
