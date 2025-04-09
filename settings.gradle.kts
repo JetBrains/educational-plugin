@@ -41,7 +41,8 @@ include(
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
-  "intellij-plugin:features:ai-test-generation"
+  "intellij-plugin:features:ai-test-generation",
+  "intellij-plugin:features:ide-onboarding"
 )
 
 // Temporary workaround to make it work with 2025.1.
