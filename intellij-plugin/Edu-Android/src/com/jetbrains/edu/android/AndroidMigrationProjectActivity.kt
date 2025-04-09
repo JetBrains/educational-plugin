@@ -1,7 +1,6 @@
 package com.jetbrains.edu.android
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -16,8 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 private val TEST_RUNNER_REGEX: Regex = """testInstrumentationRunner ".*?.AndroidEduTestRunner"""".toRegex()
 
@@ -50,10 +47,8 @@ class AndroidMigrationProjectActivity : ProjectActivity {
       if (oldText != newText) {
         writeAction {
           document.setText(newText)
-        }
-        // Done in this way, not to have a conflict between in memory and VFS states,
-        // i.e., we modify the memory state first and propagate the changes to VFS
-        withContext(Dispatchers.EDT) {
+          // Done in this way, not to have a conflict between in memory and VFS states,
+          // i.e., we modify the memory state first and propagate the changes to VFS
           FileDocumentManager.getInstance().saveDocument(document)
         }
       }

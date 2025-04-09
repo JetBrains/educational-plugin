@@ -702,9 +702,9 @@ project("Edu-Android") {
     testImplementation(project(":intellij-plugin:jvm-core", "testOutput"))
   }
 
-  // BACKCOMPAT: enable when 243 studio is available
+  // BACKCOMPAT: enable when 251 studio is available
   tasks.withType<Test> {
-    enabled = environmentName.toInt() < 243
+    enabled = environmentName.toInt() < 251
   }
 }
 
