@@ -34,7 +34,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     val currentStatements = current.statementList.statements
     val codeHintStatements = codeHint.statementList.statements
     for ((currentStatement, codeHintStatement) in currentStatements.zip(codeHintStatements)) {
-      if (currentStatement.text == codeHintStatement.text) continue
+      if (currentStatement.compareNormalized(codeHintStatement)) continue
       when (codeHintStatement) {
         is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
         is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replace(codeHintStatement)

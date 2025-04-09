@@ -426,6 +426,25 @@ class PyFunctionDiffReducerTest(
         """.trimIndent() // When extracting [PyFunction] from the given file, it's returned without [PsiComment]s.
       ),
 
+      // Function with spaces comments
+      arrayOf(
+        "spaces",
+        """
+          def spaces():
+              result    =   "Hello, World!"
+        """.trimIndent(),
+        """
+          def spaces():
+              result = "Hello, World!"
+              return result
+        """.trimIndent(),
+        """
+          def spaces():
+              result    =   "Hello, World!"
+              return result
+        """.trimIndent()
+      ),
+
       // New condition in the `if`
       arrayOf(
         "modify_condition_if",
