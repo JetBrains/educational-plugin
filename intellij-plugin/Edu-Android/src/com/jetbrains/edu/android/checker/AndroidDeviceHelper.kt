@@ -28,7 +28,7 @@ class AndroidDeviceHelper(private val project: Project, private val scope: Corou
       // so let's try to find it using some heuristic
       val createDeviceAction = actions.firstOrNull { it.presentation.value.label == "Create Virtual Device" } ?: actions.firstOrNull()
       if (createDeviceAction != null) {
-        createDeviceAction.create()
+        createDeviceAction.create(null)
       }
       else {
         LOG.warn("Failed to find an action to create a new device. Available actions: ${actions.map { it.presentation.value.label }}")

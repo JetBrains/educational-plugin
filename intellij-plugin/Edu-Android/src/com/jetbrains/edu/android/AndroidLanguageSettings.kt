@@ -3,7 +3,8 @@ package com.jetbrains.edu.android
 import com.android.tools.idea.sdk.IdeSdks
 import com.android.tools.idea.ui.ApplicationUtils
 import com.android.tools.idea.welcome.config.FirstRunWizardMode
-import com.android.tools.idea.welcome.install.getInitialSdkLocation
+import com.android.tools.idea.welcome.install.FirstRunWizardDefaults
+import com.android.tools.idea.welcome.wizard.SdkComponentInstallerProvider
 import com.android.tools.idea.welcome.wizard.deprecated.ConsolidatedProgressStep
 import com.android.tools.idea.welcome.wizard.deprecated.InstallComponentsPath
 import com.android.tools.idea.wizard.WizardConstants
@@ -82,13 +83,13 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
 
       val sdkPath = locationField.text
       val location = if (sdkPath.isEmpty()) {
-        getInitialSdkLocation(FirstRunWizardMode.MISSING_SDK)
+        FirstRunWizardDefaults.getInitialSdkLocation(FirstRunWizardMode.MISSING_SDK)
       }
       else {
         File(sdkPath)
       }
 
-      val path = InstallComponentsPath(FirstRunWizardMode.MISSING_SDK, location, progressStep, false)
+      val path = InstallComponentsPath(FirstRunWizardMode.MISSING_SDK, location, progressStep, SdkComponentInstallerProvider(), false)
 
       progressStep.setInstallComponentsPath(path)
 
