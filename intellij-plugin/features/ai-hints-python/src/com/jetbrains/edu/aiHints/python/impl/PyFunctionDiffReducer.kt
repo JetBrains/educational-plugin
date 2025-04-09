@@ -36,9 +36,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     for ((currentStatement, codeHintStatement) in currentStatements.zip(codeHintStatements)) {
       if (currentStatement.text == codeHintStatement.text) continue
       when (codeHintStatement) {
-        is PyWhileStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
-        is PyForStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
-        is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
+        is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
         is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replace(codeHintStatement)
         else -> currentStatement.replace(codeHintStatement)
       }
@@ -62,6 +60,30 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     return result as R
   }
 
+  private fun <T : PyStatement> PyStatement.replaceIfNeeded(codeHintStatement: T): Boolean {
+    // For example, if current statement is not `for`, replace with `for` part and `pass` statement as a body
+    if (this !is PyWhileStatement && this !is PyForStatement && this !is PyIfStatement) {
+      val codeHintMainPart = codeHintStatement.mainPart
+      codeHintMainPart.statementList.deleteChildRange(codeHintMainPart.statementList.firstChild, codeHintMainPart.statementList.lastChild)
+      codeHintMainPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
+      replace(codeHintMainPart)
+      return true
+    }
+    // Current statement is one of the `PyWhileStatement`, `PyForStatement` or `PyIfStatement`
+    if (replaceIfNeeded(mainPart, codeHintStatement.mainPart)) {
+      return true
+    }
+    return false
+  }
+
+  private val PyStatement.mainPart: PyStatementPart
+    get() = when (this) {
+      is PyIfStatement -> ifPart
+      is PyForStatement -> forPart
+      is PyWhileStatement -> whilePart
+      else -> error("Unexpected statement type: ${this::class.java}")
+    }
+
   private fun PyStatementList.addReduced(statement: PyStatement) {
     when (statement) {
       is PyWhileStatement -> {
@@ -76,8 +98,8 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
         add(codeHintWhileStatement)
       }
 
-      is PyForStatement -> {
-        val codeHintForStatement = statement.forPart
+      is PyForStatement, is PyIfStatement -> {
+        val codeHintForStatement = statement.mainPart
         codeHintForStatement.statementList.deleteChildRange(
           codeHintForStatement.statementList.firstChild,
           codeHintForStatement.statementList.lastChild
@@ -86,63 +108,8 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
         add(codeHintForStatement)
       }
 
-      is PyIfStatement -> {
-        val codeHintIfStatement = statement.ifPart
-        codeHintIfStatement.statementList.deleteChildRange(
-          codeHintIfStatement.statementList.firstChild,
-          codeHintIfStatement.statementList.lastChild
-        )
-        codeHintIfStatement.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-        add(codeHintIfStatement)
-      }
-
       else -> add(statement)
     }
-  }
-
-  private fun PyStatement.replaceIfNeeded(codeHintStatement: PyIfStatement): Boolean { // todo: elifParts, elsePart
-    if (this !is PyIfStatement) { // If current statement is not `if`, replace with `if` part and `pass` statement as a body
-      val codeHintIfPart = codeHintStatement.ifPart
-      codeHintIfPart.statementList.deleteChildRange(codeHintIfPart.statementList.firstChild, codeHintIfPart.statementList.lastChild)
-      codeHintIfPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-      replace(codeHintIfPart)
-      return true
-    }
-    if (replaceIfNeeded(ifPart, codeHintStatement.ifPart)) {
-      return true
-    }
-    return false
-  }
-
-  private fun PyStatement.replaceIfNeeded(codeHintStatement: PyForStatement): Boolean { // todo: elsePart
-    if (this !is PyForStatement) { // If current statement is not `for`, replace with the loop and `pass` statement as a body
-      val codeHintForPart = codeHintStatement.forPart
-      codeHintForPart.statementList.deleteChildRange(codeHintForPart.statementList.firstChild, codeHintForPart.statementList.lastChild)
-      codeHintForPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-      replace(codeHintForPart)
-      return true
-    }
-    if (replaceIfNeeded(forPart, codeHintStatement.forPart)) {
-      return true
-    }
-    return false
-  }
-
-  private fun PyStatement.replaceIfNeeded(codeHintWhileStatement: PyWhileStatement): Boolean { // todo: elsePart
-    if (this !is PyWhileStatement) { // If current statement is not `while`, replace with the loop and `pass` statement as a body
-      val codeHintWhilePart = codeHintWhileStatement.whilePart
-      codeHintWhilePart.statementList.deleteChildRange(
-        codeHintWhilePart.statementList.firstChild,
-        codeHintWhilePart.statementList.lastChild
-      )
-      codeHintWhilePart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-      replace(codeHintWhilePart)
-      return true
-    }
-    if (replaceIfNeeded(whilePart, codeHintWhileStatement.whilePart)) {
-      return true
-    }
-    return false
   }
 
   private fun replaceIfNeeded(
