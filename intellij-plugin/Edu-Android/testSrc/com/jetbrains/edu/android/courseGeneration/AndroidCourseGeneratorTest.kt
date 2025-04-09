@@ -10,6 +10,10 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.common.ThreadLeakTracker
+import com.intellij.util.application
+import com.jetbrains.edu.android.AndroidMigrationProjectActivity.Companion.INSTRUMENTED_TEST_RUNNER_MIGRATION
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -26,6 +30,11 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
 
   override fun setUp() {
     super.setUp()
+    // Workaround to prevent exceptions about leaked threads.
+    // Thread leaking happens because of `AdbLibApplicationService` application service which holds references to thread pool.
+    // Service itself is invoked on project creation by `AdbLibApplicationService.MyStartupActivity` startup activity.
+    // A bit better solution is to disable `AdbLibApplicationService.MyStartupActivity` but it seems it's not easy,
+    ThreadLeakTracker.longRunningThreadCreated(application, "AndroidAdbSessionHost", "Thread")
 
     // Disables some extensions provided by AS.
     // They try to set up JAVA and Android JDK, or run Gradle import in tests where we don't need it.
@@ -122,6 +131,8 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     val course = oldAndroidCourse(CourseMode.EDUCATOR)
     createCourseStructure(course)
 
+    waifForAndroidMigrationActivity()
+
     fileTree {
       dir("lesson1") {
         dir("task1") {
@@ -165,6 +176,8 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
   fun `test migrate to new test runner in student mode`() {
     val course = oldAndroidCourse(CourseMode.STUDENT)
     createCourseStructure(course)
+
+    waifForAndroidMigrationActivity()
 
     FileDocumentManager.getInstance().saveAllDocuments()
 
@@ -234,6 +247,15 @@ class AndroidCourseGeneratorTest : JvmCourseGenerationTestBase() {
     component.setValue(PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP, System.currentTimeMillis().toString())
     Disposer.register(testRootDisposable) {
       PropertiesComponent.getInstance().setValue(PROJECT_STRUCTURE_NOTIFICATION_LAST_HIDDEN_TIMESTAMP, oldValue)
+    }
+  }
+
+  /**
+   * Waits when `AndroidMigrationProjectActivity` is finished. Otherwise, the corresponding tests may be flaky
+   */
+  private fun waifForAndroidMigrationActivity() {
+    PlatformTestUtil.waitWhileBusy {
+      !PropertiesComponent.getInstance(project).getBoolean(INSTRUMENTED_TEST_RUNNER_MIGRATION)
     }
   }
 
