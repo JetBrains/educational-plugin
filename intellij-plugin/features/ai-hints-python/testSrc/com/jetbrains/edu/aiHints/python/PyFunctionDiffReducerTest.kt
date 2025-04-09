@@ -41,6 +41,8 @@ class PyFunctionDiffReducerTest(
     assertEquals(expectedResult, resultPsiElement?.text)
   }
 
+  // TODO: Tests for the case when there is a new function only
+
   private fun getFunctionPsiWithName(codePsiFile: PsiFile, functionName: String): PsiElement? {
     return EduAIHintsProcessor.forCourse(getCourse())?.getFunctionSignatureManager()?.getFunctionBySignature(codePsiFile, functionName)
   }
