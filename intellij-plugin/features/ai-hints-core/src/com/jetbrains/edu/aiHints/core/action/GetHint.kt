@@ -1,7 +1,6 @@
 package com.jetbrains.edu.aiHints.core.action
 
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Key
@@ -25,8 +24,11 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings.Companion.isJBALoggedIn
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.isDefault
+import org.jetbrains.annotations.Nls
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.event.HyperlinkEvent
@@ -65,8 +67,18 @@ class GetHint : ActionWithButtonCustomComponent() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
+    if (!isJBALoggedIn()) {
+      val popup = createPopup(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup.login")) {
+        MarketplaceConnector.getInstance().doAuthorize()
+      }
+      popup.show(e.dataContext)
+      return
+    }
     if (!UserAgreementSettings.getInstance().aiServiceAgreement) {
-      e.dataContext.showAiAgreementPopup(project)
+      val popup = createPopup(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup.agreement")) {
+        UserAgreementManager.getInstance().showUserAgreement(project)
+      }
+      popup.show(e.dataContext)
       return
     }
     if (HintsLoader.isRunning(project)) {
@@ -80,30 +92,30 @@ class GetHint : ActionWithButtonCustomComponent() {
     HintsLoader.getInstance(project).getHint(task)
   }
 
-  private fun DataContext.showAiAgreementPopup(project: Project) {
-    val popup = JBPopupFactory.getInstance()
-      .createHtmlTextBalloonBuilder(
-        EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup"),
-        EduAiHintsIcons.Hint,
-        UIUtil.getToolTipActionBackground(),
-        object : HyperlinkAdapter() {
-          override fun hyperlinkActivated(hyperlinkEvent: HyperlinkEvent) {
-            UserAgreementManager.getInstance().showUserAgreement(project)
-          }
+  private fun createPopup(@Nls text: String, action: Runnable): Balloon = JBPopupFactory.getInstance()
+    .createHtmlTextBalloonBuilder(
+      text,
+      EduAiHintsIcons.Hint,
+      UIUtil.getToolTipActionBackground(),
+      object : HyperlinkAdapter() {
+        override fun hyperlinkActivated(hyperlinkEvent: HyperlinkEvent) {
+          action.run()
         }
-      )
-      .createBalloon()
+      }
+    )
+    .createBalloon()
 
-    val component = getData(PlatformDataKeys.CONTEXT_COMPONENT).asSafely<JComponent>()
+  private fun Balloon.show(dataContext: DataContext) {
+    val component = dataContext.getData(PlatformDataKeys.CONTEXT_COMPONENT).asSafely<JComponent>()
     val getHintButton = UIUtil.findComponentsOfType(component, JButton::class.java)
       .firstOrNull { it.getClientProperty(GET_HINT_BUTTON) == true }
     val relativePoint = if (getHintButton != null) {
       JBPopupFactory.getInstance().guessBestPopupLocation(getHintButton)
     }
     else {
-      JBPopupFactory.getInstance().guessBestPopupLocation(this)
+      JBPopupFactory.getInstance().guessBestPopupLocation(dataContext)
     }
-    popup.show(relativePoint, Balloon.Position.above)
+    show(relativePoint, Balloon.Position.above)
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT
