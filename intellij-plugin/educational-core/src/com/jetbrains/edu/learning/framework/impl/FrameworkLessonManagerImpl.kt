@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.framework.propagateFilesOnNavigation
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.ui.getUIName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -194,10 +194,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // we shouldn't try to propagate current changes to next task
     val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && previousCurrentState == currentState)
 
-    val course = lesson.course
-    val isNonTemplateBased = !lesson.isTemplateBased || course is HyperskillCourse && !course.isTemplateBased
-
-    val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && isNonTemplateBased) {
+    val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && lesson.propagateFilesOnNavigation) {
       calculatePropagationChanges(targetTask, currentTask, currentState, targetState, showDialogIfConflict)
     }
     else {
