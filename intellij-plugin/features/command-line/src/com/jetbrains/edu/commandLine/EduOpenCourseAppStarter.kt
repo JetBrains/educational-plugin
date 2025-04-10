@@ -114,7 +114,6 @@ class EduOpenCourseAppStarter : IdeStarter() {
   }
 
   private suspend fun showOpenCourseDialog(source: CourseSource, courseId: String): OpenCourseDialogResult {
-    source.loadCourse(courseId)
     return source.loadCourse(courseId).map { course ->
       val result = withContext(Dispatchers.EDT) {
         // If it's called from external command, the application frame can be not in focus,
