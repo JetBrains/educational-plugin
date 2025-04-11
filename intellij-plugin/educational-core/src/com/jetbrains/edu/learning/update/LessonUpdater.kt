@@ -26,8 +26,8 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
     val (localFrameworkLessons, localLessons) = localItems.partition { it is FrameworkLesson }
     val (remoteFrameworkLessons, remoteLessons) = remoteItems.partition { it is FrameworkLesson }
 
-    val frameworkLessonUpdates = collectLessons(localFrameworkLessons, remoteFrameworkLessons, isFramework = true)
-    val lessonUpdates = collectLessons(localLessons, remoteLessons, isFramework = false)
+    val frameworkLessonUpdates = collectLessonUpdates(localFrameworkLessons, remoteFrameworkLessons, isFramework = true)
+    val lessonUpdates = collectLessonUpdates(localLessons, remoteLessons, isFramework = false)
 
     return frameworkLessonUpdates + lessonUpdates
   }
@@ -35,7 +35,7 @@ abstract class LessonUpdater(project: Project, private val container: LessonCont
   /**
    * If [isFramework] is true, both lists must contain [FrameworkLesson].
    */
-  private suspend fun collectLessons(localItems: List<Lesson>, remoteItems: List<Lesson>, isFramework: Boolean): List<LessonUpdate> {
+  private suspend fun collectLessonUpdates(localItems: List<Lesson>, remoteItems: List<Lesson>, isFramework: Boolean): List<LessonUpdate> {
     val updates = mutableListOf<LessonUpdate>()
 
     val localLessons = localItems.toMutableSet()
