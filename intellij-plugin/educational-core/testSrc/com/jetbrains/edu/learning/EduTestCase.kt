@@ -11,6 +11,7 @@ import com.intellij.openapi.components.ComponentManagerEx
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerKeys
 import com.intellij.openapi.fileEditor.impl.PsiAwareFileEditorManagerImpl
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
@@ -46,7 +47,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.taskToolWindow.ALLOW_IN_LIGHT_PROJECT_KEY
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
@@ -435,8 +435,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
    * @see com.intellij.testFramework.executeSomeCoroutineTasksAndDispatchAllInvocationEvents
    */
   protected fun setProductionFileEditorManager() {
-    project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, true)
-    Disposer.register(testRootDisposable) { project.putUserData(ALLOW_IN_LIGHT_PROJECT_KEY, null) }
+    project.putUserData(FileEditorManagerKeys.ALLOW_IN_LIGHT_PROJECT, true)
+    Disposer.register(testRootDisposable) { project.putUserData(FileEditorManagerKeys.ALLOW_IN_LIGHT_PROJECT, null) }
 
     project.replaceService(
       FileEditorManager::class.java,

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -28,13 +29,12 @@ object EduAIHintsUtils {
    */
   fun getHintActionPresentation(project: Project): GetHintActionPresentation {
     val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID)
-    // BACKCOMPAT: 2024.2 Replace with [AnActionEvent.createEvent]
-    @Suppress("DEPRECATION", "removal")
-    val anActionEvent = AnActionEvent.createFromInputEvent(
-      null,
-      ACTION_PLACE,
+    val anActionEvent = AnActionEvent.createEvent(
+      SimpleDataContext.builder().add(CommonDataKeys.PROJECT, project).build(),
       action.templatePresentation.clone(),
-      SimpleDataContext.builder().add(CommonDataKeys.PROJECT, project).build()
+      ACTION_PLACE,
+      ActionUiKind.NONE,
+      null
     )
     runReadAction { ActionUtil.performDumbAwareUpdate(action, anActionEvent, false) }
     return when {

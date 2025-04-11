@@ -1,8 +1,6 @@
 package com.jetbrains.edu.yaml.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.openapi.application.ApplicationInfo
-import com.intellij.openapi.util.BuildNumber
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -37,15 +35,7 @@ abstract class YamlInspectionsTestBase(private val inspectionClass: KClass<out L
   }
 
   protected fun testHighlighting(item: StudyItem, configText: String) {
-    // BACKCOMPAT: 2024.2 remove the fixedConfig variable completely and use configText instead.
-    val fixedConfig = if (ApplicationInfo.getInstance().build < BuildNumber.fromString("243")!!) {
-      configText.replace("wrong_property</warning>: prop", "wrong_property: prop</warning>")
-    }
-    else {
-      configText
-    }
-
-    openConfigFileWithText(item, fixedConfig)
+    openConfigFileWithText(item, configText)
     myFixture.checkHighlighting()
   }
 }
