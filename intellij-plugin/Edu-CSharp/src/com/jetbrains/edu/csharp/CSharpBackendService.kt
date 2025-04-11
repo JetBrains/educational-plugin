@@ -101,7 +101,7 @@ class CSharpBackendService(private val project: Project) : Disposable {
   override fun dispose() {}
 
   private inner class TaskMergingQueue : MergingUpdateQueue(PROJECT_MODEL_READY, 500, false, null, null, null, true) {
-    override fun execute(updates: UpdatesList) {
+    override fun execute(updates: List<Update>) {
       val entities = extract<RemoveRequest>(updates).flatMap { it.entities }
       val ids = entities.mapNotNull { it.getId(project) }
       if (ids.isNotEmpty()) {
@@ -145,7 +145,7 @@ class CSharpBackendService(private val project: Project) : Disposable {
       }
     }
 
-    inline fun <reified T> extract(updates: UpdatesList): List<T> =
+    inline fun <reified T> extract(updates: List<Update>): List<T> =
       updates.flatMap { update -> update.equalityObjects.filterIsInstance<T>() }
 
     @Suppress("HardcodedStringLiteral")

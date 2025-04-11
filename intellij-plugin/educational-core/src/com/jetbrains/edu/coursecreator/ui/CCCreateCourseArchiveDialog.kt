@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.DialogWrapper
@@ -41,7 +42,9 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
   private fun createPanel(project: Project): DialogPanel {
     return panel {
       row {
-        courseLocationField(project)
+        val fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+          .withTitle(EduCoreBundle.message("course.creator.create.archive.location.title"))
+        textFieldWithBrowseButton(fileChooserDescriptor, project)
           .label(EduCoreBundle.message("course.creator.create.archive.panel.location"))
           .bindText(::locationPath)
           .align(AlignX.FILL)

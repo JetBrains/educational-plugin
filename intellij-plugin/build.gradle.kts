@@ -12,8 +12,6 @@ import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val environmentName: String by project
-// BACKCOMPAT: 2024.2. Drop it, it's always true
-val isAtLeast243: Boolean = environmentName.toInt() >= 243
 val isAtLeast251: Boolean = environmentName.toInt() >= 251
 
 val pluginVersion: String by project
@@ -651,8 +649,8 @@ project("Edu-Kotlin") {
     tasks.test {
       jvmArgumentProviders += CommandLineArgumentProvider {
         listOf(
-          //TODO when 251 is supported, enable K2 in tests starting from 251 instead of 243
-          if (isAtLeast243) {
+          // TODO when 251 test run is fixed, enable K2 in tests starting from 251 instead of 243
+          if (true) {
             "-Didea.kotlin.plugin.use.k2=true"
           }
           else {
@@ -860,10 +858,7 @@ project("Edu-Go") {
     intellijPlatform {
       intellijIde(project, ideaVersion)
 
-      intellijPlugins(goPlugin, intelliLangPlugin)
-      if (isAtLeast243) {
-        intellijPlugins(jsonPlugin)
-      }
+      intellijPlugins(goPlugin, intelliLangPlugin, jsonPlugin)
       // TODO: check if it's still needed with IJPGP 2.4
       bundledModules("com.intellij.modules.ultimate")
     }
@@ -879,10 +874,7 @@ project("Edu-Php") {
     intellijPlatform {
       intellijIde(project, ideaVersion)
 
-      intellijPlugins(phpPlugin)
-      if (isAtLeast243) {
-        intellijPlugins(jsonPlugin)
-      }
+      intellijPlugins(phpPlugin, jsonPlugin)
       // TODO: check if it's still needed with IJPGP 2.4
       bundledModules("com.intellij.modules.ultimate")
     }

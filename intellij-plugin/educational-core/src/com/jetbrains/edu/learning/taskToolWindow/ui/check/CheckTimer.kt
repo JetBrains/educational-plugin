@@ -51,7 +51,9 @@ class CheckTimer(private val endDateTime: Date, onFinish: () -> Unit = {}) : JPa
         timeLabel.repaint()
       }
     }
-    Disposer.register(this, animator.toDisposable())
+    Disposer.register(this) {
+      animator.dispose()
+    }
 
     animator.resume()
   }
