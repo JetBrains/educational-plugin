@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.agreement
 
-import com.intellij.testFramework.executeSomeCoroutineTasksAndDispatchAllInvocationEvents
+import com.intellij.testFramework.PlatformTestUtil.waitForAllBackgroundActivityToCalmDown
 import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Ok
@@ -186,6 +186,6 @@ class UserAgreementManagerTest : EduTestCase() {
      * [UserAgreementManager] listens for the events from [UserAgreementSettings] and executes some async logic in its coroutine scope,
      * so let's wait for the async code to complete before verifying
      */
-    executeSomeCoroutineTasksAndDispatchAllInvocationEvents(project)
+    waitForAllBackgroundActivityToCalmDown()
   }
 }
