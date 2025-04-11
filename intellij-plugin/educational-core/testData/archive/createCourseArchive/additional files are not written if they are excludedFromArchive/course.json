@@ -38,7 +38,7 @@
       "is_binary" : false
     },
     {
-      "name" : "courseignore-ignored-file",
+      "name" : "courseignore-ignored-file.txt",
       "is_visible" : true,
       "is_binary" : false
     }
