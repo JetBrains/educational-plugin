@@ -12,39 +12,63 @@ import java.util.concurrent.ConcurrentHashMap
 @State(name = "TestManager", storages = [Storage("storage.xml")])
 class TestDependenciesManager : PersistentStateComponent<TestDependenciesManager> {
   private val tests = mutableMapOf<Int, Map<String, List<String>>>()
-  private val testGenerationSignals = ConcurrentHashMap<Int, CompletableDeferred<Unit>>()
-  private val activeWaitingJobs = ConcurrentHashMap<Int, Job>()
+  private val testStates = ConcurrentHashMap<Int, TestState>()
 
-  suspend fun waitForTestGeneration(taskId: Int, functionNames: List<String>) {
-    activeWaitingJobs[taskId]?.cancel()
-    testGenerationSignals[taskId] = CompletableDeferred()
-    coroutineScope {
-      val job = launch {
-        val deferred = testGenerationSignals.getOrPut(taskId) { CompletableDeferred() }
-        while (!isTestGenerated(taskId, functionNames)) {
-          deferred.await()
+  private sealed class TestState {
+    class Pending(val expectedFunctionNames: Set<String>, val signal: CompletableDeferred<Unit>) : TestState()
+    class Generated(val expectedFunctionNames: Set<String>) : TestState()
+  }
+
+  suspend fun waitForTestGeneration(taskId: Int, functionNames: List<String>, timeout: Long = 5000) {
+    val expectedFunctionNames = functionNames.toSet()
+    val pending = TestState.Pending(expectedFunctionNames, CompletableDeferred())
+    val currentTestState = testStates.compute(taskId) { _, state ->
+      when (state) {
+        is TestState.Generated ->
+          state.takeIf { state.expectedFunctionNames == expectedFunctionNames } ?: pending
+        is TestState.Pending -> {
+          if (state.expectedFunctionNames != expectedFunctionNames) {
+            state.signal.completeExceptionally(CancellationException("Function list changed")) // TODO Implement logger for this kind of things
+          }
+          state.takeIf { state.expectedFunctionNames == expectedFunctionNames } ?: pending
         }
+        null -> pending
       }
-      activeWaitingJobs[taskId] = job
-      job.join()
+    }
+
+    if (currentTestState is TestState.Pending) {
+      val result = withTimeoutOrNull(timeout) {
+        currentTestState.signal.await()
+      }
+      result ?: throw CancellationException("Timeout exceeded for test generation $taskId")
     }
   }
 
   fun addTest(taskId: Int, dependencies: Map<String, List<String>>) {
+    val expectedFunctionNames = dependencies.keys.toSet()
+    val newState = TestState.Generated(expectedFunctionNames)
+    val oldState = testStates.put(taskId, newState)
+    if (oldState is TestState.Pending) {
+      oldState.signal.complete(Unit)
+    }
     tests[taskId] = dependencies
-    testGenerationSignals[taskId]?.complete(Unit)
   }
 
-  fun getTest(taskId: Int) = tests[taskId]
+  fun getTest(taskId: Int): Map<String, List<String>>? = tests[taskId]
 
   override fun getState() = this
 
   override fun loadState(state: TestDependenciesManager) {
     tests.putAll(state.tests)
+    for ((key, value) in tests) {
+      testStates[key] = TestState.Generated(value.keys.toSet())
+    }
   }
 
   fun isTestGenerated(taskId: Int, functionNames: List<String>): Boolean {
-    return tests[taskId]?.keys?.toSet()?.equals(functionNames.toSet()) ?: false
+    val state = testStates[taskId]
+    val expectedFunctionNames = functionNames.toSet()
+    return state is TestState.Generated && state.expectedFunctionNames == expectedFunctionNames
   }
 
   companion object {

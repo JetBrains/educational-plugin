@@ -14,14 +14,14 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @Suppress("ComponentNotRegistered")
 class TestEvaluationAction : CheckActionBase() {
-
-  override val spinnerPanelMessage: String = EduDecompositionBundle.message("progress.title.test.evaluation")
-
   override val actionAlreadyRunningMessage: String = EduDecompositionBundle.message("action.test.evaluation.already.running")
 
-  override var checkResultMessage: String = ""
-
   override val templatePresentationMessage: String = EduDecompositionBundle.message("action.Educational.Test.Evaluation.text")
+
+  override val checkFailureMessage: String
+    get() = EduDecompositionBundle.message("action.test.evaluation.failure")
+
+  override val checkingProgressTitle: String = EduDecompositionBundle.message("progress.title.test.evaluation")
 
   override suspend fun performCheck(project: Project, task: Task): Boolean {
     return withBackgroundProgress(project, EduDecompositionBundle.message("progress.title.test.evaluation"), cancellable = true) {
@@ -32,7 +32,7 @@ class TestEvaluationAction : CheckActionBase() {
       if (!testManager.isTestGenerated(task.id, functionNames)) {
         try {
           testManager.waitForTestGeneration(task.id, functionNames)
-        } catch (e: CancellationException) {
+        } catch (e: CancellationException) { // TODO re-initiate the test generation if there is a timeout
           return@withBackgroundProgress false
         }
       }
@@ -41,13 +41,7 @@ class TestEvaluationAction : CheckActionBase() {
 
       // TODO("Call to test evaluator and handle result")
 
-      return@withBackgroundProgress  if (TestDependenciesEvaluator.evaluate(generatedDependencies, dependencies)) {
-        checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.success")
-        true
-      } else {
-        checkResultMessage = EduDecompositionBundle.message("action.test.evaluation.failure")
-        false
-      }
+      return@withBackgroundProgress TestDependenciesEvaluator.evaluate(generatedDependencies, dependencies)
     }
   }
 }
