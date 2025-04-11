@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.propagateFilesOnNavigation
 import com.jetbrains.edu.learning.update.elements.FrameworkTaskUpdateInfo
 import com.jetbrains.edu.learning.update.elements.TaskCreationInfo
 import com.jetbrains.edu.learning.update.elements.TaskDeletionInfo
@@ -41,14 +42,17 @@ abstract class FrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
     val localLesson = localItems.firstOrNull()?.lesson as? FrameworkLesson ?: return result
     val remoteLesson = remoteItems.getOrNull(0)?.lesson as? FrameworkLesson ?: return result
 
-    val taskHistory = FrameworkLessonTaskHistory(project, localLesson, remoteLesson)
-    val course = localLesson.course
-    val isNonTemplateBased = !localLesson.isTemplateBased || course is HyperskillCourse && !course.isTemplateBased
-    val isTemplateBased = !isNonTemplateBased
+    val propagateFilesOnNavigation = localLesson.propagateFilesOnNavigation
+    if (propagateFilesOnNavigation != remoteLesson.propagateFilesOnNavigation) {
+      thisLogger().error("Unable to update framework lesson \"${lesson.name}\": isTemplateBased flag is changed")
+      return emptyList()
+    }
+
+    val taskHistory = FrameworkLessonTaskHistory(project, localLesson, remoteLesson, propagateFilesOnNavigation)
     for ((localTask, remoteTask) in localItems.zip(remoteItems)) {
       // current task for non-template based FL should always be updated because the "task" folder could change because of propagation
       if (localTask.shouldBeUpdated(remoteTask) || localTask == lesson.currentTask()) {
-        result.add(FrameworkTaskUpdateInfo(localTask, remoteTask, taskHistory, isTemplateBased))
+        result.add(FrameworkTaskUpdateInfo(localTask, remoteTask, taskHistory))
       }
     }
 

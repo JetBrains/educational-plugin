@@ -5,21 +5,22 @@ import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 
-class FrameworkLessonTaskHistory(project: Project, localLesson: FrameworkLesson, remoteLesson: FrameworkLesson) {
+class FrameworkLessonTaskHistory(
+  project: Project,
+  localLesson: FrameworkLesson,
+  remoteLesson: FrameworkLesson,
+  propagateFilesOnNavigation: Boolean
+) {
   val taskFileHistories: Map<String, FrameworkLessonTaskFileHistory>
-  val isTemplateBased: Boolean = localLesson.isTemplateBased && localLesson.course !is HyperskillCourse
 
   init {
     // collect a set of all task file names from both local and remote lessons
     val localFileNames = localLesson.taskList.flatMap { it.taskFiles.keys }
     val remoteFileNames = remoteLesson.taskList.flatMap { it.taskFiles.keys }
     val allTaskFiles = localFileNames.toSet() + remoteFileNames.toSet()
-    // update from template-based to non-template-based or vice versa is not supported
-    val isTemplateBased = remoteLesson.isTemplateBased && remoteLesson.course !is HyperskillCourse
 
     taskFileHistories = allTaskFiles.associateWith { fileName ->
       FrameworkLessonTaskFileHistory(
@@ -27,7 +28,7 @@ class FrameworkLessonTaskHistory(project: Project, localLesson: FrameworkLesson,
         localLesson,
         remoteLesson,
         fileName,
-        isTemplateBased
+        propagateFilesOnNavigation
       )
     }
   }
@@ -38,7 +39,7 @@ class FrameworkLessonTaskFileHistory(
   localLesson: FrameworkLesson,
   remoteLesson: FrameworkLesson,
   fileName: String,
-  private val isTemplateBased: Boolean
+  private val propagateFilesOnNavigation: Boolean
 ) {
 
   private val localHistory: List<TaskFileStep> = evaluateHistory(localLesson, fileName) { index, task, unmodifiedText ->
@@ -66,7 +67,7 @@ class FrameworkLessonTaskFileHistory(
       // First, the user sees it and then either modifies or not
       // It could be a file.text for non-propagatable files, or the text propagated from the previous step.
       val unmodifiedText = when {
-        isTemplateBased -> taskFile?.text
+        !propagateFilesOnNavigation -> taskFile?.text
         previousIsPropagatable == true -> previousText
         else -> taskFile?.text
       }
