@@ -32,6 +32,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
       runBlocking {
         MarketplaceCourseUpdaterNew(project, course).update(courseFromServer)
       }
+      doAfterUpdate()
       return
     }
 
@@ -46,10 +47,14 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     setCourseItems(courseFromServer.items)
     setUpdated(courseFromServer)
 
+    saveLearningProgress(courseFromServer)
+
+    doAfterUpdate()
+  }
+
+  private fun doAfterUpdate() {
     //remove editor notification, suggesting to update course
     EditorNotifications.getInstance(project).updateAllNotifications()
-
-    saveLearningProgress(courseFromServer)
     showUpdateNotification()
   }
 

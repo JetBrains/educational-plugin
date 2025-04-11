@@ -161,6 +161,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
         runBlocking {
           HyperskillCourseUpdaterNew(project, course).update(remoteCourse)
         }
+        doAfterUpdate()
         return
       }
 
@@ -176,6 +177,10 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       YamlFormatSynchronizer.saveItemWithRemoteInfo(course)
       ProjectManager.getInstance().reloadProject(project)
     }
+    doAfterUpdate()
+  }
+
+  private fun doAfterUpdate() {
     @Suppress("DialogTitleCapitalization")
     EduNotificationManager.showInfoNotification(
       project,
