@@ -21,8 +21,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 data class FrameworkTaskUpdateInfo(
   override val localItem: Task,
   override val remoteItem: Task,
-  private val taskHistory: FrameworkLessonTaskHistory,
-  private val isTemplateBased: Boolean
+  private val taskHistory: FrameworkLessonTaskHistory
 ) : TaskUpdate(localItem, remoteItem) {
 
   override suspend fun update(project: Project) {
