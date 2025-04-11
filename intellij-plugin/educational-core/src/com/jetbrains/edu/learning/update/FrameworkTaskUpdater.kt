@@ -47,7 +47,7 @@ abstract class FrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
       return emptyList()
     }
 
-    val taskHistory = FrameworkLessonHistory(project, localLesson, remoteLesson, propagateFilesOnNavigation)
+    val taskHistory = FrameworkLessonHistory.create(project, localLesson, remoteLesson, propagateFilesOnNavigation)
     for ((localTask, remoteTask) in localItems.zip(remoteItems)) {
       // current task for non-template based FL should always be updated because the "task" folder could change because of propagation
       if (localTask.shouldBeUpdated(remoteTask) || localTask == lesson.currentTask()) {
