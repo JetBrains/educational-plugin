@@ -42,7 +42,7 @@ def has_branch(space_token: str, branch_name: str) -> bool:
 
 def get_youtrack_issues(youtrack_token: str, tag: str, text_query: str) -> List[Dict]:
     query_params = urlencode({
-        "fields": "summary,customFields(name,value(name))",
+        "fields": "summary,numberInProject,customFields(name,value(name))",
         "customFields": "Assignee",
         "query": f"tag: {{{tag}}} project: EDU {text_query}"
     }, quote_via=quote)
@@ -58,22 +58,36 @@ def full_platform_version(platform_version: int) -> str:
     return f"20{platform_version // 10}.{platform_version % 10}"
 
 
+class YoutrackIssue:
+    def __init__(self, issue_number: int, assignee_name: str):
+        self.issue_number = issue_number
+        self.assignee_name = assignee_name
+
+
 DEFAULT_REVIEWER = "Arseniy.Pendryak"
 
 
-def get_reviewer(youtrack_token: str, tag: str, platform_version: int) -> str:
+def get_reviewer(issue: Optional[YoutrackIssue]) -> str:
+    if not issue:
+        return DEFAULT_REVIEWER
+    # More heuristic solution than 100% reliable way
+    # but it seems it works for all possible cases for now.
+    return issue.assignee_name.replace(" ", ".")
+
+def get_youtrack_issue(youtrack_token: str, tag: str, platform_version: int) -> Optional[YoutrackIssue]:
     issues = get_youtrack_issues(youtrack_token, tag, str(platform_version))
     if not issues:
         issues = get_youtrack_issues(youtrack_token, tag, full_platform_version(platform_version))
 
     if not issues:
-        return DEFAULT_REVIEWER
+        return None
 
     # Expected json format:
     # ```
     # [
     #   {
     #     "summary" : "%summary_text%",
+    #     "numberInProject" : "%issue_number%",
     #     "customFields" : [
     #       {
     #         "value" : {
@@ -88,10 +102,9 @@ def get_reviewer(youtrack_token: str, tag: str, platform_version: int) -> str:
     #   }
     # ]
     # ```
+    issue_number: int = issues[0]["numberInProject"]
     assignee_name: str = issues[0]["customFields"][0]["value"]["name"]
-    # More heuristic solution than 100% reliable way
-    # but it seems it works for all possible cases for now.
-    return assignee_name.replace(" ", ".")
+    return YoutrackIssue(issue_number, assignee_name)
 
 
 def make_request(url: str, token: str, method: str, data: Optional[Dict] = None) -> Union[Dict, List]:

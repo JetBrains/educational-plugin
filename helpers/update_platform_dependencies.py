@@ -4,7 +4,8 @@ import os
 import subprocess
 import sys
 
-from external_services import commit_changes_to_educational_plugin, create_review_in_educational_plugin, has_branch, get_reviewer
+from external_services import commit_changes_to_educational_plugin, create_review_in_educational_plugin, has_branch, get_reviewer, \
+    get_youtrack_issue
 
 
 def gradle_property_path(platform_version: int) -> str:
@@ -17,7 +18,8 @@ def read_gradle_property_text(platform_version: int) -> str:
 
 
 def create_review(space_token: str, youtrack_token: str, platform_version: int):
-    reviewer = get_reviewer(youtrack_token, "edu: support platform", platform_version)
+    issue = get_youtrack_issue(youtrack_token, "edu: support platform", platform_version)
+    reviewer = get_reviewer(issue)
     create_review_in_educational_plugin(
         space_token=space_token,
         source_branch=f"update-{platform_version}",
