@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 
-class FrameworkLessonTaskHistory(
+class FrameworkLessonHistory(
   project: Project,
   localLesson: FrameworkLesson,
   remoteLesson: FrameworkLesson,

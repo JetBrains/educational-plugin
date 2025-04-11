@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.update
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.propagateFilesOnNavigation
 import com.jetbrains.edu.learning.update.elements.FrameworkTaskUpdateInfo
@@ -48,7 +47,7 @@ abstract class FrameworkTaskUpdater(project: Project, lesson: FrameworkLesson) :
       return emptyList()
     }
 
-    val taskHistory = FrameworkLessonTaskHistory(project, localLesson, remoteLesson, propagateFilesOnNavigation)
+    val taskHistory = FrameworkLessonHistory(project, localLesson, remoteLesson, propagateFilesOnNavigation)
     for ((localTask, remoteTask) in localItems.zip(remoteItems)) {
       // current task for non-template based FL should always be updated because the "task" folder could change because of propagation
       if (localTask.shouldBeUpdated(remoteTask) || localTask == lesson.currentTask()) {

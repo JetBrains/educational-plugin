@@ -14,14 +14,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.toCourseInfoHolder
-import com.jetbrains.edu.learning.update.FrameworkLessonTaskHistory
+import com.jetbrains.edu.learning.update.FrameworkLessonHistory
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 data class FrameworkTaskUpdateInfo(
   override val localItem: Task,
   override val remoteItem: Task,
-  private val taskHistory: FrameworkLessonTaskHistory
+  private val taskHistory: FrameworkLessonHistory
 ) : TaskUpdate(localItem, remoteItem) {
 
   override suspend fun update(project: Project) {
