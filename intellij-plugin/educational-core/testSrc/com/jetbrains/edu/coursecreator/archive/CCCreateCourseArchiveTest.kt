@@ -880,7 +880,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `additional files are not written if they are excludedFromArchive`() {
-    val courseIgnoreIgnoredFile = "courseignore-ignored-file"
+    val courseIgnoreIgnoredFile = "courseignore-ignored-file.txt"
 
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson {
