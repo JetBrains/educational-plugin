@@ -45,7 +45,7 @@ def get_youtrack_issues(youtrack_token: str, tag: str, text_query: str) -> List[
         "fields": "summary,customFields(name,value(name))",
         "customFields": "Assignee",
         "query": f"tag: {{{tag}}} project: EDU {text_query}"
-    })
+    }, quote_via=quote)
     url = f"https://youtrack.jetbrains.com/api/issues/?{query_params}"
     return make_request(url, youtrack_token, "GET")
 
