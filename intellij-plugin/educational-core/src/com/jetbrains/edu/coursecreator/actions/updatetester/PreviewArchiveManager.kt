@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdaterNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,9 @@ class PreviewArchiveManager(
           MarketplaceCourseUpdaterNew(project, localCourse).update(remoteCourse)
       }
     }
+
+    // The object is created and used only for the `doAfterUpdate` method
+    MarketplaceCourseUpdater(project, localCourse, remoteCourse.marketplaceCourseVersion).doAfterUpdate()
   }
 
   companion object {

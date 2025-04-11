@@ -52,7 +52,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     doAfterUpdate()
   }
 
-  private fun doAfterUpdate() {
+  fun doAfterUpdate() {
     //remove editor notification, suggesting to update course
     EditorNotifications.getInstance(project).updateAllNotifications()
     showUpdateNotification()
