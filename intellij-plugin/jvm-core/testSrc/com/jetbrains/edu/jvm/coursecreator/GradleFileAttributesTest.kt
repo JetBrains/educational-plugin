@@ -2,6 +2,7 @@ package com.jetbrains.edu.jvm.coursecreator
 
 import com.jetbrains.edu.coursecreator.archive.ExpectedCourseFileAttributes
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 
 abstract class GradleFileAttributesTest(
   filePath: String,
@@ -9,35 +10,46 @@ abstract class GradleFileAttributesTest(
 ) : FileAttributesTest(filePath, expectedAttributes) {
 
   companion object {
-    fun data(): Collection<Array<Any>> = FileAttributesTest.data() + listOf(
-      arrayOf("settings.gradle", expected(excludedFromArchive = false)),
-      arrayOf("subfolder/settings.gradle", expected(excludedFromArchive = false)),
+    fun data(): Collection<Array<Any>> {
+      val inArchive = expected(
+        excludedFromArchive = false,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
+      )
+      val outsideArchive = expected(
+        excludedFromArchive = true,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE
+      )
 
-      arrayOf("out/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/out/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/out/subfile", expected(excludedFromArchive = true)),
+      return FileAttributesTest.data() + listOf(
+        arrayOf("settings.gradle", inArchive),
+        arrayOf("subfolder/settings.gradle", inArchive),
 
-      arrayOf("build/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/build/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/build/subfile", expected(excludedFromArchive = true)),
+        arrayOf("out/", outsideArchive),
+        arrayOf("subfolder/out/", outsideArchive),
+        arrayOf("subfolder/out/subfile", outsideArchive),
 
-      arrayOf("gradle/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/gradle/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/gradle/subfile", expected(excludedFromArchive = true)),
+        arrayOf("build/", outsideArchive),
+        arrayOf("subfolder/build/", outsideArchive),
+        arrayOf("subfolder/build/subfile", outsideArchive),
 
-      arrayOf("EduTestRunner.java", expected(excludedFromArchive = true)),
-      arrayOf("gradlew", expected(excludedFromArchive = true)),
-      arrayOf("gradlew.bat", expected(excludedFromArchive = true)),
-      arrayOf("local.properties", expected(excludedFromArchive = true)),
-      arrayOf("gradle-wrapper.jar", expected(excludedFromArchive = true)),
-      arrayOf("gradle-wrapper.properties", expected(excludedFromArchive = true)),
+        arrayOf("gradle/", outsideArchive),
+        arrayOf("subfolder/gradle/", outsideArchive),
+        arrayOf("subfolder/gradle/subfile", outsideArchive),
 
-      arrayOf("subfolder/EduTestRunner.java", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/gradlew", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/gradlew.bat", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/local.properties", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/gradle-wrapper.jar", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/gradle-wrapper.properties", expected(excludedFromArchive = true)),
-    )
+        arrayOf("EduTestRunner.java", outsideArchive),
+        arrayOf("gradlew", outsideArchive),
+        arrayOf("gradlew.bat", outsideArchive),
+        arrayOf("local.properties", outsideArchive),
+        arrayOf("gradle-wrapper.jar", outsideArchive),
+        arrayOf("gradle-wrapper.properties", outsideArchive),
+
+        arrayOf("subfolder/EduTestRunner.java", outsideArchive),
+        arrayOf("subfolder/gradlew", outsideArchive),
+        arrayOf("subfolder/gradlew.bat", outsideArchive),
+        arrayOf("subfolder/local.properties", outsideArchive),
+        arrayOf("subfolder/gradle-wrapper.jar", outsideArchive),
+        arrayOf("subfolder/gradle-wrapper.properties", outsideArchive),
+      )
+    }
   }
 }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.archive
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseFileAttributes
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
@@ -11,11 +12,15 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 data class ExpectedCourseFileAttributes(
-  val excludedFromArchive: Boolean? = null
+  val excludedFromArchive: Boolean? = null,
+  val archiveInclusionPolicy: ArchiveInclusionPolicy? = null
 ) {
   fun assertAttributes(actual: CourseFileAttributes) {
     if (excludedFromArchive != null) {
       assertEquals("Excluded from archive attribute mismatch", excludedFromArchive, actual.excludedFromArchive)
+    }
+    if (archiveInclusionPolicy != null) {
+      assertEquals("Archive inclusion policy attribute mismatch", archiveInclusionPolicy, actual.archiveInclusionPolicy)
     }
   }
 }
@@ -34,9 +39,11 @@ open class FileAttributesTest(
 
   companion object {
     fun expected(
-      excludedFromArchive: Boolean? = null
+      excludedFromArchive: Boolean? = null,
+      archiveInclusionPolicy: ArchiveInclusionPolicy? = null
     ): ExpectedCourseFileAttributes = ExpectedCourseFileAttributes(
-      excludedFromArchive=excludedFromArchive
+      excludedFromArchive=excludedFromArchive,
+      archiveInclusionPolicy=archiveInclusionPolicy
     )
 
     fun doTest(configurator: EduConfigurator<*>, filePath: String, expectedAttributes: ExpectedCourseFileAttributes) {
@@ -51,64 +58,79 @@ open class FileAttributesTest(
 
     @JvmStatic
     @Parameters(name = "{0}")
-    fun data(): Collection<Array<Any>> = listOf(
-      arrayOf("regular-file", expected(excludedFromArchive = false)),
-      arrayOf("regular-folder/", expected(excludedFromArchive = false)),
-      arrayOf("regular-file/inside-a-folder", expected(excludedFromArchive = false)),
-      arrayOf("regular-folder/inside-a-folder/", expected(excludedFromArchive = false)),
+    fun data(): Collection<Array<Any>> {
+      val excluded = expected(
+        excludedFromArchive = true,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE
+      )
+      val excludedButCanBeInside = expected(
+        excludedFromArchive = true,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+      )
+      val normal = expected(
+        excludedFromArchive = false,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+      )
 
-      //.idea contents
-      arrayOf(".idea/", expected(excludedFromArchive = false)),
-      arrayOf(".idea/subfile", expected(excludedFromArchive = true)),
-      arrayOf(".idea/subfolder/", expected(excludedFromArchive = true)),
-      arrayOf(".idea/inspectionProfiles/", expected(excludedFromArchive = false)),
-      arrayOf(".idea/scopes/", expected(excludedFromArchive = false)),
-      arrayOf(".idea/scopes/subfile", expected(excludedFromArchive = false)),
+      return listOf(
+        arrayOf("regular-file", normal),
+        arrayOf("regular-folder/", normal),
+        arrayOf("regular-file/inside-a-folder", normal),
+        arrayOf("regular-folder/inside-a-folder/", normal),
 
-      //.dot files and folders
-      arrayOf(".folder/", expected(excludedFromArchive = true)),
-      arrayOf(".file", expected(excludedFromArchive = true)),
-      arrayOf(".folder/in/subfolder/", expected(excludedFromArchive = true)),
-      arrayOf(".file/in/subfolder", expected(excludedFromArchive = true)),
-      arrayOf("folder/.subfile", expected(excludedFromArchive = true)),
-      arrayOf("folder/.subfolder/", expected(excludedFromArchive = true)),
-      arrayOf("folder/.subfolder/subfile", expected(excludedFromArchive = true)),
-      arrayOf(".idea/scopes/.excluded_with_dot", expected(excludedFromArchive = true)),
+        //.idea contents
+        arrayOf(".idea/", normal),
+        arrayOf(".idea/subfile", excluded),
+        arrayOf(".idea/subfolder/", excluded),
+        arrayOf(".idea/inspectionProfiles/", normal),
+        arrayOf(".idea/scopes/", normal),
+        arrayOf(".idea/scopes/subfile", normal),
 
-      // iml files
-      arrayOf("project.iml", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/project.iml", expected(excludedFromArchive = true)),
+        //.dot files and folders
+        arrayOf(".folder/", excludedButCanBeInside),
+        arrayOf(".file", excludedButCanBeInside),
+        arrayOf(".folder/in/subfolder/", excludedButCanBeInside),
+        arrayOf(".file/in/subfolder", excludedButCanBeInside),
+        arrayOf("folder/.subfile", excludedButCanBeInside),
+        arrayOf("folder/.subfolder/", excludedButCanBeInside),
+        arrayOf("folder/.subfolder/subfile", excludedButCanBeInside),
+        arrayOf(".idea/scopes/.excluded_with_dot", excludedButCanBeInside),
 
-      // task descriptions
-      arrayOf("lesson/task/task.md", expected(excludedFromArchive = true)),
-      arrayOf("section/lesson/task/task.md", expected(excludedFromArchive = true)),
-      arrayOf("lesson/task/task.html", expected(excludedFromArchive = true)),
-      arrayOf("section/lesson/task/task.html", expected(excludedFromArchive = true)),
+        // iml files
+        arrayOf("project.iml", excluded),
+        arrayOf("subfolder/project.iml", excluded),
 
-      // configs
-      arrayOf("course-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("section/section-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("lesson/lesson-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("section/lesson/lesson-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("lesson/task/task-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("section/lesson/task/task-info.yaml", expected(excludedFromArchive = true)),
+        // task descriptions
+        arrayOf("lesson/task/task.md", excluded),
+        arrayOf("section/lesson/task/task.md", excluded),
+        arrayOf("lesson/task/task.html", excluded),
+        arrayOf("section/lesson/task/task.html", excluded),
 
-      // remote configs
-      arrayOf("course-remote-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("section/section-remote-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("lesson/lesson-remote-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("section/lesson/lesson-remote-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("lesson/task/task-remote-info.yaml", expected(excludedFromArchive = true)),
-      arrayOf("section/lesson/task/task-remote-info.yaml", expected(excludedFromArchive = true)),
+        // configs
+        arrayOf("course-info.yaml", excluded),
+        arrayOf("section/section-info.yaml", excluded),
+        arrayOf("lesson/lesson-info.yaml", excluded),
+        arrayOf("section/lesson/lesson-info.yaml", excluded),
+        arrayOf("lesson/task/task-info.yaml", excluded),
+        arrayOf("section/lesson/task/task-info.yaml", excluded),
 
-      //.coursecreator
-      arrayOf(".coursecreator/archive.zip", expected(excludedFromArchive = true)),
+        // remote configs
+        arrayOf("course-remote-info.yaml", excluded),
+        arrayOf("section/section-remote-info.yaml", excluded),
+        arrayOf("lesson/lesson-remote-info.yaml", excluded),
+        arrayOf("section/lesson/lesson-remote-info.yaml", excluded),
+        arrayOf("lesson/task/task-remote-info.yaml", excluded),
+        arrayOf("section/lesson/task/task-remote-info.yaml", excluded),
 
-      // other
-      arrayOf("hints", expected(excludedFromArchive = true)),
-      arrayOf("stepik_ids.json", expected(excludedFromArchive = true)),
-      arrayOf(".courseignore", expected(excludedFromArchive = true)),
-      arrayOf("courseIcon.svg", expected(excludedFromArchive = true)),
-    )
+        //.coursecreator
+        arrayOf(".coursecreator/archive.zip", excluded),
+
+        // other
+        arrayOf("hints", excludedButCanBeInside),
+        arrayOf("stepik_ids.json", excludedButCanBeInside),
+        arrayOf(".courseignore", excluded),
+        arrayOf("courseIcon.svg", excluded),
+      )
+    }
   }
 }
