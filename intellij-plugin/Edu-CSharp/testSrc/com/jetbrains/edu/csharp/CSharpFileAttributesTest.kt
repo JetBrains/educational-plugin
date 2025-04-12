@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.archive.ExpectedCourseFileAttributes
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest.Companion.doTest
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest.Companion.expected
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -26,17 +27,24 @@ class CSharpFileAttributesTest(
 
     @JvmStatic
     @Parameters(name = "{0}")
-    fun data(): Collection<Array<Any>> = FileAttributesTest.data() + listOf(
-      arrayOf("a.sln", expected(excludedFromArchive = true)),
-      arrayOf("folder/a.sln", expected(excludedFromArchive = true)),
-      arrayOf("lesson1/task1/a.sln", expected(excludedFromArchive = true)),
+    fun data(): Collection<Array<Any>> {
+      val expectedAttributes = expected(
+        excludedFromArchive = true,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE
+      )
 
-      arrayOf("obj/", expected(excludedFromArchive = true)),
-      arrayOf("bin/", expected(excludedFromArchive = true)),
-      arrayOf("obj/some/file/inside", expected(excludedFromArchive = true)),
-      arrayOf("bin/some/file/inside", expected(excludedFromArchive = true)),
-      arrayOf("lesson1/task1/obj/", expected(excludedFromArchive = true)),
-      arrayOf("lesson1/task1/bin/", expected(excludedFromArchive = true)),
-    )
+      return FileAttributesTest.data() + listOf(
+        arrayOf("a.sln", expectedAttributes),
+        arrayOf("folder/a.sln", expectedAttributes),
+        arrayOf("lesson1/task1/a.sln", expectedAttributes),
+
+        arrayOf("obj/", expectedAttributes),
+        arrayOf("bin/", expectedAttributes),
+        arrayOf("obj/some/file/inside", expectedAttributes),
+        arrayOf("bin/some/file/inside", expectedAttributes),
+        arrayOf("lesson1/task1/obj/", expectedAttributes),
+        arrayOf("lesson1/task1/bin/", expectedAttributes),
+      )
+    }
   }
 }

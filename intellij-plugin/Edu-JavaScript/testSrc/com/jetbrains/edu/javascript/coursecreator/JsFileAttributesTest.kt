@@ -3,6 +3,7 @@ package com.jetbrains.edu.javascript.coursecreator
 import com.jetbrains.edu.coursecreator.archive.ExpectedCourseFileAttributes
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest
 import com.jetbrains.edu.javascript.learning.JsConfigurator
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import org.junit.runners.Parameterized.Parameters
 
@@ -17,13 +18,25 @@ class JsFileAttributesTest(
 
     @JvmStatic
     @Parameters(name = "{0}")
-    fun data(): Collection<Array<Any>> = FileAttributesTest.data() + listOf(
-      arrayOf("node_modules/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/node_modules/", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/node_modules/subfile", expected(excludedFromArchive = true)),
+    fun data(): Collection<Array<Any>> {
 
-      arrayOf("package-lock.json", expected(excludedFromArchive = true)),
-      arrayOf("subfolder/package-lock.json", expected(excludedFromArchive = true)),
-    )
+      val expectedAttributesForNodeModules = expected(
+        excludedFromArchive = true,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE
+      )
+      val expectedAttributesForPackageLock = expected(
+        excludedFromArchive = true,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+      )
+
+      return FileAttributesTest.data() + listOf(
+        arrayOf("node_modules/", expectedAttributesForNodeModules),
+        arrayOf("subfolder/node_modules/", expectedAttributesForNodeModules),
+        arrayOf("subfolder/node_modules/subfile", expectedAttributesForNodeModules),
+
+        arrayOf("package-lock.json", expectedAttributesForPackageLock),
+        arrayOf("subfolder/package-lock.json", expectedAttributesForPackageLock)
+      )
+    }
   }
 }
