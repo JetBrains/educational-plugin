@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.socialMedia.x
+package com.jetbrains.edu.learning.socialMedia.x.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import okhttp3.ResponseBody
