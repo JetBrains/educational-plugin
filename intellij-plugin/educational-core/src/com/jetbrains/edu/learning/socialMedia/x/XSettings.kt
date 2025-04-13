@@ -11,9 +11,22 @@ import java.util.*
     Storage("study_x_settings.xml", roamingType = RoamingType.DISABLED, deprecated = true)
   ]
 )
-class XSettings : SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState>(SocialMediaSettingsState()) {
+class XSettings : SocialMediaSettings<XSettings.XSettingsState>(XSettingsState()) {
 
-  override val name = "X"
+  override val name = XUtils.PLATFORM_NAME
+
+  var account: XAccount?
+    get() {
+      val userName = state.userId ?: return null
+      val name = state.name ?: return null
+      val info = XUserInfo(userName, name)
+      return XAccount(info, state.expiresIn)
+    }
+    set(value) {
+      state.name = value?.userInfo?.name
+      state.userId = value?.userInfo?.userName
+      state.expiresIn = value?.tokenExpiresIn ?: 0
+    }
 
   override fun getDefaultUserId(): String {
     return generateNewUserId()
@@ -27,5 +40,10 @@ class XSettings : SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsSta
 
   companion object {
     fun getInstance(): XSettings = service()
+  }
+
+  class XSettingsState : SocialMediaSettingsState() {
+    var name by string()
+    var expiresIn by property(0L)
   }
 }

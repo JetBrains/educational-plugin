@@ -26,7 +26,6 @@ import twitter4j.conf.ConfigurationBuilder
 import twitter4j.v2
 import java.io.IOException
 import java.nio.file.Path
-import kotlin.Throws
 
 object XUtils {
   private const val REQUEST_PIN_CALLBACK = "oob"
@@ -34,6 +33,8 @@ object XUtils {
   @Suppress("UnstableApiUsage")
   @NlsSafe
   private const val SERVICE_DISPLAY_NAME: String = "JetBrains Academy X Integration"
+
+  const val PLATFORM_NAME: String = "X"
 
   /**
    * Set consumer key and secret.
