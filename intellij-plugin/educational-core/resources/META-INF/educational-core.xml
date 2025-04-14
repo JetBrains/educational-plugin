@@ -426,6 +426,11 @@
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.socialMedia.linkedIn.LinkedInRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.socialMedia.x.XRestService"/>
+    <registryKey key="edu.socialMedia.x.oauth2"
+                 description="Enables OAuth 2.0 authorization for X"
+                 defaultValue="false"/>
+
     <registryKey key="edu.course.update.check.interval"
                  description="Sets is course up to date check interval in seconds"
                  defaultValue="18000"/>

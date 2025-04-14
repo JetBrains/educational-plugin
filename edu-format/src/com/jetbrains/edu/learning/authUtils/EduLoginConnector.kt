@@ -54,7 +54,7 @@ abstract class EduLoginConnector<UserAccount : Account<*>, SpecificUserInfo : Us
     "${EduFormatNames.EDU_PREFIX}/${platformName.lowercase()}"
   }
 
-  protected open val oAuthServicePath: String by lazy {
+  open val oAuthServicePath: String by lazy {
     "/$REST_PREFIX/$serviceName/$OAUTH_SUFFIX"
   }
 

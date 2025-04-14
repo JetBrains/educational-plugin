@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.api
 
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
@@ -56,12 +55,14 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     vararg postLoginActions: Runnable,
     authorizationPlace: AuthorizationPlace
   ) {
-    if (!OAuthUtils.checkBuiltinPortValid()) return
+    // Unit tests use completely different port and
+    // `OAuthUtils.checkBuiltinPortValid()` always returns false here since it relies only on the default production port number
+    if (!isUnitTestMode && !OAuthUtils.checkBuiltinPortValid()) return
 
     this.authorizationPlace = authorizationPlace
     setPostLoginActions(postLoginActions.asList())
     val url = generateAuthorizationUrl()
-    BrowserUtil.browse(url)
+    EduBrowser.getInstance().browse(url.toString())
   }
 
   /**

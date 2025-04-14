@@ -5,8 +5,7 @@ import okio.Buffer
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.InputStream
-import java.net.HttpURLConnection.HTTP_NOT_FOUND
-import java.net.HttpURLConnection.HTTP_OK
+import java.net.HttpURLConnection.*
 
 object MockResponseFactory {
 
@@ -27,5 +26,6 @@ object MockResponseFactory {
   }
 
   fun ok(): MockResponse = MockResponse().setResponseCode(HTTP_OK)
+  fun badRequest(): MockResponse = MockResponse().setResponseCode(HTTP_BAD_REQUEST)
   fun notFound(): MockResponse = MockResponse().setResponseCode(HTTP_NOT_FOUND)
 }

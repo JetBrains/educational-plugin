@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.socialMedia.x
 
 import com.intellij.openapi.components.*
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.socialMedia.SocialMediaSettings
+import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 @Service
@@ -11,7 +13,7 @@ import java.util.*
     Storage("study_x_settings.xml", roamingType = RoamingType.DISABLED, deprecated = true)
   ]
 )
-class XSettings : SocialMediaSettings<XSettings.XSettingsState>(XSettingsState()) {
+class XSettings : SocialMediaSettings<XSettings.XSettingsState>(XSettingsState()), EduTestAware {
 
   override val name = XUtils.PLATFORM_NAME
 
@@ -36,6 +38,11 @@ class XSettings : SocialMediaSettings<XSettings.XSettingsState>(XSettingsState()
     val randomId = UUID.randomUUID().toString()
     state.userId = randomId
     return randomId
+  }
+
+  @TestOnly
+  override fun cleanUpState() {
+    account = null
   }
 
   companion object {
