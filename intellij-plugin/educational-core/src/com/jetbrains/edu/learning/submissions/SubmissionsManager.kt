@@ -6,7 +6,6 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduTestAware
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -248,10 +247,6 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
   }
 
   fun isLoggedIn(): Boolean = course?.getSubmissionsProvider()?.isLoggedIn() ?: false
-
-  fun isSubmissionDownloadAllowed(): Boolean = UserAgreementSettings.getInstance().submissionsServiceAgreement
-
-  fun isSolutionSharingAllowed(): Boolean = UserAgreementSettings.getInstance().submissionsServiceAgreement
 
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
