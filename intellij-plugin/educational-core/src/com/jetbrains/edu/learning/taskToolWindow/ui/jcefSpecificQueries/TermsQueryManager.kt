@@ -9,15 +9,12 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JBCefJSQuery
 import com.intellij.util.Alarm
-import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsInteractionListener
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.taskToolWindow.TERM_CLASS
 import com.jetbrains.edu.learning.taskToolWindow.ui.JsEventData
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
-import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
-import com.jetbrains.educational.core.format.enum.TranslationLanguage
+import com.jetbrains.edu.learning.taskToolWindow.ui.canShowTerms
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
@@ -151,9 +148,7 @@ class TermsQueryManager private constructor(
 
     @JvmStatic
     fun getTermsQueryManager(project: Project, task: Task?, taskJBCefBrowser: JBCefBrowserBase): TermsQueryManager? {
-      if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled || task !is TheoryTask) return null
-      val language = TranslationProjectSettings.getInstance(project).translationLanguage
-      if (language != null && (language.code != TranslationLanguage.ENGLISH.code || language.code != task.course.languageCode)) return null
+      if (task == null || !canShowTerms(project, task)) return null
       return TermsQueryManager(project, task, taskJBCefBrowser)
     }
   }
