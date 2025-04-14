@@ -19,8 +19,7 @@ class ShareMySolutionsAction : DumbAwareToggleAction() {
     e.presentation.isVisible = project.isMarketplaceCourse() && project.isStudentProject()
     if (!e.presentation.isVisible) return
 
-    e.presentation.isEnabled =
-      MarketplaceConnector.getInstance().isLoggedIn() && UserAgreementSettings.getInstance().solutionSharing
+    e.presentation.isEnabled = MarketplaceConnector.getInstance().isLoggedIn()
   }
 
   override fun isSelected(e: AnActionEvent): Boolean = UserAgreementSettings.getInstance().solutionSharing
