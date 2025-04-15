@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.PresentableStatus.COMPLETED
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.mockService
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -15,6 +17,12 @@ class EduTestInfoTest(
   private val eduTestInfo: EduTestInfo,
   @Suppress("UNUSED_PARAMETER") testSuffix: String
 ) : EduTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    mockService<MarketplaceSubmissionsConnector>(application)
+  }
+
   private val objectMapper by lazy { MarketplaceSubmissionsConnector.getInstance().objectMapper }
 
   @Test

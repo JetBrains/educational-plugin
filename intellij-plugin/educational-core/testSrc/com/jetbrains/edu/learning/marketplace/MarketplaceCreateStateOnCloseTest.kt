@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -9,12 +10,19 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClose
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceStateOnClosePost
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.submissions.getSolutionFiles
 import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import org.junit.Test
 import java.util.*
 
 class MarketplaceCreateStateOnCloseTest : EduTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    mockService<MarketplaceSubmissionsConnector>(application)
+  }
+
   private val course: EduCourse by lazy {
     courseWithFiles(language = FakeGradleBasedLanguage, courseProducer = ::EduCourse) {
       section("Section") {
