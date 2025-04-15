@@ -4,7 +4,8 @@ import com.android.tools.idea.sdk.IdeSdks
 import com.android.tools.idea.ui.ApplicationUtils
 import com.android.tools.idea.welcome.config.FirstRunWizardMode
 import com.android.tools.idea.welcome.install.FirstRunWizardDefaults
-import com.android.tools.idea.welcome.wizard.SdkComponentInstallerProvider
+import com.android.tools.idea.welcome.install.SdkComponentInstaller
+import com.android.tools.idea.welcome.wizard.FirstRunWizardTracker
 import com.android.tools.idea.welcome.wizard.deprecated.ConsolidatedProgressStep
 import com.android.tools.idea.welcome.wizard.deprecated.InstallComponentsPath
 import com.android.tools.idea.wizard.WizardConstants
@@ -12,6 +13,7 @@ import com.android.tools.idea.wizard.dynamic.DialogWrapperHost
 import com.android.tools.idea.wizard.dynamic.DynamicWizard
 import com.android.tools.idea.wizard.dynamic.DynamicWizardHost
 import com.android.tools.idea.wizard.dynamic.SingleStepPath
+import com.google.wireless.android.sdk.stats.SetupWizardEvent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.ui.LabeledComponent
@@ -79,7 +81,8 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
     host: DialogWrapperHost
   ) : DynamicWizard(null, null, wizardName, host) {
     override fun init() {
-      val progressStep = DownloadingComponentsStep(myHost.disposable, myHost)
+      val tracker = FirstRunWizardTracker(SetupWizardEvent.SetupWizardMode.MISSING_SDK, false)
+      val progressStep = DownloadingComponentsStep(myHost.disposable, myHost, tracker)
 
       val sdkPath = locationField.text
       val location = if (sdkPath.isEmpty()) {
@@ -89,7 +92,7 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
         File(sdkPath)
       }
 
-      val path = InstallComponentsPath(FirstRunWizardMode.MISSING_SDK, location, progressStep, SdkComponentInstallerProvider(), false)
+      val path = InstallComponentsPath(FirstRunWizardMode.MISSING_SDK, location, progressStep, SdkComponentInstaller(), false, tracker)
 
       progressStep.setInstallComponentsPath(path)
 
@@ -125,8 +128,9 @@ class AndroidLanguageSettings : JdkLanguageSettings(), ActionListener {
 
   private class DownloadingComponentsStep(
     disposable: Disposable,
-    host: DynamicWizardHost
-  ) : ConsolidatedProgressStep(disposable, host) {
+    host: DynamicWizardHost,
+    tracker: FirstRunWizardTracker
+  ) : ConsolidatedProgressStep(disposable, host, tracker) {
 
     private var installComponentsPath: InstallComponentsPath? = null
 
