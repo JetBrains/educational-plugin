@@ -4,8 +4,10 @@ import com.intellij.lang.LanguageExtension
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.concurrency.annotations.RequiresReadLock
+import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.getInvisibleTestFiles
 import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.language
 import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.runWithTests
+import com.jetbrains.edu.learning.checker.CheckUtils.deleteTests
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -25,6 +27,8 @@ abstract class TestFinder {
           task.taskFiles.values.filter { it.isTestFile }.mapNotNull { it.getVirtualFile(project) },
           testName
         )
-      })
+      }).also {
+        deleteTests(task.getInvisibleTestFiles(), project)
+      }
   }
 }
