@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.writeCommandAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -13,12 +12,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.readText
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.util.PlatformUtils.getPlatformPrefix
 import com.jetbrains.edu.ai.tests.connector.GenerateTaskTestConnector
 import com.jetbrains.edu.ai.tests.messages.EduAITestGenerationCoreBundle
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.getTask
 import kotlinx.coroutines.Dispatchers
@@ -41,9 +42,10 @@ class GenerateTaskTests : AnAction() {
 
     val task = data.getTask(project)
     val isEduTask = task is EduTask
+    val isNotAndroidStudio = getPlatformPrefix() != "AndroidStudio"
     val isKotlinOrPythonTask = task?.course?.languageId?.lowercase() in setOf("kotlin", "python")
 
-    e.presentation.isVisible = isEduTask && isKotlinOrPythonTask
+    e.presentation.isVisible = isEduTask && isKotlinOrPythonTask && isNotAndroidStudio
     e.presentation.icon = AllIcons.RunConfigurations.TestState.Run_run
   }
 
