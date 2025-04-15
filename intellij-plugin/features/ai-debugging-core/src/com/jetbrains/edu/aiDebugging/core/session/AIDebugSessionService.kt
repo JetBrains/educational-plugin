@@ -11,6 +11,7 @@ import com.jetbrains.edu.aiDebugging.core.messages.EduAIDebuggingCoreBundle
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.intellij.lang.Language
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.readAction
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -27,11 +28,13 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoin
 import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.EditorFactory
+import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakpointHintMouseMotionListener
 import java.util.concurrent.atomic.AtomicBoolean
 
 
 @Service(Service.Level.PROJECT)
-class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) {
+class AIDebugSessionService(private val project: Project, private val coroutineScope: CoroutineScope) : Disposable {
 
   private val lock = AtomicBoolean(false)
 
@@ -73,9 +76,11 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             )
             return@onSuccess
           }
-          AIDebugSessionRunner(project, task, closeAIDebuggingHint).apply {
-            runDebuggingSession(testResult)
-            subscribeToDebuggerEvents(fixes, breakpointHints)
+          AIDebugSessionRunner(project, task, closeAIDebuggingHint).runDebuggingSession(testResult)
+          val listener = AIBreakpointHintMouseMotionListener(fixes, breakpointHints)
+          EditorFactory.getInstance().eventMulticaster.apply {
+            addEditorMouseMotionListener(listener, this@AIDebugSessionService)
+            addEditorMouseListener(listener, this@AIDebugSessionService)
           }
         }.onFailure {
           unlock()
@@ -177,5 +182,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
 
     fun getInstance(project: Project): AIDebugSessionService = project.getService(AIDebugSessionService::class.java)
   }
+
+  override fun dispose() { }
 
 }

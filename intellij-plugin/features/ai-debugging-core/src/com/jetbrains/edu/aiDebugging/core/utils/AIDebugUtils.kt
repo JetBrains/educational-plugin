@@ -4,7 +4,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.CheckUtils.createTests
-import com.jetbrains.edu.learning.checker.CheckUtils.deleteTests
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
@@ -24,12 +23,10 @@ object AIDebugUtils {
     }.onFailure {
       LOG.error("Failed to start execution")
       executionStopped()
-    }.getOrNull().also {
-      deleteTests(task.getInvisibleTestFiles(), project)
-    }
+    }.getOrNull()
   }
 
-  private fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
+  fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
     EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible
   }
 
