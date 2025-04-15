@@ -128,13 +128,13 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     codeHintPyStatementPart: PyStatementPart,
   ): Boolean {
     val project = currentPyStatementPart.project
-    if (currentPyStatementPart.text == codeHintPyStatementPart.text) return false
+    if (currentPyStatementPart.compareNormalized(codeHintPyStatementPart)) return false
 
     when (currentPyStatementPart) {
       is PyWhilePart, is PyIfPart -> {
         val currentBinaryExpression = currentPyStatementPart.children.firstOrNull { it is PyBinaryExpression } ?: return false
         val codeHintBinaryExpression = codeHintPyStatementPart.children.firstOrNull { it is PyBinaryExpression } ?: return false
-        if (currentBinaryExpression.text != codeHintBinaryExpression.text) {
+        if (!currentBinaryExpression.compareNormalized(codeHintBinaryExpression)) {
           currentBinaryExpression.replaceWithWriteCommandAction(codeHintBinaryExpression)
           return true
         }
@@ -147,7 +147,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
           currentForPart.lastChild.delete()
           codeHintForPart.lastChild.delete()
         }
-        if (currentForPart.text != codeHintForPart.text) {
+        if (!currentForPart.compareNormalized(codeHintForPart)) {
           runWriteCommandAction(project) {
             currentForPart.replace(codeHintForPart)
             codeHintForPart.add(currentPyStatementPart.statementList)
@@ -161,7 +161,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     val currentStatements = currentPyStatementPart.statementList.statements
     val codeHintStatements = codeHintPyStatementPart.statementList.statements
     currentStatements.zip(codeHintStatements).forEach { (currentStatement, codeHintStatement) ->
-      if (currentStatement.text != codeHintStatement.text) {
+      if (!currentStatement.compareNormalized(codeHintStatement)) {
         currentStatement.replaceWithWriteCommandAction(codeHintStatement)
         return true
       }

@@ -531,6 +531,131 @@ class PyFunctionDiffReducerTest(
               return result
         """.trimIndent()
       ),
+
+      // For part with spaces
+      arrayOf(
+        "for_part",
+        """
+          def for_part(items):
+              result = []
+              for i in range(0, 9):
+                  a  =  i  *  i
+              return result
+        """.trimIndent(),
+        """
+          def for_part(items):
+              result = []
+              for i in range(0, 9):
+                  a = i * i
+                  result.append(a)
+              return result
+        """.trimIndent(),
+        """
+          def for_part(items):
+              result = []
+              for i in range(0, 9):
+                  a  =  i  *  i
+                  result.append(a)
+              return result
+        """.trimIndent()
+      ),
+
+      // For part with spaces
+      arrayOf(
+        "for_part",
+        """
+          def for_part(items):
+              result = []
+              for i in range(0, 9):
+                  a  =  i  *  i
+              return result
+        """.trimIndent(),
+        """
+          def for_part(items):
+              result = []
+              for i in range(0, 9):
+                  a = i * i
+                  result.append(a)
+              return result
+        """.trimIndent(),
+        """
+          def for_part(items):
+              result = []
+              for i in range(0, 9):
+                  a  =  i  *  i
+                  result.append(a)
+              return result
+        """.trimIndent()
+      ),
+
+      // While part with spaces
+      arrayOf(
+        "while_part_with_spaces",
+        """
+          def while_part_with_spaces(items):
+              result = []
+              while i >       10:
+                  pass
+              return result
+        """.trimIndent(),
+        """
+          def while_part_with_spaces(items):
+              result = []
+              while i > 10:
+                  result.append(i)
+              return result
+        """.trimIndent(),
+        """
+          def while_part_with_spaces(items):
+              result = []
+              while i >       10:
+                  result.append(i)
+              return result
+        """.trimIndent()
+      ),
+
+      // While part with spaces 2
+      arrayOf(
+        "count_down",
+        """
+          def count_down(start_number):
+              current = start_number
+              total_sum = 0
+
+              while current   >   0:
+                  print  (f"Counting: {current}")
+                  total_sum    +=    current
+
+              print    ("Countdown complete!")
+              return total_sum
+        """.trimIndent(),
+        """
+          def count_down(start_number):
+              current = start_number
+              total_sum = 0
+
+              while current > 0:
+                  print(f"Counting: {current}")
+                  total_sum += current
+                  current -= 1
+
+              print("Countdown complete!")
+              return total_sum
+        """.trimIndent(),
+        """
+          def count_down(start_number):
+              current = start_number
+              total_sum = 0
+
+              while current   >   0:
+                  print  (f"Counting: {current}")
+                  total_sum    +=    current
+                  current -= 1
+
+              print    ("Countdown complete!")
+              return total_sum
+        """.trimIndent()
+      ),
     )
   }
 }
