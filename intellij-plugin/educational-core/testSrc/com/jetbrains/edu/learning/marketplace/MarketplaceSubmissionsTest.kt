@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.util.application
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.api.*
+import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -29,6 +31,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
     super.setUp()
     loginFakeMarketplaceUser()
     mockJBAccount(testRootDisposable)
+    mockService<MarketplaceSubmissionsConnector>(application)
   }
 
   @Test
