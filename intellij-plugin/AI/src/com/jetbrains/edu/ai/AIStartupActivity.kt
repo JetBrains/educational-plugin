@@ -7,6 +7,7 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.jetbrains.edu.ai.AIServiceUpdateChecker.Companion.launchUpdateChecker
 import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.terms.observeAndLoadCourseTerms
+import com.jetbrains.edu.ai.terms.ui.TermsGotItTooltipService
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -27,6 +28,7 @@ class AIStartupActivity(private val scope: CoroutineScope) : ProjectActivity {
 
     withContext(Dispatchers.EDT) {
       showAINewsNotification(project)
+      TermsGotItTooltipService.getInstance(project).showTermsGotItTooltip()
     }
   }
 
