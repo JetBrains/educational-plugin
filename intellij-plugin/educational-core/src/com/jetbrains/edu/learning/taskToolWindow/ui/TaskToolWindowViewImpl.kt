@@ -59,6 +59,7 @@ import com.jetbrains.edu.learning.combineStateFlow
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotificationsPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -174,7 +175,9 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     return submissionsTab.asSafely<MarketplaceSubmissionsTab>()?.isCommunityTabShowing() ?: false
   }
 
-  private fun getSubmissionTab(): SubmissionsTab? = tabManager.getTab(SUBMISSIONS_TAB) as? SubmissionsTab
+  private fun getSubmissionTab(): SubmissionsTab? = getTab(SUBMISSIONS_TAB) as? SubmissionsTab
+
+  override fun getTab(tabType: TabType): TaskToolWindowTab? = tabManager.getTab(tabType)
 
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return

@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 import org.jetbrains.annotations.TestOnly
 import java.awt.Color
 
@@ -24,6 +25,7 @@ abstract class TaskToolWindowView(val project: Project) : EduTestAware {
 
   abstract fun init(toolWindow: ToolWindow)
 
+  abstract fun getTab(tabType: TabType): TaskToolWindowTab?
   abstract fun selectTab(tabType: TabType)
   abstract fun isSelectedTab(tabType: TabType): Boolean
   abstract fun updateCheckPanel(task: Task?)

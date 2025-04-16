@@ -10,11 +10,13 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 
 class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
   override var currentTask: Task? = null
 
   override fun init(toolWindow: ToolWindow) {}
+  override fun getTab(tabType: TabType): TaskToolWindowTab? = null
   override fun selectTab(tabType: TabType) {}
   override fun isSelectedTab(tabType: TabType): Boolean = false
   override fun updateCheckPanel(task: Task?) {}
