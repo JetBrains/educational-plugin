@@ -17,8 +17,6 @@
               topic="com.intellij.openapi.project.ProjectManagerListener"/>
     <listener class="com.jetbrains.edu.learning.RecentPreviewCourseListener"
               topic="com.intellij.ide.AppLifecycleListener"/>
-    <listener class="com.jetbrains.edu.coursecreator.ui.CCEducatorHelpProjectCloseListener"
-              topic="com.intellij.openapi.project.ProjectManagerListener"/>
   </applicationListeners>
 
   <projectListeners>

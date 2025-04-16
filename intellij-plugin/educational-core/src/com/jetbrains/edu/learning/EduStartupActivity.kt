@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.notification.BrowseNotificationAction
+import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
@@ -22,13 +24,12 @@ import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.coursecreator.ui.CCEducatorHelpProjectCloseListener.Companion.EDUCATOR_HELP_WAS_OPENED
-import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.EduNames.COURSE_IGNORE
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -42,10 +43,12 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
 
 class EduStartupActivity : StartupActivity.DumbAware {
@@ -93,13 +96,6 @@ class EduStartupActivity : StartupActivity.DumbAware {
       }
 
       SyncChangesStateManager.getInstance(project).updateSyncChangesState(course)
-
-      if (CCUtils.isCourseCreator(project)) {
-        val educatorHelpWasOpened = PropertiesComponent.getInstance(project).getBoolean(EDUCATOR_HELP_WAS_OPENED, false)
-        if (educatorHelpWasOpened) {
-          CCOpenEducatorHelp.doOpen(project)
-        }
-      }
 
       runWriteAction {
         if (project.isStudentProject()) {
