@@ -36,9 +36,9 @@ class SocialMediaMultiplePostAction : CheckListener {
     val dialog = createSuggestToPostDialogUI(project, configurators, defaultConfigurator.getMessage(task), imagePath)
 
     if (dialog.showAndGet()) {
-      runInBackground(null, EduCoreBundle.message("linkedin.loading.posting"), true) {
+      runInBackground(project, EduCoreBundle.message("linkedin.loading.posting"), true) {
         configurators.forEach {
-          it.doPost(task, imageIndex)
+          it.doPost(project, task, imageIndex)
         }
       }
     }

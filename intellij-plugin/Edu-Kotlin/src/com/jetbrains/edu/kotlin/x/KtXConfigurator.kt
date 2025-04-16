@@ -40,10 +40,10 @@ class KtXConfigurator : XPluginConfigurator {
     return level to imagePath
   }
 
-  override fun doPost(solvedTask: Task, imageIndex: Int?) {
+  override fun doPost(project: Project, solvedTask: Task, imageIndex: Int?) {
     if (!settings.askToPost) return
     val (_, imagePath) = getIndexWithImagePath(solvedTask, imageIndex)
-    XUtils.doPost(getMessage(solvedTask), imagePath)
+    XUtils.doPost(project, getMessage(solvedTask), imagePath)
   }
 
   companion object {

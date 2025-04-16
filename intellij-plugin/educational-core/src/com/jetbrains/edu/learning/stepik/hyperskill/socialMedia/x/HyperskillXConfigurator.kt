@@ -31,9 +31,9 @@ class HyperskillXConfigurator : XPluginConfigurator {
     return finalImageIndex to imagePath
   }
 
-  override fun doPost(solvedTask: Task, imageIndex: Int?) {
+  override fun doPost(project: Project, solvedTask: Task, imageIndex: Int?) {
     if (!settings.askToPost) return
     val (_, imagePath) = getIndexWithImagePath(null, imageIndex)
-    XUtils.doPost(getMessage(solvedTask), imagePath)
+    XUtils.doPost(project, getMessage(solvedTask), imagePath)
   }
 }

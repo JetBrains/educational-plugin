@@ -31,10 +31,10 @@ class HyperskillLinkedInConfigurator : LinkedInPluginConfigurator {
     return finalImageIndex to imagePath
   }
 
-  override fun doPost(solvedTask: Task, imageIndex: Int?) {
+  override fun doPost(project: Project, solvedTask: Task, imageIndex: Int?) {
     if (!settings.askToPost) return
     val (_, imagePath) = getIndexWithImagePath(null, imageIndex)
     imagePath ?: return
-    LinkedInUtils.doPost(getMessage(solvedTask), imagePath)
+    LinkedInUtils.doPost(project, getMessage(solvedTask), imagePath)
   }
 }

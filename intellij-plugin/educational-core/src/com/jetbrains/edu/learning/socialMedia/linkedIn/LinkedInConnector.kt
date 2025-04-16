@@ -6,6 +6,7 @@ import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
@@ -118,7 +119,7 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
     }
   }
 
-  fun createPostWithMedia(message: String, imagePath: Path) {
+  fun createPostWithMedia(project: Project, message: String, imagePath: Path) {
     val uploadLinkData = getMediaUploadLink() ?: return
     if (uploadMediaFile(uploadLinkData, imagePath)) {
       val postId = createPost(uploadLinkData, message)
@@ -128,11 +129,11 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
           .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("x.open.in.browser")) {
             EduBrowser.getInstance().browse("https://www.linkedin.com/feed/update/${postId}")
           })
-          .notify(null)
+          .notify(project)
       }
       else {
         EduNotificationManager.showErrorNotification(
-          null,
+          project,
           EduCoreBundle.message("linkedin.error.failed.to.post"),
           EduCoreBundle.message("linkedin.error.failed.to.post")
         )

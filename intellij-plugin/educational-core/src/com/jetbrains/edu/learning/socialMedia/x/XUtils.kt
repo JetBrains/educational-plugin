@@ -49,21 +49,21 @@ object XUtils {
       return TwitterFactory(configuration).instance
     }
 
-  fun doPost(message: String, imagePath: Path?) {
+  fun doPost(project: Project, message: String, imagePath: Path?) {
     try {
       val token = getToken(XSettings.getInstance().userId)
       val twitterInstance = twitter
       if (token == null) {
-        if (!authorize(null, twitterInstance)) return
+        if (!authorize(project, twitterInstance)) return
       }
       else {
         twitterInstance.oAuthAccessToken = AccessToken(token.token, token.tokenSecret)
       }
-      updateStatus(twitterInstance, TweetInfo(message, imagePath))
+      updateStatus(project, twitterInstance, TweetInfo(message, imagePath))
     }
     catch (_: Exception) {
       EduNotificationManager.showErrorNotification(
-        null,
+        project,
         EduCoreBundle.message("linkedin.error.failed.to.post"),
         EduCoreBundle.message("linkedin.error.failed.to.post")
       )
@@ -85,7 +85,7 @@ object XUtils {
    * As a result of succeeded tweet twitter website is opened in default browser.
    */
   @Throws(IOException::class, TwitterException::class)
-  private fun updateStatus(twitter: Twitter, info: TweetInfo) {
+  private fun updateStatus(project: Project, twitter: Twitter, info: TweetInfo) {
     checkIsBackgroundThread()
 
     val mediaPath = info.mediaPath
@@ -98,7 +98,7 @@ object XUtils {
       .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("x.open.in.browser")) {
         EduBrowser.getInstance().browse("https://x.com/anyuser/status/${tweet.id}")
       })
-      .notify(null)
+      .notify(project)
   }
 
   /**
