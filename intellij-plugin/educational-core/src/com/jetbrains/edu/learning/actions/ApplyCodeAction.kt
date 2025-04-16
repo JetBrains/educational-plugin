@@ -26,7 +26,9 @@ import com.intellij.openapi.vfs.findFile
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -48,6 +50,7 @@ open class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     val project = e.project ?: return
+    e.presentation.putClientProperty(EduActionUtils.PROJECT_KEY, project)
     e.presentation.isEnabledAndVisible = project.isStudentProject() && e.isUserDataPresented() && !e.isGetHintDiff()
   }
 
@@ -82,8 +85,9 @@ open class ApplyCodeAction : DumbAwareAction(), CustomComponentAction {
     this, presentation, place, JBUI.size(COMPONENT_SIZE)
   ) {
     init {
+      val parentDisposable = presentation.project?.let { StudyTaskManager.getInstance(it) }
       val gotItTooltip = GotItTooltip(
-        GOT_IT_ID, EduCoreBundle.message("action.Educational.Student.ApplyCode.tooltip.text")
+        GOT_IT_ID, EduCoreBundle.message("action.Educational.Student.ApplyCode.tooltip.text"), parentDisposable
       ).withHeader(EduCoreBundle.message("action.Educational.Student.ApplyCode.tooltip.title"))
 
       this.addComponentListener(object : ComponentAdapter() {

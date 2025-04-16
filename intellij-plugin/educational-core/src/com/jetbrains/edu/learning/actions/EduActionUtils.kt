@@ -1,9 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
@@ -13,6 +10,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
@@ -29,6 +27,11 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 object EduActionUtils {
+  val PROJECT_KEY: Key<Project> = Key.create("project")
+
+  val Presentation.project: Project?
+    get() = getClientProperty(PROJECT_KEY)
+
   fun getAction(@NonNls id: String): AnAction {
     return ActionManager.getInstance().getAction(id) ?: error("Can not find action by id $id")
   }

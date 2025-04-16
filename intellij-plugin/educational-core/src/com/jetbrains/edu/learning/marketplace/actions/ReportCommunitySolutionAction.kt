@@ -16,7 +16,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.ui.GotItTooltip
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.EduActionUtils.closeFileEditor
+import com.jetbrains.edu.learning.actions.EduActionUtils.project
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
@@ -38,6 +41,8 @@ class ReportCommunitySolutionAction : DumbAwareAction(), CustomComponentAction {
     val project = e.project ?: return
 
     e.presentation.apply {
+      putClientProperty(EduActionUtils.PROJECT_KEY, project)
+
       isVisible = project.isMarketplaceCourse()
                   && project.isStudentProject()
                   && e.userDataAvailable(TASK_ID_KEY)
@@ -91,7 +96,12 @@ class ReportCommunitySolutionAction : DumbAwareAction(), CustomComponentAction {
     this, presentation, place, JBUI.size(22)
   ) {
     init {
-      val gotItTooltip = GotItTooltip(GOT_IT_ID, EduCoreBundle.message("marketplace.report.solution.tooltip.message"))
+      val parentDisposable = presentation.project?.let { StudyTaskManager.getInstance(it) }
+      val gotItTooltip = GotItTooltip(
+        GOT_IT_ID,
+        EduCoreBundle.message("marketplace.report.solution.tooltip.message"),
+        parentDisposable
+      )
 
       this.addComponentListener(object : ComponentAdapter() {
         override fun componentMoved(e: ComponentEvent) {
