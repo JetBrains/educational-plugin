@@ -1,8 +1,10 @@
 package com.jetbrains.edu.aiHints.core.action
 
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.util.asSafely
@@ -15,6 +17,7 @@ import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.aiHints.core.ui.EduAiHintsIcons
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.agreement.UserAgreementManager
@@ -68,14 +71,14 @@ class GetHint : ActionWithButtonCustomComponent() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (!isJBALoggedIn()) {
-      val popup = createPopup(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup.login")) {
+      val popup = createPopup(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup.login")) {
         MarketplaceConnector.getInstance().doAuthorize()
       }
       popup.show(e.dataContext)
       return
     }
     if (!UserAgreementSettings.getInstance().aiServiceAgreement) {
-      val popup = createPopup(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup.agreement")) {
+      val popup = createPopup(project, EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.popup.agreement")) {
         UserAgreementManager.getInstance().showUserAgreement(project)
       }
       popup.show(e.dataContext)
@@ -92,18 +95,27 @@ class GetHint : ActionWithButtonCustomComponent() {
     HintsLoader.getInstance(project).getHint(task)
   }
 
-  private fun createPopup(@Nls text: String, action: Runnable): Balloon = JBPopupFactory.getInstance()
-    .createHtmlTextBalloonBuilder(
-      text,
-      EduAiHintsIcons.Hint,
-      UIUtil.getToolTipActionBackground(),
-      object : HyperlinkAdapter() {
-        override fun hyperlinkActivated(hyperlinkEvent: HyperlinkEvent) {
-          action.run()
+  private fun createPopup(project: Project, @Nls text: String, action: Runnable): Balloon {
+    val popupParentDisposable = Disposer.newDisposable()
+    // Ensuring the parent disposable is disposed even when the hyperlink is not clicked
+    Disposer.register(StudyTaskManager.getInstance(project), popupParentDisposable)
+
+    return JBPopupFactory.getInstance()
+      .createHtmlTextBalloonBuilder(
+        text,
+        EduAiHintsIcons.Hint,
+        UIUtil.getToolTipActionBackground(),
+        object : HyperlinkAdapter() {
+          override fun hyperlinkActivated(hyperlinkEvent: HyperlinkEvent) {
+            // Close the popup once the hyperlink is clicked
+            Disposer.dispose(popupParentDisposable)
+            action.run()
+          }
         }
-      }
-    )
-    .createBalloon()
+      )
+      .setDisposable(popupParentDisposable)
+      .createBalloon()
+  }
 
   private fun Balloon.show(dataContext: DataContext) {
     val component = dataContext.getData(PlatformDataKeys.CONTEXT_COMPONENT).asSafely<JComponent>()
