@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.IMG_TAG
@@ -100,7 +99,7 @@ fun getSortingShortcutHTML(
 }
 
 fun canShowTerms(project: Project, task: Task): Boolean {
-  if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled || task !is TheoryTask) return false
+  if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled) return false
   val language = TranslationProjectSettings.getInstance(project).translationLanguage ?: return true
   return language.code != TranslationLanguage.ENGLISH.code || language.code != task.course.languageCode
 }
