@@ -8,19 +8,14 @@ import com.jetbrains.educational.terms.format.Term
 import com.jetbrains.educational.terms.format.domain.TermsVersion
 import org.junit.Test
 
-abstract class TermsInTaskDescriptionTestBase(
-  private val termTitles: List<String>,
-  private val isTheoryTask: Boolean = true,
-) : TaskDescriptionTestBase() {
+@Suppress("HtmlRequiredTitleElement")
+class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
+  private val termTitles: List<String> = listOf("thread", "green thread", "mem")
+
   override fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
     courseWithFiles(language = language, environment = environment) {
       lesson {
-        if (isTheoryTask) {
-          theoryTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
-        }
-        else {
-          eduTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
-        }
+        eduTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
       }
     }
     val termsProperties = TermsProperties(
@@ -30,61 +25,7 @@ abstract class TermsInTaskDescriptionTestBase(
     )
     TermsProjectSettings.getInstance(project).setTerms(termsProperties)
   }
-}
 
-@Suppress("HtmlRequiredTitleElement")
-class TermsInEduTaskDescriptionTest : TermsInTaskDescriptionTestBase(
-  listOf("thread", "green thread", "mem"),
-  isTheoryTask = false
-) {
-  @Test
-  fun `test terms do not appear in edu task`() {
-    doHtmlTest(
-      """
-        hello!
-        thread
-        green thread
-      """,
-      """
-        <html>
-         <head>
-          ...
-         </head>
-         <body>
-          <div class="wrapper">
-           hello! thread green thread
-          </div>
-         </body>
-        </html>
-      """
-    )
-
-    doMarkdownTest(
-      """
-        hello!
-        thread
-        green thread
-      """,
-      """
-        <html>
-         <head>
-          ...
-         </head>
-         <body>
-          <div class="wrapper">
-           <p>hello! thread green thread</p>
-          </div>
-         </body>
-        </html>
-      """
-    )
-  }
-}
-
-@Suppress("HtmlRequiredTitleElement")
-class TermsInTheoryTaskDescriptionTest : TermsInTaskDescriptionTestBase(
-  listOf("thread", "green thread", "mem")
-) {
   @Test
   fun `test terms highlight only once in task html description`() {
     doHtmlTest(
