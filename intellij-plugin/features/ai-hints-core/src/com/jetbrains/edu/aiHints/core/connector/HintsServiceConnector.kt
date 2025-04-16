@@ -1,5 +1,6 @@
 package com.jetbrains.edu.aiHints.core.connector
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -23,7 +24,7 @@ import retrofit2.Response
 import java.net.HttpURLConnection.*
 
 @Service(Service.Level.APP)
-class HintsServiceConnector {
+class HintsServiceConnector : Disposable {
   private val url: String
     get() = EduAIServiceHost.getSelectedUrl()
 
@@ -42,6 +43,10 @@ class HintsServiceConnector {
       .addConverterFactory(HintsConverterFactory())
       .build()
       .create(HintsService::class.java)
+  }
+
+  override fun dispose() {
+    connectionPool.evictAll()
   }
 
   /**
