@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
+import com.intellij.ui.GotItTooltip
 import com.intellij.ui.HyperlinkAdapter
 import com.intellij.util.asSafely
 import com.intellij.util.ui.UIUtil
@@ -48,6 +49,7 @@ class GetHint : ActionWithButtonCustomComponent() {
     val isFailedEduTask = task is EduTask && task.status == CheckStatus.Failed
     e.presentation.isEnabledAndVisible =
       isMarketplaceStudyCourse && isFailedEduTask && EduAIHintsProcessor.forCourse(course) != null && HintStateManager.isDefault(project)
+    e.presentation.putClientProperty(PROJECT_KEY, project)
   }
 
   override fun createCustomComponent(presentation: Presentation, place: String): JButton {
@@ -57,7 +59,20 @@ class GetHint : ActionWithButtonCustomComponent() {
     button.isVisible = presentation.isVisible
     button.isDefault = false
     button.putClientProperty(GET_HINT_BUTTON, true)
+    createGotItTooltip(presentation)
     return button
+  }
+
+  private fun createGotItTooltip(presentation: Presentation) {
+    val project = presentation.getClientProperty(PROJECT_KEY)
+    GotItTooltip(
+      GOT_IT_TOOLTIP_ID,
+      EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.got.it.tooltip.text"),
+      parentDisposable = project?.let { StudyTaskManager.getInstance(it) }
+    )
+      .withHeader(EduAIHintsCoreBundle.message("action.Educational.Hints.GetHint.got.it.tooltip.header"))
+      .withPosition(Balloon.Position.above)
+      .assignTo(presentation, GotItTooltip.TOP_MIDDLE)
   }
 
   override fun updateCustomComponent(component: JComponent, presentation: Presentation) {
@@ -134,5 +149,8 @@ class GetHint : ActionWithButtonCustomComponent() {
 
   companion object {
     private val GET_HINT_BUTTON: Key<Boolean> = Key.create("getHintButton")
+    private val PROJECT_KEY: Key<Project> = Key.create("project")
+
+    private const val GOT_IT_TOOLTIP_ID: String = "Educational.Hints.GetHint.got.it.tooltip"
   }
 }
