@@ -429,7 +429,7 @@
     <httpRequestHandler implementation="com.jetbrains.edu.learning.socialMedia.x.XRestService"/>
     <registryKey key="edu.socialMedia.x.oauth2"
                  description="Enables OAuth 2.0 authorization for X"
-                 defaultValue="false"/>
+                 defaultValue="true"/>
 
     <registryKey key="edu.course.update.check.interval"
                  description="Sets is course up to date check interval in seconds"
