@@ -213,6 +213,8 @@ interface EduConfigurator<Settings : EduProjectSettings> {
 
   fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
 
+  fun shouldFileBeVisibleToStudent(virtualFile: VirtualFile) = false
+
   companion object {
     val EXCLUDED_FILES = arrayOf(EduNames.HINTS, EduNames.STEPIK_IDS_JSON, EduNames.COURSE_IGNORE, EduFormatNames.COURSE_ICON_FILE)
   }

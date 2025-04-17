@@ -18,9 +18,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.projectView.CourseNode
-import com.jetbrains.edu.learning.projectView.LessonNode
-import com.jetbrains.edu.learning.projectView.SectionNode
+import com.jetbrains.edu.learning.projectView.*
 import org.jetbrains.annotations.Nls
 
 class CCCourseNode(
@@ -55,6 +53,10 @@ class CCCourseNode(
 
   override fun createSectionNode(directory: PsiDirectory, section: Section): SectionNode {
     return CCSectionNode(myProject, settings, section, directory)
+  }
+
+  override fun createIntermediateDirectoryNode(directory: PsiDirectory): IntermediateDirectoryNode {
+    return CCIntermediateDirectoryNode(myProject, directory, settings)
   }
 
   override val additionalInfo: String

@@ -58,8 +58,33 @@ class CCCourseViewTest : CourseViewTestBase() {
     """.trimIndent())
   }
 
+  @Test
+  fun `test course view with content shift`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, shift = "some/path") {
+      lesson {
+        eduTask()
+        eduTask()
+      }
+    }
+    doTest("""
+      -Project
+       -CCCourseNode Test Course (Course Creation)
+        -CCIntermediateDirectoryNode some
+         -CCIntermediateDirectoryNode path
+          -CCLessonNode lesson1
+           -CCTaskNode task1
+            CCStudentInvisibleFileNode task.md
+           -CCTaskNode task2
+            CCStudentInvisibleFileNode task.md
+    """.trimIndent())
+  }
+
   private fun doTest(item: StudyItem, structure: String) {
     item.customPresentableName = "custom name"
+    doTest(structure)
+  }
+
+  private fun doTest(structure: String) {
     val pane = createPane()
     PlatformTestUtil.waitForPromise(TreeUtil.promiseExpandAll(pane.tree))
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)

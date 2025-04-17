@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -12,6 +13,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -22,6 +24,8 @@ import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.TestOnly
 import javax.swing.Icon
+import kotlin.io.path.Path
+import kotlin.io.path.relativeTo
 
 object CourseViewUtils {
 
@@ -166,5 +170,38 @@ object CourseViewUtils {
   private fun Task.containsCorrectSubmissions(): Boolean {
     val project = course.project ?: return false
     return SubmissionsManager.getInstance(project).containsCorrectSubmission(id)
+  }
+
+  fun extractNodeFromPsiDirectory(
+    directory: PsiDirectory,
+    course: Course,
+    project: Project,
+    createSectionNode: (PsiDirectory, Section) -> SectionNode,
+    createLessonNode: (PsiDirectory, Lesson) -> LessonNode?,
+    createIntermediateNode: (PsiDirectory) -> IntermediateDirectoryNode,
+  ): AbstractTreeNode<*>? {
+    val section = course.getSection(directory.name)
+    if (section != null) {
+      return createSectionNode(directory, section)
+    }
+    val lesson = course.getLesson(directory.name)
+    if (lesson != null) {
+      val lessonSolved = lesson.taskList.all { it.status == CheckStatus.Solved }
+      if (lessonSolved && PropertiesComponent.getInstance().getBoolean(CourseViewPane.HIDE_SOLVED_LESSONS, false)) {
+        return null
+      }
+      return createLessonNode(directory, lesson)
+    }
+    if (isPartOfContentShift(directory, project)) {
+      return createIntermediateNode(directory)
+    }
+    return null
+  }
+
+  private fun isPartOfContentShift(directory: PsiDirectory, project: Project): Boolean {
+    val directoryPath = Path(directory.virtualFile.path)
+    val coursePath = Path(project.courseDir.path)
+    val relativePath = directoryPath.relativeTo(coursePath)
+    return project.course?.contentShift?.contains(relativePath.toString()) == true
   }
 }

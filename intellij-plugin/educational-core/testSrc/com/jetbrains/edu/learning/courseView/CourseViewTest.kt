@@ -156,8 +156,27 @@ class CourseViewTest : CourseViewTestBase() {
     }
   }
 
-  private fun createStudyCourse() {
-    courseWithFiles("Edu test course") {
+  @Test
+  fun `test course with content shift`() {
+    createStudyCourse("some/path")
+    configureByTaskFile(1, 1, "taskFile1.txt")
+    val pane = createPane()
+    PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 5))
+
+    val structure = "-Project\n" +
+                    " -CourseNode Edu test course  0/4\n" +
+                    "  -IntermediateDirectoryNode some\n" +
+                    "   -IntermediateDirectoryNode path\n" +
+                    "    -LessonNode lesson1\n" +
+                    "     +TaskNode task1\n" +
+                    "     +TaskNode task2\n" +
+                    "     +TaskNode task3\n" +
+                    "     +TaskNode task4\n"
+    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+  }
+
+  private fun createStudyCourse(shift: String = "") {
+    courseWithFiles("Edu test course", shift = shift) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt", "a = <p>TODO()</p>") {

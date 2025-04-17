@@ -172,7 +172,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
    * because [com.intellij.testFramework.fixtures.CodeInsightTestFixture.configureFromExistingVirtualFile] loads selection and caret from markup in text
    */
   protected fun configureByTaskFile(lessonIndex: Int, taskIndex: Int, taskFileName: String) {
-    val fileName = "lesson$lessonIndex/task$taskIndex/$taskFileName"
+    val shift = myFixture.project.course?.contentShift ?: ""
+    val fileName = "$shift/lesson$lessonIndex/task$taskIndex/$taskFileName"
     val file = myFixture.findFileInTempDir(fileName)
     myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
