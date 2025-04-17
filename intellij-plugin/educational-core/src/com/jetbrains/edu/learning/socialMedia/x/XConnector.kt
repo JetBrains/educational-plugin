@@ -26,6 +26,10 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
   override val clientId: String
   private val authBaseUrl: String
 
+  // Documentation recommends using 127.0.0.1 instead of localhost
+  // https://docs.x.com/resources/fundamentals/developer-apps#things-to-keep-in-mind
+  override val redirectHost: String = "127.0.0.1"
+
   // https://docs.x.com/resources/fundamentals/authentication/oauth-2-0/authorization-code
   override val authorizationUrlBuilder: URIBuilder
     get() = URIBuilder(authBaseUrl)
