@@ -40,6 +40,76 @@ class XV2ApiSerializationTest : EduTestCase() {
     }    
   """, TweetResponse(TweetData("1912475036826448076", "Hello!")))
 
+  @Test
+  fun `media response after media upload initialization (INIT command)`() = doSerializationTest("""
+    {
+      "data" : {
+        "id" : "1912475018862166016",
+        "expires_after_secs" : 86400,
+        "media_key" : "16_1912475018862166016"
+      }
+    }
+  """, XMediaUploadResponse(
+    XUploadData(
+      id = "1912475018862166016",
+      mediaKey = "16_1912475018862166016",
+      expiresAfterSecs = 86400,
+      processingInfo = null
+    )
+  ))
+
+  @Test
+  fun `media response after finishing media upload (FINALIZE command)`() = doSerializationTest("""
+    {
+      "data" : {
+        "id" : "1912475018862166016",
+        "media_key" : "16_1912475018862166016",
+        "size" : 708679,
+        "expires_after_secs" : 86400,
+        "processing_info" : {
+          "state" : "pending",
+          "check_after_secs" : 1
+        }
+      }
+    }
+  """, XMediaUploadResponse(
+    XUploadData(
+      id = "1912475018862166016",
+      mediaKey = "16_1912475018862166016",
+      expiresAfterSecs = 86400,
+      processingInfo = XProcessingInfo(
+        state = PendingState.PENDING,
+        checkAfterSecs = 1
+      )
+    )
+  ))
+
+  @Test
+  fun `media response of checking media upload status`() = doSerializationTest("""
+    {
+      "data" : {
+        "expires_after_secs" : 86398,
+        "id" : "1912475018862166016",
+        "media_key" : "16_1912475018862166016",
+        "processing_info" : {
+          "progress_percent" : 100,
+          "state" : "succeeded"
+        },
+        "size" : 708679
+      }
+    }
+  """, XMediaUploadResponse(
+    XUploadData(
+      id = "1912475018862166016",
+      mediaKey = "16_1912475018862166016",
+      expiresAfterSecs = 86398,
+      processingInfo = XProcessingInfo(
+        state = PendingState.SUCCEEDED,
+        checkAfterSecs = 0
+      )
+    )
+  ))
+
   private inline fun <reified T> doSerializationTest(@Language("JSON") rawData: String, expected: T) {
     val actual = XConnector.getInstance().objectMapper.readValue<T>(rawData)
     assertEquals(expected, actual)

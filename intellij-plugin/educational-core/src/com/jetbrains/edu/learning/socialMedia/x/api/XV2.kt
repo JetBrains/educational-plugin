@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.socialMedia.x.api
 
+import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface XV2 {
   /**
@@ -13,6 +12,19 @@ interface XV2 {
    */
   @GET("/2/users/me")
   fun usersMe(): Call<XUserLookup>
+
+  /**
+   * [Media Upload](https://docs.x.com/x-api/media/media-upload)
+   */
+  @Multipart
+  @POST("/2/media/upload")
+  fun uploadMedia(@PartMap params: @JvmSuppressWildcards Map<String, RequestBody>): Call<XMediaUploadResponse>
+
+  /**
+   * [Media Upload Status]( https://docs.x.com/x-api/media/media-upload-status)
+   */
+  @GET("/2/media/upload")
+  fun mediaUploadStatus(@Query("media_id") mediaId: String): Call<XMediaUploadResponse>
 
   /**
    * Causes the User to create a Post under the authorized account

@@ -4,15 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
-import com.jetbrains.edu.learning.socialMedia.x.api.Media
-import com.jetbrains.edu.learning.socialMedia.x.api.Tweet
-import com.jetbrains.edu.learning.socialMedia.x.api.TweetResponse
-import com.jetbrains.edu.learning.socialMedia.x.api.XV2
+import com.jetbrains.edu.learning.socialMedia.x.api.*
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.client.utils.URIBuilder
+import java.nio.file.Files
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 
 @Service(Service.Level.APP)
 class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
@@ -78,12 +84,96 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
 
   @RequiresBackgroundThread
   fun tweet(message: String, imagePath: Path?): TweetResponse? {
-    val tweet = Tweet(message, Media(listOf()))
+    val tweet = if (imagePath != null) {
+      val mediaId = uploadMedia(imagePath) ?: return null
+      Tweet(message, Media(listOf(mediaId)))
+    }
+    else {
+      Tweet(message, Media(listOf()))
+    }
 
     return getEndpoints<XV2>()
       .postTweet(tweet)
       .executeHandlingExceptions(omitErrors = true)
       ?.body()
+  }
+
+  private fun uploadMedia(imagePath: Path): String? {
+    val endpoints = getEndpoints<XV2>()
+
+    val mediaType = imagePath.mediaType()
+    val media = imagePath.toFile().asRequestBody(mediaType)
+
+    // Supposed workflow for media uploading - https://docs.x.com/x-api/media/quickstart/media-upload-chunked
+
+    // 1. Init media loading and receiving media id
+    val initResult = endpoints.uploadMedia(
+      mapOf(
+        "command" to UploadCommand.INIT,
+        "media_type" to mediaType,
+        "media_category" to "tweet_gif", // Hardcoded value. Need to be dynamic if we decide to use new media types
+        "total_bytes" to media.contentLength()
+      ).convertToRequestBodies()
+    ).executeHandlingExceptions(omitErrors = true)?.body() ?: return null
+
+    val mediaId = initResult.data.id
+
+    // 2. Upload media chunks.
+    // Right now we do it with a single chunk
+    endpoints.uploadMedia(
+      mapOf(
+        "command" to UploadCommand.APPEND,
+        "media_id" to mediaId,
+        "segment_index" to 0, // Do we need to split media data into several chunks?
+        "media" to media
+      ).convertToRequestBodies()
+    ).executeHandlingExceptions(omitErrors = true) ?: return null
+
+    // 3. Finalize uploading and receiving media status
+    var uploadInfo = endpoints.uploadMedia(
+      mapOf(
+        "command" to UploadCommand.FINALIZE,
+        "media_id" to mediaId,
+      ).convertToRequestBodies()
+    ).executeHandlingExceptions(omitErrors = true)?.body() ?: return null
+
+    // 4. Checking uploading status
+    var totalWaitingDuration = 0L
+    while (uploadInfo.data.processingInfo != null) { // the absense of `processingInfo` means that media was uploaded successfully
+      when (uploadInfo.data.processingInfo.state) {
+        PendingState.PENDING, PendingState.IN_PROGRESS -> {
+          if (totalWaitingDuration > IMAGE_PROCESSING_WAITING_TIMEOUT) return null
+
+          val waitingTime = TimeUnit.SECONDS.toMillis(uploadInfo.data.processingInfo.checkAfterSecs)
+          totalWaitingDuration += waitingTime
+
+          @Suppress("UsagesOfObsoleteApi")
+          ProgressIndicatorUtils.awaitWithCheckCanceled(waitingTime)
+          uploadInfo = endpoints.mediaUploadStatus(mediaId).executeHandlingExceptions(omitErrors = true)?.body() ?: return null
+        }
+        PendingState.SUCCEEDED -> break
+        PendingState.FAILED -> return null
+      }
+    }
+
+    return mediaId
+  }
+
+  /**
+   * Converts all values to [RequestBody].
+   * If value is [RequestBody], does nothing.
+   * Otherwise, converts values to string with text/plain media type
+   */
+  private fun Map<String, Any>.convertToRequestBodies(): Map<String, RequestBody> = mapValues { (_, value) ->
+    value as? RequestBody ?: value.toString().toRequestBody(TEXT_PLAIN)
+  }
+
+  /**
+   * In case of any issues with content type detection, `image/gif` will be used as default media type.
+   * Maybe be a reason for a wrong media type if we start using anything except gif images for tweets.
+   */
+  private fun Path.mediaType(): MediaType {
+    return runCatching { Files.probeContentType(this).toMediaType() }.getOrElse { IMAGE_GIF }
   }
 
   companion object {
@@ -98,6 +188,11 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
       "tweet.write",    // to post new tweets (`/2/tweets` call)
       "media.write"     // to upload media (gifs in our case) for tweets (`/2/media/upload` calls)
     )
+
+    private val TEXT_PLAIN: MediaType = "text/plain".toMediaType()
+    private val IMAGE_GIF: MediaType = "image/gif".toMediaType()
+
+    private val IMAGE_PROCESSING_WAITING_TIMEOUT = TimeUnit.SECONDS.toMillis(10)
 
     fun getInstance(): XConnector = service()
   }
