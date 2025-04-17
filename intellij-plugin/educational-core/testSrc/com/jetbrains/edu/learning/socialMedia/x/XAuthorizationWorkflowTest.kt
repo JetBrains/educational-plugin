@@ -98,13 +98,11 @@ class XAuthorizationWorkflowTest : EduTestCase() {
     assertEquals("67890", account.getRefreshToken())
   }
 
-  // Note, it just checks the current behavior of `XRestService`.
-  // In practice, I'm not sure what should happen to receive `error`
   @Test
   fun `test error response`() {
     // given
     configureAuthResponse { parsedUri ->
-      addParameters(mapOf("error" to "Some error message"))
+      addParameters(mapOf("error" to "access_denied", "state" to parsedUri.state))
     }
     // when
     XConnector.getInstance().doAuthorize()

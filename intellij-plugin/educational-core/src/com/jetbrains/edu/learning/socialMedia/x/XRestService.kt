@@ -68,23 +68,22 @@ class XRestService : OAuthRestService(XUtils.PLATFORM_NAME) {
 private sealed interface UriMatchResult
 
 private data class SuccessUriMatchResult(val code: String, val state: String) : UriMatchResult
-private data class ErrorUriMatchResult(val error: String) : UriMatchResult
+private data class ErrorUriMatchResult(val error: String, val state: String) : UriMatchResult
 
 private class UriMatcher(private val path: String) {
 
   fun match(urlDecoder: QueryStringDecoder): UriMatchResult? {
     if (urlDecoder.path() != path) return null
     val params = urlDecoder.parameters()
-    return when (params.size) {
-      1 -> {
-        val error = params["error"]?.singleOrNull() ?: return null
-        ErrorUriMatchResult(error)
-      }
-      2 -> {
-        val code = params["code"]?.singleOrNull() ?: return null
-        val state = params["state"]?.singleOrNull() ?: return null
-        SuccessUriMatchResult(code, state)
-      }
+    if (params.size != 2) return null
+
+    val state = params["state"]?.singleOrNull() ?: return null
+    val error = params["error"]?.singleOrNull()
+    val code = params["code"]?.singleOrNull()
+
+    return when {
+      code != null -> SuccessUriMatchResult(code, state)
+      error != null -> ErrorUriMatchResult(error, state)
       else -> null
     }
   }
