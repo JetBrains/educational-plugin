@@ -51,9 +51,8 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
 
   override var account: XAccount? by XSettings.getInstance()::account
 
-  // TODO: replace empty `clientId` with actual one
   @Suppress("unused") // used by the platform
-  constructor() : this(authBaseUrl = AUTH_BASE_URL, baseUrl = BASE_URL, clientId = "")
+  constructor() : this(authBaseUrl = AUTH_BASE_URL, baseUrl = BASE_URL, clientId = XBundle.value("xClientId"))
 
   constructor(authBaseUrl: String, baseUrl: String, clientId: String) : super() {
     this.authBaseUrl = authBaseUrl
