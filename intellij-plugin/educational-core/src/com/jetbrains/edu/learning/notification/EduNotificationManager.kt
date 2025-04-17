@@ -8,7 +8,7 @@ import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
 
 object EduNotificationManager {
-  private const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
+  const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
 
   @Suppress("EduNotificationConversion")
   fun create(type: NotificationType, @NotificationTitle title: String = "", @NotificationContent content: String): Notification =

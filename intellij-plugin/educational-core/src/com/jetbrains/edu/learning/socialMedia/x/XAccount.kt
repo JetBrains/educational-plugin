@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.courseFormat.UserInfo
 class XAccount(userInfo: XUserInfo, tokenExpiresIn: Long) : OAuthAccount<XUserInfo>(userInfo, tokenExpiresIn) {
   override val servicePrefix: String
     get() = XUtils.PLATFORM_NAME
+
+  object Factory
 }
 
 data class XUserInfo(

@@ -1,11 +1,6 @@
 package com.jetbrains.edu.learning.socialMedia.x
 
-import com.intellij.credentialStore.PasswordSafeSettings
-import com.intellij.credentialStore.ProviderType
-import com.intellij.ide.passwordSafe.PasswordSafe
-import com.intellij.ide.passwordSafe.impl.TestPasswordSafeImpl
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.replaceService
 import com.intellij.util.Url
@@ -36,8 +31,8 @@ class XAuthorizationWorkflowTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
 
-    enableAuth2ForX()
-    inMemoryPasswordSafe()
+    enableAuth2ForX(testRootDisposable)
+    inMemoryPasswordSafe(testRootDisposable)
     helper = MockWebServerHelper(testRootDisposable)
     application.replaceService(XConnector::class.java, XConnector(helper.baseUrl, helper.baseUrl, "12345"), testRootDisposable)
     eduBrowser = mockService<EduBrowser>(application)
@@ -155,20 +150,6 @@ class XAuthorizationWorkflowTest : EduTestCase() {
     assertEquals(HttpURLConnection.HTTP_OK, responseCode.get())
 
     assertNull(XSettings.getInstance().account)
-  }
-
-  private fun enableAuth2ForX() {
-    val value = Registry.get("edu.socialMedia.x.oauth2")
-    val oldValue = value.asBoolean()
-    value.setValue(true)
-    Disposer.register(testRootDisposable) { value.setValue(oldValue) }
-  }
-
-  private fun inMemoryPasswordSafe() {
-    val passwordSafeSettings = PasswordSafeSettings()
-    passwordSafeSettings.providerType = ProviderType.MEMORY_ONLY
-    val passwordSafe = TestPasswordSafeImpl(passwordSafeSettings)
-    application.replaceService(PasswordSafe::class.java, passwordSafe, testRootDisposable)
   }
 
   private fun configureAuthResponse(adjustUrl: Url.(ParsedAuthUri) -> Url) {

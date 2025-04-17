@@ -7,8 +7,12 @@ import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.socialMedia.x.api.Media
+import com.jetbrains.edu.learning.socialMedia.x.api.Tweet
+import com.jetbrains.edu.learning.socialMedia.x.api.TweetResponse
 import com.jetbrains.edu.learning.socialMedia.x.api.XV2
 import org.apache.http.client.utils.URIBuilder
+import java.nio.file.Path
 
 @Service(Service.Level.APP)
 class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
@@ -70,6 +74,16 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
   private fun XV2.userInfo(): XUserInfo? {
     val data = usersMe().executeHandlingExceptions()?.body()?.data ?: return null
     return XUserInfo(userName = data.username, name = data.name)
+  }
+
+  @RequiresBackgroundThread
+  fun tweet(message: String, imagePath: Path?): TweetResponse? {
+    val tweet = Tweet(message, Media(listOf()))
+
+    return getEndpoints<XV2>()
+      .postTweet(tweet)
+      .executeHandlingExceptions(omitErrors = true)
+      ?.body()
   }
 
   companion object {

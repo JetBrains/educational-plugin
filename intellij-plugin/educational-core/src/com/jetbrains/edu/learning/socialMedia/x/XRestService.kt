@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.socialMedia.x
 
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import io.netty.channel.ChannelHandlerContext
@@ -61,7 +60,7 @@ class XRestService : OAuthRestService(XUtils.PLATFORM_NAME) {
   }
 
   override fun isAccessible(request: HttpRequest): Boolean {
-    return super.isAccessible(request) && Registry.`is`("edu.socialMedia.x.oauth2")
+    return super.isAccessible(request) && XUtils.oauth2Enabled
   }
 }
 

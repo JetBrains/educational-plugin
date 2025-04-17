@@ -8,12 +8,17 @@ import com.intellij.ide.passwordSafe.PasswordSafe
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsSafe
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.NumericInputValidator
+import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -36,6 +41,8 @@ object XUtils {
 
   const val PLATFORM_NAME: String = "X"
 
+  private val LOG = logger<XUtils>()
+
   /**
    * Set consumer key and secret.
    * @return Twitter instance with consumer key and secret set.
@@ -49,25 +56,34 @@ object XUtils {
       return TwitterFactory(configuration).instance
     }
 
+  val oauth2Enabled: Boolean get() = Registry.`is`("edu.socialMedia.x.oauth2")
+
+  @RequiresBackgroundThread
   fun doPost(project: Project, message: String, imagePath: Path?) {
     try {
-      val token = getToken(XSettings.getInstance().userId)
-      val twitterInstance = twitter
-      if (token == null) {
-        if (!authorize(project, twitterInstance)) return
+      if (oauth2Enabled) {
+        doPostV2(project, message, imagePath)
       }
       else {
-        twitterInstance.oAuthAccessToken = AccessToken(token.token, token.tokenSecret)
+        doPostV1(project, message, imagePath)
       }
-      updateStatus(project, twitterInstance, TweetInfo(message, imagePath))
     }
-    catch (_: Exception) {
-      EduNotificationManager.showErrorNotification(
-        project,
-        EduCoreBundle.message("linkedin.error.failed.to.post"),
-        EduCoreBundle.message("linkedin.error.failed.to.post")
-      )
+    catch (e: Exception) {
+      LOG.warn(e)
+      showFailedToPostNotification(project)
     }
+  }
+
+  private fun doPostV1(project: Project, message: String, imagePath: Path?) {
+    val token = getToken(XSettings.getInstance().userId)
+    val twitterInstance = twitter
+    if (token == null) {
+      if (!authorize(project, twitterInstance)) return
+    }
+    else {
+      twitterInstance.oAuthAccessToken = AccessToken(token.token, token.tokenSecret)
+    }
+    updateStatus(project, twitterInstance, TweetInfo(message, imagePath))
   }
 
   private fun getToken(userId: String): RequestToken? {
@@ -93,12 +109,7 @@ object XUtils {
 
     val tweet = twitter.v2.createTweet(text = info.message, mediaIds = mediaId)
 
-    EduNotificationManager
-      .create(INFORMATION, EduCoreBundle.message("x.success.title"), EduCoreBundle.message("x.tweet.posted"))
-      .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("x.open.in.browser")) {
-        EduBrowser.getInstance().browse("https://x.com/anyuser/status/${tweet.id}")
-      })
-      .notify(project)
+    showSuccessNotification(project, tweet.id.toString())
   }
 
   /**
@@ -129,6 +140,55 @@ object XUtils {
         EduCoreBundle.message("x.validation.not.numeric.pin")
       )
     )
+  }
+
+  private fun doPostV2(project: Project, message: String, imagePath: Path?) {
+    val connector = XConnector.getInstance()
+    if (connector.account == null) {
+      connector.doAuthorize({
+        runInEdt {
+          requestFocus()
+        }
+        tweet(project, message, imagePath)
+      })
+    }
+    else {
+      tweet(project, message, imagePath)
+    }
+  }
+
+  private fun tweet(project: Project, message: String, imagePath: Path?) {
+    val response = try {
+      XConnector.getInstance().tweet(message, imagePath)
+    }
+    catch (e: Exception) {
+      LOG.warn(e)
+      null
+    }
+
+    if (response?.data?.id != null) {
+      showSuccessNotification(project, response.data.id)
+    }
+    else {
+      showFailedToPostNotification(project)
+    }
+  }
+
+  private fun showFailedToPostNotification(project: Project) {
+    EduNotificationManager.showErrorNotification(
+      project,
+      EduCoreBundle.message("linkedin.error.failed.to.post"),
+      EduCoreBundle.message("linkedin.error.failed.to.post")
+    )
+  }
+
+  private fun showSuccessNotification(project: Project, postId: String) {
+    EduNotificationManager
+      .create(INFORMATION, EduCoreBundle.message("x.success.title"), EduCoreBundle.message("x.tweet.posted"))
+      .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("x.open.in.browser")) {
+        EduBrowser.getInstance().browse("https://x.com/anyuser/status/${postId}")
+      })
+      .notify(project)
   }
 
   private class TweetInfo(

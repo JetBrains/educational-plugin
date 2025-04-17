@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.socialMedia.x.api
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -16,16 +14,11 @@ interface XV2 {
   @GET("/2/users/me")
   fun usersMe(): Call<XUserLookup>
 
+  /**
+   * Causes the User to create a Post under the authorized account
+   *
+   * [Creation of a Post](https://docs.x.com/x-api/posts/creation-of-a-post)
+   */
   @POST("/2/tweets")
-  fun postTweet(@Body tweet: Tweet): Call<ResponseBody>
+  fun postTweet(@Body tweet: Tweet): Call<TweetResponse>
 }
-
-data class Tweet(
-  val text: String,
-  val media: Media
-)
-
-data class Media(
-  @get:JsonProperty("media_ids")
-  val mediaIds: List<String>
-)

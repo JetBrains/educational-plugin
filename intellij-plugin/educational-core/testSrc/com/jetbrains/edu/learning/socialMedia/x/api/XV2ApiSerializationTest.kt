@@ -21,8 +21,32 @@ class XV2ApiSerializationTest : EduTestCase() {
     }
   """, XUserLookup(XUserData("TwitterDev", "X Dev")))
 
+  @Test
+  fun tweet() = doDeserializationTest(
+    Tweet("Hello!", Media(listOf("1912475018862166016"))),
+    """{"text":"Hello!","media":{"media_ids":["1912475018862166016"]}}"""
+  )
+
+  @Test
+  fun `tweet response`() = doSerializationTest("""
+    {
+      "data" : {
+        "edit_history_tweet_ids" : [
+          "1912475036826448076"
+        ],
+        "id" : "1912475036826448076",
+        "text" : "Hello!"
+      }
+    }    
+  """, TweetResponse(TweetData("1912475036826448076", "Hello!")))
+
   private inline fun <reified T> doSerializationTest(@Language("JSON") rawData: String, expected: T) {
     val actual = XConnector.getInstance().objectMapper.readValue<T>(rawData)
+    assertEquals(expected, actual)
+  }
+
+  private fun <T> doDeserializationTest(value: T, @Language("JSON") expected: String) {
+    val actual = XConnector.getInstance().objectMapper.writeValueAsString(value)
     assertEquals(expected, actual)
   }
 }
