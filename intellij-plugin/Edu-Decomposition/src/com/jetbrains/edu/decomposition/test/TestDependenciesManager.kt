@@ -14,26 +14,25 @@ class TestDependenciesManager : PersistentStateComponent<TestDependenciesManager
   private val tests = mutableMapOf<Int, Map<String, List<String>>>()
   private val testStates = ConcurrentHashMap<Int, TestState>()
 
-  private sealed class TestState {
-    class Pending(val expectedFunctionNames: Set<String>, val signal: CompletableDeferred<Unit>) : TestState()
-    class Generated(val expectedFunctionNames: Set<String>) : TestState()
+  private sealed class TestState(val expectedFunctionNames: Set<String>) {
+    class Pending(expectedFunctionNames: Set<String>, val signal: CompletableDeferred<Unit>) : TestState(expectedFunctionNames)
+    class Generated(expectedFunctionNames: Set<String>) : TestState(expectedFunctionNames)
+    fun functionDependenciesMatches(expectedFunctionNames: Set<String>) = this.expectedFunctionNames == expectedFunctionNames
   }
 
-  suspend fun waitForTestGeneration(taskId: Int, functionNames: List<String>, timeout: Long = 5000) {
-    val expectedFunctionNames = functionNames.toSet()
+  suspend fun waitForTestGeneration(taskId: Int, expectedFunctionNames: Set<String>, timeout: Long = 5000) {
     val pending = TestState.Pending(expectedFunctionNames, CompletableDeferred())
     val currentTestState = testStates.compute(taskId) { _, state ->
       when (state) {
-        is TestState.Generated ->
-          state.takeIf { state.expectedFunctionNames == expectedFunctionNames } ?: pending
+        is TestState.Generated -> state
         is TestState.Pending -> {
-          if (state.expectedFunctionNames != expectedFunctionNames) {
+          if (!state.functionDependenciesMatches(expectedFunctionNames)) {
             state.signal.completeExceptionally(CancellationException("Function list changed")) // TODO Implement logger for this kind of things
           }
-          state.takeIf { state.expectedFunctionNames == expectedFunctionNames } ?: pending
+          state
         }
-        null -> pending
-      }
+        null -> null
+      }?.takeIf { it.functionDependenciesMatches(expectedFunctionNames) } ?: pending
     }
 
     if (currentTestState is TestState.Pending) {
@@ -45,13 +44,12 @@ class TestDependenciesManager : PersistentStateComponent<TestDependenciesManager
   }
 
   fun addTest(taskId: Int, dependencies: Map<String, List<String>>) {
-    val expectedFunctionNames = dependencies.keys.toSet()
-    val newState = TestState.Generated(expectedFunctionNames)
+    val newState = TestState.Generated(dependencies.keys)
     val oldState = testStates.put(taskId, newState)
+    tests[taskId] = dependencies
     if (oldState is TestState.Pending) {
       oldState.signal.complete(Unit)
     }
-    tests[taskId] = dependencies
   }
 
   fun getTest(taskId: Int): Map<String, List<String>>? = tests[taskId]
@@ -65,10 +63,9 @@ class TestDependenciesManager : PersistentStateComponent<TestDependenciesManager
     }
   }
 
-  fun isTestGenerated(taskId: Int, functionNames: List<String>): Boolean {
+  fun isTestGenerated(taskId: Int, expectedFunctionNames: Set<String>): Boolean {
     val state = testStates[taskId]
-    val expectedFunctionNames = functionNames.toSet()
-    return state is TestState.Generated && state.expectedFunctionNames == expectedFunctionNames
+    return state is TestState.Generated && state.functionDependenciesMatches(expectedFunctionNames)
   }
 
   companion object {

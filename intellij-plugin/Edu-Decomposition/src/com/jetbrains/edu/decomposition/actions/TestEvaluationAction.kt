@@ -27,7 +27,7 @@ class TestEvaluationAction : CheckActionBase() {
     return withBackgroundProgress(project, EduDecompositionBundle.message("progress.title.test.evaluation"), cancellable = true) {
       val language = task.course.languageById ?: return@withBackgroundProgress false
       val files = task.taskFiles.values.filter { it.isVisible }
-      val functionNames = runReadAction { FunctionParser.extractFunctionModels(files, project, language) }.map { it.name }
+      val functionNames = runReadAction { FunctionParser.extractFunctionModels(files, project, language) }.map { it.name }.toSet()
       val testManager = TestDependenciesManager.getInstance(project)
       if (!testManager.isTestGenerated(task.id, functionNames)) {
         try {
