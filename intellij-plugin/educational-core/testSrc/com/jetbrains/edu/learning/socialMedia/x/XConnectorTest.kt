@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.socialMedia.x.api.Media
 import com.jetbrains.edu.learning.socialMedia.x.api.Tweet
 import com.jetbrains.edu.learning.socialMedia.x.api.TweetData
 import com.jetbrains.edu.learning.socialMedia.x.api.TweetResponse
+import com.jetbrains.edu.rules.WithRegistryValue
 import com.jetbrains.rd.util.ConcurrentHashMap
 import org.junit.Test
 import java.net.HttpURLConnection.*
@@ -21,6 +22,7 @@ import kotlin.collections.ArrayDeque
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull as kAssertNotNull
 
+@WithRegistryValue("edu.socialMedia.x.oauth2", "true")
 class XConnectorTest : EduTestCase() {
 
   private lateinit var helper: MockWebServerHelper
@@ -29,7 +31,6 @@ class XConnectorTest : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    enableAuth2ForX(testRootDisposable)
     inMemoryPasswordSafe(testRootDisposable)
     mockXAccount()
     helper = MockWebServerHelper(testRootDisposable)

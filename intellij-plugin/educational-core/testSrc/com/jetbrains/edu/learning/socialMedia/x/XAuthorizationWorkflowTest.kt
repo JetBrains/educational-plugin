@@ -9,6 +9,7 @@ import com.intellij.util.application
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.queryParameters
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.rules.WithRegistryValue
 import io.mockk.every
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -20,7 +21,7 @@ import java.net.URI
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertNotEquals
 
-
+@WithRegistryValue("edu.socialMedia.x.oauth2", "true")
 class XAuthorizationWorkflowTest : EduTestCase() {
 
   private lateinit var helper: MockWebServerHelper
@@ -31,7 +32,6 @@ class XAuthorizationWorkflowTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
 
-    enableAuth2ForX(testRootDisposable)
     inMemoryPasswordSafe(testRootDisposable)
     helper = MockWebServerHelper(testRootDisposable)
     application.replaceService(XConnector::class.java, XConnector(helper.baseUrl, helper.baseUrl, "12345"), testRootDisposable)

@@ -11,18 +11,15 @@ import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.socialMedia.x.api.TweetData
 import com.jetbrains.edu.learning.socialMedia.x.api.TweetResponse
+import com.jetbrains.edu.rules.WithRegistryValue
 import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicReference
 
+@WithRegistryValue("edu.socialMedia.x.oauth2", "true")
 class XPostTest : EduTestCase() {
-
-  override fun setUp() {
-    super.setUp()
-    enableAuth2ForX(testRootDisposable)
-  }
 
   @Test
   fun `test successful post when logged in`() {

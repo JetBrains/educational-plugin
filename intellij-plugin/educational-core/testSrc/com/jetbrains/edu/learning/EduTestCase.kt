@@ -50,8 +50,10 @@ import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
+import com.jetbrains.edu.rules.CustomValuesRule
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
+import org.junit.Rule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import java.io.File
@@ -65,6 +67,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
   protected lateinit var testPluginDescriptor: IdeaPluginDescriptor
 
   protected open val useDocumentListener: Boolean = true
+
+  @Rule
+  @JvmField
+  val customValuesRule = CustomValuesRule()
 
   @Throws(Exception::class)
   override fun setUp() {

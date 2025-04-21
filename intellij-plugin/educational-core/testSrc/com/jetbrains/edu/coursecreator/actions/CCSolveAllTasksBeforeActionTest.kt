@@ -1,15 +1,16 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.ui.SelectTaskUi
 import com.jetbrains.edu.coursecreator.ui.withMockSelectTaskUi
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.rules.WithRegistryValue
 import org.junit.Test
 
+@WithRegistryValue(CCSolveAllTasksBeforeAction.REGISTRY_KEY, "true")
 class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
 
   @Test
@@ -133,14 +134,7 @@ class CCSolveAllTasksBeforeActionTest : EduActionTestCase() {
         return course.findTask(lessonName, taskName)
       }
     }) {
-      val registryValue = Registry.get(CCSolveAllTasksBeforeAction.REGISTRY_KEY)
-      val oldValue = registryValue.asBoolean()
-      registryValue.setValue(true)
-      try {
-        testAction(CCSolveAllTasksBeforeAction.ACTION_ID)
-      } finally {
-        registryValue.setValue(oldValue)
-      }
+      testAction(CCSolveAllTasksBeforeAction.ACTION_ID)
     }
 
     fileTree(expectedFileTree).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
