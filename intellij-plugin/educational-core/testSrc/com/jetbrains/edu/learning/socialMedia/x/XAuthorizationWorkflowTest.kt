@@ -125,9 +125,7 @@ class XAuthorizationWorkflowTest : EduTestCase() {
     PlatformTestUtil.waitWhileBusy { responseCode.get() == NO_RESPONSE }
 
     // then
-    // We use a custom builtin server for Android Studio. Because of its implementation, it returns 200 instead of 400 here
-    val expectedCode = if (!EduUtilsKt.isAndroidStudio()) HttpURLConnection.HTTP_BAD_REQUEST else HttpURLConnection.HTTP_OK
-    assertEquals(expectedCode, responseCode.get())
+    assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, responseCode.get())
 
     assertNull(XSettings.getInstance().account)
   }
