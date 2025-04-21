@@ -41,15 +41,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
   }
 
   private fun init() {
-    if (EduUtilsKt.isAndroidStudio()) {
-      // Android Studio requires additional credentials to use builtin server:
-      // login/password form is opened in browser when a query to builtin server is made,
-      // one should use _token_ as login and token from <config>/user.token file as password
-      // (see DelegatingHttpRequestHandler file in Android Studio sources for more details).
-      // This is unacceptable in terms of UX for our Hyperskill integration.
-      // That's why we start custom server on another port to handle Hyperskill related queries.
-      EduCustomServerService.getInstance().startCustomServer()
-    }
     UserAgreementManager.getInstance()
     if (isUnitTestMode) return
 

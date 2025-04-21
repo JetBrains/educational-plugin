@@ -3,13 +3,16 @@ package com.jetbrains.edu.learning.api
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.UserInfo
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import io.netty.handler.codec.http.FullHttpRequest
 import io.netty.handler.codec.http.QueryStringDecoder
@@ -17,7 +20,6 @@ import org.apache.commons.codec.binary.Base64
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
 import org.jetbrains.ide.RestService
-import java.io.IOException
 import java.net.HttpURLConnection.*
 import java.net.URI
 import java.security.MessageDigest
@@ -125,24 +127,10 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     account = null
   }
 
-  @Throws(IOException::class)
-  private fun createCustomServer(): CustomAuthorizationServer {
-    return CustomAuthorizationServer.create(platformName, oAuthServicePath, state) { code: String, _: String ->
-      if (!login(code)) "Failed to log in to $platformName" else null
-    }
+  protected fun getRedirectUri(): String {
+    val currentPort = BuiltInServerManager.getInstance().port
+    return Urls.newHttpUrl("$redirectHost:${currentPort}", oAuthServicePath).toString()
   }
-
-  protected open fun getRedirectUri(): String =
-    if (EduUtilsKt.isAndroidStudio()) {
-      val runningServer = CustomAuthorizationServer.getServerIfStarted(platformName)
-      val server = runningServer ?: createCustomServer()
-      server.handlingUri
-    }
-    else {
-      // port is already checked to be valid
-      val currentPort = BuiltInServerManager.getInstance().port
-      Urls.newHttpUrl("$redirectHost:${currentPort}", oAuthServicePath).toString()
-    }
 
   private fun getNewTokens(): TokenInfo {
     val currentAccount = account ?: error("No logged-in user")
