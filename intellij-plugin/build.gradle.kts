@@ -73,6 +73,7 @@ val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
 val radlerPlugin = "org.jetbrains.plugins.clion.radler"
+val imagesPlugin = "com.intellij.platform.images"
 
 
 val jvmPlugins = listOf(
@@ -109,6 +110,14 @@ val sqlPlugins = listOfNotNull(
 
 val csharpPlugins = listOf(
   "com.intellij.resharper.unity"
+)
+
+// Plugins which we add to tests for all modules.
+// It's the most common plugins which affect the behavior of the plugin code
+val commonTestPlugins = listOf(
+  imagesPlugin, // adds `svg` file type and makes IDE consider .svg files as text ones
+  yamlPlugin,   // makes IDE consider .yaml files as text ones and affects formatting of yaml files
+  jsonPlugin,   // dependency of a lot of other bundled plugin
 )
 
 val ideToPlugins = mapOf(
@@ -252,6 +261,8 @@ subprojects {
     testOutput(sourceSets.test.get().output.classesDirs)
 
     intellijPlatform {
+      testIntellijPlugins(commonTestPlugins)
+
       testFramework(TestFrameworkType.Bundled)
     }
   }
@@ -853,7 +864,7 @@ project("Edu-Go") {
     intellijPlatform {
       intellijIde(ideaVersion)
 
-      intellijPlugins(goPlugin, intelliLangPlugin, jsonPlugin)
+      intellijPlugins(goPlugin, intelliLangPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -867,7 +878,7 @@ project("Edu-Php") {
     intellijPlatform {
       intellijIde(ideaVersion)
 
-      intellijPlugins(phpPlugin, jsonPlugin)
+      intellijPlugins(phpPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1130,6 +1141,21 @@ fun IntelliJPlatformDependenciesExtension.intellijPlugins(vararg notations: Stri
 
 fun IntelliJPlatformDependenciesExtension.intellijPlugins(notations: List<String>) {
   intellijPlugins(*notations.toTypedArray())
+}
+
+fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(vararg notations: String) {
+  for (notation in notations) {
+    if (notation.contains(":")) {
+      testPlugin(notation)
+    }
+    else {
+      testBundledPlugin(notation)
+    }
+  }
+}
+
+fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(notations: List<String>) {
+  testIntellijPlugins(*notations.toTypedArray())
 }
 
 fun hasProp(name: String): Boolean = extra.has(name)
