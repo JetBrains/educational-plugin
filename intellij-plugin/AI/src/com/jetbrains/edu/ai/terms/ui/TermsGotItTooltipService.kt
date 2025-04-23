@@ -36,10 +36,10 @@ class TermsGotItTooltipService(private val project: Project) {
     if (!taskToolWindowView.isSelectedTab(TabType.DESCRIPTION_TAB)) return
     val descriptionTab = taskToolWindowView.getTab(TabType.DESCRIPTION_TAB) as? DescriptionTab ?: return
 
-    val tooltip = GotItTooltip(TERMS_GOT_IT_TOOLTIP_ID, EduAIBundle.message("ai.terms.tooltip.text"), descriptionTab)
+    gotItTooltip = GotItTooltip(TERMS_GOT_IT_TOOLTIP_ID, EduAIBundle.message("ai.terms.tooltip.text"), descriptionTab)
       .withHeader(EduAIBundle.message("ai.terms.tooltip.header"))
       .withPosition(Balloon.Position.atLeft)
-    tooltip.show(descriptionTab, GotItTooltip.LEFT_MIDDLE)
+    gotItTooltip?.show(descriptionTab, GotItTooltip.LEFT_MIDDLE)
   }
 
   private fun removeExistingTooltip() {
