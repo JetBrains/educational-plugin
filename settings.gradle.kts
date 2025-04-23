@@ -35,6 +35,7 @@ include(
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
   "intellij-plugin:github",
+  "intellij-plugin:remote-env",
   "intellij-plugin:localization",
   "intellij-plugin:features:command-line",
   "intellij-plugin:features:ai-error-explanation",
@@ -44,12 +45,6 @@ include(
   "intellij-plugin:features:ai-test-generation",
   "intellij-plugin:features:ide-onboarding"
 )
-
-// Temporary workaround to make it work with 2025.1.
-// Will be fixed automatically after migration to IJPGP 2.4
-if (settings.providers.gradleProperty("environmentName").get().toInt() < 251) {
-  include("intellij-plugin:remote-env")
-}
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
