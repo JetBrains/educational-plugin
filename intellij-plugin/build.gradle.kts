@@ -186,6 +186,9 @@ allprojects {
 
     val verifyClasses = task("verifyClasses") {
       dependsOn(jar)
+      // `verifyClasses` relies on resources from the current and `intellij-plugin` modules.
+      // So, we need to be sure that all necessary recourses are already located in expected placed
+      dependsOn(project(":intellij-plugin").tasks.jar)
       doLast {
         verifyClasses(project)
       }
