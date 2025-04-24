@@ -1064,8 +1064,7 @@ project("features:ai-hints-python") {
 project("features:ai-test-generation") {
   dependencies {
     intellijPlatform {
-      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(ideVersion)
+      intellijIde(baseVersion)
     }
 
     api(rootProject.libs.educational.ml.library.core) {
