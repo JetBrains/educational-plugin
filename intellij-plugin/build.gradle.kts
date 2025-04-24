@@ -1086,12 +1086,10 @@ project("features:ai-test-generation") {
 project("features:ide-onboarding") {
   dependencies {
     intellijPlatform {
-      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(ideVersion)
+      intellijIde(project, baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
-    implementationWithoutKotlin(rootProject.libs.clikt.core)
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
   }
