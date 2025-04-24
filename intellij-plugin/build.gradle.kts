@@ -72,6 +72,7 @@ val jsonPlugin = "com.intellij.modules.json"
 val yamlPlugin = "org.jetbrains.plugins.yaml"
 val androidPlugin = "org.jetbrains.android"
 val codeWithMePlugin = "com.jetbrains.codeWithMe"
+val radlerPlugin = "org.jetbrains.plugins.clion.radler"
 
 
 val jvmPlugins = listOf(
@@ -91,6 +92,7 @@ val rustPlugins = listOf(
 )
 
 val cppPlugins = listOf(
+  "com.intellij.cidr.lang",
   "com.intellij.clion",
   "com.intellij.clion.runFile",
   "com.intellij.nativeDebug",
@@ -837,6 +839,7 @@ project("Edu-Cpp:CLion-Nova") {
       intellijIde(clionVersion)
 
       intellijPlugins(cppPlugins)
+      intellijPlugins(radlerPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -851,8 +854,6 @@ project("Edu-Go") {
       intellijIde(ideaVersion)
 
       intellijPlugins(goPlugin, intelliLangPlugin, jsonPlugin)
-      // TODO: check if it's still needed with IJPGP 2.4
-      bundledModules("com.intellij.modules.ultimate")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -867,8 +868,6 @@ project("Edu-Php") {
       intellijIde(ideaVersion)
 
       intellijPlugins(phpPlugin, jsonPlugin)
-      // TODO: check if it's still needed with IJPGP 2.4
-      bundledModules("com.intellij.modules.ultimate")
     }
 
     implementation(project(":intellij-plugin:educational-core"))
