@@ -246,8 +246,7 @@ subprojects {
       // Does nothing otherwise because Kotlin does not exist in the classpath
       jvmArgumentProviders += CommandLineArgumentProvider {
         listOf(
-          // TODO when 251 test run is fixed, enable K2 in tests starting from 251 instead of 243
-          if (true) {
+          if (isAtLeast251) {
             "-Didea.kotlin.plugin.use.k2=true"
           }
           else {
