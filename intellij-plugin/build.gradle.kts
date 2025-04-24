@@ -124,7 +124,14 @@ val ideToPlugins = mapOf(
   // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
   // Actually, Python Community contains all necessary code that we need.
   // Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
-  IntellijIdeaUltimate to listOfNotNull(scalaPlugin, rustPlugin, pythonProPlugin, pythonCommunityPlugin.takeIf { true }, goPlugin, phpPlugin),
+  IntellijIdeaUltimate to listOfNotNull(
+    scalaPlugin,
+    rustPlugin,
+    pythonProPlugin,
+    pythonCommunityPlugin.takeIf { true },
+    goPlugin,
+    phpPlugin
+  ),
   CLion to listOf(rustPlugin),
   AndroidStudio to listOf(pythonCommunityPlugin),
   GoLand to listOf(pythonCommunityPlugin),
@@ -1086,7 +1093,7 @@ project("features:ai-test-generation") {
 project("features:ide-onboarding") {
   dependencies {
     intellijPlatform {
-      intellijIde(project, baseVersion)
+      intellijIde(baseVersion)
     }
 
     implementation(project(":intellij-plugin:educational-core"))

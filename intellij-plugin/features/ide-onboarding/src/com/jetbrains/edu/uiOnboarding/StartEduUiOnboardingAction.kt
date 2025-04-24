@@ -4,8 +4,9 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 
-internal class StartEduUiOnboardingAction : DumbAwareAction() {
+class StartEduUiOnboardingAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project
     if (project == null) {
@@ -15,7 +16,8 @@ internal class StartEduUiOnboardingAction : DumbAwareAction() {
   }
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = e.project != null
+    val project = e.project
+    e.presentation.isEnabledAndVisible = project != null && project.isEduProject()
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
