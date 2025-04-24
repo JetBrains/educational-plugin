@@ -698,8 +698,8 @@ project("Edu-Android") {
       intellijIde(studioVersion)
 
       intellijPlugins(jvmPlugins)
-      // TODO: make `kotlinPlugin` test-only
-      intellijPlugins(androidPlugin, kotlinPlugin)
+      intellijPlugins(androidPlugin)
+      testIntellijPlugins(kotlinPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -722,13 +722,8 @@ project("Edu-Python") {
       val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
       intellijIde(ideVersion)
 
-      val pluginList = listOfNotNull(
-        pythonPlugin,
-        if (isJvmCenteredIDE) javaPlugin else null,
-        // needed to load `intellij.python.community.impl` module of Python plugin in tests
-        tomlPlugin
-      )
-      intellijPlugins(pluginList)
+      intellijPlugins(pythonPlugin)
+      testIntellijPlugins(tomlPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1033,8 +1028,8 @@ project("features:ai-hints-kotlin") {
       val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
       intellijIde(ideVersion)
 
-      intellijPlugins(jvmPlugins)
       intellijPlugins(kotlinPlugin)
+      testIntellijPlugins(jvmPlugins)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
@@ -1053,13 +1048,8 @@ project("features:ai-hints-python") {
       val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
       intellijIde(ideVersion)
 
-      val pluginList = listOfNotNull(
-        pythonPlugin,
-        if (isJvmCenteredIDE) javaPlugin else null,
-        // needed to load `intellij.python.community.impl` module of Python plugin in tests
-        tomlPlugin
-      )
-      intellijPlugins(pluginList)
+      intellijPlugins(pythonPlugin)
+      testIntellijPlugins(tomlPlugin)
     }
 
     implementation(project(":intellij-plugin:educational-core"))
