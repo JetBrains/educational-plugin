@@ -10,6 +10,7 @@ import com.intellij.util.ui.StartupUiUtil
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.actions.ActionWithButtonCustomComponent
 import com.jetbrains.edu.learning.isFeatureEnabled
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCOpenEducatorHelp : ActionWithButtonCustomComponent() {
@@ -32,7 +33,9 @@ class CCOpenEducatorHelp : ActionWithButtonCustomComponent() {
     private const val LIGHT_THEME = "light"
 
     fun doOpen(project: Project) {
-      require(JBCefApp.isSupported()) { "JCEF is not supported on this system" }
+      if (!isUnitTestMode) {
+        require(JBCefApp.isSupported()) { "JCEF is not supported on this system" }
+      }
 
       val welcomeScreenHtml = loadResourceAsString()?.replace(THEME_KEY, if (StartupUiUtil.isDarkTheme) DARK_THEME else LIGHT_THEME)
       welcomeScreenHtml ?: error("Couldn't load help file $HELP_URL")
