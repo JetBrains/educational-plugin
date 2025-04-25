@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.courseView
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseView.CourseViewTestBase
 import org.junit.Test
 
@@ -16,8 +15,9 @@ class CCCourseViewTest : CourseViewTestBase() {
     }
 
     val lesson = course.lessons.first()
+    lesson.customPresentableName = "custom name"
 
-    doTest(lesson, "-Project\n" +
+    doTest("-Project\n" +
                    " -CCCourseNode Test Course (Course Creation)\n" +
                    "  CCLessonNode custom name (lesson1)\n")
   }
@@ -29,8 +29,9 @@ class CCCourseViewTest : CourseViewTestBase() {
     }
 
     val section = course.sections.first()
+    section.customPresentableName = "custom name"
 
-    doTest(section, "-Project\n" +
+    doTest("-Project\n" +
                     " -CCCourseNode Test Course (Course Creation)\n" +
                     "  CCSectionNode custom name (section1)\n")
   }
@@ -45,9 +46,9 @@ class CCCourseViewTest : CourseViewTestBase() {
     }
 
     val task = course.lessons.first().taskList.first()
+    task.customPresentableName = "custom name"
 
-    doTest(task,
-    """
+    doTest("""
       -Project
        -CCCourseNode Test Course (Course Creation)
         -CCLessonNode lesson1
@@ -58,8 +59,28 @@ class CCCourseViewTest : CourseViewTestBase() {
     """.trimIndent())
   }
 
-  private fun doTest(item: StudyItem, structure: String) {
-    item.customPresentableName = "custom name"
+  @Test
+  fun `test course view with custom content path`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR, customPath = "some/path") {
+      lesson {
+        eduTask()
+        eduTask()
+      }
+    }
+    doTest("""
+      -Project
+       -CCCourseNode Test Course (Course Creation)
+        -CCIntermediateDirectoryNode some
+         -CCIntermediateDirectoryNode path
+          -CCLessonNode lesson1
+           -CCTaskNode task1
+            CCStudentInvisibleFileNode task.md
+           -CCTaskNode task2
+            CCStudentInvisibleFileNode task.md
+    """.trimIndent())
+  }
+
+  private fun doTest(structure: String) {
     val pane = createPane()
     PlatformTestUtil.waitForPromise(TreeUtil.promiseExpandAll(pane.tree))
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)

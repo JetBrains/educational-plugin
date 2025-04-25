@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore.getRelativePath
 import com.intellij.psi.*
 import com.intellij.ui.LayeredIcon
 import com.jetbrains.edu.EducationalCoreIcons.CourseView
@@ -12,6 +14,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
@@ -166,5 +169,32 @@ object CourseViewUtils {
   private fun Task.containsCorrectSubmissions(): Boolean {
     val project = course.project ?: return false
     return SubmissionsManager.getInstance(project).containsCorrectSubmission(id)
+  }
+
+  fun ContentHolderNode.createNodeFromPsiDirectory(
+    course: Course,
+    directory: PsiDirectory,
+  ): AbstractTreeNode<*>? {
+    val section = course.getSection(directory.name)
+    if (section != null) {
+      return createSectionNode(directory, section)
+    }
+    val lesson = course.getLesson(directory.name)
+    if (lesson != null) {
+      val lessonSolved = lesson.taskList.all { it.status == CheckStatus.Solved }
+      if (lessonSolved && PropertiesComponent.getInstance().getBoolean(CourseViewPane.HIDE_SOLVED_LESSONS, false)) {
+        return null
+      }
+      return createLessonNode(directory, lesson)
+    }
+    if (directory.isPartOfCustomContentPath(getProject())) {
+      return createIntermediateDirectoryNode(directory, course)
+    }
+    return null
+  }
+
+  private fun PsiDirectory.isPartOfCustomContentPath(project: Project): Boolean {
+    val relativePath = getRelativePath(virtualFile, project.courseDir) ?: return false
+    return project.course.customContentPath.contains(relativePath)
   }
 }

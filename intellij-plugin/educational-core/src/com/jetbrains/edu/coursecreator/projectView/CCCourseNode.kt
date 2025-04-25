@@ -11,16 +11,12 @@ import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.excludeFromArchive
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.projectView.CourseNode
-import com.jetbrains.edu.learning.projectView.LessonNode
-import com.jetbrains.edu.learning.projectView.SectionNode
 import org.jetbrains.annotations.Nls
 
 class CCCourseNode(
@@ -28,7 +24,7 @@ class CCCourseNode(
   value: PsiDirectory,
   viewSettings: ViewSettings,
   course: Course
-) : CourseNode(project, value, viewSettings, course) {
+) : CCContentHolderNode, CourseNode(project, value, viewSettings, course) {
 
   public override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
     val node = super.modifyChildNode(childNode)
@@ -47,14 +43,6 @@ class CCCourseNode(
       }
     }
     return null
-  }
-
-  override fun createLessonNode(directory: PsiDirectory, lesson: Lesson): LessonNode {
-    return CCLessonNode(myProject, directory, settings, lesson)
-  }
-
-  override fun createSectionNode(directory: PsiDirectory, section: Section): SectionNode {
-    return CCSectionNode(myProject, settings, section, directory)
   }
 
   override val additionalInfo: String

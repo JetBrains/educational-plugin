@@ -156,8 +156,29 @@ class CourseViewTest : CourseViewTestBase() {
     }
   }
 
-  private fun createStudyCourse() {
-    courseWithFiles("Edu test course") {
+  @Test
+  fun `test course with custom content path`() {
+    createStudyCourse("some/path")
+    configureByTaskFile(1, 1, "taskFile1.txt")
+    val pane = createPane()
+    PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 5))
+
+    val structure = """
+                    -Project
+                     -CourseNode Edu test course  0/4
+                      -IntermediateDirectoryNode some
+                       -IntermediateDirectoryNode path
+                        -LessonNode lesson1
+                         +TaskNode task1
+                         +TaskNode task2
+                         +TaskNode task3
+                         +TaskNode task4
+                         """.trimIndent()
+    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+  }
+
+  private fun createStudyCourse(customPath: String = "") {
+    courseWithFiles("Edu test course", customPath = customPath) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
