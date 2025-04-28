@@ -10,7 +10,8 @@ import com.jetbrains.python.psi.*
 object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
   override fun reduceDiffFunctions(currentFunction: PyFunction?, codeHintFunction: PyFunction): PyFunction {
     return if (currentFunction != null) {
-      reduceDifferenceWithCodeHint(currentFunction, codeHintFunction)
+      val project = runReadAction { currentFunction.project }
+      reduceDifferenceWithCodeHint(project, currentFunction, codeHintFunction)
     }
     else {
       codeHintFunction // todo: reduce the newly added function
@@ -18,12 +19,13 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
   }
 
   private fun reduceDifferenceWithCodeHint(
+    project: Project,
     current: PyFunction,
     codeHint: PyFunction
-  ): PyFunction = runReadAction {
+  ): PyFunction = runWriteCommandAction(project) {
     // Return when either parameter list or return type have been replaced
     if (current.parameterList.replaceIfNeeded(codeHint.parameterList) || current.annotation.replaceIfNeeded(codeHint.annotation)) {
-      return@runReadAction current
+      return@runWriteCommandAction current
     }
 
     // For each existing statement, replace with the corresponding from the CodeHint if they differ
@@ -36,7 +38,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
         is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replaceWithWriteCommandAction(codeHintStatement)
         else -> currentStatement.replaceWithWriteCommandAction(codeHintStatement)
       }
-      return@runReadAction current // Don't make more than one modification in one step
+      return@runWriteCommandAction current // Don't make more than one modification in one step
     }
 
     // As no existing statements have been replaced, let's add the next statement if the Code Hint has one
@@ -44,7 +46,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
       current.statementList.addReduced(codeHintStatements[currentStatements.size])
     }
 
-    return@runReadAction current
+    return@runWriteCommandAction current
   }
 
   private fun PsiElement.replaceWithWriteCommandAction(element: PsiElement): PsiElement = runWriteCommandAction(project) {
@@ -101,7 +103,8 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
           }
           return true
         }
-      } else if (currentElifParts.isEmpty() && codeHintElifParts.isNotEmpty()) {
+      }
+      else if (currentElifParts.isEmpty() && codeHintElifParts.isNotEmpty()) {
         // Add the first elif part (reduced) from CodeHint
         val reducedElifPart = codeHintElifParts[0].copy() as PyIfPartElif
         runWriteCommandAction(project) {
@@ -113,7 +116,8 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
           addBefore(reducedElifPart, elsePart)
         }
         return true
-      } else if (currentElifParts.isNotEmpty()) { // CodeHint's elif parts are empty
+      }
+      else if (currentElifParts.isNotEmpty()) { // CodeHint's elif parts are empty
         // Removing all `elif` parts
         runWriteCommandAction(project) {
           deleteChildRange(currentElifParts.first(), currentElifParts.last())
@@ -150,12 +154,12 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     }
 
   private val PyStatement.elsePart: PyStatementPart?
-  get() = when (this) {
-    is PyIfStatement -> elsePart
-    is PyForStatement -> elsePart
-    is PyWhileStatement -> elsePart
-    else -> null
-  }
+    get() = when (this) {
+      is PyIfStatement -> elsePart
+      is PyForStatement -> elsePart
+      is PyWhileStatement -> elsePart
+      else -> null
+    }
 
   private fun PyStatementList.addReduced(statement: PyStatement) {
     when (statement) {
