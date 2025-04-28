@@ -1049,6 +1049,41 @@
      ```
     And the file should be located in the archive, in the `[task folder]/src/Main.kt`.
 
+### Yaml format version
+
+The YAML version is written in the `course-info.yaml` in the `yaml_version` field. For example:
+```
+yaml_version: 2
+```
+
+The version is not written in other YAMLs: `section-info.yaml`,`lesson-info.yaml` and `task-info.yaml`, although these files
+are also versioned and may have different schemas for different versions.
+Their version is the same as the version written in the `course-info.yaml`.
+
+**Notes for developers**: to update a YAML version, implement `com.jetbrains.edu.learning.yaml.migrate.YamlMigrationStep` and list it in
+`com.jetbrains.edu.learning.yaml.migrate.YamlMigrator#migrationSteps`.
+To pass some data to migrator, unavailable in the `edu-format` module, use
+`com.jetbrains.edu.learning.yaml.EduInjectableValuesKt#setEduValue` inside the method
+`com.jetbrains.edu.learning.yaml.YamlDeepLoader#setupForMigration`.
+
+0. In the old versions of the plugin there was no `yaml_version` field. Such YAMLs are considered to have version 0. 
+1. The `yaml_version` field MUST be present:
+   ```
+   yaml_version: 1
+   ```
+2. The property `additiona_files` with a list of files appears.
+   Each file has the field `name` and the optional field `is_binary` with the default value `false`.
+
+   ```
+   additional_files:
+     - name: file1.txt
+     - name: folder/file2.txt
+     - name: lesson1/file3.txt  # additional files may be located in lesson, section folders. But not in task folders
+     - name: file4.png
+       is_binary: true
+   yaml_version: 2
+   ``` 
+
 ### Courseignore format version
 
 #### Version 1
