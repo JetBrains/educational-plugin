@@ -18,7 +18,7 @@ private class PlainTextEduAIHintsProcessor : EduAIHintsProcessor {
     override fun findChangedMethods(before: PsiFile, after: PsiFile, considerParameters: Boolean): List<String> = listOf()
   }
 
-  override fun getFunctionDiffReducer(): FunctionDiffReducer = object : FunctionDiffReducer {
+  override fun getFunctionDiffReducer(): FunctionDiffReducer<PsiElement> = object : FunctionDiffReducer<PsiElement> {
     override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement? = null
   }
 

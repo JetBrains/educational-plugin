@@ -8,8 +8,8 @@ import com.jetbrains.edu.aiHints.core.api.FunctionDiffReducer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-object KtFunctionDiffReducer : FunctionDiffReducer {
-  override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement {
+object KtFunctionDiffReducer : FunctionDiffReducer<KtFunction> {
+  override fun reduceDiffFunctions(function: KtFunction?, modifiedFunction: KtFunction): KtFunction {
     val project = modifiedFunction.project
     if (function == null) {
       reducingNewElement(modifiedFunction, project, true)

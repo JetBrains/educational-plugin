@@ -4,26 +4,23 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.util.asSafely
 import com.jetbrains.edu.aiHints.core.api.FunctionDiffReducer
 import com.jetbrains.python.psi.*
 
-object PyFunctionDiffReducer : FunctionDiffReducer {
-  override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement {
-    return if (function != null) {
-      val pyFunction = function.asSafely<PyFunction>() ?: return modifiedFunction // todo: revise this
-      val pyCodeHintFunction = modifiedFunction.asSafely<PyFunction>() ?: return modifiedFunction
-      reduceDifferenceWithCodeHint(pyFunction, pyCodeHintFunction)
+object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
+  override fun reduceDiffFunctions(currentFunction: PyFunction?, codeHintFunction: PyFunction): PyFunction {
+    return if (currentFunction != null) {
+      reduceDifferenceWithCodeHint(currentFunction, codeHintFunction)
     }
     else {
-      modifiedFunction // todo: reduce the newly added function
+      codeHintFunction // todo: reduce the newly added function
     }
   }
 
   private fun reduceDifferenceWithCodeHint(
     current: PyFunction,
     codeHint: PyFunction
-  ): PsiElement = runReadAction {
+  ): PyFunction = runReadAction {
     // Return when either parameter list or return type have been replaced
     if (current.parameterList.replaceIfNeeded(codeHint.parameterList) || current.annotation.replaceIfNeeded(codeHint.annotation)) {
       return@runReadAction current

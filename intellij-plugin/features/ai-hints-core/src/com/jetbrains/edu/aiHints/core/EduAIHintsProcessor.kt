@@ -1,6 +1,7 @@
 package com.jetbrains.edu.aiHints.core
 
 import com.intellij.lang.LanguageExtension
+import com.intellij.psi.PsiElement
 import com.jetbrains.edu.aiHints.core.api.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -17,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 interface EduAIHintsProcessor {
   fun getFilesDiffer(): FilesDiffer
 
-  fun getFunctionDiffReducer(): FunctionDiffReducer
+  fun getFunctionDiffReducer(): FunctionDiffReducer<PsiElement>
 
   fun getInspectionsProvider(): InspectionsProvider
 
