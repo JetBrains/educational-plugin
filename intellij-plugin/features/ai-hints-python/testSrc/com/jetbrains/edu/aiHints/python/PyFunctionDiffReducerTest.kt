@@ -591,6 +591,168 @@ class PyFunctionDiffReducerTest : EduTestCase() {
     """
   )
 
+  @Test
+  fun `test for loop with else`() = assertCodeHint(
+    functionName = "for_loop_with_else",
+    currentCode = """
+        def for_loop_with_else(items):
+            for i in range(0, 10):
+                print(i)
+            else:
+                print("Irrelevant line")
+    """,
+    codeHint = """
+        def for_loop_with_else(items):
+            for i in range(0, 10):
+                print(i)
+            else:
+                print("Done!")
+    """,
+    expectedResult = """
+        def for_loop_with_else(items):
+            for i in range(0, 10):
+                print(i)
+            else:
+                print("Done!")
+    """,
+  )
+
+  @Test
+  fun `test adding else part to function with for loop`() = assertCodeHint(
+    functionName = "for_loop_with_else",
+    currentCode = """
+        def for_loop_with_else(items):
+            for i in range(0, 10):
+                print(i)
+    """,
+    codeHint = """
+        def for_loop_with_else(items):
+            for i in range(0, 10):
+                print(i)
+            else:
+                print("Done!")
+    """,
+    expectedResult = """
+        def for_loop_with_else(items):
+            for i in range(0, 10):
+                print(i)
+            else:
+                pass
+    """,
+  )
+
+  @Test
+  fun `test while loop with else`() = assertCodeHint(
+    functionName = "while_loop_with_else",
+    currentCode = """
+      def while_loop_with_else(count):
+          i = 0
+          while i < count:
+              print(i)
+              i += 1
+          else:
+              print("Irrelevant line")
+  """,
+    codeHint = """
+      def while_loop_with_else(count):
+          i = 0
+          while i < count:
+              print(i)
+              i += 1
+          else:
+              print("Loop completed normally")
+  """,
+    expectedResult = """
+      def while_loop_with_else(count):
+          i = 0
+          while i < count:
+              print(i)
+              i += 1
+          else:
+              print("Loop completed normally")
+  """,
+  )
+
+  @Test
+  fun `test adding else part to function with while loop`() = assertCodeHint(
+    functionName = "while_loop_with_else",
+    currentCode = """
+      def while_loop_with_else(count):
+          i = 0
+          while i < count:
+              print(i)
+              i += 1
+  """,
+    codeHint = """
+      def while_loop_with_else(count):
+          i = 0
+          while i < count:
+              print(i)
+              i += 1
+          else:
+              print("Loop completed normally")
+  """,
+    expectedResult = """
+      def while_loop_with_else(count):
+          i = 0
+          while i < count:
+              print(i)
+              i += 1
+          else:
+              pass
+  """,
+  )
+
+  @Test
+  fun `test if-else structure modification`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          else:
+              print("Irrelevant line")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          else:
+              print("Zero")
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          else:
+              print("Zero")
+  """,
+  )
+
+  @Test
+  fun `test adding else part to function with if statement`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          else:
+              print("Zero")
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          else:
+              pass
+  """,
+  )
+
   // TODO: Tests for the case when there is a new function only
 
   private fun assertCodeHint(
