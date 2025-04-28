@@ -1,75 +1,74 @@
 package com.jetbrains.edu.aiHints.python.impl
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.api.FunctionDiffReducer
 import com.jetbrains.python.psi.*
 
 object PyFunctionDiffReducer : FunctionDiffReducer {
   override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement {
-    return if (function != null) {
-      val pyFunction = function.asSafely<PyFunction>() ?: return modifiedFunction // todo: revise this
-      val pyCodeHintFunction = modifiedFunction.asSafely<PyFunction>() ?: return modifiedFunction
-      reduceDifferenceWithCodeHint(pyFunction, pyCodeHintFunction)
-    }
-    else {
-      modifiedFunction // todo: reduce the newly added function
-    }
-  }
-
-  private fun reduceDifferenceWithCodeHint(
-    current: PyFunction,
-    codeHint: PyFunction
-  ): PsiElement = runReadAction {
-    // Return when either parameter list or return type have been replaced
-    if (current.parameterList.replaceIfNeeded(codeHint.parameterList) || current.annotation.replaceIfNeeded(codeHint.annotation)) {
-      return@runReadAction current
-    }
-
-    // For each existing statement, replace with the corresponding from the CodeHint if they differ
-    val currentStatements = current.statementList.statements
-    val codeHintStatements = codeHint.statementList.statements
-    for ((currentStatement, codeHintStatement) in currentStatements.zip(codeHintStatements)) {
-      if (currentStatement.compareNormalized(codeHintStatement)) continue
-      when (codeHintStatement) {
-        is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
-        is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replaceWithWriteCommandAction(codeHintStatement)
-        else -> currentStatement.replaceWithWriteCommandAction(codeHintStatement)
+    val project = runReadAction { modifiedFunction.project }
+    val codeHint = modifiedFunction.asSafely<PyFunction>() ?: return modifiedFunction
+    if (function != null) {
+      val currentFunction = function.asSafely<PyFunction>() ?: return modifiedFunction
+      return runWriteCommandAction(project) {
+        currentFunction.reduceDifferenceWith(project, codeHint)
       }
-      return@runReadAction current // Don't make more than one modification in one step
     }
-
-    // As no existing statements have been replaced, let's add the next statement if the Code Hint has one
-    if (currentStatements.size < codeHintStatements.size) {
-      current.statementList.addReduced(codeHintStatements[currentStatements.size])
-    }
-
-    return@runReadAction current
+    return codeHint // todo: reduce the newly added function
   }
 
-  private fun PsiElement.replaceWithWriteCommandAction(element: PsiElement): PsiElement = runWriteCommandAction(project) {
-    replace(element)
+  @RequiresReadLock
+  private fun PyFunction.reduceDifferenceWith(project: Project, codeHint: PyFunction): PyFunction {
+    if (codeHint.text.lines().size <= 3) return codeHint
+
+    // Check parameters and return type of the functions
+    if (parameterList.deleteOrSwapWith(project, codeHint.parameterList) || annotation.deleteOrSwapWith(project, codeHint.annotation)) {
+      return this // Don't make more than one modification in one step
+    }
+
+    unifyStatementLists(this, codeHint)
+    return this
   }
 
-  private fun <R> runWriteCommandAction(project: Project, action: () -> R): R {
-    var result: R? = null
-    WriteCommandAction.runWriteCommandAction(project, null, null, {
-      result = action()
-    })
-    @Suppress("UNCHECKED_CAST")
-    return result as R
+  private fun unifyStatementLists(
+    currentPyStatementList: PyStatementListContainer,
+    codeHintPyStatementList: PyStatementListContainer,
+  ): Boolean {
+    // Find the first difference in the list statements
+    val firstDifference = currentPyStatementList.firstDifferentStatement(codeHintPyStatementList)
+    if (firstDifference != null) {
+      val (currentStatement, codeHintStatement) = firstDifference
+      currentStatement.unifyStatementWith(codeHintStatement)
+      return true
+    }
+    // If no difference was found, let's add the first new statement from the Code Hint list statements
+    val nextStatement = currentPyStatementList.findNextFrom(codeHintPyStatementList)
+    if (nextStatement != null) {
+      currentPyStatementList.addNewStatement(nextStatement)
+      return true
+    }
+    return false
+  }
+
+  private fun PyStatement.unifyStatementWith(another: PyStatement) {
+    val (currentStatement, codeHintStatement) = this to another
+    when (codeHintStatement) {
+      is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
+      is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replace(project, codeHintStatement)
+      else -> currentStatement.replace(project, codeHintStatement)
+    }
   }
 
   private fun <T : PyStatement> PyStatement.replaceIfNeeded(codeHintStatement: T): Boolean {
     // For example, if the current statement is not `for`, replace with `for` part and `pass` statement as a body
-    if (this !is PyWhileStatement && this !is PyForStatement && this !is PyIfStatement) {
+    if (this::class != codeHintStatement::class) {
       val codeHintMainPart = codeHintStatement.mainPart
       runWriteCommandAction(project) {
-        codeHintMainPart.statementList.deleteChildRange(codeHintMainPart.statementList.firstChild, codeHintMainPart.statementList.lastChild)
-        codeHintMainPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
+        codeHintMainPart.statementList.children.forEach { it.delete() }
         replace(codeHintMainPart)
       }
       return true
@@ -79,50 +78,8 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
       return true
     }
 
-    if (this is PyIfStatement && codeHintStatement is PyIfStatement) {
-      val currentElifParts = elifParts
-      val codeHintElifParts = codeHintStatement.elifParts
-
-      if (currentElifParts.isNotEmpty() && codeHintElifParts.isNotEmpty()) {
-        for ((currentElifPart, codeHintElifPart) in currentElifParts.zip(codeHintElifParts)) {
-          if (currentElifPart.compareNormalized(codeHintElifPart)) continue
-          if (replaceIfNeeded(currentElifPart, codeHintElifPart)) {
-            return true
-          }
-        }
-
-        if (currentElifParts.size < codeHintElifParts.size) {
-          // Insert next `elif` if possible
-          val reducedElifPart = codeHintElifParts[currentElifParts.size].copy() as PyIfPartElif
-          runWriteCommandAction(project) {
-            reducedElifPart.statementList.deleteChildRange(
-              reducedElifPart.statementList.firstChild,
-              reducedElifPart.statementList.lastChild
-            )
-            reducedElifPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-            addBefore(reducedElifPart, elsePart)
-          }
-          return true
-        }
-      } else if (currentElifParts.isEmpty() && codeHintElifParts.isNotEmpty()) {
-        // Add the first elif part (reduced) from CodeHint
-        val reducedElifPart = codeHintElifParts[0].copy() as PyIfPartElif
-        runWriteCommandAction(project) {
-          reducedElifPart.statementList.deleteChildRange(
-            reducedElifPart.statementList.firstChild,
-            reducedElifPart.statementList.lastChild
-          )
-          reducedElifPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          addBefore(reducedElifPart, elsePart)
-        }
-        return true
-      } else if (currentElifParts.isNotEmpty()) { // CodeHint's elif parts are empty
-        // Removing all `elif` parts
-        runWriteCommandAction(project) {
-          deleteChildRange(currentElifParts.first(), currentElifParts.last())
-        }
-        return true
-      } // else: both are empty, do nothing
+    if (this is PyIfStatement && codeHintStatement is PyIfStatement && modifyElifParts(codeHintStatement)) {
+      return true
     }
 
     if (replaceIfNeeded(elsePart, codeHintStatement.elsePart)) {
@@ -131,66 +88,58 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     if (elsePart == null) {
       val codeHintElsePart = codeHintStatement.elsePart ?: return false
       // Add else part with `pass` statement as a body if the Code Hint has one
-      runWriteCommandAction(project) {
-        codeHintElsePart.statementList.deleteChildRange(
-          codeHintElsePart.statementList.firstChild,
-          codeHintElsePart.statementList.lastChild
-        )
-        codeHintElsePart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-        add(codeHintElsePart)
-      }
+      reduceAndAdd(codeHintElsePart)
       return true
     }
     return false
   }
 
-  private val PyStatement.mainPart: PyStatementPart
-    get() = when (this) {
-      is PyIfStatement -> ifPart
-      is PyForStatement -> forPart
-      is PyWhileStatement -> whilePart
-      else -> error("Unexpected statement type: ${this::class.java}")
-    }
+  private fun PyIfStatement.modifyElifParts(codeHintStatement: PyIfStatement): Boolean {
+    val currentElifParts = elifParts
+    val codeHintElifParts = codeHintStatement.elifParts
 
-  private val PyStatement.elsePart: PyStatementPart?
-  get() = when (this) {
-    is PyIfStatement -> elsePart
-    is PyForStatement -> elsePart
-    is PyWhileStatement -> elsePart
-    else -> null
+    if (currentElifParts.isNotEmpty() && codeHintElifParts.isNotEmpty()) {
+      for ((currentElifPart, codeHintElifPart) in currentElifParts.zip(codeHintElifParts)) {
+        if (currentElifPart.compareNormalized(codeHintElifPart)) continue
+        if (replaceIfNeeded(currentElifPart, codeHintElifPart)) {
+          return true
+        }
+      }
+      // Insert next `elif` if possible
+      if (currentElifParts.size < codeHintElifParts.size) {
+        val reducedElifPart = codeHintElifParts[currentElifParts.size].copy() as PyIfPartElif
+        reduceAndAdd(reducedElifPart, elsePart)
+        return true
+      }
+    }
+    else if (currentElifParts.isEmpty() && codeHintElifParts.isNotEmpty()) {
+      // Add the first elif part (reduced) from CodeHint
+      val reducedElifPart = codeHintElifParts[0].copy() as PyIfPartElif
+      reduceAndAdd(reducedElifPart, elsePart)
+      return true
+    }
+    else if (currentElifParts.isNotEmpty()) { // CodeHint's elif parts are empty
+      // Removing all `elif` parts
+      runWriteCommandAction(project) {
+        deleteChildRange(currentElifParts.first(), currentElifParts.last())
+      }
+      return true
+    } // else: both are empty, do nothing
+
+    return false
   }
 
-  private fun PyStatementList.addReduced(statement: PyStatement) {
-    when (statement) {
-      is PyWhileStatement -> {
-        val codeHintWhileStatement = statement.whilePart
-        runWriteCommandAction(project) {
-          codeHintWhileStatement.statementList.deleteChildRange(
-            codeHintWhileStatement.statementList.firstChild,
-            codeHintWhileStatement.statementList.lastChild
-          )
-          codeHintWhileStatement.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          statement.whilePart.statementList.children.forEach { it.delete() }
-          statement.whilePart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          add(codeHintWhileStatement)
-        }
+  private fun PyStatementListContainer.addNewStatement(statement: PyStatement) = when (statement) {
+    is PyWhileStatement, is PyForStatement, is PyIfStatement -> {
+      val codeHintMainPart = statement.mainPart
+      runWriteCommandAction(project) {
+        codeHintMainPart.statementList.children.forEach { it.delete() }
+        statementList.add(codeHintMainPart)
       }
+    }
 
-      is PyForStatement, is PyIfStatement -> {
-        val codeHintForStatement = statement.mainPart
-        runWriteCommandAction(project) {
-          codeHintForStatement.statementList.deleteChildRange(
-            codeHintForStatement.statementList.firstChild,
-            codeHintForStatement.statementList.lastChild
-          )
-          codeHintForStatement.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          add(codeHintForStatement)
-        }
-      }
-
-      else -> runWriteCommandAction(project) {
-        add(statement)
-      }
+    else -> runWriteCommandAction(project) {
+      statementList.add(statement)
     }
   }
 
@@ -203,77 +152,23 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     val project = currentPyStatementPart.project
     if (currentPyStatementPart.compareNormalized(codeHintPyStatementPart)) return false
 
-    when (currentPyStatementPart) {
-      is PyWhilePart, is PyIfPart -> {
-        val currentBinaryExpression = currentPyStatementPart.children.firstOrNull { it is PyBinaryExpression } ?: return false
-        val codeHintBinaryExpression = codeHintPyStatementPart.children.firstOrNull { it is PyBinaryExpression } ?: return false
-        if (!currentBinaryExpression.compareNormalized(codeHintBinaryExpression)) {
-          currentBinaryExpression.replaceWithWriteCommandAction(codeHintBinaryExpression)
-          return true
-        }
+    return when {
+      currentPyStatementPart is PyConditionalStatementPart && codeHintPyStatementPart is PyConditionalStatementPart -> {
+        currentPyStatementPart.condition.deleteOrSwapWith(project, codeHintPyStatementPart.condition)
+        || unifyStatementLists(currentPyStatementPart, codeHintPyStatementPart)
       }
 
-      is PyForPart -> {
-        val currentForPart = currentPyStatementPart.copy() as PyForPart
-        val codeHintForPart = codeHintPyStatementPart.copy() as PyForPart
-        runWriteCommandAction(project) {
-          currentForPart.lastChild.delete()
-          codeHintForPart.lastChild.delete()
-        }
-        if (!currentForPart.compareNormalized(codeHintForPart)) {
-          runWriteCommandAction(project) {
-            currentForPart.replace(codeHintForPart)
-            codeHintForPart.add(currentPyStatementPart.statementList)
-            currentPyStatementPart.replace(codeHintForPart)
-          }
-          return true
-        }
+      currentPyStatementPart is PyElsePart && codeHintPyStatementPart is PyElsePart -> {
+        unifyStatementLists(currentPyStatementPart, codeHintPyStatementPart)
       }
-    }
 
-    val currentStatements = currentPyStatementPart.statementList.statements
-    val codeHintStatements = codeHintPyStatementPart.statementList.statements
-    currentStatements.zip(codeHintStatements).forEach { (currentStatement, codeHintStatement) ->
-      if (!currentStatement.compareNormalized(codeHintStatement)) {
-        currentStatement.replaceWithWriteCommandAction(codeHintStatement)
-        return true
+      currentPyStatementPart is PyForPart && codeHintPyStatementPart is PyForPart -> {
+        currentPyStatementPart.target.deleteOrSwapWith(project, codeHintPyStatementPart.target)
+        || currentPyStatementPart.source.deleteOrSwapWith(project, codeHintPyStatementPart.source)
+        || unifyStatementLists(currentPyStatementPart, codeHintPyStatementPart)
       }
-    }
-    if (currentStatements.size < codeHintStatements.size) {
-      runWriteCommandAction(project) {
-        currentPyStatementPart.statementList.add(codeHintStatements[currentStatements.size])
-      }
-      return true
-    }
-    return false
-  }
 
-  private fun PyParameterList.replaceIfNeeded(codeHintParameterList: PyParameterList): Boolean {
-    if (!compareNormalized(codeHintParameterList)) {
-      replaceWithWriteCommandAction(codeHintParameterList)
-      return true
+      else -> false
     }
-    return false
-  }
-
-  private fun PyAnnotation?.replaceIfNeeded(codeHintAnnotation: PyAnnotation?): Boolean {
-    val currentAnnotation = this ?: return false
-    if (codeHintAnnotation == null) {
-      runWriteCommandAction(project) {
-        currentAnnotation.delete()
-      }
-      return true
-    }
-    if (!compareNormalized(codeHintAnnotation)) {
-      currentAnnotation.replaceWithWriteCommandAction(codeHintAnnotation)
-      return true
-    }
-    return false
-  }
-
-  private fun PsiElement.compareNormalized(psiElement: PsiElement): Boolean {
-    val currentTextNormalized = text.replace(" ", "")
-    val anotherTextNormalized = psiElement.text.replace(" ", "")
-    return currentTextNormalized == anotherTextNormalized
   }
 }
