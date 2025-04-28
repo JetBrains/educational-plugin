@@ -78,6 +78,21 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     if (replaceIfNeeded(mainPart, codeHintStatement.mainPart)) {
       return true
     }
+    if (replaceIfNeeded(elsePart, codeHintStatement.elsePart)) {
+      return true
+    }
+    if (elsePart == null) {
+      val codeHintElsePart = codeHintStatement.elsePart ?: return false
+      // Add else part with `pass` statement as a body if the Code Hint has one
+      runWriteCommandAction(project) {
+        codeHintElsePart.statementList.deleteChildRange(
+          codeHintElsePart.statementList.firstChild,
+          codeHintElsePart.statementList.lastChild
+        )
+        codeHintElsePart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
+        add(codeHintElsePart)
+      }
+    }
     return false
   }
 
@@ -88,6 +103,14 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
       is PyWhileStatement -> whilePart
       else -> error("Unexpected statement type: ${this::class.java}")
     }
+
+  private val PyStatement.elsePart: PyStatementPart?
+  get() = when (this) {
+    is PyIfStatement -> elsePart
+    is PyForStatement -> elsePart
+    is PyWhileStatement -> elsePart
+    else -> null
+  }
 
   private fun PyStatementList.addReduced(statement: PyStatement) {
     when (statement) {
@@ -124,9 +147,11 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
   }
 
   private fun replaceIfNeeded(
-    currentPyStatementPart: PyStatementPart,
-    codeHintPyStatementPart: PyStatementPart,
+    currentPyStatementPart: PyStatementPart?,
+    codeHintPyStatementPart: PyStatementPart?,
   ): Boolean {
+    if (currentPyStatementPart == null || codeHintPyStatementPart == null) return false
+
     val project = currentPyStatementPart.project
     if (currentPyStatementPart.compareNormalized(codeHintPyStatementPart)) return false
 
