@@ -6,10 +6,10 @@ import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.socialMedia.linkedIn.LinkedInPluginConfigurator
+import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import com.jetbrains.edu.socialMedia.suggestToPostDialog.createSuggestToPostDialogUI
 import com.jetbrains.edu.socialMedia.x.XPluginConfigurator
 
@@ -36,7 +36,7 @@ class SocialMediaMultiplePostAction : CheckListener {
     val dialog = createSuggestToPostDialogUI(project, configurators, defaultConfigurator.getMessage(task), imagePath)
 
     if (dialog.showAndGet()) {
-      runInBackground(project, EduCoreBundle.message("linkedin.loading.posting"), true) {
+      runInBackground(project, EduSocialMediaBundle.message("linkedin.loading.posting"), true) {
         configurators.forEach {
           it.doPost(project, task, imageIndex)
         }

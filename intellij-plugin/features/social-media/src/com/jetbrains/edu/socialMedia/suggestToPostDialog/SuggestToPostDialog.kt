@@ -6,9 +6,9 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.socialMedia.SocialMediaPluginConfigurator
 import com.jetbrains.edu.socialMedia.SocialMediaSettings
+import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import java.awt.FlowLayout
 import java.awt.event.ItemEvent
 import java.nio.file.Path
@@ -33,14 +33,14 @@ class SuggestToPostDialog(
   init {
     val onlyOneConfigurator = configurators.size == 1
     title = if (onlyOneConfigurator) {
-      EduCoreBundle.message("dialog.title.post.your.achievements.to", configurators[0].settings.name)
+      EduSocialMediaBundle.message("dialog.title.post.your.achievements.to", configurators[0].settings.name)
     }
     else {
-      EduCoreBundle.message("dialog.title.post.your.achievements.to.social.networks")
+      EduSocialMediaBundle.message("dialog.title.post.your.achievements.to.social.networks")
     }
 
     setDoNotAskOption(SuggestDoNotAskToPostOption(checkBoxes))
-    setOKButtonText(EduCoreBundle.message("linkedin.post.button.text"))
+    setOKButtonText(EduSocialMediaBundle.message("linkedin.post.button.text"))
     setResizable(false)
     panel = SuggestToPostDialogPanel(message, imagePath, disposable)
 
@@ -53,7 +53,7 @@ class SuggestToPostDialog(
     }
     if (!onlyOneConfigurator) {
       val checkBoxesPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 0, 0))
-      checkBoxesPanel.add(JBLabel(EduCoreBundle.message("label.share.on")))
+      checkBoxesPanel.add(JBLabel(EduSocialMediaBundle.message("label.share.on")))
       checkBoxesPanel.add(Box.createHorizontalStrut(10))
       checkBoxes.forEach {
         checkBoxesPanel.add(it.value)
@@ -97,6 +97,6 @@ class SuggestToPostDialog(
     override fun isToBeShown(): Boolean = true
     override fun canBeHidden(): Boolean = true
     override fun shouldSaveOptionsOnCancel(): Boolean = true
-    override fun getDoNotShowMessage(): String = EduCoreBundle.message("x.dialog.do.not.ask")
+    override fun getDoNotShowMessage(): String = EduSocialMediaBundle.message("x.dialog.do.not.ask")
   }
 }

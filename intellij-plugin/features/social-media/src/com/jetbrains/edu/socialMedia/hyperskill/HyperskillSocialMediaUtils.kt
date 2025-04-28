@@ -5,7 +5,9 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.socialMedia.messages.BUNDLE
+import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
+import org.jetbrains.annotations.PropertyKey
 
 object HyperskillSocialMediaUtils {
 
@@ -24,10 +26,10 @@ object HyperskillSocialMediaUtils {
     return allProjectTaskSolved
   }
 
-  fun getMessage(solvedTask: Task, messageKey: String): String {
+  fun getMessage(solvedTask: Task, @PropertyKey(resourceBundle = BUNDLE) messageKey: String): String {
     val course = solvedTask.course
     val courseName = (course as? HyperskillCourse)?.getProjectLesson()?.presentableName ?: course.presentableName
-    return EduCoreBundle.message(messageKey, courseName)
+    return EduSocialMediaBundle.message(messageKey, courseName)
   }
 
   // NB! This number should be synchronized for X and LinkedIn to post the same images to both social networks

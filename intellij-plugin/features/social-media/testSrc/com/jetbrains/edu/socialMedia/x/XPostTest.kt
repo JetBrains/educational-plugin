@@ -6,10 +6,10 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.application
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.rules.WithRegistryValue
+import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import com.jetbrains.edu.socialMedia.x.api.TweetData
 import com.jetbrains.edu.socialMedia.x.api.TweetResponse
 import io.mockk.every
@@ -36,7 +36,7 @@ class XPostTest : EduTestCase() {
     // then
     verify(exactly = 0) { mockConnector.doAuthorize(any()) }
     verify(exactly = 1) { mockConnector.tweet(TWEET_TEXT, null) }
-    assertEquals(EduCoreBundle.message("x.tweet.posted"), notification.content)
+    assertEquals(EduSocialMediaBundle.message("x.tweet.posted"), notification.content)
   }
 
   @Test
@@ -60,7 +60,7 @@ class XPostTest : EduTestCase() {
     // then
     verify(exactly = 1) { mockConnector.doAuthorize(any()) }
     verify(exactly = 1) { mockConnector.tweet(TWEET_TEXT, PATH_TO_MEDIA) }
-    assertEquals(EduCoreBundle.message("x.tweet.posted"), notification.content)
+    assertEquals(EduSocialMediaBundle.message("x.tweet.posted"), notification.content)
   }
 
   @Test
@@ -78,7 +78,7 @@ class XPostTest : EduTestCase() {
     // then
     verify(exactly = 0) { mockConnector.doAuthorize(any()) }
     verify(exactly = 1) { mockConnector.tweet(TWEET_TEXT, null) }
-    assertEquals(EduCoreBundle.message("linkedin.error.failed.to.post"), notification.content)
+    assertEquals(EduSocialMediaBundle.message("linkedin.error.failed.to.post"), notification.content)
   }
 
   @Test
@@ -96,7 +96,7 @@ class XPostTest : EduTestCase() {
     // then
     verify(exactly = 0) { mockConnector.doAuthorize(any()) }
     verify(exactly = 1) { mockConnector.tweet(TWEET_TEXT, null) }
-    assertEquals(EduCoreBundle.message("linkedin.error.failed.to.post"), notification.content)
+    assertEquals(EduSocialMediaBundle.message("linkedin.error.failed.to.post"), notification.content)
   }
 
   private fun runAndWaitForNotification(action: () -> Unit): Notification {

@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.authUtils.OAuthUtils
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.apache.http.client.utils.URIBuilder
@@ -125,8 +125,8 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
       val postId = createPost(uploadLinkData, message)
       if (postId != null) {
         EduNotificationManager
-          .create(INFORMATION, EduCoreBundle.message("x.success.title"), EduCoreBundle.message("linkedin.post.posted"))
-          .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("x.open.in.browser")) {
+          .create(INFORMATION, EduSocialMediaBundle.message("x.success.title"), EduSocialMediaBundle.message("linkedin.post.posted"))
+          .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("x.open.in.browser")) {
             EduBrowser.getInstance().browse("https://www.linkedin.com/feed/update/${postId}")
           })
           .notify(project)
@@ -134,8 +134,8 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
       else {
         EduNotificationManager.showErrorNotification(
           project,
-          EduCoreBundle.message("linkedin.error.failed.to.post"),
-          EduCoreBundle.message("linkedin.error.failed.to.post")
+          EduSocialMediaBundle.message("linkedin.error.failed.to.post"),
+          EduSocialMediaBundle.message("linkedin.error.failed.to.post")
         )
       }
     }

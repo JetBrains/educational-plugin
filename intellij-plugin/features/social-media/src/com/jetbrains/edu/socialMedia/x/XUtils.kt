@@ -20,8 +20,8 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.NumericInputValidator
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.checkIsBackgroundThread
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import twitter4j.Twitter
 import twitter4j.TwitterException
 import twitter4j.TwitterFactory
@@ -134,10 +134,10 @@ object XUtils {
 
   private fun createAndShowPinDialog(project: Project?): String? {
     return Messages.showInputDialog(
-      project, EduCoreBundle.message("x.enter.pin"), EduCoreBundle.message("x.authorization"),
+      project, EduSocialMediaBundle.message("x.enter.pin"), EduSocialMediaBundle.message("x.authorization"),
       null, "", NumericInputValidator(
-        EduCoreBundle.message("x.validation.empty.pin"),
-        EduCoreBundle.message("x.validation.not.numeric.pin")
+        EduSocialMediaBundle.message("x.validation.empty.pin"),
+        EduSocialMediaBundle.message("x.validation.not.numeric.pin")
       )
     )
   }
@@ -177,15 +177,15 @@ object XUtils {
   private fun showFailedToPostNotification(project: Project) {
     EduNotificationManager.showErrorNotification(
       project,
-      EduCoreBundle.message("linkedin.error.failed.to.post"),
-      EduCoreBundle.message("linkedin.error.failed.to.post")
+      EduSocialMediaBundle.message("linkedin.error.failed.to.post"),
+      EduSocialMediaBundle.message("linkedin.error.failed.to.post")
     )
   }
 
   private fun showSuccessNotification(project: Project, postId: String) {
     EduNotificationManager
-      .create(INFORMATION, EduCoreBundle.message("x.success.title"), EduCoreBundle.message("x.tweet.posted"))
-      .addAction(NotificationAction.createSimpleExpiring(EduCoreBundle.message("x.open.in.browser")) {
+      .create(INFORMATION, EduSocialMediaBundle.message("x.success.title"), EduSocialMediaBundle.message("x.tweet.posted"))
+      .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("x.open.in.browser")) {
         EduBrowser.getInstance().browse("https://x.com/anyuser/status/${postId}")
       })
       .notify(project)
