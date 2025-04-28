@@ -753,6 +753,143 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   """,
   )
 
+  @Test
+  fun `test if-elif structure modification`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              pass
+  """,
+  )
+
+  @Test
+  fun `test adding elif part to function with if statement`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("something else")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+  """,
+  )
+
+  @Test
+  fun `test adding elif part to function with another elif statement`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+          elif num == 0:
+              print("Zero")
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+          elif num == 0:
+              pass
+  """,
+  )
+
+  @Test
+  fun `test removing elif parts when there are no in the CodeHint`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+          elif num == 0:
+              print("Zero")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          return num
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+  """,
+  )
+
+  @Test
+  fun `test if-elif content modification in elif parts`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Nogative")
+          elif num == 0:
+              print("WA")
+  """,
+    codeHint = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+          elif num == 0:
+              print("Zero")
+  """,
+    expectedResult = """
+      def check_number(num):
+          if num > 0:
+              print("Positive")
+          elif num < 0:
+              print("Negative")
+          elif num == 0:
+              print("WA")
+  """,
+  )
+
   // TODO: Tests for the case when there is a new function only
 
   private fun assertCodeHint(
