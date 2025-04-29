@@ -30,6 +30,7 @@ import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHints
 import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import com.jetbrains.edu.ai.debugger.core.log.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -82,16 +83,42 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             addEditorMouseListener(listener, this@AIDebugSessionService)
           }
           AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
-        }.onFailure {
+          AIDebuggingLogEntry(
+            task = task.toTaskData(),
+            actionType = "RunDebugSession",
+            testResult = testResult,
+            testText = testText,
+            userCode = virtualFiles.toStringPresentation(),
+            fixes = fixes,
+            intermediateBreakpoints = intermediateBreakpoints,
+            breakpointHints = breakpointHints.content,
+          ).logInfo()
+        }.onFailure { exception ->
           unlock()
           EduNotificationManager.showErrorNotification(
             project,
             content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
           )
+          AIDebuggingLogEntry(
+            task = task.toTaskData(),
+            actionType = "ErrorInRunDebugSession",
+            testResult = testResult,
+            testText = testText,
+            userCode = virtualFiles.toStringPresentation(),
+            error = "An error occurred. AI Debugging is currently unavailable: $exception"
+          ).logError()
         }
       } catch (e: Exception) {
         unlock()
         LOG.error("An error occurred in the ai debugging session", e)
+        AIDebuggingLogEntry(
+          task = task.toTaskData(),
+          actionType = "ErrorInRunDebugSession",
+          testResult = testResult,
+          testText = testText,
+          userCode = virtualFiles.toStringPresentation(),
+          error = "An error occurred in the ai debugging session: ${e.message}"
+        ).logError()
       }
     }
   }
