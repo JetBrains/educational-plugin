@@ -8,6 +8,9 @@ import java.io.File
 import kotlin.test.assertIs
 
 abstract class CourseArchiveTestBase : EduActionTestCase() {
+  override fun getTestDataPath(): String {
+    return super.getTestDataPath() + "/archive/createCourseArchive"
+  }
 
   /**
    * Launches course archive creation for given [course] and checks:

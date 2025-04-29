@@ -11,8 +11,6 @@ import org.junit.Test
 @Suppress("NonFinalUtilityClass")
 class JCreateCourseArchiveTest : CourseArchiveTestBase() {
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/archive/createCourseArchive"
-
   /** Checks [com.jetbrains.edu.jvm.gradle.generation.macro.GradleCommandMacroProvider] */
   @Test
   fun `test custom command`() {

@@ -7,8 +7,6 @@ import org.rust.lang.RsLanguage
 
 class RsCourseArchiveTest : CourseArchiveTestBase() {
 
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/archive/createCourseArchive"
-
   @Test
   fun `test cargo config 1`() {
     val course = courseWithFiles(

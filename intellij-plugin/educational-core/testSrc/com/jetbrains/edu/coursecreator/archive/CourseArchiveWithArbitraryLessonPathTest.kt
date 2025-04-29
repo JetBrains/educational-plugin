@@ -4,8 +4,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
 
 class CourseArchiveWithArbitraryLessonPathTest : CourseArchiveTestBase() {
-  override fun getTestDataPath(): String = super.getTestDataPath() + "/archive/createCourseArchive"
-
   @Test
   fun `test archive with arbitrary lesson path`() {
     val course = courseWithFiles(

@@ -360,7 +360,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   override fun getTestDataPath(): String {
-    return super.getTestDataPath() + "/archive/marketplaceCourseArchive"
+    return "$TEST_DATA_ROOT/archive/marketplaceCourseArchive"
   }
 
   companion object {

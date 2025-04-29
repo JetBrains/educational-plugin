@@ -191,7 +191,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return "testData"
+    return TEST_DATA_ROOT
   }
 
   fun courseWithFiles(
@@ -351,6 +351,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
   }
 
   companion object {
+    const val TEST_DATA_ROOT = "testData"
 
     fun getPlaceholders(document: Document, useLength: Boolean): List<AnswerPlaceholder> {
       return WriteCommandAction.writeCommandAction(null).compute<List<AnswerPlaceholder>, RuntimeException> {
