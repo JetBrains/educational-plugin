@@ -15,16 +15,15 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotionListener
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.ai.debugger.core.connector.AIDebuggerServiceConnector
+import com.jetbrains.edu.ai.debugger.core.log.*
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
 import com.jetbrains.edu.ai.debugger.core.service.TaskDescription
 import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getLanguage
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getTaskDescriptionText
-import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.toNameTextMap
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.toTaskDescriptionType
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
@@ -48,7 +47,8 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
 
   fun runDebuggingSession(
     task: Task,
-    taskFiles: List<TaskFile>,
+    userSolution: Map<String, String>,
+    virtualFileMap: Map<String, VirtualFile>,
     testResult: CheckResult,
     testInfo: TestInfo,
     closeAIDebuggingHint: () -> Unit
@@ -76,25 +76,30 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             testInfo = testInfo,
             // TODO: positive number
             updateVersion = project.course?.marketplaceCourseVersion,
-            userSolution = taskFiles.toNameTextMap(project),
+            userSolution = userSolution,
           )
-        }.onError {
+        }.onError { error ->
           unlock()
           EduNotificationManager.showErrorNotification(
             project,
             content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
           )
+          AIDebuggerLogEntry(
+            task = task.toTaskData(),
+            actionType = "ErrorInRunDebugSession",
+            testResult = testResult,
+            testText = testInfo.text,
+            userCode = userSolution.toString(),
+            error = "An error occurred. AI Debugging is currently unavailable: $error"
+          ).logError()
           return@launch
         }
 
         val language = project.course?.languageById ?: error("Language is not found")
-        val fileMap = runReadAction {
-          taskFiles.associate { it.name to (it.getVirtualFile(project) ?: error("Virtual file is not found")) }
-        }
-        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(finalBreakpoints, fileMap, language)
-        finalBreakpoints.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
-        intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
-        val breakpointHints = generateBreakpointHints(fileMap, finalBreakpoints, intermediateBreakpoints)
+        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(finalBreakpoints, virtualFileMap, language)
+        finalBreakpoints.toBreakpointPositionsByFileMap().toggleLineBreakpoint(virtualFileMap, language)
+        intermediateBreakpoints.toggleLineBreakpoint(virtualFileMap, language)
+        val breakpointHints = generateBreakpointHints(virtualFileMap, finalBreakpoints, intermediateBreakpoints)
         if (breakpointHints == null) {
           EduNotificationManager.showErrorNotification(
             project,
@@ -109,9 +114,27 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           addEditorMouseListener(listener, this@AIDebugSessionService)
         }
         AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
+        AIDebuggerLogEntry(
+          task = task.toTaskData(),
+          actionType = "RunDebugSession",
+          testResult = testResult,
+          testText = testInfo.text,
+          userCode = userSolution.toString(),
+          finalBreakpoints = finalBreakpoints,
+          intermediateBreakpoints = intermediateBreakpoints,
+          breakpointHints = breakpointHints,
+        ).logInfo()
       } catch (e: Exception) {
         unlock()
         LOG.error("An error occurred in the ai debugging session", e)
+        AIDebuggerLogEntry(
+          task = task.toTaskData(),
+          actionType = "ErrorInRunDebugSession",
+          testResult = testResult,
+          testText = testInfo.text,
+          userCode = userSolution.toString(),
+          error = "An error occurred in the ai debugging session: ${e.message}"
+        ).logError()
       }
     }
   }
