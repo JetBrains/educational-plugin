@@ -5,6 +5,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.readText
 import com.jetbrains.edu.ai.debugger.core.api.TestFinder
+import com.jetbrains.edu.ai.debugger.core.log.AIDebuggerLogEntry
+import com.jetbrains.edu.ai.debugger.core.log.logInfo
+import com.jetbrains.edu.ai.debugger.core.log.toStringPresentation
+import com.jetbrains.edu.ai.debugger.core.log.toTaskData
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
 import com.jetbrains.edu.ai.debugger.core.session.AIDebugSessionService
 import com.jetbrains.edu.ai.debugger.core.ui.AIDebuggerHintInlineBanner
@@ -35,6 +39,11 @@ class AIDebuggerCheckListener : CheckListener {
       }
     }
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(aiDebuggerHintBanner)
+    AIDebuggerLogEntry(
+      task = task.toTaskData(),
+      actionType = "AIDebuggingNotificationBanner",
+      testResult = result,
+    ).logInfo()
   }
 
   private fun showDebugNotification(task: Task, testResult: CheckResult, closeAIDebuggingHint: () -> Unit) {
@@ -45,6 +54,13 @@ class AIDebuggerCheckListener : CheckListener {
     val testText = runReadAction { TestFinder.findTestByName(project, task, testResult.failedTestName()) } ?: ""
     project.service<AIDebugSessionService>()
       .runDebuggingSession(task, taskDescription, virtualFiles, testResult, testText, closeAIDebuggingHint)
+    AIDebuggerLogEntry(
+      task = task.toTaskData(),
+      actionType = "StartDebugSessionIsClicked",
+      testResult = testResult,
+      testText = testText,
+      userCode = virtualFiles.toStringPresentation(),
+    ).logInfo()
   }
 
   // TODO: when should we show this button?

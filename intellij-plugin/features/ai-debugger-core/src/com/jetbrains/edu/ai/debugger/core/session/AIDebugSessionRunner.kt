@@ -15,6 +15,9 @@ import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunCo
 import com.intellij.openapi.project.Project
 import com.intellij.xdebugger.*
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
+import com.jetbrains.edu.ai.debugger.core.log.AIDebuggerLogEntry
+import com.jetbrains.edu.ai.debugger.core.log.logInfo
+import com.jetbrains.edu.ai.debugger.core.log.toTaskData
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.runWithTests
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.failedTestName
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getInvisibleTestFiles
@@ -47,6 +50,10 @@ class AIDebugSessionRunner(
       removeEditorMouseMotionListener(listener)
       removeEditorMouseListener(listener)
     }
+    AIDebuggerLogEntry(
+      task = task.toTaskData(),
+      actionType = "DebugSessionStopped",
+    ).logInfo()
   }
 
   private fun makeBreakpointsRegular() {

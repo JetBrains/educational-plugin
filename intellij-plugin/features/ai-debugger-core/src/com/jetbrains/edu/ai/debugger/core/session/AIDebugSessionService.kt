@@ -15,6 +15,7 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotionListener
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.ai.debugger.core.connector.AIDebuggerServiceConnector
+import com.jetbrains.edu.ai.debugger.core.log.*
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -61,12 +62,20 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             files = virtualFiles.toNumberedLineMap(),
             testDescription = testResult.details ?: testResult.message
           )
-        }.onError {
+        }.onError { error ->
           unlock()
           EduNotificationManager.showErrorNotification(
             project,
             content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
           )
+          AIDebuggerLogEntry(
+            task = task.toTaskData(),
+            actionType = "ErrorInRunDebugSession",
+            testResult = testResult,
+            testText = testText,
+            userCode = virtualFiles.toStringPresentation(),
+            error = "An error occurred. AI Debugging is currently unavailable: $error"
+          ).logError()
           return@launch
         }
 
@@ -89,9 +98,27 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           addEditorMouseListener(listener, this@AIDebugSessionService)
         }
         AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
+        AIDebuggerLogEntry(
+          task = task.toTaskData(),
+          actionType = "RunDebugSession",
+          testResult = testResult,
+          testText = testText,
+          userCode = virtualFiles.toStringPresentation(),
+          fixes = fixes.content,
+          intermediateBreakpoints = intermediateBreakpoints,
+          breakpointHints = breakpointHints.content,
+        ).logInfo()
       } catch (e: Exception) {
         unlock()
         LOG.error("An error occurred in the ai debugging session", e)
+        AIDebuggerLogEntry(
+          task = task.toTaskData(),
+          actionType = "ErrorInRunDebugSession",
+          testResult = testResult,
+          testText = testText,
+          userCode = virtualFiles.toStringPresentation(),
+          error = "An error occurred in the ai debugging session: ${e.message}"
+        ).logError()
       }
     }
   }
