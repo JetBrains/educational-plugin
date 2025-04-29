@@ -11,9 +11,9 @@
   <actions>
     <unregister id="Educational.Educator.NewFile"/>
     <group id="Educational.Educator.NewFile">
-      <reference id="Educational.Educator.CreateTask"/>
-      <reference id="Educational.Educator.CreateLesson"/>
-      <reference id="Educational.Educator.CreateSection"/>
+      <reference ref="Educational.Educator.CreateTask"/>
+      <reference ref="Educational.Educator.CreateLesson"/>
+      <reference ref="Educational.Educator.CreateSection"/>
       <separator/>
       <add-to-group group-id="SolutionViewAddGroup.SolutionSection" anchor="first"/>
     </group>
@@ -21,10 +21,10 @@
     <unregister id="Educational.Educator.CourseCreator.FrameworkLesson"/>
     <group id="Educational.Educator.CourseCreator.FrameworkLesson" popup="false"
            class="com.jetbrains.edu.coursecreator.actions.CCFrameworkLessonActionGroup">
-      <reference id="Educational.Educator.SyncChangesWithNextTasks"/>
-      <reference id="Educational.Educator.AllowFileToSyncChanges"/>
-      <reference id="Educational.Educator.IgnoreFilePropagation"/>
-      <reference id="Educational.Educator.ShowUnsyncedChanges">
+      <reference ref="Educational.Educator.SyncChangesWithNextTasks"/>
+      <reference ref="Educational.Educator.AllowFileToSyncChanges"/>
+      <reference ref="Educational.Educator.IgnoreFilePropagation"/>
+      <reference ref="Educational.Educator.ShowUnsyncedChanges">
       </reference>
       <separator/>
       <add-to-group group-id="SolutionExplorerPopupMenu"
@@ -37,33 +37,33 @@
            class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
            popup="true"
            icon="com.jetbrains.edu.EducationalCoreIcons.Actions.EduCourse">
-      <reference id="Educational.BrowseCourses"/>
-      <reference id="Educational.Educator.NewCourse"/>
+      <reference ref="Educational.BrowseCourses"/>
+      <reference ref="Educational.Educator.NewCourse"/>
       <add-to-group group-id="FileMenu" anchor="before" relative-to-action="RiderFileOpenGroup"/>
     </group>
 
     <unregister id="Educational.Educator.CourseCreator.Menu"/>
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
            class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
-      <reference id="Educational.Educator.ShowToStudent"/>
-      <reference id="Educational.Educator.HideFromStudent"/>
-      <reference id="Educational.Educator.ShowPreview"/>
+      <reference ref="Educational.Educator.ShowToStudent"/>
+      <reference ref="Educational.Educator.HideFromStudent"/>
+      <reference ref="Educational.Educator.ShowPreview"/>
       <add-to-group group-id="SolutionExplorerPopupMenu.Edit"/>
-      <reference id="Educational.Educator.CCWrapWithSection"/>
-      <reference id="Educational.Educator.CCRemoveSection"/>
-      <reference id="Educational.Educator.IncludeIntoTask"/>
-      <reference id="Educational.Educator.ExcludeFromTask"/>
+      <reference ref="Educational.Educator.CCWrapWithSection"/>
+      <reference ref="Educational.Educator.CCRemoveSection"/>
+      <reference ref="Educational.Educator.IncludeIntoTask"/>
+      <reference ref="Educational.Educator.ExcludeFromTask"/>
       <separator/>
-      <reference id="Educational.Educator.CreateCoursePreview"/>
-      <reference id="Educational.Educator.ChangeCourseInfo"/>
-      <reference id="Educational.Educator.CheckAllTasks"/>
-      <reference id="Educational.Educator.PackCourse"/>
+      <reference ref="Educational.Educator.CreateCoursePreview"/>
+      <reference ref="Educational.Educator.ChangeCourseInfo"/>
+      <reference ref="Educational.Educator.CheckAllTasks"/>
+      <reference ref="Educational.Educator.PackCourse"/>
       <add-to-group group-id="SolutionExplorerPopupMenu" anchor="after"
                     relative-to-action="Educational.Educator.CourseCreator.FrameworkLesson"/>
       <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.LearnAndTeachFileMenu"/>
     </group>
 
-    <reference id="Educational.Educator.MarketplacePushCourse">
+    <reference ref="Educational.Educator.MarketplacePushCourse">
       <add-to-group group-id="Educational.Educator.CourseCreator.Menu" relative-to-action="Educational.Educator.PackCourse" anchor="after"/>
     </reference>
   </actions>
