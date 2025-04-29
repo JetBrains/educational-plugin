@@ -177,15 +177,15 @@ object XUtils {
   private fun showFailedToPostNotification(project: Project) {
     EduNotificationManager.showErrorNotification(
       project,
-      EduSocialMediaBundle.message("linkedin.error.failed.to.post"),
-      EduSocialMediaBundle.message("linkedin.error.failed.to.post")
+      EduSocialMediaBundle.message("social.media.error.failed.to.post.notification"),
+      EduSocialMediaBundle.message("social.media.error.failed.to.post.notification")
     )
   }
 
   private fun showSuccessNotification(project: Project, postId: String) {
     EduNotificationManager
-      .create(INFORMATION, EduSocialMediaBundle.message("x.success.title"), EduSocialMediaBundle.message("x.tweet.posted"))
-      .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("x.open.in.browser")) {
+      .create(INFORMATION, EduSocialMediaBundle.message("social.media.success.notification.title"), EduSocialMediaBundle.message("x.tweet.posted"))
+      .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("social.media.open.in.browser.notification.action.text")) {
         EduBrowser.getInstance().browse("https://x.com/anyuser/status/${postId}")
       })
       .notify(project)

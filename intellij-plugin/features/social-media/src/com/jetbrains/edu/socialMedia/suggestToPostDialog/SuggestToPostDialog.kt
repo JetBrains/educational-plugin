@@ -33,14 +33,14 @@ class SuggestToPostDialog(
   init {
     val onlyOneConfigurator = configurators.size == 1
     title = if (onlyOneConfigurator) {
-      EduSocialMediaBundle.message("dialog.title.post.your.achievements.to", configurators[0].settings.name)
+      EduSocialMediaBundle.message("social.media.post.your.achievements.to.dialog.title", configurators[0].settings.name)
     }
     else {
-      EduSocialMediaBundle.message("dialog.title.post.your.achievements.to.social.networks")
+      EduSocialMediaBundle.message("social.media.post.your.achievements.to.social.networks.dialog.title")
     }
 
     setDoNotAskOption(SuggestDoNotAskToPostOption(checkBoxes))
-    setOKButtonText(EduSocialMediaBundle.message("linkedin.post.button.text"))
+    setOKButtonText(EduSocialMediaBundle.message("social.media.post.button.text"))
     setResizable(false)
     panel = SuggestToPostDialogPanel(message, imagePath, disposable)
 
@@ -53,7 +53,7 @@ class SuggestToPostDialog(
     }
     if (!onlyOneConfigurator) {
       val checkBoxesPanel = JPanel(FlowLayout(FlowLayout.RIGHT, 0, 0))
-      checkBoxesPanel.add(JBLabel(EduSocialMediaBundle.message("label.share.on")))
+      checkBoxesPanel.add(JBLabel(EduSocialMediaBundle.message("social.media.share.on.label")))
       checkBoxesPanel.add(Box.createHorizontalStrut(10))
       checkBoxes.forEach {
         checkBoxesPanel.add(it.value)
@@ -97,6 +97,6 @@ class SuggestToPostDialog(
     override fun isToBeShown(): Boolean = true
     override fun canBeHidden(): Boolean = true
     override fun shouldSaveOptionsOnCancel(): Boolean = true
-    override fun getDoNotShowMessage(): String = EduSocialMediaBundle.message("x.dialog.do.not.ask")
+    override fun getDoNotShowMessage(): String = EduSocialMediaBundle.message("social.media.do.not.ask.dialog.checkbox")
   }
 }

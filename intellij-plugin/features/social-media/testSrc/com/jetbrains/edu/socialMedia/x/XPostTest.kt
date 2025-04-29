@@ -78,7 +78,7 @@ class XPostTest : EduTestCase() {
     // then
     verify(exactly = 0) { mockConnector.doAuthorize(any()) }
     verify(exactly = 1) { mockConnector.tweet(TWEET_TEXT, null) }
-    assertEquals(EduSocialMediaBundle.message("linkedin.error.failed.to.post"), notification.content)
+    assertEquals(EduSocialMediaBundle.message("social.media.error.failed.to.post.notification"), notification.content)
   }
 
   @Test
@@ -96,7 +96,7 @@ class XPostTest : EduTestCase() {
     // then
     verify(exactly = 0) { mockConnector.doAuthorize(any()) }
     verify(exactly = 1) { mockConnector.tweet(TWEET_TEXT, null) }
-    assertEquals(EduSocialMediaBundle.message("linkedin.error.failed.to.post"), notification.content)
+    assertEquals(EduSocialMediaBundle.message("social.media.error.failed.to.post.notification"), notification.content)
   }
 
   private fun runAndWaitForNotification(action: () -> Unit): Notification {

@@ -125,8 +125,8 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
       val postId = createPost(uploadLinkData, message)
       if (postId != null) {
         EduNotificationManager
-          .create(INFORMATION, EduSocialMediaBundle.message("x.success.title"), EduSocialMediaBundle.message("linkedin.post.posted"))
-          .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("x.open.in.browser")) {
+          .create(INFORMATION, EduSocialMediaBundle.message("social.media.success.notification.title"), EduSocialMediaBundle.message("linkedin.post.posted"))
+          .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("social.media.open.in.browser.notification.action.text")) {
             EduBrowser.getInstance().browse("https://www.linkedin.com/feed/update/${postId}")
           })
           .notify(project)
@@ -134,8 +134,8 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
       else {
         EduNotificationManager.showErrorNotification(
           project,
-          EduSocialMediaBundle.message("linkedin.error.failed.to.post"),
-          EduSocialMediaBundle.message("linkedin.error.failed.to.post")
+          EduSocialMediaBundle.message("social.media.error.failed.to.post.notification"),
+          EduSocialMediaBundle.message("social.media.error.failed.to.post.notification")
         )
       }
     }
