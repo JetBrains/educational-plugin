@@ -76,12 +76,12 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             )
             return@onSuccess
           }
-          AIDebugSessionRunner(project, task, closeAIDebuggingHint).runDebuggingSession(testResult)
           val listener = AIBreakpointHintMouseMotionListener(fixes, breakpointHints)
           EditorFactory.getInstance().eventMulticaster.apply {
             addEditorMouseMotionListener(listener, this@AIDebugSessionService)
             addEditorMouseListener(listener, this@AIDebugSessionService)
           }
+          AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
         }.onFailure {
           unlock()
           EduNotificationManager.showErrorNotification(

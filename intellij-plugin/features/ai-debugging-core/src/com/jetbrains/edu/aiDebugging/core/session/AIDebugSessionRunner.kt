@@ -5,11 +5,16 @@ import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
+import com.intellij.icons.AllIcons
+import com.intellij.lang.Language
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.components.service
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.xdebugger.*
+import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.runWithTests
 import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.failedTestName
 import com.jetbrains.edu.aiDebugging.core.utils.AIDebugUtils.getInvisibleTestFiles
@@ -17,11 +22,15 @@ import com.jetbrains.edu.learning.checker.CheckUtils.deleteTests
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakPointService.Companion.getAIBreakpointType
+import com.jetbrains.edu.aiDebugging.core.breakpoint.AIBreakpointHintMouseMotionListener
 
 class AIDebugSessionRunner(
   private val project: Project,
   private val task: Task,
-  private val closeAIDebuggingHint: () -> Unit
+  private val closeAIDebuggingHint: () -> Unit,
+  private val listener: AIBreakpointHintMouseMotionListener,
+  private val language: Language
 ) {
 
   fun runDebuggingSession(testResult: CheckResult) {
@@ -33,7 +42,19 @@ class AIDebugSessionRunner(
     deleteTests(task.getInvisibleTestFiles(), project)
     closeAIDebuggingHint()
     AIDebugSessionService.getInstance(project).unlock()
-    // TODO: make breakpoints regular
+    makeBreakpointsRegular()
+    EditorFactory.getInstance().eventMulticaster.apply {
+      removeEditorMouseMotionListener(listener)
+      removeEditorMouseListener(listener)
+    }
+  }
+
+  private fun makeBreakpointsRegular() {
+    val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
+    breakpointManager.getBreakpoints(language.getAIBreakpointType()).forEach {
+      breakpointManager.updateBreakpointPresentation(it, AllIcons.Debugger.Db_set_breakpoint, null)
+      project.service<AIBreakPointService>().removeHighlighter(it)
+    }
   }
 
   private fun subscribeToDebuggerEvents() {

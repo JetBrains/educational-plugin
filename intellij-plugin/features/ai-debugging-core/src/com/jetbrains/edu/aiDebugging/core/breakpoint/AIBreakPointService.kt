@@ -49,11 +49,7 @@ class AIBreakPointService(private val project: Project, private val scope: Corou
       }
 
       override fun breakpointRemoved(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        val position = breakpoint.sourcePosition ?: error("There are no position for the breakpoint")
-        val range = highlighterRangers[breakpoint]
-        range?.let {
-          position.file.getEditor(project)?.markupModel?.removeHighlighter(it)
-        }
+        removeHighlighter(breakpoint)
         super.breakpointRemoved(breakpoint)
       }
     }
@@ -71,6 +67,14 @@ class AIBreakPointService(private val project: Project, private val scope: Corou
       attribute
     )
     highlighterRangers[breakpoint] = range
+  }
+
+  fun removeHighlighter(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+    val position = breakpoint.sourcePosition ?: error("There are no position for the breakpoint")
+    val range = highlighterRangers[breakpoint]
+    range?.let {
+      position.file.getEditor(project)?.markupModel?.removeHighlighter(it)
+    }
   }
 
   private fun addListener(type: XLineBreakpointType<XBreakpointProperties<*>>) {
