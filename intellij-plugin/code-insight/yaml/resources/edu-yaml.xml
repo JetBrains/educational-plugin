@@ -1,8 +1,11 @@
-<idea-plugin package="com.jetbrains.edu.yaml">
+<idea-plugin package="com.jetbrains.edu.yaml" xmlns:xi="http://www.w3.org/2001/XInclude">
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="org.jetbrains.plugins.yaml"/>
   </dependencies>
+
+  <!-- BACKCOMPAT: 2024.3. inline it -->
+  <xi:include href="/edu-yaml-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="JavaScript">
     <JsonSchema.ProviderFactory implementation="com.jetbrains.edu.yaml.EduYamlSchemaProviderFactory"/>
