@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
@@ -19,7 +20,6 @@ import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
@@ -37,7 +37,13 @@ class ImportLocalCourseAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
-    FileChooser.chooseFile(LocalCourseFileChooser, null, importLocation()) { file ->
+    // BACKCOMPAT: 2024.3. Use `singleFile` instead of `createSingleLocalFileDescriptor`
+    @Suppress("DEPRECATION")
+    val fileChooserDescriptor = FileChooserDescriptorFactory
+      .createSingleLocalFileDescriptor()
+      .withExtensionFilter("zip")
+
+    FileChooser.chooseFile(fileChooserDescriptor, null, importLocation()) { file ->
       val fileName = file.path
       val course = EduUtilsKt.getLocalCourse(fileName)
       course?.isLocal = true
