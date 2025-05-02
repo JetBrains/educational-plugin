@@ -272,9 +272,12 @@ class CCNewCoursePanel(
 
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {
     val field = TextFieldWithBrowseButton(pathField)
-    field.addBrowseFolderListener(EduCoreBundle.message("cc.new.course.select.location.title"),
-                                  EduCoreBundle.message("cc.new.course.select.location.description"), null,
-                                  FileChooserDescriptorFactory.createSingleFolderDescriptor())
+    // BACKCOMPAT: 2024.3. Use `singleDir` instead of `createSingleFolderDescriptor`
+    @Suppress("UsagesOfObsoleteApi")
+    val fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+      .withTitle(EduCoreBundle.message("cc.new.course.select.location.title"))
+      .withDescription(EduCoreBundle.message("cc.new.course.select.location.description"))
+    field.addBrowseFolderListener(null, fileChooserDescriptor)
     return LabeledComponent.create(field, "${EduCoreBundle.message("cc.new.course.select.location.label")}:", BorderLayout.WEST)
   }
 
