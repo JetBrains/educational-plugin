@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileChooser.FileChooser
-import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
@@ -22,10 +22,11 @@ class CCEditCourseArchive : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    val descriptor = FileChooserDescriptor(
-      true, true, true, true,
-      true, false
-    )
+    // BACKCOMPAT: 2024.3. Use `singleFile` instead of `createSingleLocalFileDescriptor`
+    @Suppress("DEPRECATION")
+    val descriptor = FileChooserDescriptorFactory
+      .createSingleLocalFileDescriptor()
+      .withExtensionFilter("zip")
     val virtualFile = FileChooser.chooseFile(descriptor, project, null) ?: return
     val course = EduUtilsKt.getLocalCourse(virtualFile.path)
     if (course == null) {
