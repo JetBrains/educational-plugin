@@ -76,10 +76,4 @@ tasks {
       }
     }
   }
-
-  jar {
-    // Starting from gradle-intellij-plugin 1.6.0, test runs produces `classpath.index` file in `class` directory
-    // But this file shouldn't be included into final module artifact at all, so exclude it manually for now
-    exclude("**/classpath.index")
-  }
 }

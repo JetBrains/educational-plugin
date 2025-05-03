@@ -6,28 +6,6 @@ import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 import org.jetbrains.intellij.platform.gradle.utils.extensionProvider
 
-val ideToPlugins = mapOf(
-  // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
-  // Actually, Python Community contains all necessary code that we need.
-  // Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
-  IntellijIdeaUltimate to listOfNotNull(
-    scalaPlugin,
-    rustPlugin,
-    pythonProPlugin,
-    pythonCommunityPlugin.takeIf { true },
-    goPlugin,
-    phpPlugin
-  ),
-  CLion to listOf(rustPlugin),
-  AndroidStudio to listOf(pythonCommunityPlugin),
-  GoLand to listOf(pythonCommunityPlugin),
-  RustRover to listOf(pythonCommunityPlugin)
-)
-
-fun idePlugins(type: IntelliJPlatformType): List<String> {
-  return ideToPlugins[type].orEmpty() + psiViewerPlugin
-}
-
 plugins {
   id("intellij-plugin-common-conventions")
   id("org.jetbrains.intellij.platform")
@@ -115,6 +93,24 @@ dependencies {
     testFramework(TestFrameworkType.Bundled)
   }
 }
+
+val ideToPlugins = mapOf(
+  // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
+  // Actually, Python Community contains all necessary code that we need.
+  // Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
+  IntellijIdeaUltimate to listOfNotNull(
+    scalaPlugin,
+    rustPlugin,
+    pythonProPlugin,
+    pythonCommunityPlugin,
+    goPlugin,
+    phpPlugin
+  ),
+  CLion to listOf(rustPlugin),
+  AndroidStudio to listOf(pythonCommunityPlugin),
+  GoLand to listOf(pythonCommunityPlugin),
+  RustRover to listOf(pythonCommunityPlugin)
+)
 
 tasks {
   val projectName = project.extensionProvider.flatMap { it.projectName }
@@ -212,6 +208,10 @@ tasks {
     customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
   }
+}
+
+fun idePlugins(type: IntelliJPlatformType): List<String> {
+  return ideToPlugins[type].orEmpty() + psiViewerPlugin
 }
 
 /**

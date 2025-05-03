@@ -5,8 +5,6 @@ plugins {
   id("common-conventions")
 }
 
-val pluginVersion: String by project
-
 idea {
   project {
     jdkName = "17"
