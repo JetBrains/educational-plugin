@@ -265,55 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("Edu-Cpp") {
-  tasks {
-    test {
-      setClionSystemProperties(withRadler = false)
-    }
-  }
-
-  dependencies {
-    intellijPlatform {
-      intellijIde(clionVersion)
-
-      intellijPlugins(cppPlugins)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
-project("Edu-Cpp:CLion-Classic") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(clionVersion)
-
-      intellijPlugins(cppPlugins)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:Edu-Cpp"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
-project("Edu-Cpp:CLion-Nova") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(clionVersion)
-
-      intellijPlugins(cppPlugins)
-      intellijPlugins(radlerPlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:Edu-Cpp"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("Edu-Go") {
   dependencies {
     intellijPlatform {
