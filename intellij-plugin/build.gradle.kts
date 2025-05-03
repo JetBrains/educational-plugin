@@ -265,30 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("features:ai-test-generation") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(baseVersion)
-    }
-
-    api(rootProject.libs.educational.ml.library.core) {
-      excludeKotlinDeps()
-      excludeKotlinSerializationDeps()
-      exclude(group = "net.java.dev.jna")
-    }
-    api(rootProject.libs.educational.ml.library.test.generation) {
-      excludeKotlinDeps()
-      excludeKotlinSerializationDeps()
-      exclude(group = "net.java.dev.jna")
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    implementation(project(":intellij-plugin:AI"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("features:ide-onboarding") {
   dependencies {
     intellijPlatform {
