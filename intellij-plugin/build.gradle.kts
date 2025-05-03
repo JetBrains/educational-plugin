@@ -265,60 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("Edu-Python") {
-  dependencies {
-    intellijPlatform {
-      // needed to load `org.toml.lang plugin` for Python plugin in tests
-      val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
-      intellijIde(ideVersion)
-
-      intellijPlugins(pythonPlugin)
-      testIntellijPlugins(tomlPlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-    testImplementation(project(":intellij-plugin:Edu-Python:Idea"))
-    testImplementation(project(":intellij-plugin:Edu-Python:PyCharm"))
-  }
-}
-
-project("Edu-Python:Idea") {
-  dependencies {
-    intellijPlatform {
-      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(ideVersion)
-
-      val pluginList = listOf(
-        if (!isJvmCenteredIDE) pythonCommunityPlugin else pythonPlugin,
-        javaPlugin
-      )
-      intellijPlugins(pluginList)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    compileOnly(project(":intellij-plugin:Edu-Python"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
-project("Edu-Python:PyCharm") {
-  dependencies {
-    intellijPlatform {
-      val ideVersion = if (isStudioIDE) ideaVersion else baseVersion
-      intellijIde(ideVersion)
-
-      // TODO: incorrect plugin version in case of AS
-      intellijPlugins(pythonPlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    compileOnly(project(":intellij-plugin:Edu-Python"))
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("Edu-JavaScript") {
   dependencies {
     intellijPlatform {
