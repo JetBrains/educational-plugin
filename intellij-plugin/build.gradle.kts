@@ -265,20 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("Edu-Shell") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(baseVersion)
-
-      intellijPlugins(shellScriptPlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("Edu-CSharp") {
   dependencies {
     intellijPlatform {
