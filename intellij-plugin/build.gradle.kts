@@ -265,20 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("features:command-line") {
-  dependencies {
-    intellijPlatform {
-      // TODO: use `baseVersion` when https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1790 is resolved
-      intellijIde(ideaVersion)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-    implementationWithoutKotlin(rootProject.libs.clikt.core)
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("features:ai-error-explanation") {
   dependencies {
     intellijPlatform {
