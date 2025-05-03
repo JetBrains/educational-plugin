@@ -265,21 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("jvm-core") {
-  dependencies {
-    intellijPlatform {
-      val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-      intellijIde(ideVersion)
-
-      intellijPlugins(jvmPlugins)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("remote-env") {
   dependencies {
     intellijPlatform {
