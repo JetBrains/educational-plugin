@@ -265,20 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("Edu-Php") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(ideaVersion)
-
-      intellijPlugins(phpPlugin)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("Edu-Shell") {
   dependencies {
     intellijPlatform {
