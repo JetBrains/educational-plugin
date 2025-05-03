@@ -1,28 +1,6 @@
 plugins {
+  id("common-conventions")
   `maven-publish`
-}
-
-sourceSets {
-  main {
-    java.srcDirs("src")
-    resources.srcDirs("resources")
-  }
-
-  test {
-    java.srcDirs("testSrc")
-    resources.srcDirs("testResources")
-  }
-}
-
-kotlin {
-  sourceSets {
-    main {
-      kotlin.srcDirs("src")
-    }
-    test {
-      kotlin.srcDirs("testSrc")
-    }
-  }
 }
 
 java {
@@ -88,19 +66,3 @@ publishing {
     }
   }
 }
-
-fun DependencyHandler.implementationWithoutKotlin(dependencyNotation: Provider<*>) {
-  implementation(dependencyNotation) {
-    excludeKotlinDeps()
-  }
-}
-
-fun <T : ModuleDependency> T.excludeKotlinDeps() {
-  exclude(module = "kotlin-runtime")
-  exclude(module = "kotlin-reflect")
-  exclude(module = "kotlin-stdlib")
-  exclude(module = "kotlin-stdlib-common")
-  exclude(module = "kotlin-stdlib-jdk8")
-}
-
-fun prop(name: String): String = providers.gradleProperty(name).get()
