@@ -265,14 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("localization") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(baseVersion)
-    }
-  }
-}
-
 project("features:command-line") {
   dependencies {
     intellijPlatform {
