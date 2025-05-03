@@ -265,22 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("AI") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(baseVersion)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    compileOnly(rootProject.libs.kotlinx.serialization) {
-      excludeKotlinDeps()
-    }
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("Edu-Java") {
   dependencies {
     intellijPlatform {
