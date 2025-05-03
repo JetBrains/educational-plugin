@@ -265,18 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("features:ide-onboarding") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(baseVersion)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 fun buildDir(): String {
   return project.layout.buildDirectory.get().asFile.absolutePath
 }
