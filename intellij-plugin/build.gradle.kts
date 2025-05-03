@@ -265,18 +265,6 @@ fun IntelliJPlatformTestingExtension.customRunIdeTask(
   }
 }
 
-project("features:ai-error-explanation") {
-  dependencies {
-    intellijPlatform {
-      intellijIde(baseVersion)
-    }
-
-    implementation(project(":intellij-plugin:educational-core"))
-
-    testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  }
-}
-
 project("features:ai-hints-core") {
   dependencies {
     intellijPlatform {
