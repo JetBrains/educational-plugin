@@ -26,13 +26,15 @@ class CourseViewTest : CourseViewTestBase() {
     val pane = createPane()
     PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 3))
 
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  0/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   +TaskNode task1\n" +
-                    "   +TaskNode task2\n" +
-                    "   +TaskNode task3\n" +
-                    "   +TaskNode task4\n"
+    val structure = """
+                    -Project
+                     -CourseNode Edu test course  0/4
+                      -LessonNode lesson1
+                       +TaskNode task1
+                       +TaskNode task2
+                       +TaskNode task3
+                       +TaskNode task4
+                    """.trimIndent()
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
@@ -61,12 +63,14 @@ class CourseViewTest : CourseViewTestBase() {
     val pane = createPane()
     val model = pane.tree.model
 
-    val structure = "-Project\n" +
-                    " +CourseNode Edu test course  0/2"
+    val structure = """
+                    -Project
+                     +CourseNode Edu test course  0/2
+                    """.trimIndent()
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
 
     PlatformTestUtil.waitForPromise(TreeUtil.promiseExpand(pane.tree, 3))
-    assertEmpty(FileEditorManager.getInstance (project).openFiles)
+    assertEmpty(FileEditorManager.getInstance(project).openFiles)
 
     val root = model.root as DefaultMutableTreeNode
     val courseNode = model.getChild(root, 0) as DefaultMutableTreeNode
@@ -75,8 +79,8 @@ class CourseViewTest : CourseViewTestBase() {
     assertFalse(frameworkLessonNodeObject.expandOnDoubleClick())
     assertTrue(frameworkLessonNodeObject.canNavigate())
     frameworkLessonNodeObject.navigate(true)
-    assertEquals(1, FileEditorManager.getInstance (project).openFiles.size)
-    assertEquals("taskFile1.txt", FileEditorManager.getInstance (project).openFiles[0].name)
+    assertEquals(1, FileEditorManager.getInstance(project).openFiles.size)
+    assertEquals("taskFile1.txt", FileEditorManager.getInstance(project).openFiles[0].name)
   }
 
   @Test
@@ -97,23 +101,26 @@ class CourseViewTest : CourseViewTestBase() {
     val task = findTask(0, 1)
     testAction(CheckAction(task.getUICheckLabel()), dataContext(taskFile))
 
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  1/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   -TaskNode task1\n" +
-                    "    taskFile1.txt\n" +
-                    "   -TaskNode task2\n" +
-                    "    taskFile2.txt\n" +
-                    "   -TaskNode task3\n" +
-                    "    taskFile3.txt\n" +
-                    "   -TaskNode task4\n" +
-                    "    taskFile4.txt"
+    val structure = """
+                    -Project
+                     -CourseNode Edu test course  1/4
+                      -LessonNode lesson1
+                       -TaskNode task1
+                        taskFile1.txt
+                       -TaskNode task2
+                        taskFile2.txt
+                       -TaskNode task3
+                        taskFile3.txt
+                       -TaskNode task4
+                        taskFile4.txt
+                    """.trimIndent()
     assertCourseView(structure)
 
     withEduTestDialog(EduTestDialog(Messages.OK)) {
       testAction(RevertTaskAction.ACTION_ID, dataContext(taskFile))
     }
   }
+
   @Test
   fun `test hidden lesson`() {
     PropertiesComponent.getInstance().setValue(CourseViewPane.HIDE_SOLVED_LESSONS, true)
@@ -141,11 +148,13 @@ class CourseViewTest : CourseViewTestBase() {
       val task = findTask(0, 0)
       testAction(CheckAction(task.getUICheckLabel()), dataContext(taskFile))
 
-      val structure = "-Project\n" +
-                      " -CourseNode Edu test course  1/2\n" +
-                      "  -LessonNode lesson2\n" +
-                      "   -TaskNode task1\n" +
-                      "    taskFile2.txt"
+      val structure = """
+                      -Project
+                       -CourseNode Edu test course  1/2
+                        -LessonNode lesson2
+                         -TaskNode task1
+                          taskFile2.txt
+                      """.trimIndent()
       assertCourseView(structure)
 
       withEduTestDialog(EduTestDialog(Messages.OK)) {

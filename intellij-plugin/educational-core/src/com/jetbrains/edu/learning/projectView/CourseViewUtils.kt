@@ -42,6 +42,7 @@ object CourseViewUtils {
         if (dirName == EduNames.BUILD || dirName == EduNames.OUT) return null
         if (task != null && isShowDirInView(project, task, value)) directoryNodeFactory(value) else null
       }
+
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
         val virtualFile = psiFile.virtualFile ?: return null
@@ -49,6 +50,7 @@ object CourseViewUtils {
         val visibleFile = task?.getTaskFile(path)
         if (visibleFile?.isVisible == true) fileNodeFactory(childNode, psiFile) else null
       }
+
       else -> null
     }
   }
@@ -59,7 +61,9 @@ object CourseViewUtils {
     val hasTaskFileNotInsideSourceDir = task.hasVisibleTaskFilesNotInsideSourceDir(project)
     if (dirName == task.sourceDir) return hasTaskFileNotInsideSourceDir
     return task.taskFiles.values.any {
-      it.isVisible && VfsUtil.isAncestor(dir.virtualFile, it.getVirtualFile(project)?:return@any false, true)
+      if (!it.isVisible) return@any false
+      val virtualFile = it.getVirtualFile(project) ?: return@any false
+      VfsUtil.isAncestor(dir.virtualFile, virtualFile, true)
     }
   }
 
@@ -119,6 +123,7 @@ object CourseViewUtils {
         else if (item.isSolved || item.containsCorrectSubmissions()) TaskSolved
         else TaskFailed
       }
+
       else -> error("Unexpected item type: ${item.javaClass.simpleName}")
     }
     val modifier = getSyncChangesModifier(item) ?: return icon
@@ -161,7 +166,7 @@ object CourseViewUtils {
         is IdeTask -> if (isSolved) IdeTaskSolved else CourseView.IdeTask
         is TheoryTask -> if (isSolved) TheoryTaskSolved else CourseView.TheoryTask
         else -> if (status == CheckStatus.Unchecked) CourseView.Task
-        else if  (isSolved || containsCorrectSubmissions()) TaskSolved
+        else if (isSolved || containsCorrectSubmissions()) TaskSolved
         else TaskFailed
       }
     }
