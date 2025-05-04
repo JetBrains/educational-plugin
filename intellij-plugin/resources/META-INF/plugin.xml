@@ -46,5 +46,6 @@
     <module name="ai-test-generation"/>
     <module name="ide-onboarding"/>
     <module name="remote-env"/>
+    <module name="social-media"/>
   </content>
 </idea-plugin>

@@ -1,0 +1,32 @@
+<idea-plugin package="com.jetbrains.edu.socialMedia">
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.xPluginConfigurator"
+                    interface="com.jetbrains.edu.socialMedia.x.XPluginConfigurator"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.linkedInPluginConfigurator"
+                    interface="com.jetbrains.edu.socialMedia.linkedIn.LinkedInPluginConfigurator"
+                    dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <httpRequestHandler implementation="com.jetbrains.edu.socialMedia.linkedIn.LinkedInRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.socialMedia.x.XRestService"/>
+
+    <registryKey key="edu.socialMedia.x.oauth2"
+                 description="Enables OAuth 2.0 authorization for X"
+                 defaultValue="true"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.socialMedia.SocialMediaMultiplePostAction"/>
+
+    <xPluginConfigurator implementation="com.jetbrains.edu.socialMedia.kotlin.KtXConfigurator"/>
+    <xPluginConfigurator
+        implementation="com.jetbrains.edu.socialMedia.hyperskill.HyperskillXConfigurator"/>
+    <linkedInPluginConfigurator
+        implementation="com.jetbrains.edu.socialMedia.hyperskill.HyperskillLinkedInConfigurator"/>
+
+    <optionsProvider instance="com.jetbrains.edu.socialMedia.x.XOptionsProvider"/>
+    <optionsProvider instance="com.jetbrains.edu.socialMedia.linkedIn.LinkedInOptionsProvider"/>
+  </extensions>
+</idea-plugin>

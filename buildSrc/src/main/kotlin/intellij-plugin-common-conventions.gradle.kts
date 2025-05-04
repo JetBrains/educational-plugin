@@ -40,8 +40,6 @@ val libs = the<VersionCatalogsExtension>().named("libs")
 // TODO: move dependencies into particular module `build.gradle.kts`.
 //  Most modules don't need all (or even any) these dependencies
 dependencies {
-  implementationWithoutKotlin(libs.findLibrary("twitter4j.core").get())
-  implementationWithoutKotlin(libs.findLibrary("twitter4j.v2").get())
   implementationWithoutKotlin(libs.findLibrary("jsoup").get())
   implementationWithoutKotlin(libs.findLibrary("jackson.dataformat.yaml").get())
   implementationWithoutKotlin(libs.findLibrary("jackson.datatype.jsr310").get())

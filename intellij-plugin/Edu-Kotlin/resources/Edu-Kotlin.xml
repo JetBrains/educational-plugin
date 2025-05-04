@@ -1,5 +1,4 @@
 <idea-plugin package="com.jetbrains.edu.kotlin">
-  <!--suppress PluginXmlValidity -->
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
@@ -15,7 +14,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
-    <xPluginConfigurator implementation="com.jetbrains.edu.kotlin.x.KtXConfigurator"/>
     <mainFileProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.KtMainFileProvider"/>
 
     <!-- Hyperskill -->

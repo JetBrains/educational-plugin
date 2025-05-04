@@ -35,11 +35,7 @@
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckListener"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillRemoteTaskChecker"/>
-    <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsProvider"/>-->
-    <xPluginConfigurator
-        implementation="com.jetbrains.edu.learning.stepik.hyperskill.socialMedia.x.HyperskillXConfigurator"/>
-    <linkedInPluginConfigurator
-        implementation="com.jetbrains.edu.learning.stepik.hyperskill.socialMedia.linkedIn.HyperskillLinkedInConfigurator"/>
+    <submissionsProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSubmissionsProvider"/>
   </extensions>
 
   <actions>
