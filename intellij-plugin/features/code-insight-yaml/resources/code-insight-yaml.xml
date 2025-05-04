@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.yaml" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="code-insight-core"/>
     <plugin id="org.jetbrains.plugins.yaml"/>
   </dependencies>
 

@@ -5,7 +5,6 @@
   <vendor>JetBrains</vendor>
 
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/edu-code-insight.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <!--update description in description.html file instead-->
   <description/>
@@ -14,9 +13,6 @@
   <change-notes/>
 
   <content>
-    <module name="edu-html"/>
-    <module name="edu-markdown"/>
-    <module name="edu-yaml"/>
     <module name="jvm-core"/>
     <module name="AI"/>
     <module name="Edu-Java"/>
@@ -38,6 +34,10 @@
     <module name="remote-env"/>
 
     <!-- feature modules -->
+    <module name="code-insight-core"/>
+    <module name="code-insight-html"/>
+    <module name="code-insight-markdown"/>
+    <module name="code-insight-yaml"/>
     <module name="command-line"/>
     <module name="github"/>
     <module name="ai-error-explanation"/>

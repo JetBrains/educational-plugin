@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin package="com.jetbrains.edu.codeInsight">
   <extensions defaultExtensionNs="com.intellij">
     <useScopeEnlarger implementation="com.jetbrains.edu.codeInsight.EduUseScopeEnlarger"/>
   </extensions>

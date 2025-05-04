@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.markdown">
-  <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="code-insight-core"/>
     <plugin id="org.intellij.plugins.markdown"/>
   </dependencies>
 

@@ -1,6 +1,7 @@
 <idea-plugin package="com.jetbrains.edu.html">
-  <!--suppress PluginXmlValidity -->
   <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="code-insight-core"/>
     <plugin id="com.intellij.modules.xml"/>
   </dependencies>
 
