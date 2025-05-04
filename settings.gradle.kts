@@ -30,7 +30,6 @@ include(
   "intellij-plugin:Edu-CSharp",
   "intellij-plugin:sql",
   "intellij-plugin:sql:sql-jvm",
-  "intellij-plugin:remote-env",
   "intellij-plugin:localization",
   "intellij-plugin:features:code-insight-core",
   "intellij-plugin:features:code-insight-html",
@@ -43,7 +42,8 @@ include(
   "intellij-plugin:features:ai-hints-kotlin",
   "intellij-plugin:features:ai-hints-python",
   "intellij-plugin:features:ai-test-generation",
-  "intellij-plugin:features:ide-onboarding"
+  "intellij-plugin:features:ide-onboarding",
+  "intellij-plugin:features:remote-env"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {

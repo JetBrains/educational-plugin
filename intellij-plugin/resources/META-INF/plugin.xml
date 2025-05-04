@@ -31,7 +31,6 @@
     <module name="Edu-CSharp"/>
     <module name="sql-core"/>
     <module name="sql-jvm"/>
-    <module name="remote-env"/>
 
     <!-- feature modules -->
     <module name="code-insight-core"/>
@@ -46,5 +45,6 @@
     <module name="ai-hints-python"/>
     <module name="ai-test-generation"/>
     <module name="ide-onboarding"/>
+    <module name="remote-env"/>
   </content>
 </idea-plugin>

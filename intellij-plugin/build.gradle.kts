@@ -75,7 +75,6 @@ dependencies {
     pluginModule(implementation(project("Edu-CSharp")))
     pluginModule(implementation(project("sql")))
     pluginModule(implementation(project("sql:sql-jvm")))
-    pluginModule(implementation(project("remote-env")))
     pluginModule(implementation(project("features:code-insight-core")))
     pluginModule(implementation(project("features:code-insight-html")))
     pluginModule(implementation(project("features:code-insight-markdown")))
@@ -88,6 +87,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-python")))
     pluginModule(implementation(project("features:ai-test-generation")))
     pluginModule(implementation(project("features:ide-onboarding")))
+    pluginModule(implementation(project("features:remote-env")))
     pluginModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)
