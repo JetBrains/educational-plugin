@@ -1,7 +1,6 @@
 package com.jetbrains.edu.aiHints.python.impl
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.aiHints.core.api.FunctionDiffReducer
@@ -53,15 +52,6 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     replace(element)
   }
 
-  private fun <R> runWriteCommandAction(project: Project, action: () -> R): R {
-    var result: R? = null
-    WriteCommandAction.runWriteCommandAction(project, null, null, {
-      result = action()
-    })
-    @Suppress("UNCHECKED_CAST")
-    return result as R
-  }
-
   private fun <T : PyStatement> PyStatement.replaceIfNeeded(codeHintStatement: T): Boolean {
     // For example, if the current statement is not `for`, replace with `for` part and `pass` statement as a body
     if (this !is PyWhileStatement && this !is PyForStatement && this !is PyIfStatement) {
@@ -78,52 +68,8 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
       return true
     }
 
-    if (this is PyIfStatement && codeHintStatement is PyIfStatement) {
-      val currentElifParts = elifParts
-      val codeHintElifParts = codeHintStatement.elifParts
-
-      if (currentElifParts.isNotEmpty() && codeHintElifParts.isNotEmpty()) {
-        for ((currentElifPart, codeHintElifPart) in currentElifParts.zip(codeHintElifParts)) {
-          if (currentElifPart.compareNormalized(codeHintElifPart)) continue
-          if (replaceIfNeeded(currentElifPart, codeHintElifPart)) {
-            return true
-          }
-        }
-
-        if (currentElifParts.size < codeHintElifParts.size) {
-          // Insert next `elif` if possible
-          val reducedElifPart = codeHintElifParts[currentElifParts.size].copy() as PyIfPartElif
-          runWriteCommandAction(project) {
-            reducedElifPart.statementList.deleteChildRange(
-              reducedElifPart.statementList.firstChild,
-              reducedElifPart.statementList.lastChild
-            )
-            reducedElifPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-            addBefore(reducedElifPart, elsePart)
-          }
-          return true
-        }
-      }
-      else if (currentElifParts.isEmpty() && codeHintElifParts.isNotEmpty()) {
-        // Add the first elif part (reduced) from CodeHint
-        val reducedElifPart = codeHintElifParts[0].copy() as PyIfPartElif
-        runWriteCommandAction(project) {
-          reducedElifPart.statementList.deleteChildRange(
-            reducedElifPart.statementList.firstChild,
-            reducedElifPart.statementList.lastChild
-          )
-          reducedElifPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          addBefore(reducedElifPart, elsePart)
-        }
-        return true
-      }
-      else if (currentElifParts.isNotEmpty()) { // CodeHint's elif parts are empty
-        // Removing all `elif` parts
-        runWriteCommandAction(project) {
-          deleteChildRange(currentElifParts.first(), currentElifParts.last())
-        }
-        return true
-      } // else: both are empty, do nothing
+    if (this is PyIfStatement && codeHintStatement is PyIfStatement && modifyElifParts(codeHintStatement)) {
+      return true
     }
 
     if (replaceIfNeeded(elsePart, codeHintStatement.elsePart)) {
@@ -132,16 +78,44 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     if (elsePart == null) {
       val codeHintElsePart = codeHintStatement.elsePart ?: return false
       // Add else part with `pass` statement as a body if the Code Hint has one
-      runWriteCommandAction(project) {
-        codeHintElsePart.statementList.deleteChildRange(
-          codeHintElsePart.statementList.firstChild,
-          codeHintElsePart.statementList.lastChild
-        )
-        codeHintElsePart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-        add(codeHintElsePart)
-      }
+      reduceAndAdd(codeHintElsePart)
       return true
     }
+    return false
+  }
+
+  private fun PyIfStatement.modifyElifParts(codeHintStatement: PyIfStatement): Boolean {
+    val currentElifParts = elifParts
+    val codeHintElifParts = codeHintStatement.elifParts
+
+    if (currentElifParts.isNotEmpty() && codeHintElifParts.isNotEmpty()) {
+      for ((currentElifPart, codeHintElifPart) in currentElifParts.zip(codeHintElifParts)) {
+        if (currentElifPart.compareNormalized(codeHintElifPart)) continue
+        if (replaceIfNeeded(currentElifPart, codeHintElifPart)) {
+          return true
+        }
+      }
+      // Insert next `elif` if possible
+      if (currentElifParts.size < codeHintElifParts.size) {
+        val reducedElifPart = codeHintElifParts[currentElifParts.size].copy() as PyIfPartElif
+        reduceAndAdd(reducedElifPart, elsePart)
+        return true
+      }
+    }
+    else if (currentElifParts.isEmpty() && codeHintElifParts.isNotEmpty()) {
+      // Add the first elif part (reduced) from CodeHint
+      val reducedElifPart = codeHintElifParts[0].copy() as PyIfPartElif
+      reduceAndAdd(reducedElifPart, elsePart)
+      return true
+    }
+    else if (currentElifParts.isNotEmpty()) { // CodeHint's elif parts are empty
+      // Removing all `elif` parts
+      runWriteCommandAction(project) {
+        deleteChildRange(currentElifParts.first(), currentElifParts.last())
+      }
+      return true
+    } // else: both are empty, do nothing
+
     return false
   }
 
