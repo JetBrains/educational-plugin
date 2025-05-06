@@ -472,6 +472,46 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     assertContentsEqual(localCourse.task3, "NewFile.kt", InMemoryUndeterminedContents("author contents 3"))
   }
 
+  @Test
+  fun `update task name`() {
+    fun assertRenamedTaskFolder(step: Int) {
+      fileTree {
+        dir("lesson1") {
+          dir("task") {
+            file("Task.kt")
+            file("Tests$step.kt")
+            file("NonEdit.kt")
+          }
+          dir("task1 renamed") {
+            file("task.html")
+          }
+          dir("task2 renamed") {
+            file("task.html")
+          }
+          dir("task3 renamed") {
+            file("task.html")
+          }
+        }
+        file("build.gradle")
+        file("settings.gradle")
+      }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+    }
+
+    updateCourse {
+      task1.name = "task1 renamed"
+      task2.name = "task2 renamed"
+      task3.name = "task3 renamed"
+    }
+
+    assertEquals(localCourse.task1.name, "task1 renamed")
+
+    assertRenamedTaskFolder(1)
+    next()
+    assertRenamedTaskFolder(2)
+    next()
+    assertRenamedTaskFolder(3)
+  }
+
   protected abstract fun produceCourse(): T
 
   protected abstract fun setupLocalCourse(course: T)
