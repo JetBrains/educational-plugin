@@ -7,6 +7,8 @@ inspections:
     ignore:
       - "**/resources/fileTemplates/**"
       - "**/testData/**"
+      # It contains a lot of generated Kotlin code for convention plugins which we don't want to check
+      - "buildSrc/build/generated-sources/**"
       - "intellij-plugin/educational-core/resources/style/**"
       - "intellij-plugin/educational-core/resources/oauthResponsePages/**"
       # All localized resources are put into the project automatically.
