@@ -219,6 +219,11 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 
   fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
+
+  /**
+   * Determines whether a given virtual file should be visible to students in Course View.
+   */
+  fun shouldFileBeVisibleToStudent(virtualFile: VirtualFile): Boolean = false
 }
 
 fun EduConfigurator<*>.excludeFromArchive(project: Project, file: VirtualFile): Boolean =
