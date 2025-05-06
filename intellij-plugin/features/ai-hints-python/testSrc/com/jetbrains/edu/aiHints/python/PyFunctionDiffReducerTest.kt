@@ -407,6 +407,355 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   )
 
   @Test
+  fun `test nested structures 2`() = assertCodeHint(
+    functionName = "nested_structures",
+    currentCode = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                pass
+    """,
+    codeHint = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+            return result
+    """,
+    expectedResult = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                   pass
+    """
+  )
+
+  @Test
+  fun `test nested structures 3`() = assertCodeHint(
+    functionName = "nested_structures",
+    currentCode = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                   pass
+    """,
+    codeHint = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+            return result
+    """,
+    expectedResult = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+    """
+  )
+
+  @Test
+  fun `test nested structures 4`() = assertCodeHint(
+    functionName = "nested_structures",
+    currentCode = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                   pass
+    """,
+    codeHint = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+            return result
+    """,
+    expectedResult = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+    """
+  )
+
+  @Test
+  fun `test nested structures 5`() = assertCodeHint(
+    functionName = "nested_structures",
+    currentCode = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+    """,
+    codeHint = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+            return result
+    """,
+    expectedResult = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+                        item -= 1
+            return result
+    """
+  )
+
+  @Test
+  fun `test check_number full path`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          pass
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Nogative")
+              elif num == 0:
+                  print("WA")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              pass
+  """
+  )
+
+  @Test
+  fun `test check_number full path 2`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              pass
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Nogative")
+              elif num == 0:
+                  print("WA")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  pass
+  """
+  )
+
+  @Test
+  fun `test check_number full path 3`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  pass
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Nogative")
+              elif num == 0:
+                  print("WA")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      pass
+  """
+  )
+
+  @Test
+  fun `test check_number full path 4`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      pass
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Nogative")
+              elif num == 0:
+                  print("WA")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      pass
+  """
+  )
+
+  @Test
+  fun `test check_number full path 5`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      pass
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Nogative")
+              elif num == 0:
+                  print("WA")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Nogative")
+                  elif num == 0:
+                      pass
+  """
+  )
+
+  @Test
+  fun `test check_number full path 6`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Nogative")
+                  elif num == 0:
+                      pass
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Nogative")
+              elif num == 0:
+                  print("WA")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Nogative")
+                  elif num == 0:
+                      print("WA")
+  """
+  )
+
+  @Test
+  fun `test check_number full path 7`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Nogative")
+                  elif num == 0:
+                      print("WA")
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Negative")
+              elif num == 0:
+                  print("Zero")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Negative")
+                  elif num == 0:
+                      print("Zero")
+  """
+  )
+
+  @Test
   fun `test function with pass body`() = assertCodeHint(
     functionName = "empty_function",
     currentCode = """
