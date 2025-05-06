@@ -32,6 +32,63 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   )
 
   @Test
+  fun `test add for loop to empty function`() = assertCodeHint(
+    functionName = "foo",
+    currentCode = """
+        def foo(lst):
+            pass
+    """,
+    codeHint = """
+        def foo(lst):
+            for l in lst:
+                print(l)
+    """,
+    expectedResult = """
+        def foo(lst):
+            for l in lst:
+                pass
+    """
+  )
+
+  @Test
+  fun `test add while loop to empty function`() = assertCodeHint(
+    functionName = "foo",
+    currentCode = """
+        def foo(lst):
+            pass
+    """,
+    codeHint = """
+        def foo(lst):
+            while length(lst) > 0:
+                lst = lst[:-1]
+    """,
+    expectedResult = """
+        def foo(lst):
+            while length(lst) > 0:
+                pass
+    """
+  )
+
+  @Test
+  fun `test add if statement to empty function`() = assertCodeHint(
+    functionName = "foo",
+    currentCode = """
+        def foo(lst):
+            pass
+    """,
+    codeHint = """
+        def foo(lst):
+            if length(lst) > 0:
+                print("List is not empty")
+        """,
+    expectedResult = """
+        def foo(lst):
+            if length(lst) > 0:
+                pass
+    """
+  )
+
+  @Test
   fun `test add return statement sum`() = assertCodeHint(
     functionName = "sum",
     currentCode = """

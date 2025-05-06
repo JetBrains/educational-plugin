@@ -57,8 +57,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     if (this !is PyWhileStatement && this !is PyForStatement && this !is PyIfStatement) {
       val codeHintMainPart = codeHintStatement.mainPart
       runWriteCommandAction(project) {
-        codeHintMainPart.statementList.deleteChildRange(codeHintMainPart.statementList.firstChild, codeHintMainPart.statementList.lastChild)
-        codeHintMainPart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
+        codeHintMainPart.statementList.children.forEach { it.delete() }
         replace(codeHintMainPart)
       }
       return true
