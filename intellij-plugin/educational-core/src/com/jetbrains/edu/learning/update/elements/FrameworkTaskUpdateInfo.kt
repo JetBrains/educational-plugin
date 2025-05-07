@@ -52,8 +52,12 @@ data class FrameworkTaskUpdateInfo(
     }
 
     remoteItem.record = localItem.record
+    flManager.updateUserChanges(localItem, remoteItem.taskFiles.mapValues { it.value.text })
+    localLesson.replaceItem(localItem, remoteItem)
+    remoteItem.init(localLesson, false)
+
     if (taskIsCurrent) {
-      val taskDir = localItem.getDir(project.courseDir) ?: return
+      val taskDir = remoteItem.getDir(project.courseDir) ?: return
 
       for ((fileName, fileHistory) in taskHistory.taskFileHistories) {
         val fileContents = fileHistory.evaluateContents(localLesson.currentTaskIndex)
@@ -66,10 +70,6 @@ data class FrameworkTaskUpdateInfo(
         }
       }
     }
-
-    flManager.updateUserChanges(localItem, remoteItem.taskFiles.mapValues { it.value.text })
-    localLesson.replaceItem(localItem, remoteItem)
-    remoteItem.init(localLesson, false)
 
     blockingContext {
       YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
