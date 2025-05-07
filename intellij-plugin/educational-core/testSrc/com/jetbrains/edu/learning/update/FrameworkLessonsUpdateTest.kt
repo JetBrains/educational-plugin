@@ -2,26 +2,23 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
-import com.jetbrains.edu.learning.FileTreeBuilder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.testAction
 import org.junit.Before
 import org.junit.Test
 import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
 
 abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
+
   @Before
   fun prepare() {
     initiateLocalCourse()
@@ -467,9 +464,9 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
 
     // TODO after revert action we should see the contents from the course update. Now just test what is inside:
 
-    assertContentsEqual(localCourse.task1, "NewFile.kt", InMemoryUndeterminedContents("author contents 1"))
-    assertContentsEqual(localCourse.task2, "NewFile.kt", InMemoryUndeterminedContents("author contents 2"))
-    assertContentsEqual(localCourse.task3, "NewFile.kt", InMemoryUndeterminedContents("author contents 3"))
+    assertContentsEqual(localCourse.task1, "NewFile.kt", InMemoryTextualContents("author contents 1"))
+    assertContentsEqual(localCourse.task2, "NewFile.kt", InMemoryTextualContents("author contents 2"))
+    assertContentsEqual(localCourse.task3, "NewFile.kt", InMemoryTextualContents("author contents 3"))
   }
 
   @Test
@@ -484,16 +481,26 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
           }
           dir("task1 renamed") {
             file("task.html")
+            file("task-info.yaml")
+            file("task-remote-info.yaml")
           }
           dir("task2 renamed") {
             file("task.html")
+            file("task-info.yaml")
+            file("task-remote-info.yaml")
           }
           dir("task3 renamed") {
             file("task.html")
+            file("task-info.yaml")
+            file("task-remote-info.yaml")
           }
+          file("lesson-info.yaml")
+          file("lesson-remote-info.yaml")
         }
         file("build.gradle")
         file("settings.gradle")
+        file("course-info.yaml")
+        file("course-remote-info.yaml")
       }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
     }
 
@@ -520,9 +527,11 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     @Suppress("UNCHECKED_CAST")
     val eduCourse = courseWithFiles(
       language = FakeGradleBasedLanguage,
-      courseProducer = { produceCourse() }
+      courseProducer = { produceCourse() },
+      createYamlConfigs = true,
+      id = 1234 // to ensure that course-remote-info.yaml is created
     ) {
-      frameworkLesson("lesson1", isTemplateBased = false) {
+      frameworkLesson("lesson1", isTemplateBased = false, id = 4321) {
         eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
           taskFile("Task.kt", "fun task() {}", visible = true, editable = true)
           taskFile("NonEdit.kt", "val p = 41", visible = true, editable = false)
@@ -552,16 +561,26 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
         }
         dir("task1") {
           file("task.html")
+          file("task-info.yaml")
+          file("task-remote-info.yaml")
         }
         dir("task2") {
           file("task.html")
+          file("task-info.yaml")
+          file("task-remote-info.yaml")
         }
         dir("task3") {
           file("task.html")
+          file("task-info.yaml")
+          file("task-remote-info.yaml")
         }
+        file("lesson-info.yaml")
+        file("lesson-remote-info.yaml")
       }
       file("build.gradle")
       file("settings.gradle")
+      file("course-info.yaml")
+      file("course-remote-info.yaml")
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 

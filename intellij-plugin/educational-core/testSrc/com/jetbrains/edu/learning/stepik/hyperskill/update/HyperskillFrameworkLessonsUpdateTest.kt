@@ -11,7 +11,10 @@ class HyperskillFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<Hyperski
   override fun produceCourse(): HyperskillCourse = HyperskillCourse()
 
   override fun setupLocalCourse(course: HyperskillCourse) {
-    course.hyperskillProject = HyperskillProject()
+    course.hyperskillProject = HyperskillProject().apply {
+      title = course.name
+      description = course.description
+    }
     course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2), HyperskillStage(3, "", 3))
   }
 
