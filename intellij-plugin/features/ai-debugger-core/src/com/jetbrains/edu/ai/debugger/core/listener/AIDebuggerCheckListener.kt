@@ -1,4 +1,4 @@
-package com.jetbrains.edu.ai.debugger.core
+package com.jetbrains.edu.ai.debugger.core.listener
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service

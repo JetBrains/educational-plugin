@@ -7,7 +7,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
-    <checkListener implementation="com.jetbrains.edu.ai.debugger.core.AIDebuggerCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.ai.debugger.core.listener.AIDebuggerCheckListener"/>
   </extensions>
 
   <extensionPoints>
