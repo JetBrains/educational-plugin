@@ -1,8 +1,8 @@
-package com.jetbrains.edu.aiDebugging.jvm
+package com.jetbrains.edu.ai.debugger.jvm
 
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
-import com.jetbrains.edu.aiDebugging.core.breakpoint.BreakpointTypeManager
+import com.jetbrains.edu.ai.debugger.core.breakpoint.BreakpointTypeManager
 
 @Suppress("UNCHECKED_CAST")
 class JvmBreakpointTypeManager : BreakpointTypeManager {

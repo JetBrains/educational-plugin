@@ -38,7 +38,7 @@ include(
   "intellij-plugin:features:command-line",
   "intellij-plugin:features:github",
   "intellij-plugin:features:ai-debugger-core",
-  "intellij-plugin:features:ai-debugging-jvm",
+  "intellij-plugin:features:ai-debugger-jvm",
   "intellij-plugin:features:ai-debugging-kotlin",
   "intellij-plugin:features:ai-error-explanation",
   "intellij-plugin:features:ai-hints-core",

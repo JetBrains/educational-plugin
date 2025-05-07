@@ -40,7 +40,7 @@
     <module name="command-line"/>
     <module name="github"/>
     <module name="ai-debugger-core"/>
-    <module name="ai-debugging-jvm"/>
+    <module name="ai-debugger-jvm"/>
     <module name="ai-debugging-kotlin"/>
     <module name="ai-error-explanation"/>
     <module name="ai-hints-core"/>

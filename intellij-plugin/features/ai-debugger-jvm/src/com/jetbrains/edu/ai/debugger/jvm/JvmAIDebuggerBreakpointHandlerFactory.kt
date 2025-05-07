@@ -1,4 +1,4 @@
-package com.jetbrains.edu.aiDebugging.jvm
+package com.jetbrains.edu.ai.debugger.jvm
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaBreakpointHandler
