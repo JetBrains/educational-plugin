@@ -1,6 +1,12 @@
 <idea-plugin package="com.jetbrains.edu.ai.debugger.core">
   <resource-bundle>messages.EduAIDebuggerCoreBundle</resource-bundle>
 
+  <actions>
+    <action id="Educational.EduAIDebuggerServiceChangeHost"
+            class="com.jetbrains.edu.ai.debugger.core.action.EduAIDebuggerServiceChangeHost"
+            internal="true"/>
+  </actions>
+
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlValidity -->
     <postStartupActivity implementation="com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointsStartupActivity"/>
