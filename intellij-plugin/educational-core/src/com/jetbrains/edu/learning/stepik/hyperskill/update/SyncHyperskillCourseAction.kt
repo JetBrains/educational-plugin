@@ -30,9 +30,9 @@ class SyncHyperskillCourseAction : SyncCourseAction(
           EduCoreBundle.message("update.notification.text", EduNames.JBA, EduNames.PROJECT),
         )
       }
-    }
 
-    HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
+      HyperskillSolutionLoader.getInstance(project).loadSolutionsInBackground()
+    }
 
     EduCounterUsageCollector.synchronizeCourse(course, EduCounterUsageCollector.SynchronizeCoursePlace.WIDGET)
   }
