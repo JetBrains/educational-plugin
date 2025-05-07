@@ -14,6 +14,7 @@ import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotionListener
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
+import com.jetbrains.edu.ai.debugger.core.connector.AIDebuggerServiceConnector
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -21,8 +22,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.ml.debugger.dto.*
-import com.jetbrains.educational.ml.debugger.grazie.DebuggerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -51,35 +52,43 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         return@launch
       }
       try {
-        withBackgroundProgress(project, EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")) {
-          DebuggerConnector().getCodeFix(description, virtualFiles.toNumberedLineMap(), testResult.details ?: testResult.message)
-        }.onSuccess { fixes ->
-          val language = project.course?.languageById ?: error("Language is not found")
-          val fileMap = virtualFiles.associateBy { it.name }
-          val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
-          fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
-          intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
-          val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints)
-          if (breakpointHints == null) {
-            EduNotificationManager.showErrorNotification(
-              project,
-              content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
-            )
-            return@onSuccess
-          }
-          val listener = AIBreakpointHintMouseMotionListener(fixes, breakpointHints)
-          EditorFactory.getInstance().eventMulticaster.apply {
-            addEditorMouseMotionListener(listener, this@AIDebugSessionService)
-            addEditorMouseListener(listener, this@AIDebugSessionService)
-          }
-          AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
-        }.onFailure {
+        val fixes = withBackgroundProgress(
+          project,
+          EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")
+        ) {
+          AIDebuggerServiceConnector.getInstance().getCodeFix(
+            taskDescription = description,
+            files = virtualFiles.toNumberedLineMap(),
+            testDescription = testResult.details ?: testResult.message
+          )
+        }.onError {
           unlock()
           EduNotificationManager.showErrorNotification(
             project,
             content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
           )
+          return@launch
         }
+
+        val language = project.course?.languageById ?: error("Language is not found")
+        val fileMap = virtualFiles.associateBy { it.name }
+        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
+        fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
+        intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
+        val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints)
+        if (breakpointHints == null) {
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
+          )
+          return@launch
+        }
+        val listener = AIBreakpointHintMouseMotionListener(fixes, breakpointHints)
+        EditorFactory.getInstance().eventMulticaster.apply {
+          addEditorMouseMotionListener(listener, this@AIDebugSessionService)
+          addEditorMouseListener(listener, this@AIDebugSessionService)
+        }
+        AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
       } catch (e: Exception) {
         unlock()
         LOG.error("An error occurred in the ai debugging session", e)
@@ -140,8 +149,8 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       project,
       EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")
     ) {
-      DebuggerConnector().getBreakpointHint(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
-    }.getOrNull()
+      AIDebuggerServiceConnector.getInstance().getBreakpointHint(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
+    }.onError { return null }
   }
 
   private suspend fun VirtualFile.getLine(line: Int): String {
