@@ -1,5 +1,6 @@
 package com.jetbrains.edu.aiHints.core.api
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 
 interface FunctionDiffReducer<T : PsiElement> {
@@ -14,5 +15,5 @@ interface FunctionDiffReducer<T : PsiElement> {
    *                        This is a PSI element that represents the target state of the code.
    * @return A [PsiElement] representing a change to be suggested to the student or null if no meaningful reduction can be made.
    */
-  fun reduceDiffFunctions(currentFunction: T?, codeHintFunction: T): T?
+  fun reduceDiffFunctions(project: Project, currentFunction: T?, codeHintFunction: T): T?
 }

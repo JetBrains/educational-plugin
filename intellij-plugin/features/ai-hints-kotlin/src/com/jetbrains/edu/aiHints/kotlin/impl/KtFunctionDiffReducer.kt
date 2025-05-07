@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 object KtFunctionDiffReducer : FunctionDiffReducer<KtFunction> {
-  override fun reduceDiffFunctions(function: KtFunction?, modifiedFunction: KtFunction): KtFunction {
-    val project = modifiedFunction.project
-    if (function == null) {
-      reducingNewElement(modifiedFunction, project, true)
-      return modifiedFunction
+  override fun reduceDiffFunctions(project: Project, currentFunction: KtFunction?, codeHintFunction: KtFunction): KtFunction {
+    if (currentFunction == null) {
+      reducingNewElement(codeHintFunction, project, true)
+      return codeHintFunction
     }
-    reducingReplacementElement(function, modifiedFunction, project, true)
-    return function
+    reducingReplacementElement(currentFunction, codeHintFunction, project, true)
+    return currentFunction
   }
 
   private fun compareAndAmendChildren(

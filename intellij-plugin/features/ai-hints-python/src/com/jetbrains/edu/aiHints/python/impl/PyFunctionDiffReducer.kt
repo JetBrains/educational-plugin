@@ -1,55 +1,81 @@
 package com.jetbrains.edu.aiHints.python.impl
 
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
+import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.api.FunctionDiffReducer
 import com.jetbrains.python.psi.*
 
 object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
-  override fun reduceDiffFunctions(currentFunction: PyFunction?, codeHintFunction: PyFunction): PyFunction {
-    return if (currentFunction != null) {
-      val project = runReadAction { currentFunction.project }
-      reduceDifferenceWithCodeHint(project, currentFunction, codeHintFunction)
-    }
-    else {
-      codeHintFunction // todo: reduce the newly added function
+  override fun reduceDiffFunctions(project: Project, currentFunction: PyFunction?, codeHintFunction: PyFunction): PyFunction {
+    return runWriteCommandAction(project) {
+      currentFunction?.reduceDifferenceWith(codeHint = codeHintFunction) ?: codeHintFunction // todo: reduce the newly added function
     }
   }
 
-  private fun reduceDifferenceWithCodeHint(
-    project: Project,
-    current: PyFunction,
-    codeHint: PyFunction
-  ): PyFunction = runWriteCommandAction(project) {
-    // Return when either parameter list or return type have been replaced
-    if (current.parameterList.replaceIfNeeded(codeHint.parameterList) || current.annotation.replaceIfNeeded(codeHint.annotation)) {
-      return@runWriteCommandAction current
+  @RequiresReadLock
+  private fun PyFunction.reduceDifferenceWith(codeHint: PyFunction): PyFunction {
+    // Check parameters and return type of the functions
+    if (unifyParameters(codeHint) || unifyReturnType(codeHint)) {
+      return this // Don't make more than one modification in one step
     }
 
-    // For each existing statement, replace with the corresponding from the CodeHint if they differ
-    val currentStatements = current.statementList.statements
-    val codeHintStatements = codeHint.statementList.statements
-    for ((currentStatement, codeHintStatement) in currentStatements.zip(codeHintStatements)) {
-      if (currentStatement.compareNormalized(codeHintStatement)) continue
+    // Find the first difference in the body statements
+    val foundDifference = firstDifferentStatement(codeHint)
+    if (foundDifference != null) {
+      val (currentStatement, codeHintStatement) = foundDifference
       when (codeHintStatement) {
         is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
-        is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replaceWithWriteCommandAction(codeHintStatement)
-        else -> currentStatement.replaceWithWriteCommandAction(codeHintStatement)
+        is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replace(project, codeHintStatement)
+        else -> currentStatement.replace(project, codeHintStatement)
       }
-      return@runWriteCommandAction current // Don't make more than one modification in one step
+      return this // Don't make more than one modification in one step
     }
 
-    // As no existing statements have been replaced, let's add the next statement if the Code Hint has one
-    if (currentStatements.size < codeHintStatements.size) {
-      current.statementList.addReduced(codeHintStatements[currentStatements.size])
+    // If no difference was found, let's add the first new statement from the Code Hint
+    val nextStatement = findNextFrom(codeHint)
+    if (nextStatement != null) {
+      addNewStatement(nextStatement)
     }
-
-    return@runWriteCommandAction current
+    return this
   }
 
-  private fun PsiElement.replaceWithWriteCommandAction(element: PsiElement): PsiElement = runWriteCommandAction(project) {
-    replace(element)
+  /**
+   * Checks if functions have different lists of parameters and applies the list from the CodeHint to the given function.
+   *
+   * @return [Boolean] whether the modification was made
+   */
+  private fun PyFunction.unifyParameters(codeHintFunction: PyFunction): Boolean {
+    val codeHintParameterList = codeHintFunction.parameterList
+    if (!parameterList.compareNormalized(codeHintParameterList)) {
+      runWriteCommandAction(project) {
+        parameterList.replace(codeHintParameterList)
+      }
+      return true
+    }
+    return false
+  }
+
+  /**
+   * Checks if functions have return type annotations and applies the annotation from the CodeHint to the given function.
+   *
+   * @return [Boolean] whether the modification was made
+   */
+  private fun PyFunction.unifyReturnType(codeHintFunction: PyFunction): Boolean {
+    val currentAnnotation = annotation ?: return false
+    val codeHintAnnotation = codeHintFunction.annotation
+    if (codeHintAnnotation == null) {
+      runWriteCommandAction(project) {
+        currentAnnotation.delete()
+      }
+      return true
+    }
+    if (!currentAnnotation.compareNormalized(codeHintAnnotation)) {
+      runWriteCommandAction(project) {
+        currentAnnotation.replace(codeHintAnnotation)
+      }
+      return true
+    }
+    return false
   }
 
   private fun <T : PyStatement> PyStatement.replaceIfNeeded(codeHintStatement: T): Boolean {
@@ -118,23 +144,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     return false
   }
 
-  private val PyStatement.mainPart: PyStatementPart
-    get() = when (this) {
-      is PyIfStatement -> ifPart
-      is PyForStatement -> forPart
-      is PyWhileStatement -> whilePart
-      else -> error("Unexpected statement type: ${this::class.java}")
-    }
-
-  private val PyStatement.elsePart: PyStatementPart?
-    get() = when (this) {
-      is PyIfStatement -> elsePart
-      is PyForStatement -> elsePart
-      is PyWhileStatement -> elsePart
-      else -> null
-    }
-
-  private fun PyStatementList.addReduced(statement: PyStatement) {
+  private fun PyFunction.addNewStatement(statement: PyStatement) {
     when (statement) {
       is PyWhileStatement -> {
         val codeHintWhileStatement = statement.whilePart
@@ -146,24 +156,20 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
           codeHintWhileStatement.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
           statement.whilePart.statementList.children.forEach { it.delete() }
           statement.whilePart.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          add(codeHintWhileStatement)
+          statementList.add(codeHintWhileStatement)
         }
       }
 
       is PyForStatement, is PyIfStatement -> {
         val codeHintForStatement = statement.mainPart
         runWriteCommandAction(project) {
-          codeHintForStatement.statementList.deleteChildRange(
-            codeHintForStatement.statementList.firstChild,
-            codeHintForStatement.statementList.lastChild
-          )
-          codeHintForStatement.statementList.add(PyElementGenerator.getInstance(project).createPassStatement())
-          add(codeHintForStatement)
+          codeHintForStatement.statementList.children.forEach { it.delete() }
+          statementList.add(codeHintForStatement)
         }
       }
 
       else -> runWriteCommandAction(project) {
-        add(statement)
+        statementList.add(statement)
       }
     }
   }
@@ -182,7 +188,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
         val currentBinaryExpression = currentPyStatementPart.children.firstOrNull { it is PyBinaryExpression } ?: return false
         val codeHintBinaryExpression = codeHintPyStatementPart.children.firstOrNull { it is PyBinaryExpression } ?: return false
         if (!currentBinaryExpression.compareNormalized(codeHintBinaryExpression)) {
-          currentBinaryExpression.replaceWithWriteCommandAction(codeHintBinaryExpression)
+          currentBinaryExpression.replace(project, codeHintBinaryExpression)
           return true
         }
       }
@@ -205,49 +211,19 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
       }
     }
 
-    val currentStatements = currentPyStatementPart.statementList.statements
-    val codeHintStatements = codeHintPyStatementPart.statementList.statements
-    currentStatements.zip(codeHintStatements).forEach { (currentStatement, codeHintStatement) ->
-      if (!currentStatement.compareNormalized(codeHintStatement)) {
-        currentStatement.replaceWithWriteCommandAction(codeHintStatement)
-        return true
-      }
+    val firstDifference = currentPyStatementPart.firstDifferentStatement(codeHintPyStatementPart)
+    if (firstDifference != null) {
+      val (currentStatement, codeHintStatement) = firstDifference
+      currentStatement.replace(project, codeHintStatement)
+      return true
     }
-    if (currentStatements.size < codeHintStatements.size) {
+    val nextStatement = currentPyStatementPart.findNextFrom(codeHintPyStatementPart)
+    if (nextStatement != null) {
       runWriteCommandAction(project) {
-        currentPyStatementPart.statementList.add(codeHintStatements[currentStatements.size])
+        currentPyStatementPart.statementList.add(nextStatement)
       }
       return true
     }
     return false
-  }
-
-  private fun PyParameterList.replaceIfNeeded(codeHintParameterList: PyParameterList): Boolean {
-    if (!compareNormalized(codeHintParameterList)) {
-      replaceWithWriteCommandAction(codeHintParameterList)
-      return true
-    }
-    return false
-  }
-
-  private fun PyAnnotation?.replaceIfNeeded(codeHintAnnotation: PyAnnotation?): Boolean {
-    val currentAnnotation = this ?: return false
-    if (codeHintAnnotation == null) {
-      runWriteCommandAction(project) {
-        currentAnnotation.delete()
-      }
-      return true
-    }
-    if (!compareNormalized(codeHintAnnotation)) {
-      currentAnnotation.replaceWithWriteCommandAction(codeHintAnnotation)
-      return true
-    }
-    return false
-  }
-
-  private fun PsiElement.compareNormalized(psiElement: PsiElement): Boolean {
-    val currentTextNormalized = text.replace(" ", "")
-    val anotherTextNormalized = psiElement.text.replace(" ", "")
-    return currentTextNormalized == anotherTextNormalized
   }
 }

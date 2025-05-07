@@ -2,6 +2,7 @@ package com.jetbrains.edu.aiHints.core
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.aiHints.core.api.*
@@ -19,7 +20,7 @@ private class PlainTextEduAIHintsProcessor : EduAIHintsProcessor {
   }
 
   override fun getFunctionDiffReducer(): FunctionDiffReducer<PsiElement> = object : FunctionDiffReducer<PsiElement> {
-    override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement? = null
+    override fun reduceDiffFunctions(project: Project, currentFunction: PsiElement?, codeHintFunction: PsiElement): PsiElement? = null
   }
 
   override fun getInspectionsProvider(): InspectionsProvider = object : InspectionsProvider {
