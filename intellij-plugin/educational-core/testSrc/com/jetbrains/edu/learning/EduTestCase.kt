@@ -24,6 +24,7 @@ import com.intellij.platform.util.coroutines.childScope
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.replaceService
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -218,7 +219,9 @@ abstract class EduTestCase : BasePlatformTestCase() {
       course.id = id
     }
     if (createYamlConfigs) {
-      createConfigFiles(project)
+      runInEdtAndWait {
+        createConfigFiles(project)
+      }
     }
 
     SubmissionsManager.getInstance(project).course = course
