@@ -83,7 +83,7 @@ fun isVersionCompatible(submissionFormatVersion: Int): Boolean {
 
 internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
-  return diff > Time.MINUTE
+  return diff > Time.SECOND * 10
 }
 
 fun formatDate(time: Date): String {
