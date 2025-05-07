@@ -178,6 +178,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     val lesson = FrameworkLesson()
     lesson.index = 1
     lesson.parent = course
+    lesson.name = course.name
     progressIndicator?.checkCanceled()
     val stageIds = course.stages.map { it.stepId }
     val stepSources = getStepSources(stageIds).onError { e ->
@@ -222,7 +223,6 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       task.feedbackLink = feedbackLink(projectId, stages[index])
       task.name = stages[index].title
     }
-    lesson.name = hyperskillCourse.name
 
     // We want project lesson to be the first
     // It's possible to open Problems in IDE without loading project lesson (stages)
