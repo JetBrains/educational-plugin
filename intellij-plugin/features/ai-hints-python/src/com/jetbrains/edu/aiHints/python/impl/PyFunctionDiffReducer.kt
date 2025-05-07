@@ -23,11 +23,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     val foundDifference = firstDifferentStatement(codeHint)
     if (foundDifference != null) {
       val (currentStatement, codeHintStatement) = foundDifference
-      when (codeHintStatement) {
-        is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
-        is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replace(project, codeHintStatement)
-        else -> currentStatement.replace(project, codeHintStatement)
-      }
+      currentStatement.unifyStatementWith(codeHintStatement)
       return this // Don't make more than one modification in one step
     }
 
@@ -37,6 +33,15 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
       addNewStatement(nextStatement)
     }
     return this
+  }
+
+  fun PyStatement.unifyStatementWith(another: PyStatement) {
+    val (currentStatement, codeHintStatement) = this to another
+    when (codeHintStatement) {
+      is PyWhileStatement, is PyForStatement, is PyIfStatement -> currentStatement.replaceIfNeeded(codeHintStatement)
+      is PyAssignmentStatement, is PyReturnStatement -> currentStatement.replace(project, codeHintStatement)
+      else -> currentStatement.replace(project, codeHintStatement)
+    }
   }
 
   /**
@@ -214,7 +219,7 @@ object PyFunctionDiffReducer : FunctionDiffReducer<PyFunction> {
     val firstDifference = currentPyStatementPart.firstDifferentStatement(codeHintPyStatementPart)
     if (firstDifference != null) {
       val (currentStatement, codeHintStatement) = firstDifference
-      currentStatement.replace(project, codeHintStatement)
+      currentStatement.unifyStatementWith(codeHintStatement)
       return true
     }
     val nextStatement = currentPyStatementPart.findNextFrom(codeHintPyStatementPart)

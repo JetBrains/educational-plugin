@@ -430,7 +430,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             result = 0
             for item in items:
                 if item > 0:
-                   pass
+                    pass
     """
   )
 
@@ -460,8 +460,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             for item in items:
                 if item > 0:
                     while item > 0:
-                        result += 1
-                        item -= 1
+                        pass
     """
   )
 
@@ -491,8 +490,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             for item in items:
                 if item > 0:
                     while item > 0:
-                        result += 1
-                        item -= 1
+                        pass
     """
   )
 
@@ -638,8 +636,6 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               for j in range(0, 10):
                   if num > 0:
                       print("Positive")
-                  elif num < 0:
-                      pass
   """
   )
 
@@ -674,8 +670,6 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                       print("Positive")
                   elif num < 0:
                       print("Nogative")
-                  elif num == 0:
-                      pass
   """
   )
 
@@ -728,6 +722,44 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                       print("Positive")
                   elif num < 0:
                       print("Nogative")
+                  elif num == 0:
+                      print("WA")
+  """,
+    codeHint = """
+      def check_number(num):
+          for i in range(0, 10):
+            for j in range(0, 10):
+              if num > 0:
+                  print("Positive")
+              elif num < 0:
+                  print("Negative")
+              elif num == 0:
+                  print("Zero")
+  """,
+    expectedResult = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Negative")
+                  elif num == 0:
+                      print("WA")
+  """
+  )
+
+  @Test
+  fun `test check_number full path 8`() = assertCodeHint(
+    functionName = "check_number",
+    currentCode = """
+      def check_number(num):
+          for i in range(0, 10):
+              for j in range(0, 10):
+                  if num > 0:
+                      print("Positive")
+                  elif num < 0:
+                      print("Negative")
                   elif num == 0:
                       print("WA")
   """,
