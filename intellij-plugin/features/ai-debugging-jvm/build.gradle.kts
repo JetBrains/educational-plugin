@@ -11,8 +11,8 @@ dependencies {
   }
 
   implementation(project(":intellij-plugin:educational-core"))
-  implementation(project(":intellij-plugin:features:ai-debugging-core"))
+  implementation(project(":intellij-plugin:features:ai-debugger-core"))
 
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  testImplementation(project(":intellij-plugin:features:ai-debugging-core", "testOutput"))
+  testImplementation(project(":intellij-plugin:features:ai-debugger-core", "testOutput"))
 }

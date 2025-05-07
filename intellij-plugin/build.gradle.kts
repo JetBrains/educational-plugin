@@ -81,6 +81,9 @@ dependencies {
     pluginModule(implementation(project("features:code-insight-yaml")))
     pluginModule(implementation(project("features:command-line")))
     pluginModule(implementation(project("features:github")))
+    pluginModule(implementation(project("features:ai-debugger-core")))
+    pluginModule(implementation(project("features:ai-debugging-jvm")))
+    pluginModule(implementation(project("features:ai-debugging-kotlin")))
     pluginModule(implementation(project("features:ai-error-explanation")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))
@@ -90,9 +93,6 @@ dependencies {
     pluginModule(implementation(project("features:remote-env")))
     pluginModule(implementation(project("features:social-media")))
     pluginModule(implementation(project("localization")))
-    pluginModule(implementation(project("features:ai-debugging-core")))
-    pluginModule(implementation(project("features:ai-debugging-jvm")))
-    pluginModule(implementation(project("features:ai-debugging-kotlin")))
 
     testFramework(TestFrameworkType.Bundled)
   }
