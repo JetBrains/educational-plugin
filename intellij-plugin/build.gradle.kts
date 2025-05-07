@@ -83,7 +83,7 @@ dependencies {
     pluginModule(implementation(project("features:github")))
     pluginModule(implementation(project("features:ai-debugger-core")))
     pluginModule(implementation(project("features:ai-debugger-jvm")))
-    pluginModule(implementation(project("features:ai-debugging-kotlin")))
+    pluginModule(implementation(project("features:ai-debugger-kotlin")))
     pluginModule(implementation(project("features:ai-error-explanation")))
     pluginModule(implementation(project("features:ai-hints-core")))
     pluginModule(implementation(project("features:ai-hints-kotlin")))

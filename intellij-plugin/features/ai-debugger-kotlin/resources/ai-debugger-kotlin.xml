@@ -1,0 +1,13 @@
+<idea-plugin package="com.jetbrains.edu.ai.debugger.kotlin">
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-debugger-core"/>
+    <plugin id="org.jetbrains.kotlin"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="ai.debugger">
+    <sliceManager language="kotlin" implementationClass="com.jetbrains.edu.ai.debugger.kotlin.slice.KtSliceManager"/>
+    <intermediateBreakpointProcessor language="kotlin" implementationClass="com.jetbrains.edu.ai.debugger.kotlin.KtIntermediateBreakpointProcessor"/>
+    <testFinder language="kotlin" implementationClass="com.jetbrains.edu.ai.debugger.kotlin.impl.KtTestFinder"/>
+  </extensions>
+</idea-plugin>
