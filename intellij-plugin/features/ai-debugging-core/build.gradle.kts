@@ -1,6 +1,5 @@
 plugins {
   id("intellij-plugin-module-conventions")
-  alias(libs.plugins.kotlinSerializationPlugin)
 }
 
 dependencies {
@@ -9,7 +8,6 @@ dependencies {
   }
 
   implementation(project(":intellij-plugin:educational-core"))
-  implementation(project(":intellij-plugin:AI"))
   api(rootProject.libs.educational.ml.library.core) {
     excludeKotlinDeps()
     excludeKotlinSerializationDeps()
