@@ -3,11 +3,15 @@
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>
-
     <plugin id="org.intellij.scala"/>
     <plugin id="org.jetbrains.plugins.gradle"/>
     <plugin id="JUnit"/>
   </dependencies>
+
+  <!-- BACKCOMPAT: 2024.3. inline it-->
+  <xi:include href="/META-INF/Dependencies-Scala.xml" xpointer="xpointer(/idea-plugin/*)">
+    <xi:fallback/>
+  </xi:include>
 
   <xi:include href="/META-INF/Hyperskill-Scala.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <extensions defaultExtensionNs="Educational">
