@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
+import com.jetbrains.edu.learning.update.UpdateUtils
 import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpdated
 import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
@@ -181,6 +182,8 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
   }
 
   private fun doAfterUpdate() {
+    UpdateUtils.navigateToTaskAfterUpdate(project)
+
     @Suppress("DialogTitleCapitalization")
     EduNotificationManager.showInfoNotification(
       project,
