@@ -23,11 +23,22 @@ class CourseViewStep : EduUiOnboardingStep {
         val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("course.view.step.text") }
             .withHeader(EduUiOnboardingBundle.message("course.view.step.header"))
 
-        // Position the balloon at the bottom of the project view component
-        val point = Point(component.width / 2, component.height - 20)
+        val zhabaComponent = createZhaba(project, disposable)
+        val dimension = zhabaComponent.dimension
+
+        val zhabaPoint = Point(
+            (component.width - dimension.width) / 2,
+            component.height - dimension.height
+        )
+        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
+
+        // Position the balloon a bit to the right from the middle of the project view
+        val point = Point(component.width / 2 + dimension.width / 2 - 10, component.height - dimension.height / 2 + 20)
         val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above)
+
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
     }
 
     override fun isAvailable(): Boolean = true
+    override val zhabaID: String = "zhaba-project"
 }

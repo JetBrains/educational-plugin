@@ -8,15 +8,25 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 
 // copy-pasted from mono-repo
 @Service(Service.Level.PROJECT)
 internal class EduUiOnboardingService(private val project: Project, private val cs: CoroutineScope) {
 
+  private val myTourInProgress = AtomicBoolean(false)
+  val tourInProgress: Boolean
+    get() = myTourInProgress.get()
+
   fun startOnboarding() {
+    myTourInProgress.set(true)
     val steps = getSteps()
     val executor = EduUiOnboardingExecutor(project, steps, cs, project)
     cs.launch(Dispatchers.EDT) { executor.start() }
+  }
+
+  fun onboardingFinished() {
+    myTourInProgress.set(false)
   }
 
   private fun getSteps(): List<Pair<String, EduUiOnboardingStep>> {

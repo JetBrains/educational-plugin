@@ -23,11 +23,17 @@ class TaskDescriptionStep : EduUiOnboardingStep {
         val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("task.description.step.text") }
             .withHeader(EduUiOnboardingBundle.message("task.description.step.header"))
 
-        // Position the balloon at the bottom of the task tool window component
-        val point = Point(component.width / 2, component.height - 20)
+        val zhabaComponent = createZhaba(project, disposable)
+
+        val zhabaPoint = Point(-65, component.height / 2)
+        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
+
+        // Position the balloon on top of zhaba
+        val point = Point(-40, component.height / 2 - 10)
         val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
     }
 
     override fun isAvailable(): Boolean = true
+    override val zhabaID: String = "zhaba-task"
 }

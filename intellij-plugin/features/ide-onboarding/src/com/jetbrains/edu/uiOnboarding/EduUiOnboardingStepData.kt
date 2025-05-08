@@ -9,5 +9,6 @@ class EduUiOnboardingStepData(
   val builder: GotItComponentBuilder,
   val relativePoint: RelativePoint,
   // null means that the balloon should be shown in the center of the component referenced in relativePoint
-  val position: Balloon.Position?
+  val position: Balloon.Position?,
+  val zhaba: ZhabaComponent,
 )

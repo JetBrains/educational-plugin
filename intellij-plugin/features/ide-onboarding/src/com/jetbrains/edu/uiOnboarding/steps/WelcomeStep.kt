@@ -2,9 +2,8 @@
 package com.jetbrains.edu.uiOnboarding.steps
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.CheckedDisposable
-import com.intellij.openapi.util.IconLoader
-import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
@@ -14,19 +13,32 @@ import java.awt.Point
 
 class WelcomeStep : EduUiOnboardingStep {
     override suspend fun performStep(project: Project, disposable: CheckedDisposable): EduUiOnboardingStepData? {
-        val frame = WindowManager.getInstance().getIdeFrame(project) ?: return null
-        val component = frame.component
+        val projectViewToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
+                                        .getToolWindow("Project") ?: return null
+        projectViewToolWindow.show()
 
-        val zhabaIcon = IconLoader.getIcon("images/zhaba-welcome.png", this::class.java.classLoader)
+        val component = projectViewToolWindow.component
+
+        val zhabaComponent = createZhaba(project, disposable)
+        val zhabaDimension = zhabaComponent.dimension
+
+        // Position of the zhaba on the project view component
+        val zhabaPoint = Point(
+            (component.width - zhabaDimension.width) / 2,
+            component.height - zhabaDimension.height
+        )
+        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
+
+        // Position the balloon at the bottom of the project view component
+        val point = Point(component.width / 2, component.height - zhabaDimension.height - 10)
+        val relativePoint = RelativePoint(component, point)
+
         val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("welcome.step.text") }
-            .withImage(zhabaIcon)
             .withHeader(EduUiOnboardingBundle.message("welcome.step.header"))
 
-        // Position the balloon in the center of the screen
-        val point = Point(component.width / 2, component.height / 2)
-        val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, null) // null position means center
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
     }
 
     override fun isAvailable(): Boolean = true
+    override val zhabaID: String = "zhaba-welcome"
 }

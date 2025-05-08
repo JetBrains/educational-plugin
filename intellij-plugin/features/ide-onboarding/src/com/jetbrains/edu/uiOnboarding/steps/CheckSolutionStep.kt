@@ -14,6 +14,8 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepData
 import java.awt.Point
 
 class CheckSolutionStep : EduUiOnboardingStep {
+    override val zhabaID: String = "zhaba-check"
+
     override suspend fun performStep(project: Project, disposable: CheckedDisposable): EduUiOnboardingStepData? {
         val taskToolWindow = ToolWindowManager.getInstance(project)
             .getToolWindow("Task") ?: return null
@@ -24,19 +26,21 @@ class CheckSolutionStep : EduUiOnboardingStep {
 
         val checkPanel = component.findComponentOfType(CheckPanel::class.java) ?: return null
 
-        val leftActionsToolbar = findLeftActionsToolbar(checkPanel) ?: return null
-
-        if (leftActionsToolbar !is java.awt.Container || leftActionsToolbar.componentCount == 0) return null
-        val checkButtonWrapper = leftActionsToolbar.getComponent(0)
-
         val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("check.solution.step.text") }
             .withHeader(EduUiOnboardingBundle.message("check.solution.step.header"))
 
-        val point = Point(checkButtonWrapper.width / 2, 0)
-        val relativePoint = RelativePoint(checkButtonWrapper, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above)
+        val zhabaComponent = createZhaba(project, disposable)
+        val zhabaDimension = zhabaComponent.dimension
+
+        val zhabaPoint = Point(-20, component.height - zhabaDimension.height - checkPanel.height - 5)
+        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
+
+        val point = Point(20, component.height - zhabaDimension.height - checkPanel.height - 15)
+        val relativePoint = RelativePoint(component, point)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
     }
 
+    // todo this might still be needed in the future for GetHintOnboardingStep
     private fun findLeftActionsToolbar(checkPanel: CheckPanel): java.awt.Component? {
 
         // Find the check actions panel (should be at index 0 or 1)
