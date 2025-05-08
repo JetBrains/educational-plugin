@@ -2,6 +2,7 @@ package com.jetbrains.edu.csharp
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
@@ -88,8 +89,7 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     val course = project.course ?: error("No course associated with project")
 
     if (cause == RefreshCause.PROJECT_CREATED) {
-      val topLevelDirectories = course.sections + course.lessons.filter { it.getDir(project.courseDir)?.parent == project.courseDir }
-      val filesToIndex = topLevelDirectories.mapNotNull { it.getDir(project.courseDir)?.toIOFile() }
+      val filesToIndex = project.courseDir.children.filter { it.isTopLevelDirectory(project, course) }.mapNotNull { it.toIOFile() }
       CSharpBackendService.getInstance(project).includeFilesToCourseView(filesToIndex)
     }
     val projectModelEntities = WorkspaceModel.getInstance(project).findProjects().associateByTo(HashMap()) { it.name }
@@ -106,6 +106,11 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
     CSharpBackendService.getInstance(project).removeProjectModelEntitiesFromSolution(projectModelEntities.values.toList())
     CSharpBackendService.getInstance(project).addTasksCSProjectToSolution(tasksToAdd)
+  }
+
+  private fun VirtualFile.isTopLevelDirectory(project: Project, course: Course): Boolean {
+    return getSection(project) != null || getLesson(project) != null
+           || course.customContentPath.startsWith(name)
   }
 
   override fun getSupportedLanguageVersions(): List<String> = ProjectTemplateTargetFramework.allPredefinedNet.map { it.presentation }
