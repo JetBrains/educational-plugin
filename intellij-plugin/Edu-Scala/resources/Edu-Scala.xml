@@ -9,6 +9,11 @@
     <plugin id="JUnit"/>
   </dependencies>
 
+  <!-- BACKCOMPAT: 2024.3. inline it-->
+  <xi:include href="/META-INF/Dependencies-Scala.xml" xpointer="xpointer(/idea-plugin/*)">
+    <xi:fallback/>
+  </xi:include>
+
   <xi:include href="/META-INF/Hyperskill-Scala.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <extensions defaultExtensionNs="Educational">
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
