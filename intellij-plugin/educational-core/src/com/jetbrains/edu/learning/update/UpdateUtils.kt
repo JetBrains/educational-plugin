@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.update
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -14,6 +16,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.toCourseInfoHolder
 
 object UpdateUtils {
@@ -114,6 +118,20 @@ object UpdateUtils {
       localTasks.size > tasksFromServer.size -> false
       localTasks.zip(tasksFromServer).any { (task, remoteTask) -> task.id != remoteTask.id } -> false
       else -> true
+    }
+  }
+
+  fun navigateToTaskAfterUpdate(project: Project) {
+    project.invokeLater {
+      val currentTask = project.getCurrentTask()
+      val course = project.course ?: return@invokeLater
+
+      if (currentTask != null) {
+        NavigationUtils.navigateToTask(project, currentTask)
+      }
+      else {
+        NavigationUtils.openFirstTask(course, project)
+      }
     }
   }
 }

@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.UPDATE
+import com.jetbrains.edu.learning.update.UpdateUtils
 import kotlinx.coroutines.runBlocking
 
 class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
@@ -53,6 +54,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
   }
 
   private fun doAfterUpdate() {
+    UpdateUtils.navigateToTaskAfterUpdate(project)
     //remove editor notification, suggesting to update course
     EditorNotifications.getInstance(project).updateAllNotifications()
     showUpdateNotification()
