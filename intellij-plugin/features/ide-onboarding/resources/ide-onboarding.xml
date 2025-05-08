@@ -25,4 +25,10 @@
     <step key="codeEditor" implementationClass="com.jetbrains.edu.uiOnboarding.steps.CodeEditorStep"/>
     <step key="checkSolution" implementationClass="com.jetbrains.edu.uiOnboarding.steps.CheckSolutionStep"/>
   </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="EduOnboarding"
+                       displayType="BALLOON"
+                       bundle="messages.EduUiOnboardingTourBundle"
+                       key="notification.group.edu.onboarding"/>
+  </extensions>
 </idea-plugin>

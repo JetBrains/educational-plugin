@@ -21,11 +21,18 @@ class CodeEditorStep : EduUiOnboardingStep {
         val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("code.editor.step.text") }
             .withHeader(EduUiOnboardingBundle.message("code.editor.step.header"))
 
-        // Position the balloon at the top of the editor component
-        val point = Point(component.width / 2, 20)
+        val zhabaComponent = createZhaba(project, disposable)
+        val dimension = zhabaComponent.dimension
+
+        val zhabaPoint = Point(component.width / 2, 0)
+        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
+
+        // Position the balloon below the zhaba
+        val point = Point(component.width / 2 + dimension.width - 30, dimension.height + 10)
         val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.below)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.below, zhabaComponent)
     }
 
     override fun isAvailable(): Boolean = true
+    override val zhabaID: String = "zhaba-editor"
 }
