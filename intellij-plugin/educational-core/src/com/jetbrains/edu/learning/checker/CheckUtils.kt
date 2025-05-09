@@ -9,15 +9,21 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.writeBytes
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
 import com.intellij.util.text.nullize
@@ -25,9 +31,14 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.RunTaskAction
 import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.UndeterminedContents
 import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
@@ -59,6 +70,7 @@ object CheckUtils {
       SYNTAX_ERROR_MESSAGE,
       EXECUTION_ERROR_MESSAGE
     )
+  private val EMPTY_BYTE_ARRAY = byteArrayOf()
 
   /**
    * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
@@ -83,9 +95,13 @@ object CheckUtils {
     }
   }
 
-  private fun getCustomRunConfiguration(project: Project, task: Task, fileNamePredicate: (String) -> Boolean): RunnerAndConfigurationSettings? {
+  private fun getCustomRunConfiguration(
+    project: Project,
+    task: Task,
+    fileNamePredicate: (String) -> Boolean
+  ): RunnerAndConfigurationSettings? {
     val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
-    val runConfigurationDir = taskDir.findChild(EduNames.RUN_CONFIGURATION_DIR)?: return null
+    val runConfigurationDir = taskDir.findChild(EduNames.RUN_CONFIGURATION_DIR) ?: return null
     val pathPrefix = "${runConfigurationDir.path}/"
 
     return RunManager.getInstance(project).allSettings.find {
@@ -297,4 +313,52 @@ object CheckUtils {
   var ExecutionEnvironment.isEduTaskEnvironment: Boolean
     get() = getUserData(EDU_ENV_KEY) == true
     set(value) = putUserData(EDU_ENV_KEY, value)
+
+  fun deleteTests(testFiles: List<TaskFile>, project: Project) {
+    invokeAndWaitIfNeeded {
+      testFiles.forEach { file ->
+        when (file.contents) {
+          is BinaryContents -> replaceFileBytes(file, EMPTY_BYTE_ARRAY, project)
+          is TextualContents -> replaceFileText(file, "", project)
+          is UndeterminedContents -> replaceFileText(file, "", project)
+        }
+      }
+    }
+  }
+
+  fun createTests(testFiles: List<TaskFile>, project: Project) {
+    invokeAndWaitIfNeeded {
+      testFiles.forEach { file ->
+        when (val contents = file.contents) {
+          is BinaryContents -> replaceFileBytes(file, contents.bytes, project)
+          is TextualContents -> replaceFileText(file, contents.text, project)
+          is UndeterminedContents -> replaceFileText(file, contents.textualRepresentation, project)
+        }
+      }
+    }
+  }
+
+  private fun replaceFileBytes(file: TaskFile, bytes: ByteArray, project: Project) {
+    CommandProcessor.getInstance().runUndoTransparentAction {
+      runWriteAction {
+        file.getVirtualFile(project)?.writeBytes(bytes)
+      }
+    }
+  }
+
+  private fun replaceFileText(file: TaskFile, newText: String, project: Project) {
+    val newDocumentText = StringUtil.convertLineSeparators(newText)
+    CommandProcessor.getInstance().runUndoTransparentAction {
+      runWriteAction {
+        val document = file.getDocument(project) ?: return@runWriteAction
+        CommandProcessor.getInstance().executeCommand(
+          project,
+          { document.setText(newDocumentText) },
+          EduCoreBundle.message("action.change.test.text"),
+          "Edu Actions"
+        )
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+      }
+    }
+  }
 }
