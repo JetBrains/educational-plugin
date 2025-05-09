@@ -1,0 +1,39 @@
+<idea-plugin package="com.jetbrains.edu.ai.debugger.core">
+  <resource-bundle>messages.EduAIDebuggerCoreBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--suppress PluginXmlValidity -->
+    <postStartupActivity implementation="com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointsStartupActivity"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.ai.debugger.core.listener.AIDebuggerCheckListener"/>
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.breakpointTypeManager"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.ai.debugger.core.breakpoint.BreakpointTypeManager"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.intermediateBreakpointProcessor"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.sliceManager"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.ai.debugger.core.slicing.SliceManager"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.testFinder"
+                    beanClass="com.intellij.lang.LanguageExtensionPoint"
+                    dynamic="true">
+      <with attribute="implementationClass"
+            implements="com.jetbrains.edu.ai.debugger.core.api.TestFinder"/>
+    </extensionPoint>
+  </extensionPoints>
+</idea-plugin>
