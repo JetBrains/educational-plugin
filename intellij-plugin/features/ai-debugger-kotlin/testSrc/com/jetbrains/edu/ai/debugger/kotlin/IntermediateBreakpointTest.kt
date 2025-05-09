@@ -1,0 +1,126 @@
+package com.jetbrains.edu.ai.debugger.kotlin
+
+import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
+import com.jetbrains.edu.learning.findTask
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+
+@Suppress("Junit4RunWithInspection")
+@RunWith(Parameterized::class)
+class IntermediateBreakpointTest(
+  private val wrongCodeLines: List<Int>,
+  private val intermediateBreakpoints: List<Int>,
+) : EduTestCase() {
+
+  private var virtualFile: VirtualFile? = null
+
+  @Before
+  fun initialise() {
+    val course = project.course ?: error("Course was not found")
+    val task = course.findTask("lesson1", "task1")
+    virtualFile = task.taskFiles.values.first().getVirtualFile(project) ?: error("Can't find virtual file for `${task.name}` task")
+  }
+
+  @Test
+  fun `test breakpoints by heuristics`() {
+    virtualFile?.let { file ->
+      assertEquals(
+        intermediateBreakpoints.toSet(),
+        runReadAction {
+          IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
+            file,
+            wrongCodeLines,
+            project,
+            language,
+            withSlicing = false
+          ).toSet()
+        }
+      )
+    }
+  }
+
+  override fun createCourse() {
+    StudyTaskManager.getInstance(project).course = courseWithFiles(courseMode = CourseMode.STUDENT) {
+      frameworkLesson("lesson1") {
+        eduTask("task1") {
+          taskFile(
+            name = "Main.kt",
+            text = """
+              object Task {
+                  fun foo(name: String) {
+                      var a = 10
+                      if (a > 5 && a < 5) {
+                          println("Valid")
+                          a = a + name.toInt()
+                      } else if (a > 10) {
+                          println("Valid")
+                      } else println("Invalid")
+        
+                      var sum = 0
+                      val numbers = intArrayOf(1, 2, 3, 4, 5)
+                      for (i in 0..numbers.size) {
+                          println("Number: " + numbers[i])
+                          sum += numbers[i]
+                      }
+                      println("Sum: " + sum)
+        
+                      when (name) {
+                          "John" -> println("Hello, John!")
+                          "Mark" -> println("Hello, Mark!")
+                          else -> { 
+                            println("Hello, stranger!")
+                          }
+                      }
+        
+                      while (a > 0) {
+                          a = a - 1
+                      }
+                  }
+                  
+                  fun main() {
+                      foo("John")
+                  }
+              }
+            """.trimIndent()
+          )
+        }
+      }
+    }
+  }
+
+  companion object {
+
+    @Parameterized.Parameters(name = "{1}")
+    @JvmStatic
+    fun data(): Collection<Array<Any>> = listOf(
+      arrayOf(listOf(1), functionStartLines + functionCallLines), // test function
+      arrayOf(listOf(2), propertyUsesLines + functionCallLines), // test property
+      arrayOf(listOf(5), parameterUsesLines + propertyUsesLines + functionCallLines), // test BinaryExpression
+      arrayOf(listOf(12), listOf(13, 14) + functionCallLines), // test for
+      arrayOf(listOf(3), listOf(4, 7, 8) + functionCallLines), // test if
+      arrayOf(listOf(18), listOf(19, 20, 22) + functionCallLines), // test when
+      arrayOf(listOf(26), propertyUsesLines + functionCallLines), // test while
+      arrayOf(listOf(1, 2, 5), functionStartLines + functionCallLines + parameterUsesLines + propertyUsesLines), // test multiple lines
+    )
+
+    private val functionCallLines = listOf(32)
+
+    private val propertyUsesLines = listOf(3, 5, 6, 26, 27)
+
+    private val parameterUsesLines = listOf(6, 18)
+
+    private val functionStartLines = listOf(2)
+
+    private val language = KotlinLanguage.INSTANCE
+  }
+}
