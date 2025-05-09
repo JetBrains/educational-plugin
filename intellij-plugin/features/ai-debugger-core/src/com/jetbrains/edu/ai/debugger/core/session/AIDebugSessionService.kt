@@ -21,13 +21,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.educational.ml.ai.debugger.prompt.core.BreakpointHintAssistant
-import com.jetbrains.educational.ml.ai.debugger.prompt.core.FixCodeForTestAssistant
-import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.FinalBreakpoint
-import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.breakpoint.IntermediateBreakpoint
-import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.description.TaskDescription
-import com.jetbrains.educational.ml.ai.debugger.prompt.responses.BreakpointHintsResponse
-import com.jetbrains.educational.ml.ai.debugger.prompt.responses.FixCodeForTestResponse
+import com.jetbrains.educational.ml.debugger.dto.*
+import com.jetbrains.educational.ml.debugger.grazie.DebuggerConnector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -57,11 +52,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       }
       try {
         withBackgroundProgress(project, EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")) {
-          FixCodeForTestAssistant.getCodeFix(
-            description,
-            virtualFiles.toNumberedLineMap(),
-            testResult.details ?: testResult.message
-          )
+          DebuggerConnector().getCodeFix(description, virtualFiles.toNumberedLineMap(), testResult.details ?: testResult.message)
         }.onSuccess { fixes ->
           val language = project.course?.languageById ?: error("Language is not found")
           val fileMap = virtualFiles.associateBy { it.name }
@@ -96,17 +87,17 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     }
   }
 
-  private fun FixCodeForTestResponse.toBreakpointPositionsByFileMap() =
-    groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+  private fun CodeFixResponse.toBreakpointPositionsByFileMap() =
+    content.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
       fileName to fixesForFile.map { it.wrongCodeLineNumber }
     }.toMap()
 
   private fun calculateIntermediateBreakpointPositions(
-    fixes: FixCodeForTestResponse,
+    fixes: CodeFixResponse,
     fileMap: Map<String, VirtualFile>,
     language: Language
   ) =
-    fixes.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+    fixes.content.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
       val virtualFile = fileMap[fileName] ?: return@mapNotNull null
       fileName to runReadAction {
         IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
@@ -130,10 +121,10 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
 
   private suspend fun generateIntermediateBreakpointHints(
     fileMap: Map<String, VirtualFile>,
-    fixes: FixCodeForTestResponse,
+    fixes: CodeFixResponse,
     intermediateBreakpointPositions: Map<String, List<Int>>
-  ): BreakpointHintsResponse? {
-    val finalBreakpoints = fixes.mapNotNull {
+  ): BreakpointHintResponse? {
+    val finalBreakpoints = fixes.content.mapNotNull {
       val virtualFile = fileMap[it.fileName] ?: return@mapNotNull null
       val line = virtualFile.getLine(it.wrongCodeLineNumber)
       FinalBreakpoint(it.fileName, it.wrongCodeLineNumber, line, it.breakpointHint)
@@ -149,7 +140,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       project,
       EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")
     ) {
-      BreakpointHintAssistant.getBreakpointHints(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
+      DebuggerConnector().getBreakpointHint(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
     }.getOrNull()
   }
 
