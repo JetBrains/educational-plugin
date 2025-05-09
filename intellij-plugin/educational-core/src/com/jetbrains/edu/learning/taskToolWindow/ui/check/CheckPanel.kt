@@ -92,7 +92,6 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
       linkPanel.removeAll()
       checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, checkResult, checkTimeAlarm), BorderLayout.SOUTH)
     }
-    updateBackground()
   }
 
   private fun restoreSavedResult(task: Task): CheckResult? {
