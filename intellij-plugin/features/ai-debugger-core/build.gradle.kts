@@ -13,7 +13,7 @@ dependencies {
     excludeKotlinSerializationDeps()
     exclude(group = "net.java.dev.jna")
   }
-  api(rootProject.libs.educational.ml.library.ai.debugger) {
+  api(rootProject.libs.educational.ml.library.debugger) {
     excludeKotlinDeps()
     excludeKotlinSerializationDeps()
     exclude(group = "net.java.dev.jna")

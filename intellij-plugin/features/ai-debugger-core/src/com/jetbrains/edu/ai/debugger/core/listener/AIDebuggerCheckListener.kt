@@ -21,8 +21,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
-import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.description.TaskDescription
-import com.jetbrains.educational.ml.ai.debugger.prompt.prompt.entities.description.TaskDescriptionType
+import com.jetbrains.educational.ml.debugger.dto.TaskDescription
+import com.jetbrains.educational.ml.debugger.dto.TaskDescriptionType
 
 class AIDebuggerCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
