@@ -1,16 +1,28 @@
 package com.jetbrains.edu.learning.courseGeneration
 
+import com.intellij.diagnostic.dumpCoroutines
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.progress.runBlockingMaybeCancellable
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.backend.observation.Observation
 import com.intellij.testFramework.IndexingTestUtil
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduHeavyTestCase
+import com.jetbrains.edu.learning.FileTree
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
+import com.jetbrains.edu.learning.createCourseFromJson
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import kotlinx.coroutines.*
+import kotlinx.coroutines.future.asCompletableFuture
+import kotlin.time.Duration.Companion.minutes
 
 @Suppress("UnstableApiUsage")
 abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeavyTestCase() {
@@ -32,6 +44,8 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeav
     val project = invokeAndWaitIfNeeded {
       generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
     }
+
+    waitForCourseConfiguration(project)
     IndexingTestUtil.waitUntilIndexesAreReady(project)
     TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     runInEdtAndWait {
@@ -110,6 +124,27 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeav
       val actualContents = actualFile.contents.disambiguateContents(path)
       if (expectedContents != null) {
         assertContentsEqual(path, expectedContents, actualContents)
+      }
+    }
+  }
+
+  protected fun waitForCourseConfiguration(project: Project) {
+    @OptIn(DelicateCoroutinesApi::class)
+    val job = GlobalScope.launch { Observation.awaitConfiguration(project) }
+    if (ApplicationManager.getApplication().isDispatchThread) {
+      PlatformTestUtil.waitForFuture(job.asCompletableFuture())
+    }
+    else {
+      runBlockingMaybeCancellable {
+        try {
+          // The same timeout as `PlatformTestUtil.MAX_WAIT_TIME`
+          withTimeout(2.minutes) {
+            job.join()
+          }
+        }
+        catch (e: TimeoutCancellationException) {
+          throw RuntimeException("Cannot wait for course configuration to complete\n${dumpCoroutines()}", e)
+        }
       }
     }
   }
