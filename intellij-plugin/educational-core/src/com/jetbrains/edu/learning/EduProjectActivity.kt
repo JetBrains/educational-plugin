@@ -2,23 +2,25 @@ package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.BrowseNotificationAction
-import com.intellij.notification.NotificationType.WARNING
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runInEdt
-import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.startup.StartupManager
+import com.intellij.openapi.project.waitForSmartMode
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.util.concurrency.annotations.RequiresBlockingContext
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreFileType
@@ -29,7 +31,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -43,19 +44,16 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.jetbrains.annotations.NonNls
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
-class EduStartupActivity : StartupActivity.DumbAware {
-
-  private val YAML_MIGRATED = "Edu.Yaml.Migrate"
-
-  override fun runActivity(project: Project) {
+class EduProjectActivity : ProjectActivity {
+  override suspend fun execute(project: Project) {
     if (!project.isEduProject()) return
 
     val manager = StudyTaskManager.getInstance(project)
@@ -73,43 +71,49 @@ class EduStartupActivity : StartupActivity.DumbAware {
 
     ensureCourseIgnoreHasNoCustomAssociation()
 
-    StartupManager.getInstance(project).runWhenProjectIsInitialized {
-      val course = manager.course
-      if (course == null) {
-        LOG.warn("Opened project is with null course")
-        return@runWhenProjectIsInitialized
-      }
+    // Not sure we want to wait
+    project.waitForSmartMode()
 
+    val course = manager.course
+    if (course == null) {
+      LOG.warn("Opened project is with null course")
+      return
+    }
+
+    withContext(Dispatchers.EDT) {
       val fileEditorManager = FileEditorManager.getInstance(project)
       if (!fileEditorManager.hasOpenFiles() && !SubmissionSettings.getInstance(project).stateOnClose) {
         NavigationUtils.openFirstTask(course, project)
       }
-      selectProjectView(project, true)
+    }
+    selectProjectView(project, true)
 
-      migrateYaml(project, course)
-
-      setupProject(project, course)
+    withContext(Dispatchers.EDT) {
+      blockingContext {
+        migrateYaml(project, course)
+        setupProject(project, course)
+      }
       val coursesStorage = CoursesStorage.getInstance()
       val location = project.basePath
       if (!coursesStorage.hasCourse(course) && location != null && !course.isPreview) {
         coursesStorage.addCourse(course, location)
       }
+    }
 
-      SyncChangesStateManager.getInstance(project).updateSyncChangesState(course)
+    SyncChangesStateManager.getInstance(project).updateSyncChangesState(course)
 
-      runWriteAction {
-        if (project.isStudentProject()) {
-          course.visitTasks {
-            setHighlightLevelForFilesInTask(it, project)
-          }
+    writeAction {
+      if (project.isStudentProject()) {
+        course.visitTasks {
+          setHighlightLevelForFilesInTask(it, project)
         }
-
-        EduCounterUsageCollector.eduProjectOpened(course)
       }
     }
+    EduCounterUsageCollector.eduProjectOpened(course)
   }
 
   @VisibleForTesting
+  @RequiresBlockingContext
   fun migrateYaml(project: Project, course: Course) {
     migratePropagatableYamlFields(project, course)
     migrateCanCheckLocallyYaml(project, course)
@@ -157,18 +161,16 @@ class EduStartupActivity : StartupActivity.DumbAware {
     }
   }
 
-  private fun ensureCourseIgnoreHasNoCustomAssociation() {
-    runInEdt {
-      runWriteAction {
-        FileTypeManager.getInstance().associate(CourseIgnoreFileType, ExactFileNameMatcher(COURSE_IGNORE))
-      }
+  private suspend fun ensureCourseIgnoreHasNoCustomAssociation() {
+    writeAction {
+      FileTypeManager.getInstance().associate(CourseIgnoreFileType, ExactFileNameMatcher(COURSE_IGNORE))
     }
   }
 
   // In general, it's hack to select proper Project View pane for course projects
   // Should be replaced with proper API
   private fun selectProjectView(project: Project, retry: Boolean) {
-    ToolWindowManager.getInstance(project).invokeLater(Runnable {
+    ToolWindowManager.getInstance(project).invokeLater {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW)
       // Since 2020.1 project view tool window can be uninitialized here yet
       if (toolWindow == null) {
@@ -178,7 +180,7 @@ class EduStartupActivity : StartupActivity.DumbAware {
         else {
           LOG.warn("Failed to show Course View because Project View is not initialized yet")
         }
-        return@Runnable
+        return@invokeLater
       }
       val projectView = ProjectView.getInstance(project)
       if (projectView != null) {
@@ -191,9 +193,11 @@ class EduStartupActivity : StartupActivity.DumbAware {
         LOG.warn("Failed to select Project View")
       }
       toolWindow.show()
-    })
+    }
   }
 
+  @RequiresEdt
+  @RequiresBlockingContext
   private fun setupProject(project: Project, course: Course) {
     val configurator = course.configurator
     if (configurator == null) {
@@ -212,9 +216,10 @@ class EduStartupActivity : StartupActivity.DumbAware {
   }
 
   companion object {
+    private val LOG: Logger = logger<EduProjectActivity>()
+
+    private const val YAML_MIGRATED = "Edu.Yaml.Migrate"
     @VisibleForTesting
     const val YAML_MIGRATED_PROPAGATABLE = "Edu.Yaml.Migrate.Propagatable"
-
-    private val LOG = Logger.getInstance(EduStartupActivity::class.java)
   }
 }

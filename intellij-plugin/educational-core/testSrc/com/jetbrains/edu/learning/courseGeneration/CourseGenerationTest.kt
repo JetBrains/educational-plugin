@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseGeneration
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.EduStartupActivity
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -124,9 +123,6 @@ class CourseGenerationTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     }
 
     createCourseStructure(coursePreview)
-
-    // wa have to call it here as it is called itself at time when course isn't set to StudyTaskManager
-    EduStartupActivity().runActivity(myProject)
 
     assertFalse("Course `${coursePreview.name}` shouldn't be added to course storage", CoursesStorage.getInstance().hasCourse(coursePreview))
   }
