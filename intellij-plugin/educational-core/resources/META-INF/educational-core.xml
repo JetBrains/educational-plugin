@@ -349,7 +349,7 @@
     <lang.commenter language="CourseIgnore" implementationClass="com.intellij.openapi.vcs.changes.ignore.lang.IgnoreCommenter"/>
     <!--END of Courseignore lang-->
 
-    <postStartupActivity implementation="com.jetbrains.edu.learning.EduStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.EduProjectActivity"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.agreement.UserAgreementProjectActivity"/>
 
     <registryKey key="edu.task.description.update.delay"
