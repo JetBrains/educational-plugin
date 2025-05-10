@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.platform.backend.observation.trackActivity
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -53,8 +54,8 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
 class EduProjectActivity : ProjectActivity {
-  override suspend fun execute(project: Project) {
-    if (!project.isEduProject()) return
+  override suspend fun execute(project: Project) = project.trackActivity(EduCourseConfigurationActivityKey) {
+    if (!project.isEduProject()) return@trackActivity
 
     val manager = StudyTaskManager.getInstance(project)
     val connection = ApplicationManager.getApplication().messageBus.connect(manager)
@@ -77,7 +78,7 @@ class EduProjectActivity : ProjectActivity {
     val course = manager.course
     if (course == null) {
       LOG.warn("Opened project is with null course")
-      return
+      return@trackActivity
     }
 
     withContext(Dispatchers.EDT) {

@@ -48,6 +48,7 @@ abstract class CourseReopeningTestBase<Settings : EduProjectSettings> : CourseGe
       OpenProjectTask(forceOpenInNewFrame = true)
     ) ?: error("failed to reopen the project")
 
+    waitForCourseConfiguration(reopenedProject)
     runInEdtAndWait {
       myProject = reopenedProject
     }
