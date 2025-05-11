@@ -1,10 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.google.common.collect.Lists
-import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.ComponentManagerEx
@@ -30,15 +27,12 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.checker.CheckActionListener
-import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleHyperskillConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 import com.jetbrains.edu.learning.courseFormat.ext.customContentPath
@@ -66,8 +60,6 @@ import kotlin.reflect.KMutableProperty0
 @RunWith(JUnit4::class)
 abstract class EduTestCase : BasePlatformTestCase() {
 
-  protected lateinit var testPluginDescriptor: IdeaPluginDescriptor
-
   protected open val useDocumentListener: Boolean = true
 
   @Rule
@@ -77,17 +69,15 @@ abstract class EduTestCase : BasePlatformTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    testPluginDescriptor = PluginManager.getPlugins().first { it.pluginId.idString.startsWith("com.jetbrains.edu") }
     // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
     // for course with no files. This flag is checked in this method and it does nothing if the flag is false
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
-    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, HYPERSKILL)
-    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, STEPIK)
-    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE,
-                         environment = EduNames.ANDROID)
-    registerConfigurator(myFixture.testRootDisposable, PlainTextConfigurator::class.java, PlainTextLanguage.INSTANCE, COURSERA)
-    registerConfigurator(myFixture.testRootDisposable, FakeGradleConfigurator::class.java, FakeGradleBasedLanguage)
-    registerConfigurator(myFixture.testRootDisposable, FakeGradleHyperskillConfigurator::class.java, FakeGradleBasedLanguage, HYPERSKILL)
+    registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, courseType = HYPERSKILL)
+    registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, courseType = STEPIK)
+    registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, environment = EduNames.ANDROID)
+    registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, courseType = COURSERA)
+    registerConfigurator<FakeGradleConfigurator>(FakeGradleBasedLanguage)
+    registerConfigurator<FakeGradleHyperskillConfigurator>(FakeGradleBasedLanguage, courseType = HYPERSKILL)
 
     // Mock tool window provided by default headless implementation of `ToolWindowManager` doesn't keep any state.
     // As a result, it's impossible to write tests which check tool window state.
@@ -323,22 +313,6 @@ abstract class EduTestCase : BasePlatformTestCase() {
     remoteCourse.init(true)
     StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse
-  }
-
-  private fun registerConfigurator(
-    disposable: Disposable,
-    configuratorClass: Class<*>,
-    language: Language,
-    courseType: String = EduFormatNames.PYCHARM,
-    environment: String = DEFAULT_ENVIRONMENT
-  ) {
-    val extension = EducationalExtensionPoint<EduConfigurator<*>>()
-    extension.language = language.id
-    extension.implementationClass = configuratorClass.name
-    extension.courseType = courseType
-    extension.environment = environment
-    extension.pluginDescriptor = testPluginDescriptor
-    EducationalExtensionPoint.EP_NAME.point.registerExtension(extension, disposable)
   }
 
   protected fun getTestFile(fileName: String) = testDataPath + fileName

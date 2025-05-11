@@ -12,7 +12,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TestDialog
@@ -21,8 +20,6 @@ import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.TestActionEvent
-import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.replaceService
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -33,7 +30,6 @@ import com.jetbrains.edu.learning.storage.LearningObjectStorageType
 import com.jetbrains.edu.learning.storage.getDefaultLearningObjectsStorageType
 import com.jetbrains.edu.learning.storage.pathInStorage
 import com.jetbrains.edu.learning.storage.setDefaultLearningObjectsStorageType
-import io.mockk.spyk
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertArrayEquals
@@ -235,17 +231,4 @@ fun simpleDiffRequestChain(
       )
     )
   )
-}
-
-/**
- * Temporarily replaces an existing service with a new spy created by [spyk].
- * Behavior of mocked service can be adjusted with [io.mockk.every] API
- *
- * @see [replaceService]
- */
-inline fun <reified T : Any> UsefulTestCase.mockService(componentManager: ComponentManager): T {
-  val service = componentManager.getService(T::class.java)
-  return spyk(service) {
-    componentManager.replaceService(T::class.java, this, testRootDisposable)
-  }
 }
