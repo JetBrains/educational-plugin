@@ -18,12 +18,6 @@ val Course.minJvmSdkVersion: ParsedJavaVersion
     else -> ParsedJavaVersion.fromStringLanguageLevel(environmentSettings[JVM_LANGUAGE_LEVEL])
   }
 
-val Course.maxJvmSdkVersion: ParsedJavaVersion?
-  get() = when(this) {
-    is HyperskillCourse -> JavaVersionParseSuccess(hyperskillJdkVersion)
-    else -> null
-  }
-
 fun jvmEnvironmentSettings(project: Project): Map<String, String> = mapOf(
   JVM_LANGUAGE_LEVEL to LanguageLevelProjectExtension.getInstance(project).languageLevel.toString()
 )
