@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 const val JVM_LANGUAGE_LEVEL = "jvm_language_level"
 
 // TODO(refactor this), this is a temporary solution
-// All JVM-based Hyperskill courses now require JDK version 21
-val hyperskillJdkVersion: JavaSdkVersion = JavaSdkVersion.JDK_21
+// All JVM-based Hyperskill courses now require JDK version 23
+val hyperskillJdkVersion: JavaSdkVersion = JavaSdkVersion.JDK_23
 
 val Course.minJvmSdkVersion: ParsedJavaVersion
   get() = when (this) {

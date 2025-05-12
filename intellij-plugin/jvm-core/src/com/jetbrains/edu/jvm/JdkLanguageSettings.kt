@@ -104,11 +104,11 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       }
     }
 
-    selectedJavaVersion as JavaVersionParseSuccess
     if (courseJavaVersion == JavaVersionNotProvided) {
       return SettingsValidationResult.OK
     }
 
+    selectedJavaVersion as JavaVersionParseSuccess
     courseJavaVersion as JavaVersionParseSuccess
 
     return if (selectedJavaVersion isAtLeast courseJavaVersion) {
