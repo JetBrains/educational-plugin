@@ -21,7 +21,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
   SCALA(EduFormatNames.SCALA, "scala"),
   SCALA3(EduFormatNames.SCALA, "scala3"),
   SHELL(EduFormatNames.SHELL, "shell"),
-  CPP(EduFormatNames.CPP, "c++"),
+  CPP(EduFormatNames.CPP, "cpp"),
   CSHARP(EduFormatNames.CSHARP, "unity"),
 
   // last three needed for tests
