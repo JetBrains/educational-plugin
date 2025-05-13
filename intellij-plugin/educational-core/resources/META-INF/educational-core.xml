@@ -217,9 +217,9 @@
       <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
       <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
       <separator/>
-      <reference id="Educational.Educator.CreateCoursePreview"/>
-      <reference id="Educational.Educator.ChangeCourseInfo"/>
-      <reference id="Educational.Educator.CheckAllTasks"/>
+      <reference ref="Educational.Educator.CreateCoursePreview"/>
+      <reference ref="Educational.Educator.ChangeCourseInfo"/>
+      <reference ref="Educational.Educator.CheckAllTasks"/>
       <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
       <add-to-group group-id="FileMenu" anchor="before" relative-to-action="FileMainSettingsGroup"/>
@@ -254,8 +254,8 @@
            class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
            popup="true"
            icon="com.jetbrains.edu.EducationalCoreIcons.Actions.EduCourse">
-      <reference id="Educational.BrowseCourses"/>
-      <reference id="Educational.Educator.NewCourse"/>
+      <reference ref="Educational.BrowseCourses"/>
+      <reference ref="Educational.Educator.NewCourse"/>
       <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
     </group>
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
@@ -285,8 +285,8 @@
 
    <!-- Actions located in the right corner of the Course View header -->
     <group id="Educational.CourseView.Header.Right">
-      <reference id="Educational.Educator.CreateCoursePreview"/>
-      <reference id="Educational.Educator.OpenEducatorHelp"/>
+      <reference ref="Educational.Educator.CreateCoursePreview"/>
+      <reference ref="Educational.Educator.OpenEducatorHelp"/>
     </group>
 
     <action id="Educational.LeaveInIdeFeedbackAction"
@@ -294,20 +294,20 @@
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.CommentTask"/>
 
     <group id="Educational.CheckPanel.Left">
-      <reference id="Educational.Run"/>
+      <reference ref="Educational.Run"/>
     </group>
 
     <group id="Educational.CheckPanel.Right">
-      <reference id="Educational.RefreshTask"/>
-      <reference id="Educational.LeaveInIdeFeedbackAction"/>
-      <reference id="Educational.LeaveFeedbackAction"/>
+      <reference ref="Educational.RefreshTask"/>
+      <reference ref="Educational.LeaveInIdeFeedbackAction"/>
+      <reference ref="Educational.LeaveFeedbackAction"/>
     </group>
 
     <!-- Actions located in the right corner of Task tool window -->
     <group id="Educational.TaskToolWindowView.TitleActions">
-      <reference id="Educational.CCEditTaskDescription"/>
-      <reference id="Educational.PreviousTask"/>
-      <reference id="Educational.NextTask"/>
+      <reference ref="Educational.CCEditTaskDescription"/>
+      <reference ref="Educational.PreviousTask"/>
+      <reference ref="Educational.NextTask"/>
     </group>
   </actions>
 
