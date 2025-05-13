@@ -1,5 +1,5 @@
-https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week2.zip?raw=true # Kotlin for Java Developers Week 2
-https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week3.zip?raw=true # Kotlin for Java Developers Week 3
-https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week4.zip?raw=true # Kotlin for Java Developers Week 4
-https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week5.zip?raw=true # Kotlin for Java Developers Week 5
-https://github.com/JetBrains/coursera-assignments/blob/master/Algorithmic_Toolbox/Algorithmic_Toolbox.zip?raw=true # Algorithmic Toolbox
+https://raw.githubusercontent.com/JetBrains/coursera-assignments/refs/heads/master/Kotlin%20for%20Java%20Developers/week2.zip # Kotlin for Java Developers Week 2
+https://raw.githubusercontent.com/JetBrains/coursera-assignments/refs/heads/master/Kotlin%20for%20Java%20Developers/week3.zip # Kotlin for Java Developers Week 3
+https://raw.githubusercontent.com/JetBrains/coursera-assignments/refs/heads/master/Kotlin%20for%20Java%20Developers/week4.zip # Kotlin for Java Developers Week 4
+https://raw.githubusercontent.com/JetBrains/coursera-assignments/refs/heads/master/Kotlin%20for%20Java%20Developers/week5.zip # Kotlin for Java Developers Week 5
+https://raw.githubusercontent.com/JetBrains/coursera-assignments/refs/heads/master/Algorithmic_Toolbox/Algorithmic_Toolbox.zip # Algorithmic Toolbox
