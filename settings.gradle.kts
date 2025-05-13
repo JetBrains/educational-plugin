@@ -86,8 +86,6 @@ fun configureSecretProperties() {
   )
   secretProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties",
-    "twitterConsumerKey",
-    "twitterConsumerSecret",
     "xClientId"
   )
   secretProperties.extractAndStore(
