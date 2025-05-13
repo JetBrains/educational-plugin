@@ -36,7 +36,7 @@ class CourseViewStep : EduUiOnboardingStep {
         val point = Point(component.width / 2 + dimension.width / 2 - 10, component.height - dimension.height / 2 + 20)
         val relativePoint = RelativePoint(component, point)
 
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent, Point(0, 164))
     }
 
     override fun isAvailable(): Boolean = true

@@ -37,7 +37,7 @@ class CheckSolutionStep : EduUiOnboardingStep {
 
         val point = Point(20, component.height - zhabaDimension.height - checkPanel.height - 15)
         val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent, Point(0, 0))
     }
 
     // todo this might still be needed in the future for GetHintOnboardingStep

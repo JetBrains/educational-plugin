@@ -31,7 +31,7 @@ class TaskDescriptionStep : EduUiOnboardingStep {
         // Position the balloon on top of zhaba
         val point = Point(-40, component.height / 2 - 10)
         val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent, Point(0, 0))
     }
 
     override fun isAvailable(): Boolean = true

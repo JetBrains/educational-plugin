@@ -25,16 +25,18 @@ class EduUiOnboardingExecutor(private val project: Project,
 
   private var curStepId: String? = null
   private var curStepStartMillis: Long? = null
+  private var zhabaAnimationData: ZhabaAnimationData? = null
 
   init {
     Disposer.register(parentDisposable, disposable)
   }
 
   suspend fun start() {
+    zhabaAnimationData = ZhabaAnimationData.load()
     runStep(0)
   }
 
-  private suspend fun runStep(ind: Int) {
+  private suspend fun runStep(ind: Int, previousData: EduUiOnboardingStepData? = null) {
     if (ind >= steps.size) {
       return
     }
@@ -47,11 +49,13 @@ class EduUiOnboardingExecutor(private val project: Project,
     curStepId = stepId
     curStepStartMillis = stepStartMillis
 
-
     val gotItData = step.performStep(project, stepDisposable)
     if (gotItData == null) {
-      runStep(ind + 1)
+      runStep(ind + 1, previousData)
       return
+    }
+    if (previousData != null) {
+      animateZhaba(previousData, gotItData)
     }
 
     val showInCenter = gotItData.position == null
@@ -67,7 +71,7 @@ class EduUiOnboardingExecutor(private val project: Project,
         .onButtonClick {
           Disposer.dispose(stepDisposable)
           cs.launch(Dispatchers.EDT) {
-            runStep(ind + 1)
+            runStep(ind + 1, gotItData)
           }
         }
         .withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.skipAll")) {
@@ -83,7 +87,7 @@ class EduUiOnboardingExecutor(private val project: Project,
         .withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.restart")) {
           Disposer.dispose(stepDisposable)
           cs.launch(Dispatchers.EDT) {
-            runStep(0)
+            runStep(0, gotItData)
           }
         }
     }
@@ -101,6 +105,26 @@ class EduUiOnboardingExecutor(private val project: Project,
     else {
       balloon.show(gotItData.relativePoint, gotItData.position)
     }
+  }
+
+  private suspend fun animateZhaba(fromData: EduUiOnboardingStepData, toData: EduUiOnboardingStepData  ) {
+    val animationData = zhabaAnimationData ?: return
+
+    val frame = WindowManager.getInstance().getFrame(project) ?: return
+
+    val fromPoint = fromData.zhaba.zhabaPoint.getPoint(frame)
+    val toPoint = toData.zhaba.zhabaPoint.getPoint(frame)
+
+    fromPoint.translate(fromData.characterShift.x, fromData.characterShift.y)
+    toPoint.translate(toData.characterShift.x, toData.characterShift.y)
+
+    val animatedZhaba = ZhabaAnimatedComponent(frame, animationData, fromPoint, toPoint)
+    Disposer.register(disposable, animatedZhaba)
+    frame.layeredPane.add(animatedZhaba, JLayeredPane.PALETTE_LAYER)
+    animatedZhaba.setBounds(0, 0, frame.width, frame.height)
+
+    animatedZhaba.animate()
+    Disposer.dispose(animatedZhaba)
   }
 
   private fun showZhaba(zhaba: ZhabaComponent) {

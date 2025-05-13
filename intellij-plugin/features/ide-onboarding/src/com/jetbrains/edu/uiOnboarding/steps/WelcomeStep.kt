@@ -36,7 +36,7 @@ class WelcomeStep : EduUiOnboardingStep {
         val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("welcome.step.text") }
             .withHeader(EduUiOnboardingBundle.message("welcome.step.header"))
 
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent, Point(0, 0))
     }
 
     override fun isAvailable(): Boolean = true

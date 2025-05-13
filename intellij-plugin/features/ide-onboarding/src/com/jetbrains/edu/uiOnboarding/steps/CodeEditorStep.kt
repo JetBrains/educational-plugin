@@ -30,7 +30,7 @@ class CodeEditorStep : EduUiOnboardingStep {
         // Position the balloon below the zhaba
         val point = Point(component.width / 2 + dimension.width - 30, dimension.height + 10)
         val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.below, zhabaComponent)
+        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.below, zhabaComponent, Point(110, 0/*-107*/))
     }
 
     override fun isAvailable(): Boolean = true
