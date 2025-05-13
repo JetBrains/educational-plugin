@@ -11,10 +11,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <httpRequestHandler implementation="com.jetbrains.edu.socialMedia.linkedIn.LinkedInRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.socialMedia.x.XRestService"/>
-
-    <registryKey key="edu.socialMedia.x.oauth2"
-                 description="Enables OAuth 2.0 authorization for X"
-                 defaultValue="true"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.rules.WithRegistryValue
 import com.jetbrains.edu.socialMedia.x.api.Media
 import com.jetbrains.edu.socialMedia.x.api.Tweet
 import com.jetbrains.edu.socialMedia.x.api.TweetData
@@ -22,7 +21,6 @@ import kotlin.collections.ArrayDeque
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull as kAssertNotNull
 
-@WithRegistryValue("edu.socialMedia.x.oauth2", "true")
 class XConnectorTest : EduTestCase() {
 
   private lateinit var helper: MockWebServerHelper

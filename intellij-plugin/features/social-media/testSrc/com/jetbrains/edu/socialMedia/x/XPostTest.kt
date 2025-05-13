@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.rules.WithRegistryValue
 import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import com.jetbrains.edu.socialMedia.x.api.TweetData
 import com.jetbrains.edu.socialMedia.x.api.TweetResponse
@@ -18,7 +17,6 @@ import org.junit.Test
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicReference
 
-@WithRegistryValue("edu.socialMedia.x.oauth2", "true")
 class XPostTest : EduTestCase() {
 
   @Test

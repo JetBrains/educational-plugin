@@ -23,8 +23,6 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-twitter4j-core = { group = "org.twitter4j", name = "twitter4j-core", version = "4.0.7" }
-twitter4j-v2 = { group = "io.github.takke", name = "jp.takke.twitter4j-v2", version = "1.4.2" }
 
 # test dependencies
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.179" }
