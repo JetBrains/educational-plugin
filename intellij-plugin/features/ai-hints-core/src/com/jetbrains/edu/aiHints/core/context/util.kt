@@ -1,36 +1,7 @@
 package com.jetbrains.edu.aiHints.core.context
 
 import com.jetbrains.edu.aiHints.core.context.TaskFileHintsDataHolder.Companion.hintData
-import com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder.Companion.hintData
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-
-/**
- * Stores a context created by the author's solution, if any.
- */
-var Task.authorSolutionContext: AuthorSolutionContext
-  get() = hintData.authorSolutionContext
-  set(value) {
-    val currentHintData = hintData
-    hintData = TaskHintsDataHolder.TaskHintData(
-      value,
-      currentHintData.taskFilesWithChangedFunctions
-    )
-  }
-
-/**
- * Stores a map of a [TaskFile] full names (including paths) to functions that can be changed.
- * This map stores only task files in which changes have been made in the author's solution.
- */
-var Task.taskFilesWithChangedFunctions: Map<String, List<String>>?
-  get() = hintData.taskFilesWithChangedFunctions
-  set(value) {
-    val currentHintData = hintData
-    hintData = TaskHintsDataHolder.TaskHintData(
-      currentHintData.authorSolutionContext,
-      value
-    )
-  }
 
 /**
  * Represents function signatures used in the task file.

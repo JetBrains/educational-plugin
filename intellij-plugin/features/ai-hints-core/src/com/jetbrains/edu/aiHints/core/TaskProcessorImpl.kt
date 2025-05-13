@@ -16,6 +16,8 @@ import com.intellij.psi.PsiManager
 import com.intellij.util.asSafely
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.context.*
+import com.jetbrains.edu.aiHints.core.ext.authorSolutionContext
+import com.jetbrains.edu.aiHints.core.ext.taskFilesWithChangedFunctions
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
