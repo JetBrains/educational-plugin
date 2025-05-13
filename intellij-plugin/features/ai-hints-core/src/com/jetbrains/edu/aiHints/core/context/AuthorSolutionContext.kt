@@ -10,6 +10,8 @@ data class AuthorSolutionContext(
   val functionsToStringMap: Map<String, List<String>> = emptyMap(),
   val functionSignatures: Set<FunctionSignature> = emptySet()
 ) {
+  fun isFunctionsPresented(): Boolean = functionSignatures.isNotEmpty()
+
   companion object {
     @JvmStatic
     fun create(project: Project, task: Task): AuthorSolutionContext {

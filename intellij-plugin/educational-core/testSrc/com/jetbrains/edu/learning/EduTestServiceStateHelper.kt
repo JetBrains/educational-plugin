@@ -215,6 +215,7 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
 
     private val projectServices = listOf(
       "com.jetbrains.edu.aiHints.core.HintStateManager",
+      "com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder",
       "com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager",
       "com.jetbrains.edu.learning.StudyTaskManager",
       "com.jetbrains.edu.learning.ai.TranslationProjectSettings",

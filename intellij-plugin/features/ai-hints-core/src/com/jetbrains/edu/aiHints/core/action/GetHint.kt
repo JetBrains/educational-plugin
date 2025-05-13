@@ -14,6 +14,7 @@ import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageColl
 import com.jetbrains.edu.aiHints.core.EduAIHintsProcessor
 import com.jetbrains.edu.aiHints.core.HintStateManager
 import com.jetbrains.edu.aiHints.core.HintsLoader
+import com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.aiHints.core.ui.EduAiHintsIcons
 import com.jetbrains.edu.learning.EduExperimentalFeatures
@@ -43,13 +44,23 @@ class GetHint : ActionWithButtonCustomComponent() {
     if (!isFeatureEnabled(EduExperimentalFeatures.AI_HINTS)) return
     val project = e.project ?: return
     val course = project.course.asSafely<EduCourse>() ?: return
-    val task = project.getCurrentTask() ?: return
+    val task = project.getCurrentTask().asSafely<EduTask>() ?: return
+
+    // Action is not available for tasks with no functions in the Author's Solution
+    if (!task.isFunctionsPresented(project)) return
 
     val isMarketplaceStudyCourse = course.isMarketplace && course.isStudy
-    val isFailedEduTask = task is EduTask && task.status == CheckStatus.Failed
     e.presentation.isEnabledAndVisible =
-      isMarketplaceStudyCourse && isFailedEduTask && EduAIHintsProcessor.forCourse(course) != null && HintStateManager.isDefault(project)
+      isMarketplaceStudyCourse
+      && task.status == CheckStatus.Failed
+      && EduAIHintsProcessor.forCourse(course) != null
+      && HintStateManager.isDefault(project)
     e.presentation.putClientProperty(PROJECT_KEY, project)
+  }
+
+  private fun EduTask.isFunctionsPresented(project: Project): Boolean {
+    val taskHintData = TaskHintsDataHolder.getInstance(project).getTaskHintData(this) ?: return false
+    return taskHintData.authorSolutionContext.isFunctionsPresented()
   }
 
   override fun createCustomComponent(presentation: Presentation, place: String): JButton {
