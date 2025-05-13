@@ -11,23 +11,16 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.ai.debugger.core.slicing.SliceManager
 
-abstract class IntermediateBreakpointProcessor {
+interface IntermediateBreakpointProcessor {
 
-  abstract fun findBreakpointLines(psiElement: PsiElement, document: Document, psiFile: PsiFile): List<Int>
+  fun findBreakpointLines(psiElement: PsiElement, document: Document, psiFile: PsiFile): List<Int>
 
-  abstract fun getCalleeExpressions(psiFile: PsiFile): List<PsiElement>
+  fun getCalleeExpressions(psiFile: PsiFile): List<PsiElement>
 
-  abstract fun getParentFunctionName(element: PsiElement): String?
-
-  protected fun Document.getAllReferencesLines(element: PsiElement) =
-    ReferencesSearch.search(element).findAll().mapNotNull {
-      getLineNumber(it.element)
-    }.distinct()
-
-  protected fun Document.getLineNumber(element: PsiElement) = getLineNumber(element.textRange.startOffset)
+  fun getParentFunctionName(element: PsiElement): String?
 
   companion object {
-    private val EP_NAME = LanguageExtension<IntermediateBreakpointProcessor>("ai.debugger.intermediateBreakpointProcessor")
+    private val EP_NAME = LanguageExtension<IntermediateBreakpointProcessor>("Educational.intermediateBreakpointProcessor")
 
     @RequiresReadLock
     fun calculateIntermediateBreakpointPositions(
@@ -80,5 +73,11 @@ abstract class IntermediateBreakpointProcessor {
         .map { document.getLineNumber(it.textRange.startOffset) }
     }
 
+    fun Document.getAllReferencesLines(element: PsiElement): List<Int> =
+      ReferencesSearch.search(element).findAll().mapNotNull {
+        getStartLineNumber(it.element)
+      }.distinct()
+
+    fun Document.getStartLineNumber(element: PsiElement): Int = getLineNumber(element.textRange.startOffset)
   }
 }

@@ -8,7 +8,7 @@ import com.jetbrains.edu.ai.debugger.core.api.TestFinder
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class KtTestFinder : TestFinder() {
+class KtTestFinder : TestFinder {
   override fun findTestByName(project: Project, testFiles: List<VirtualFile>, testName: String): String? {
     val (className, methodName) = testName.split(":")
     val psiManager = PsiManager.getInstance(project)

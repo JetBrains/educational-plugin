@@ -12,12 +12,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.isTestFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-abstract class TestFinder {
+interface TestFinder {
 
-  abstract fun findTestByName(project: Project, testFiles: List<VirtualFile>, testName: String): String?
+  fun findTestByName(project: Project, testFiles: List<VirtualFile>, testName: String): String?
 
   companion object {
-    private val EP_NAME = LanguageExtension<TestFinder>("ai.debugger.testFinder")
+    private val EP_NAME = LanguageExtension<TestFinder>("Educational.testFinder")
 
     @RequiresReadLock
     fun findTestByName(project: Project, task: Task, testName: String): String? =

@@ -9,7 +9,7 @@ interface BreakpointTypeManager {
   fun getBreakPointType(): XLineBreakpointType<XBreakpointProperties<*>>
 
   companion object {
-    private val EP_NAME = LanguageExtension<BreakpointTypeManager>("ai.debugger.breakpointTypeManager")
+    private val EP_NAME = LanguageExtension<BreakpointTypeManager>("Educational.breakpointTypeManager")
 
     fun getInstance(language: Language): BreakpointTypeManager = EP_NAME.forLanguage(language)
   }

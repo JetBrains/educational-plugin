@@ -19,7 +19,7 @@ interface SliceManager {
   fun processSlice(element: PsiElement, document: Document, psiFile: PsiFile): Set<Int>
 
   companion object {
-    private val EP_NAME = LanguageExtension<SliceManager>("ai.debugger.sliceManager")
+    private val EP_NAME = LanguageExtension<SliceManager>("Educational.sliceManager")
 
     fun getInstance(language: Language): SliceManager = EP_NAME.forLanguage(language)
   }

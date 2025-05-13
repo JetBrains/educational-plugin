@@ -5,7 +5,7 @@
     <plugin id="com.intellij.modules.java"/>
   </dependencies>
 
-  <extensions defaultExtensionNs="ai.debugger">
+  <extensions defaultExtensionNs="Educational">
     <breakpointTypeManager language="JVM" implementationClass="com.jetbrains.edu.ai.debugger.jvm.JvmBreakpointTypeManager"/>
   </extensions>
 

@@ -5,9 +5,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
+import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor.Companion.getAllReferencesLines
+import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor.Companion.getStartLineNumber
 import org.jetbrains.kotlin.psi.*
 
-class KtIntermediateBreakpointProcessor : IntermediateBreakpointProcessor() {
+class KtIntermediateBreakpointProcessor : IntermediateBreakpointProcessor {
   override fun findBreakpointLines(psiElement: PsiElement, document: Document, psiFile: PsiFile): List<Int> =
     when (psiElement) {
 
@@ -20,7 +22,7 @@ class KtIntermediateBreakpointProcessor : IntermediateBreakpointProcessor() {
       is KtFunction -> {
         val functionCalls = PsiTreeUtil.collectElementsOfType(psiFile, KtCallExpression::class.java).toList()
           .filter { it.calleeExpression?.text == psiElement.name }
-          .mapNotNull { document.getLineNumber(it) }
+          .mapNotNull { document.getStartLineNumber(it) }
         psiElement.bodyExpression
           ?.let { document.getLineWithBlockAdjustment(it) }
           ?.let { listOf(it) + functionCalls } ?: functionCalls
@@ -63,8 +65,8 @@ class KtIntermediateBreakpointProcessor : IntermediateBreakpointProcessor() {
     }
 
   private fun Document.getLineWithBlockAdjustment(expression: KtExpression) =
-    if (expression is KtBlockExpression) getLineNumber(expression) + 1
-    else getLineNumber(expression)
+    if (expression is KtBlockExpression) getStartLineNumber(expression) + 1
+    else getStartLineNumber(expression)
 
   override fun getCalleeExpressions(psiFile: PsiFile): List<PsiElement> =
     PsiTreeUtil.collectElementsOfType(psiFile, KtCallExpression::class.java).mapNotNull { it.calleeExpression }
