@@ -58,10 +58,6 @@ class XRestService : OAuthRestService(XUtils.PLATFORM_NAME) {
     }
     return originAllowed
   }
-
-  override fun isAccessible(request: HttpRequest): Boolean {
-    return super.isAccessible(request) && XUtils.oauth2Enabled
-  }
 }
 
 // TODO: refactor `EduLoginConnector` and the corresponding `OAuthRestService`s to use this instead of regex
