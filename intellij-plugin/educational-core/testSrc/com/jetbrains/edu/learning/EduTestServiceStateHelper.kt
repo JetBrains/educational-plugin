@@ -209,8 +209,8 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
       "com.jetbrains.edu.learning.EduBrowser",
       "com.jetbrains.edu.learning.agreement.UserAgreementSettings",
       "com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage",
-      "com.jetbrains.edu.learning.socialMedia.x.XSettings",
       "com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService",
+      "com.jetbrains.edu.socialMedia.x.XSettings",
     )
 
     private val projectServices = listOf(
