@@ -11,17 +11,25 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 var Task.authorSolutionContext: AuthorSolutionContext
   get() = hintData.authorSolutionContext
   set(value) {
-    hintData.authorSolutionContext = value
+    val currentHintData = hintData
+    hintData = TaskHintsDataHolder.TaskHintData(
+      value,
+      currentHintData.taskFilesWithChangedFunctions
+    )
   }
 
 /**
- * Stores a map of task file full names (including path) to functions that can be changed.
+ * Stores a map of a [TaskFile] full names (including paths) to functions that can be changed.
  * This map stores only task files in which changes have been made in the author's solution.
  */
 var Task.taskFilesWithChangedFunctions: Map<String, List<String>>?
   get() = hintData.taskFilesWithChangedFunctions
   set(value) {
-    hintData.taskFilesWithChangedFunctions = value
+    val currentHintData = hintData
+    hintData = TaskHintsDataHolder.TaskHintData(
+      currentHintData.authorSolutionContext,
+      value
+    )
   }
 
 /**

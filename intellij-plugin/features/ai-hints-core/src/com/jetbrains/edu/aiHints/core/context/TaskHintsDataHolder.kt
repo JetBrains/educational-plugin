@@ -16,17 +16,21 @@ class TaskHintsDataHolder {
   }
 
   data class TaskHintData(
-    var authorSolutionContext: AuthorSolutionContext,
-    var taskFilesWithChangedFunctions: Map<String, List<String>>? = null
+    val authorSolutionContext: AuthorSolutionContext,
+    val taskFilesWithChangedFunctions: Map<String, List<String>>? = null
   )
 
   companion object {
     fun getInstance(project: Project): TaskHintsDataHolder = project.service()
 
-    val Task.hintData: TaskHintData
+    var Task.hintData: TaskHintData
       get() {
         val project = project ?: error("No project for task $name")
         return getInstance(project).getOrCreate(project, this)
+      }
+      set(value) {
+        val project = project ?: error("No project for task $name")
+        getInstance(project).data[this] = value
       }
   }
 }
