@@ -30,6 +30,7 @@ import com.intellij.platform.util.progress.indeterminateStep
 import com.intellij.platform.util.progress.progressStep
 import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.ui.jcef.JBCefApp
 import com.intellij.util.PathUtil
 import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
@@ -93,7 +94,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
 
-    if (!course.isStudy && !course.isPreview && !isUnitTestMode) {
+    if (!course.isStudy && !course.isPreview && !isHeadlessEnvironment && JBCefApp.isSupported()) {
       CCOpenEducatorHelp.doOpen(project)
     }
 

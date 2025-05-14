@@ -22,7 +22,7 @@ class CCOpenEducatorHelp : ActionWithButtonCustomComponent() {
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP)
+    e.presentation.isEnabledAndVisible = isFeatureEnabled(EduExperimentalFeatures.EDUCATOR_HELP) && JBCefApp.isSupported()
   }
 
   companion object {
