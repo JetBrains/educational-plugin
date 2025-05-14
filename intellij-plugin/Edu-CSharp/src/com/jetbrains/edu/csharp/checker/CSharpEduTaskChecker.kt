@@ -122,7 +122,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
   }
 
   private fun VirtualFile.getTestUrl(): String? = if (project.isUnityProject.value) {
-    findFileByRelativePath("${CSharpConfigurator.TEST_DIRECTORY}/${CSharpConfigurator.TEST_CS}")?.url
+    findChild(CSharpConfigurator.TEST_CS)?.url
   }
   else {
     findChild(CSharpConfigurator.TEST_DIRECTORY)?.url
