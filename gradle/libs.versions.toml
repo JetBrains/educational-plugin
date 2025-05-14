@@ -35,7 +35,7 @@ mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", versio
 openTest4J = { group = "org.opentest4j", name = "opentest4j", version = "1.3.0" }
 
 [plugins]
-intelliJPlatformPlugin = { id = "org.jetbrains.intellij.platform", version = "2.5.0" }
+intelliJPlatformPlugin = { id = "org.jetbrains.intellij.platform", version = "2.6.0" }
 kotlinPlugin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 propertiesPlugin = { id = "net.saliman.properties", version = "1.5.2" }
