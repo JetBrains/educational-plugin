@@ -8,6 +8,8 @@ import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.aiHints.core.api.FunctionDiffReducer
 import com.jetbrains.python.psi.*
 
+private const val SMALL_FUNCTION_SIZE: Int = 3
+
 object PyFunctionDiffReducer : FunctionDiffReducer {
   override fun reduceDiffFunctions(function: PsiElement?, modifiedFunction: PsiElement): PsiElement {
     val project = runReadAction { modifiedFunction.project }
@@ -18,12 +20,21 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
         currentFunction.reduceDifferenceWith(project, codeHint)
       }
     }
-    return codeHint // todo: reduce the newly added function
+    return reduce(project, codeHint)
+  }
+
+  private fun reduce(project: Project, codeHint: PyFunction): PyFunction {
+    val functionSize = runReadAction { codeHint.text.lines().size }
+    if (functionSize <= SMALL_FUNCTION_SIZE) return codeHint
+    runWriteCommandAction(project) {
+      codeHint.statementList.children.forEach { it.delete() }
+    }
+    return codeHint
   }
 
   @RequiresReadLock
   private fun PyFunction.reduceDifferenceWith(project: Project, codeHint: PyFunction): PyFunction {
-    if (codeHint.text.lines().size <= 3) return codeHint
+    if (codeHint.text.lines().size <= SMALL_FUNCTION_SIZE) return codeHint
 
     // Check parameters and return type of the functions
     if (parameterList.deleteOrSwapWith(project, codeHint.parameterList) || annotation.deleteOrSwapWith(project, codeHint.annotation)) {
