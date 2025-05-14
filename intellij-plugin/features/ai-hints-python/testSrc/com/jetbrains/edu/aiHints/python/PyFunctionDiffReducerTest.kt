@@ -1360,7 +1360,54 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   """,
   )
 
-  // TODO: Tests for the case when there is a new function only
+  /**
+   * Tests for adding a new function to the student code.
+   * The expected result here is the function that will be suggested to add.
+   */
+
+  @Test
+  fun `test adding small function`() = assertCodeHint(
+    functionName = "new_function",
+    currentCode = """
+      def foo():
+          return 42
+    """,
+    codeHint = """
+      def foo():
+          return 42
+
+      def new_function():
+          # This function returns string
+          return "Hello, World!"
+    """,
+    expectedResult = """
+      def new_function():
+          # This function returns string
+          return "Hello, World!"
+    """,
+  )
+
+  @Test
+  fun `test adding big function`() = assertCodeHint(
+    functionName = "new_function",
+    currentCode = """
+      def foo():
+          return 42
+    """,
+    codeHint = """
+      def foo():
+          return 42
+
+      def new_function():
+          for (l in lst):
+            print(l)
+            l++
+    """,
+    expectedResult = """
+      def new_function():
+          pass
+    """,
+  )
 
   private fun assertCodeHint(
     functionName: String,
@@ -1378,7 +1425,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
     }
     val current = getPsiFile(project, PY_LESSON, PY_TASK, PY_TASK_FILE)
     val codeHint = PsiFileFactory.getInstance(project).createFileFromText("codeHint.py", PythonLanguage.INSTANCE, codeHint.trimIndent())
-    val functionFromCode = getFunctionPsiWithName(current, functionName) ?: error("Current PSI File is null")
+    val functionFromCode = getFunctionPsiWithName(current, functionName)
     val functionFromCodeHint = getFunctionPsiWithName(codeHint, functionName) ?: error("PSI File for CodeHint is null")
 
     // then
