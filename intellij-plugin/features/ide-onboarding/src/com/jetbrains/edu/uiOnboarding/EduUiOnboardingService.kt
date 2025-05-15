@@ -1,6 +1,7 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package com.jetbrains.edu.uiOnboarding
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 // copy-pasted from mono-repo
 @Service(Service.Level.PROJECT)
-internal class EduUiOnboardingService(private val project: Project, private val cs: CoroutineScope) {
+internal class EduUiOnboardingService(private val project: Project, private val cs: CoroutineScope) : Disposable {
 
   private val myTourInProgress = AtomicBoolean(false)
   val tourInProgress: Boolean
@@ -21,7 +22,8 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   fun startOnboarding() {
     myTourInProgress.set(true)
     val steps = getSteps()
-    val executor = EduUiOnboardingExecutor(project, steps, cs, project)
+    val data = EduUiOnboardingAnimationData.load() ?: return
+    val executor = EduUiOnboardingExecutor(project, data, steps, cs, this)
     cs.launch(Dispatchers.EDT) { executor.start() }
   }
 
@@ -38,8 +40,10 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   }
 
   private fun getDefaultStepsOrder(): List<String> {
-    return listOf("welcome", "courseView", "taskDescription", "codeEditor", "checkSolution")
+    return listOf("welcome", "taskDescription", "codeEditor", "checkSolution", "courseView")
   }
+
+  override fun dispose() {}
 
   companion object {
     @JvmStatic

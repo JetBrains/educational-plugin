@@ -10,17 +10,26 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.awt.RelativePoint
+import com.jetbrains.edu.uiOnboarding.transitions.JumpDown
+import com.jetbrains.edu.uiOnboarding.transitions.JumpLeft
+import com.jetbrains.edu.uiOnboarding.transitions.JumpRight
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
+import com.jetbrains.edu.uiOnboarding.transitions.HappyJumpDown
+import com.jetbrains.edu.uiOnboarding.transitions.SadJumpDown
 
 // copy-pasted from mono-repo
-class EduUiOnboardingExecutor(private val project: Project,
-                                       private val steps: List<Pair<String, EduUiOnboardingStep>>,
-                                       private val cs: CoroutineScope,
-                                       parentDisposable: Disposable) {
+class EduUiOnboardingExecutor(
+  private val project: Project,
+  private val animationData: EduUiOnboardingAnimationData,
+  private val steps: List<Pair<String, EduUiOnboardingStep>>,
+  private val cs: CoroutineScope,
+  parentDisposable: Disposable
+) {
   private val disposable = Disposer.newCheckedDisposable()
 
   private var curStepId: String? = null
@@ -34,7 +43,7 @@ class EduUiOnboardingExecutor(private val project: Project,
     runStep(0)
   }
 
-  private suspend fun runStep(ind: Int) {
+  private suspend fun runStep(ind: Int, previousStepId: String? = null, previousData: EduUiOnboardingStepData? = null) {
     if (ind >= steps.size) {
       return
     }
@@ -47,43 +56,52 @@ class EduUiOnboardingExecutor(private val project: Project,
     curStepId = stepId
     curStepStartMillis = stepStartMillis
 
-
-    val gotItData = step.performStep(project, stepDisposable)
+    val gotItData = step.performStep(project, animationData, stepDisposable)
     if (gotItData == null) {
-      runStep(ind + 1)
+      runStep(ind + 1, previousStepId, previousData)
       return
+    }
+    if (previousData != null && previousStepId != null) {
+      animateTransitionBetweenSteps(previousStepId, stepId, previousData, gotItData)
     }
 
     val showInCenter = gotItData.position == null
     val builder = gotItData.builder
-    builder.withStepNumber("${ind + 1}/${steps.size}")
-      .onEscapePressed {
-        finishOnboarding()
-      }
-      .requestFocus(true)
+
+    if (ind > 0) {
+      builder.withStepNumber("$ind/${steps.size - 1}")
+    }
+
+    builder.onEscapePressed {
+      Disposer.dispose(stepDisposable)
+        cs.launch(Dispatchers.EDT) {
+          finishOnboarding(gotItData, isHappy = false)
+        }
+      }.requestFocus(true)
 
     if (ind < steps.lastIndex) {
-      builder.withButtonLabel(EduUiOnboardingBundle.message("gotIt.button.next"))
-        .onButtonClick {
+      builder.withButtonLabel(EduUiOnboardingBundle.message("gotIt.button.next")).onButtonClick {
           Disposer.dispose(stepDisposable)
           cs.launch(Dispatchers.EDT) {
-            runStep(ind + 1)
+            runStep(ind + 1, curStepId, gotItData)
           }
-        }
-        .withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.skipAll")) {
-          finishOnboarding()
+        }.withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.skipAll")) {
+          Disposer.dispose(stepDisposable)
+          cs.launch(Dispatchers.EDT) {
+            finishOnboarding(gotItData, isHappy = false)
+          }
         }
     }
     else {
-      builder.withButtonLabel(EduUiOnboardingBundle.message("gotIt.button.finish"))
-        .withContrastButton(true)
-        .onButtonClick {
-          finishOnboarding()
-        }
-        .withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.restart")) {
+      builder.withButtonLabel(EduUiOnboardingBundle.message("gotIt.button.finish")).withContrastButton(true).onButtonClick {
+          cs.launch(Dispatchers.EDT) {
+            Disposer.dispose(stepDisposable)
+            finishOnboarding(gotItData, isHappy = true)
+          }
+        }.withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.restart")) {
           Disposer.dispose(stepDisposable)
           cs.launch(Dispatchers.EDT) {
-            runStep(0)
+            runStep(1, curStepId, gotItData)
           }
         }
     }
@@ -93,32 +111,78 @@ class EduUiOnboardingExecutor(private val project: Project,
       setShowCallout(!showInCenter)
     }
 
-    showZhaba(gotItData.zhaba)
-
     if (showInCenter) {
-      balloon.showInCenterOf(gotItData.relativePoint.originalComponent as JComponent)
+      balloon.showInCenterOf(gotItData.tooltipPoint.originalComponent as JComponent)
     }
     else {
-      balloon.show(gotItData.relativePoint, gotItData.position)
+      balloon.show(gotItData.tooltipPoint, gotItData.position)
     }
+
+    showZhaba(gotItData.zhaba)
   }
 
-  private fun showZhaba(zhaba: ZhabaComponent) {
+  private suspend fun showZhaba(zhaba: ZhabaComponent) {
     val frame = WindowManager.getInstance().getFrame(project)!!
-    frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER)
+    frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER, -1)
     zhaba.setBounds(0, 0, frame.width, frame.height)
-    zhaba.repaint()
+    zhaba.start()
   }
 
-  private fun finishOnboarding() {
+  private suspend fun animateTransitionBetweenSteps(
+    fromStepId: String, toStepId: String, fromData: EduUiOnboardingStepData, toData: EduUiOnboardingStepData
+  ) {
+    val frame = WindowManager.getInstance().getFrame(project) ?: return
+
+    val fromPoint = fromData.zhabaPoint
+    val toPoint = toData.zhabaPoint
+
+    val transitionAnimation = getTransition(fromStepId, toStepId, fromPoint, toPoint)
+
+    val zhaba = ZhabaComponent(project)
+    Disposer.register(disposable, zhaba)
+    frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER, -1)
+    zhaba.setBounds(0, 0, frame.width, frame.height)
+    zhaba.animation = transitionAnimation
+
+    zhaba.start()
+    Disposer.dispose(zhaba)
+  }
+
+  private fun getTransition(
+    fromStepId: String, toStepId: String, fromPoint: RelativePoint, toPoint: RelativePoint
+  ): EduUiOnboardingAnimation? = when (fromStepId to toStepId) {
+    "welcome" to "taskDescription" -> JumpRight(animationData, fromPoint, toPoint)
+    "courseView" to "taskDescription" -> JumpRight(animationData, fromPoint, toPoint)
+    "codeEditor" to "checkSolution" -> JumpDown(animationData, fromPoint, toPoint)
+    "checkSolution" to "courseView" -> JumpLeft(animationData, fromPoint, toPoint)
+    else -> null
+  }
+
+  private suspend fun finishOnboarding(data: EduUiOnboardingStepData, isHappy: Boolean) {
+    val frame = WindowManager.getInstance().getFrame(project)!!
+    val lastZhaba = ZhabaComponent(project)
+    Disposer.register(disposable, lastZhaba)
+    frame.layeredPane.add(lastZhaba, JLayeredPane.PALETTE_LAYER, -1)
+    lastZhaba.setBounds(0, 0, frame.width, frame.height)
+    lastZhaba.animation = createLastAnimation(data, isHappy, lastZhaba)
+    lastZhaba.start()
+
     Disposer.dispose(disposable)
     EduUiOnboardingService.getInstance(project).onboardingFinished()
-    NotificationGroupManager.getInstance()
-      .getNotificationGroup("EduOnboarding")
-      .createNotification(EduUiOnboardingBundle.message("finished.reminder"), MessageType.INFO)
-      .notify(project)
+    NotificationGroupManager.getInstance().getNotificationGroup("EduOnboarding")
+      .createNotification(EduUiOnboardingBundle.message("finished.reminder"), MessageType.INFO).notify(project)
 
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.MEET_NEW_UI)
     toolWindow?.activate(null)
+  }
+
+  private fun createLastAnimation(data: EduUiOnboardingStepData, isHappy: Boolean, lastZhaba: ZhabaComponent): EduUiOnboardingAnimation {
+    val fromPoint = data.zhabaPoint
+    return if (isHappy) {
+      HappyJumpDown(animationData, fromPoint, lastZhaba)
+    }
+    else {
+      SadJumpDown(animationData, fromPoint, lastZhaba)
+    }
   }
 }

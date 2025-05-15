@@ -7,7 +7,8 @@ import com.intellij.ui.awt.RelativePoint
 // copy-pasted from mono-repo
 class EduUiOnboardingStepData(
   val builder: GotItComponentBuilder,
-  val relativePoint: RelativePoint,
+  val tooltipPoint: RelativePoint,
+  val zhabaPoint: RelativePoint,
   // null means that the balloon should be shown in the center of the component referenced in relativePoint
   val position: Balloon.Position?,
   val zhaba: ZhabaComponent,

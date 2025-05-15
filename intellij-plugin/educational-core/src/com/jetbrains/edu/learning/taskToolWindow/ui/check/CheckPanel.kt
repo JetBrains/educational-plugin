@@ -35,9 +35,11 @@ import javax.swing.JPanel
 
 class CheckPanel(private val project: Project, private val parentDisposable: Disposable) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
-  private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
+
+  val checkActionsPanel: JPanel = JPanel(BorderLayout())
+
   /**
    * FIXME: Should be removed in favor of the [CheckPanel.leftActionsToolbar]
    * @see <a href="https://youtrack.jetbrains.com/issue/EDU-7584">EDU-7584</a>
