@@ -4,15 +4,33 @@ buildscript {
     }
 }
 
+apply plugin: 'hyperskill'
+
 subprojects {
     apply plugin: 'application'
     apply plugin: 'java'
 
-    sourceCompatibility = 11
+    def userJava = Integer.parseInt(JavaVersion.current().getMajorVersion())
+    def hsJava = Integer.parseInt(hs.java.version)
+    def testJava = Math.max(userJava, hsJava)
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(testJava)
+
+    compileJava {
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(userJava)
+        }
+    }
+
+    compileTestJava {
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(testJava)
+        }
+    }
 
     repositories {
         mavenCentral()
-
+        maven { url 'https://packages.jetbrains.team/maven/p/hyperskill-hs-test/maven' }
         maven { url "https://jitpack.io" }
     }
 
@@ -31,6 +49,7 @@ subprojects {
 
     test {
         systemProperty "file.encoding", "utf-8"
+        outputs.upToDateWhen { false }
     }
 
     compileJava.options.encoding = 'utf-8'
@@ -50,4 +69,8 @@ configure(subprojects.findAll { it.name != 'util' }) {
         testImplementation project(':util').sourceSets.main.output
         testImplementation project(':util').sourceSets.test.output
     }
+}
+
+wrapper {
+    gradleVersion = hs.gradle.version
 }
