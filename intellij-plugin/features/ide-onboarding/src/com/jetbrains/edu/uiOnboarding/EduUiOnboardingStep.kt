@@ -5,19 +5,21 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.KeyedLazyInstanceEP
 
 // copy-pasted from mono-repo
 interface EduUiOnboardingStep {
-  suspend fun performStep(project: Project, disposable: CheckedDisposable): EduUiOnboardingStepData?
+  suspend fun performStep(project: Project, data: EduUiOnboardingAnimationData, disposable: CheckedDisposable): EduUiOnboardingStepData?
 
   fun isAvailable(): Boolean = true
 
-  val zhabaID: String
+  fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation
 
-  fun createZhaba(project: Project, parentDisposable: Disposable): ZhabaComponent {
-    val zhabaComponent = ZhabaComponent(project, zhabaID)
+  fun createZhaba(project: Project, data: EduUiOnboardingAnimationData, point: RelativePoint, parentDisposable: Disposable): ZhabaComponent {
+    val zhabaComponent = ZhabaComponent(project)
     Disposer.register(parentDisposable, zhabaComponent)
+    zhabaComponent.animation = buildAnimation(data, point)
     return zhabaComponent
   }
 

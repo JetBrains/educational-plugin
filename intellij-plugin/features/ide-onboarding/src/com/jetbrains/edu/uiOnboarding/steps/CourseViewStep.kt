@@ -6,39 +6,49 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepData
+import com.jetbrains.edu.uiOnboarding.*
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import java.awt.Point
 
 class CourseViewStep : EduUiOnboardingStep {
-    override suspend fun performStep(project: Project, disposable: CheckedDisposable): EduUiOnboardingStepData? {
-        val projectViewToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
-            .getToolWindow("Project") ?: return null
+  override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
+    object : EduUiOnboardingAnimation {
+      override val steps: List<EduUiOnboardingAnimationStep> = listOf(
+        EduUiOnboardingAnimationStep(data.lookUp, point, point, 10_000),
+      )
 
-        projectViewToolWindow.show()
-
-        val component = projectViewToolWindow.component
-
-        val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("course.view.step.text") }
-            .withHeader(EduUiOnboardingBundle.message("course.view.step.header"))
-
-        val zhabaComponent = createZhaba(project, disposable)
-        val dimension = zhabaComponent.dimension
-
-        val zhabaPoint = Point(
-            (component.width - dimension.width) / 2,
-            component.height - dimension.height
-        )
-        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
-
-        // Position the balloon a bit to the right from the middle of the project view
-        val point = Point(component.width / 2 + dimension.width / 2 - 10, component.height - dimension.height / 2 + 20)
-        val relativePoint = RelativePoint(component, point)
-
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
+      override val cycle: Boolean = true
     }
 
-    override fun isAvailable(): Boolean = true
-    override val zhabaID: String = "zhaba-project"
+  override suspend fun performStep(
+    project: Project,
+    data: EduUiOnboardingAnimationData,
+    disposable: CheckedDisposable
+  ): EduUiOnboardingStepData? {
+    val projectViewToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
+                                  .getToolWindow("Project") ?: return null
+
+    projectViewToolWindow.show()
+
+    val component = projectViewToolWindow.component
+
+    val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("course.view.step.text") }
+      .withHeader(EduUiOnboardingBundle.message("course.view.step.header"))
+
+    val zhabaPoint = Point(
+      (component.width - ZHABA_DIMENSION.width) / 2,
+      component.height - ZHABA_DIMENSION.height
+    )
+
+    val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
+    val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)
+
+    // Position the balloon a bit to the right from the middle of the project view
+    val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - 4)
+    val relativePoint = RelativePoint(component, point)
+
+    return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
+  }
+
+  override fun isAvailable(): Boolean = true
 }

@@ -6,34 +6,51 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE_SHIFT
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepData
 import java.awt.Point
 
 class TaskDescriptionStep : EduUiOnboardingStep {
-    override suspend fun performStep(project: Project, disposable: CheckedDisposable): EduUiOnboardingStepData? {
-        val taskToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
-            .getToolWindow("Task") ?: return null
+  override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
+    object : EduUiOnboardingAnimation {
+      override val steps: List<EduUiOnboardingAnimationStep> = listOf(
+        EduUiOnboardingAnimationStep(data.pointingRight1, point, point, 2_000),
+        EduUiOnboardingAnimationStep(data.pointingRight2, point, point, 1_000),
+      )
 
-        taskToolWindow.show()
-
-        val component = taskToolWindow.component
-
-        val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("task.description.step.text") }
-            .withHeader(EduUiOnboardingBundle.message("task.description.step.header"))
-
-        val zhabaComponent = createZhaba(project, disposable)
-
-        val zhabaPoint = Point(-65, component.height / 2)
-        zhabaComponent.zhabaPoint = RelativePoint(component, zhabaPoint)
-
-        // Position the balloon on top of zhaba
-        val point = Point(-40, component.height / 2 - 10)
-        val relativePoint = RelativePoint(component, point)
-        return EduUiOnboardingStepData(builder, relativePoint, Balloon.Position.above, zhabaComponent)
+      override val cycle: Boolean = true
     }
 
-    override fun isAvailable(): Boolean = true
-    override val zhabaID: String = "zhaba-task"
+  override suspend fun performStep(
+    project: Project,
+    data: EduUiOnboardingAnimationData,
+    disposable: CheckedDisposable
+  ): EduUiOnboardingStepData? {
+    val taskToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
+                           .getToolWindow("Task") ?: return null
+
+    taskToolWindow.show()
+
+    val component = taskToolWindow.component
+
+    val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("task.description.step.text") }
+      .withHeader(EduUiOnboardingBundle.message("task.description.step.header"))
+
+    val zhabaPoint = Point(4, component.height / 2 - ZHABA_DIMENSION.height / 2)
+    val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
+
+    val tooltipPoint = Point(zhabaPoint.x + EYE_SHIFT, zhabaPoint.y - 4)
+    val relativePoint = RelativePoint(component, tooltipPoint)
+
+    val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)
+    return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
+  }
+
+  override fun isAvailable(): Boolean = true
 }
