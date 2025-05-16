@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.checker.CheckUtils.createTests
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getText
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -31,4 +33,6 @@ object AIDebugUtils {
   }
 
   private val LOG: Logger = Logger.getInstance(AIDebugUtils::class.java)
+
+  fun List<TaskFile>.toNameTextMap(project: Project) = associate { it.name to (it.getText(project) ?: "") }
 }
