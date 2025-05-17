@@ -5,8 +5,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.readText
 import com.jetbrains.edu.ai.debugger.core.api.TestFinder
-import com.jetbrains.edu.ai.debugger.core.connector.TestInfo
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
+import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.ai.debugger.core.session.AIDebugSessionService
 import com.jetbrains.edu.ai.debugger.core.ui.AIDebuggerHintInlineBanner
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.failedTestName
@@ -47,11 +47,11 @@ class AIDebuggerCheckListener : CheckListener {
     val taskDescription = task.getTaskDescription(project)
     val testText = runReadAction { TestFinder.findTestByName(project, task, testResult.failedTestName()) } ?: ""
     val testInfo = TestInfo(
-      name = testResult.failedTestName(),
-      expectedOutput = testResult.diff?.expected ?: "",
       errorMessage = testResult.details ?: testResult.message,
-      text = testText,
-      testFiles = task.getInvisibleTestFiles().toNameTextMap(project)
+      expectedOutput = testResult.diff?.expected ?: "",
+      name = testResult.failedTestName(),
+      testFiles =  task.getInvisibleTestFiles().toNameTextMap(project),
+      text = testText
     )
     project.service<AIDebugSessionService>()
       .runDebuggingSession(task, taskDescription, virtualFiles, testResult, testInfo, closeAIDebuggingHint)

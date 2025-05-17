@@ -15,8 +15,9 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotionListener
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.ai.debugger.core.connector.AIDebuggerServiceConnector
-import com.jetbrains.edu.ai.debugger.core.connector.TestInfo
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
+import com.jetbrains.edu.ai.debugger.core.service.TaskDescription
+import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -25,7 +26,10 @@ import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.educational.ml.debugger.context.TaskDescriptionContext
-import com.jetbrains.educational.ml.debugger.dto.*
+import com.jetbrains.educational.ml.debugger.dto.Breakpoint
+import com.jetbrains.educational.ml.debugger.dto.ProgrammingLanguage
+import com.jetbrains.educational.ml.debugger.dto.TaskDescriptionFormat
+import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -58,15 +62,27 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           project,
           EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")
         ) {
-          AIDebuggerServiceConnector.getInstance().getFinalBreakpoints(
-            project = project,
-            language = project.course?.languageById.toString(),
-            task = task,
-            taskDescription = description,
-            files = virtualFiles.associate { it.name to it.document.text },
-            testInfo = testInfo,
+          AIDebuggerServiceConnector.getInstance().getBreakpoints(
+            // TODO: not empty
+            authorSolution = emptyMap(),
+            // TODO: positive number / non-nullable
+            courseId = project.course?.id ?: 0,
+            // TODO: non-empty list
             dependencies = extractDependencies(task),
-            mavenRepositories = extractMavenUrls(task)
+            // TODO: non-empty list
+            mavenRepositories = extractMavenUrls(task),
+            // TODO: proper course language
+            programmingLanguage = ProgrammingLanguage.KOTLIN,
+            taskDescription = TaskDescription(
+              // TODO: proper task description format
+              descriptionFormat = TaskDescriptionFormat.MD,
+              text = description.text
+            ),
+            taskId = task.id,
+            testInfo = testInfo,
+            // TODO: positive number
+            updateVersion = project.course?.marketplaceCourseVersion,
+            userSolution = virtualFiles.associate { it.name to it.document.text },
           )
         }.onError {
           unlock()

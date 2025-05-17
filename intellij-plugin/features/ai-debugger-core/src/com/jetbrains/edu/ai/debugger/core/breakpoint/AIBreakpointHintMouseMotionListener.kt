@@ -13,7 +13,7 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService.Compani
 import com.jetbrains.edu.ai.debugger.core.ui.AIBreakpointHint
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.educational.ml.debugger.dto.BreakpointHintDetails
+import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 
 
 class AIBreakpointHintMouseMotionListener(
