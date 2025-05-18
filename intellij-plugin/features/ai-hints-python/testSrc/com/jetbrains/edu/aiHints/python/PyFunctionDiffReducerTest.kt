@@ -209,6 +209,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             b = 12
             while b < a:
                 pass
+            return a + b
     """
   )
 
@@ -358,6 +359,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             result = 0
             for item in items:
                 pass
+            return result
     """
   )
 
@@ -381,6 +383,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             result = 0
             if value > 0:
                 pass
+            return result
     """
   )
 
@@ -432,6 +435,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             result = 0
             for item in items:
                 pass
+            return result
     """
   )
 
@@ -458,8 +462,8 @@ class PyFunctionDiffReducerTest : EduTestCase() {
         def nested_structures(items):
             result = 0
             for item in items:
-                if item > 0:
-                    pass
+                pass
+            return result
     """
   )
 
@@ -470,8 +474,8 @@ class PyFunctionDiffReducerTest : EduTestCase() {
         def nested_structures(items):
             result = 0
             for item in items:
-                if item > 0:
-                   pass
+                pass
+            return result
     """,
     codeHint = """
         def nested_structures(items):
@@ -488,8 +492,8 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             result = 0
             for item in items:
                 if item > 0:
-                    while item > 0:
-                        pass
+                    pass
+            return result
     """
   )
 
@@ -502,6 +506,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             for item in items:
                 if item > 0:
                    pass
+            return result
     """,
     codeHint = """
         def nested_structures(items):
@@ -520,6 +525,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                 if item > 0:
                     while item > 0:
                         pass
+            return result
     """
   )
 
@@ -532,8 +538,41 @@ class PyFunctionDiffReducerTest : EduTestCase() {
             for item in items:
                 if item > 0:
                     while item > 0:
+                        pass
+            return result
+    """,
+    codeHint = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
                         result += 1
                         item -= 1
+            return result
+    """,
+    expectedResult = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+            return result
+    """
+  )
+
+  @Test
+  fun `test nested structures 6`() = assertCodeHint(
+    functionName = "nested_structures",
+    currentCode = """
+        def nested_structures(items):
+            result = 0
+            for item in items:
+                if item > 0:
+                    while item > 0:
+                        result += 1
+            return result
     """,
     codeHint = """
         def nested_structures(items):
@@ -571,7 +610,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               if num > 0:
                   print("Positive")
               elif num < 0:
-                  print("Nogative")
+                  print("Negative")
               elif num == 0:
                   print("WA")
   """,
@@ -597,7 +636,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               if num > 0:
                   print("Positive")
               elif num < 0:
-                  print("Nogative")
+                  print("Negative")
               elif num == 0:
                   print("WA")
   """,
@@ -625,7 +664,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               if num > 0:
                   print("Positive")
               elif num < 0:
-                  print("Nogative")
+                  print("Negative")
               elif num == 0:
                   print("WA")
   """,
@@ -655,7 +694,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               if num > 0:
                   print("Positive")
               elif num < 0:
-                  print("Nogative")
+                  print("Negative")
               elif num == 0:
                   print("WA")
   """,
@@ -687,7 +726,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               if num > 0:
                   print("Positive")
               elif num < 0:
-                  print("Nogative")
+                  print("Negative")
               elif num == 0:
                   print("WA")
   """,
@@ -698,7 +737,9 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                   if num > 0:
                       print("Positive")
                   elif num < 0:
-                      print("Nogative")
+                      pass
+                  elif num == 0:
+                      pass
   """
   )
 
@@ -712,7 +753,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                   if num > 0:
                       print("Positive")
                   elif num < 0:
-                      print("Nogative")
+                      pass
                   elif num == 0:
                       pass
   """,
@@ -723,7 +764,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               if num > 0:
                   print("Positive")
               elif num < 0:
-                  print("Nogative")
+                  print("Negative")
               elif num == 0:
                   print("WA")
   """,
@@ -734,9 +775,9 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                   if num > 0:
                       print("Positive")
                   elif num < 0:
-                      print("Nogative")
+                      print("Negative")
                   elif num == 0:
-                      print("WA")
+                      pass
   """
   )
 
@@ -750,47 +791,9 @@ class PyFunctionDiffReducerTest : EduTestCase() {
                   if num > 0:
                       print("Positive")
                   elif num < 0:
-                      print("Nogative")
-                  elif num == 0:
-                      print("WA")
-  """,
-    codeHint = """
-      def check_number(num):
-          for i in range(0, 10):
-            for j in range(0, 10):
-              if num > 0:
-                  print("Positive")
-              elif num < 0:
-                  print("Negative")
-              elif num == 0:
-                  print("Zero")
-  """,
-    expectedResult = """
-      def check_number(num):
-          for i in range(0, 10):
-              for j in range(0, 10):
-                  if num > 0:
-                      print("Positive")
-                  elif num < 0:
                       print("Negative")
                   elif num == 0:
-                      print("WA")
-  """
-  )
-
-  @Test
-  fun `test check_number full path 8`() = assertCodeHint(
-    functionName = "check_number",
-    currentCode = """
-      def check_number(num):
-          for i in range(0, 10):
-              for j in range(0, 10):
-                  if num > 0:
-                      print("Positive")
-                  elif num < 0:
-                      print("Negative")
-                  elif num == 0:
-                      print("WA")
+                      pass
   """,
     codeHint = """
       def check_number(num):
@@ -1314,6 +1317,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
               print("Negative")
           elif num == 0:
               print("Zero")
+          return num
   """,
     codeHint = """
       def check_number(num):
@@ -1325,6 +1329,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
       def check_number(num):
           if num > 0:
               print("Positive")
+          return num
   """,
   )
 
