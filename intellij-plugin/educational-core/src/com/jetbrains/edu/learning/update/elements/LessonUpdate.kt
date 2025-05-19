@@ -1,13 +1,16 @@
 package com.jetbrains.edu.learning.update.elements
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.update.StudyItemUpdater.Companion.deleteFilesOnDisc
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +45,10 @@ data class LessonUpdateInfo(
   val taskUpdates: List<TaskUpdate>
 ) : LessonUpdate(localItem, remoteItem) {
   override suspend fun update(project: Project) {
+    if (localItem is FrameworkLesson) {
+      ensureFrameworkLessonCurrentTaskIsNotDeleted(project, localItem, remoteItem.taskList.lastIndex)
+    }
+
     if (taskUpdates.isNotEmpty()) {
       taskUpdates.forEach {
         it.update(project)
@@ -68,6 +75,24 @@ data class LessonUpdateInfo(
 
     blockingContext {
       YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
+    }
+  }
+
+  private suspend fun ensureFrameworkLessonCurrentTaskIsNotDeleted(
+    project: Project,
+    lesson: FrameworkLesson,
+    lastTaskIndexInRemoteLesson: Int
+  ) {
+    if (lesson.currentTaskIndex <= lastTaskIndexInRemoteLesson) return
+
+    val currentTask = lesson.currentTask() ?: return
+    val lastNonDeletedTask = lesson.taskList.getOrNull(lastTaskIndexInRemoteLesson) ?: return
+
+    // We explicitly navigate to the last non-deleted task to properly update the state of the framework lesson
+    withContext(Dispatchers.EDT) {
+      blockingContext {
+        NavigationUtils.prepareFilesForTargetTask(project, lesson, currentTask, lastNonDeletedTask, showDialogIfConflict = false)
+      }
     }
   }
 }
