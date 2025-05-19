@@ -519,6 +519,55 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     assertRenamedTaskFolder(3)
   }
 
+  @Test
+  fun `current task is removed from the end`() {
+    next()
+    next() // move to the third task and remove it in update
+    doTestRemoveLastTask()
+  }
+
+  @Test
+  fun `non-current task is removed from the end`() {
+    next() // move to the second task and remove the third one in update
+    doTestRemoveLastTask()
+  }
+
+  private fun doTestRemoveLastTask() {
+    updateCourse {
+      lessons[0].removeTask(task3)
+    }
+
+    assertEquals(2, localCourse.taskList.size)
+    // in all scenarios, the current task is the second
+    assertEquals(localCourse.task2, currentTask)
+
+    fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("Task.kt")
+          file("Tests2.kt")
+          file("NonEdit.kt")
+        }
+        dir("task1") {
+          file("task.html")
+          file("task-info.yaml")
+          file("task-remote-info.yaml")
+        }
+        dir("task2") {
+          file("task.html")
+          file("task-info.yaml")
+          file("task-remote-info.yaml")
+        }
+        file("lesson-info.yaml")
+        file("lesson-remote-info.yaml")
+      }
+      file("build.gradle")
+      file("settings.gradle")
+      file("course-info.yaml")
+      file("course-remote-info.yaml")
+    }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
+  }
+
   protected abstract fun produceCourse(): T
 
   protected abstract fun setupLocalCourse(course: T)
