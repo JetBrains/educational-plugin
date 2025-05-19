@@ -1,9 +1,10 @@
 package com.jetbrains.edu.csharp.hyperskill
 
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.csharp.CSharpLanguageSettings
 import com.jetbrains.edu.csharp.CSharpProjectSettings
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.csharp.includeTopLevelDirsInCourseView
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -12,4 +13,16 @@ class CSharpHyperskillCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CSharpProjectSettings> =
     CSharpHyperskillProjectGenerator(this, course)
+
+  /**
+   * Is needed to index top-level files when the Unity project is re-opened as a solution
+   */
+  override fun refreshProject(project: Project, cause: RefreshCause) {
+    super.refreshProject(project, cause)
+    val course = project.course ?: error("No course associated with project")
+
+    if (cause == RefreshCause.STRUCTURE_MODIFIED) {
+      includeTopLevelDirsInCourseView(project, course)
+    }
+  }
 }

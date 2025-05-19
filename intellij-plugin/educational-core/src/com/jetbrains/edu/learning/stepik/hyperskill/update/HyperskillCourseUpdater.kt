@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator
 import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
@@ -51,7 +52,8 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillProject.language) ?: return null
     val eduEnvironment = hyperskillProject.eduEnvironment ?: return null
     val stagesFromServer = connector.getStages(id) ?: return null
-    return HyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment).apply {
+    val hyperskillCourse = HyperskillCourseCreator.createHyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment)
+    return hyperskillCourse.apply {
       stages = stagesFromServer
       val lessonFromServer = connector.getLesson(this)
       addLesson(lessonFromServer)

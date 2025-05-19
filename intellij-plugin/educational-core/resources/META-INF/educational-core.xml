@@ -97,6 +97,9 @@
     <extensionPoint qualifiedName="Educational.studyItemRefactoringHandler"
                     interface="com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.hyperskillCourseCreator"
+                    interface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>
