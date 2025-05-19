@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 
 interface FunctionParser {
   fun extractFunctionModels(files: List<PsiFile>): List<FunctionModel>
+  fun extractDependencies(files: List<PsiFile>): List<Pair<FunctionModel, List<FunctionModel>>>
 
   companion object {
     private val EP_NAME = LanguageExtension<FunctionParser>("Educational.functionParser")
@@ -19,6 +20,11 @@ interface FunctionParser {
     fun extractFunctionModels(files: List<TaskFile>, project: Project, language: Language): List<FunctionModel> {
       val psiFiles = files.mapNotNull { it.getVirtualFile(project) }.mapNotNull { PsiManager.getInstance(project).findFile(it) }
       return EP_NAME.forLanguage(language)?.extractFunctionModels(psiFiles) ?: emptyList()
+    }
+
+    fun extractDependencies(files: List<TaskFile>, project: Project, language: Language): List<Pair<FunctionModel, List<FunctionModel>>> {
+      val psiFiles = files.mapNotNull { it.getVirtualFile(project) }.mapNotNull { PsiManager.getInstance(project).findFile(it) }
+      return EP_NAME.forLanguage(language)?.extractDependencies(psiFiles) ?: emptyList()
     }
   }
 }

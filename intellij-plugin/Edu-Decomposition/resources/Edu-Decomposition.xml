@@ -8,6 +8,8 @@
   <actions>
       <action id="Educational.Check.Completeness" class="com.jetbrains.edu.decomposition.actions.CheckCompletenessAction"/>
       <action id="Educational.Check.Granularity" class="com.jetbrains.edu.decomposition.actions.CheckGranularityAction"/>
+      <action id="Educational.Check.Dependencies" class="com.jetbrains.edu.decomposition.actions.CheckDependenciesAction"/>
+
   </actions>
 
   <extensionPoints>

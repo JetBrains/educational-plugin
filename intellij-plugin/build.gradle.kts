@@ -1103,6 +1103,11 @@ project("Edu-Decomposition") {
       excludeKotlinSerializationDeps()
       exclude(group = "net.java.dev.jna")
     }
+    api(rootProject.libs.educational.ml.library.decompose) {
+      excludeKotlinDeps()
+      excludeKotlinSerializationDeps()
+      exclude(group = "net.java.dev.jna")
+    }
 
     testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 

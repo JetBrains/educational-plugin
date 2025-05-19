@@ -35,6 +35,7 @@ abstract class CheckActionBase: ActionWithProgressIcon() {
 
   abstract val checkingProgressTitle: String
 
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     CheckDetailsView.getInstance(project).clear()

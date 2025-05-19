@@ -161,6 +161,9 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
           DecompositionStatus.GRANULARITY_CHECK_NEEDED ->
             ActionManager.getInstance().getAction("Educational.Check.Granularity") as ActionWithProgressIcon
 
+          DecompositionStatus.DEPENDENCIES_CHECK_NEEDED ->
+            ActionManager.getInstance().getAction("Educational.Check.Dependencies") as ActionWithProgressIcon
+
           else -> CheckAction(task.getUICheckLabel())
         }
         val checkComponent = CheckPanelButtonComponent(
