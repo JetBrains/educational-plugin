@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.update.elements.StudyItemUpdate
 import org.jetbrains.annotations.TestOnly
 
@@ -23,7 +25,10 @@ abstract class StudyItemUpdater<T : StudyItem, U : StudyItemUpdate<T>>(protected
   companion object {
     @Suppress("UnstableApiUsage")
     suspend fun <T : StudyItem> T.deleteFilesOnDisc(project: Project) {
-      val virtualFile = getDir(project.courseDir) ?: return
+      val virtualFile = when (this) {
+        is Task -> getTaskDirectory(project) ?: return
+        else -> getDir(project.courseDir) ?: return
+      }
       writeAction {
         virtualFile.delete(this::class.java)
       }
