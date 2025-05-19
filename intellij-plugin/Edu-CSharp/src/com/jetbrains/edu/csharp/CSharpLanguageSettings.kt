@@ -8,6 +8,7 @@ import com.jetbrains.edu.csharp.messages.EduCSharpBundle
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -20,6 +21,7 @@ class CSharpLanguageSettings : LanguageSettings<CSharpProjectSettings>() {
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
 
+    if (course is HyperskillCourse) return emptyList()
     val versions = course.configurator?.courseBuilder?.getSupportedLanguageVersions()?.toTypedArray() ?: error("No builder associated with course found")
     val langStandardComboBox = ComboBox(versions)
     val courseTargetFrameworkVersion = course.languageVersion
@@ -32,7 +34,7 @@ class CSharpLanguageSettings : LanguageSettings<CSharpProjectSettings>() {
       targetFrameworkVersion = it.item.toString()
       notifyListeners()
     }
-    return listOf<LabeledComponent<JComponent>>(
+    return listOf(
       LabeledComponent.create(
         langStandardComboBox,
         EduCSharpBundle.getMessage("target.framework"),

@@ -26,7 +26,12 @@ class HyperskillCourse : Course {
   var selectedStage: Int? = null
   var selectedProblem: Int? = null
 
-  constructor(hyperskillProject: HyperskillProject, languageId: String, languageVersion: String?, environment: String) {
+  constructor(
+    hyperskillProject: HyperskillProject,
+    languageId: String,
+    languageVersion: String?,
+    environment: String,
+  ) {
     this.hyperskillProject = hyperskillProject
     name = hyperskillProject.title
     description = hyperskillProject.description + descriptionNote(hyperskillProject.id)

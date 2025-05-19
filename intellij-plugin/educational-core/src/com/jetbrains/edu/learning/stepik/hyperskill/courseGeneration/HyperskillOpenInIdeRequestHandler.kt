@@ -190,8 +190,8 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     if (eduEnvironment == EduNames.ANDROID && !EduUtilsKt.isAndroidStudio()) {
       return Err(ValidationErrorMessageWithHyperlinks(EduCoreBundle.message("rest.service.android.not.supported")))
     }
-
-    return Ok(HyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment))
+    val hyperskillCourse = HyperskillCourseCreator.createHyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment)
+    return Ok(hyperskillCourse)
   }
 
   override fun getCourse(request: HyperskillOpenRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {

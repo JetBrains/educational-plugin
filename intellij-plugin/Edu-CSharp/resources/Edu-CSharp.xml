@@ -71,14 +71,11 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.csharp.CSharpConfigurator" language="C#"
                   displayName="C#"/>
-    <!--    For now, we have 2 configurators to have compatibility with Hyperskill courses.
-    The one with "environment=unittest" will be removed as soon as the courses on Hyperskill are fixed-->
-    <configurator implementationClass="com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator" language="C#"
-                  courseType="Hyperskill" environment="unittest"/>
     <configurator implementationClass="com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator" language="C#"
                   courseType="Hyperskill"/>
     <courseViewPaneCustomization implementation="com.jetbrains.edu.csharp.CSharpCourseViewPaneCustomization"/>
     <studyItemRefactoringHandler implementation="com.jetbrains.edu.csharp.refactoring.CSharpStudyItemRefactoringHandler"/>
+    <hyperskillCourseCreator implementation="com.jetbrains.edu.csharp.hyperskill.UnityHyperskillCourseCreator"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">

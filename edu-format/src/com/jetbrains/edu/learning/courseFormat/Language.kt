@@ -16,6 +16,7 @@ object Language {
     "Shell Script" to "Shell Script",
     "SQL" to "SQL",
     "C#" to "C#",
+    "unity" to "unity",
 
     // used only for testing
     "TEXT" to "Plain text",
