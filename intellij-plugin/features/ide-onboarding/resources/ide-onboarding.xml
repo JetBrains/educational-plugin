@@ -32,5 +32,6 @@
                        displayType="BALLOON"
                        bundle="messages.EduUiOnboardingTourBundle"
                        key="notification.group.edu.onboarding"/>
+    <postStartupActivity implementation="com.jetbrains.edu.uiOnboarding.EduUiOnboardingProjectActivity"/>
   </extensions>
 </idea-plugin>
