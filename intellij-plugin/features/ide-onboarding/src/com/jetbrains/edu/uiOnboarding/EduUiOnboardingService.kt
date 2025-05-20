@@ -6,6 +6,11 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.uiOnboarding.steps.CheckSolutionStep
+import com.jetbrains.edu.uiOnboarding.steps.CodeEditorStep
+import com.jetbrains.edu.uiOnboarding.steps.CourseViewStep
+import com.jetbrains.edu.uiOnboarding.steps.TaskDescriptionStep
+import com.jetbrains.edu.uiOnboarding.steps.WelcomeStep
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,7 +47,13 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   }
 
   private fun getDefaultStepsOrder(): List<String> {
-    return listOf("welcome", "taskDescription", "codeEditor", "checkSolution", "courseView")
+    return listOf(
+      WelcomeStep.STEP_KEY,
+      TaskDescriptionStep.STEP_KEY,
+      CodeEditorStep.STEP_KEY,
+      CheckSolutionStep.STEP_KEY,
+      CourseViewStep.STEP_KEY
+    )
   }
 
   override fun dispose() {}

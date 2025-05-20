@@ -51,6 +51,10 @@ class CheckSolutionStep : EduUiOnboardingStep {
   }
 
   override fun isAvailable(): Boolean = true
+
+  companion object {
+    const val STEP_KEY: String = "checkSolution"
+  }
 }
 
 private fun <T : Any> java.awt.Component.findComponentOfType(clazz: Class<T>): T? {
