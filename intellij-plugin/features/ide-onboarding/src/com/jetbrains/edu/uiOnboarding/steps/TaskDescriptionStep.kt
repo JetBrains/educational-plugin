@@ -53,4 +53,8 @@ class TaskDescriptionStep : EduUiOnboardingStep {
   }
 
   override fun isAvailable(): Boolean = true
+
+  companion object {
+    const val STEP_KEY = "taskDescription"
+  }
 }

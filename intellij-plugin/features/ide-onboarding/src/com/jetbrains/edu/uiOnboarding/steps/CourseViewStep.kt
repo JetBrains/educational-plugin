@@ -51,4 +51,8 @@ class CourseViewStep : EduUiOnboardingStep {
   }
 
   override fun isAvailable(): Boolean = true
+
+  companion object {
+    const val STEP_KEY = "courseView"
+  }
 }

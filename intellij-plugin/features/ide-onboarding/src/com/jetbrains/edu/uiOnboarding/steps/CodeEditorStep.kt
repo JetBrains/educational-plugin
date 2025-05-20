@@ -49,4 +49,8 @@ class CodeEditorStep : EduUiOnboardingStep {
   }
 
   override fun isAvailable(): Boolean = true
+
+  companion object {
+    const val STEP_KEY: String = "codeEditor"
+  }
 }
