@@ -20,7 +20,9 @@ internal class EduUiOnboardingService(private val project: Project, private val 
     get() = myTourInProgress.get()
 
   fun startOnboarding() {
-    myTourInProgress.set(true)
+    val alreadyInProgress = myTourInProgress.getAndSet(true)
+    if (alreadyInProgress) return
+
     val steps = getSteps()
     val data = EduUiOnboardingAnimationData.load() ?: return
     val executor = EduUiOnboardingExecutor(project, data, steps, cs, this)
