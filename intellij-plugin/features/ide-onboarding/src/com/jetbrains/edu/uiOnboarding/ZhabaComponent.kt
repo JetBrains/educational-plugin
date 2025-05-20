@@ -91,8 +91,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
   override fun dispose() {
     animation = null
-    val frame = WindowManager.getInstance().getFrame(project)!!
-    frame.layeredPane.remove(frame.layeredPane.components.find { it == this })
+    val frame = WindowManager.getInstance().getFrame(project) ?: return
+    frame.layeredPane.remove(this)
   }
 }
-

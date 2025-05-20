@@ -57,7 +57,7 @@ class EduUiOnboardingExecutor(
     curStepStartMillis = stepStartMillis
 
     val gotItData = step.performStep(project, animationData, stepDisposable)
-    if (gotItData == null) {
+    if (gotItData == null || !gotItData.tooltipPoint.component.isShowing) {
       runStep(ind + 1, previousStepId, previousData)
       return
     }
