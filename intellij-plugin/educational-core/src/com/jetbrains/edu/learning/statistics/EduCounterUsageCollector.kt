@@ -107,17 +107,24 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     }
   }
 
+  enum class UiOnboardingRelaunchLocation {
+    MENU_OR_ACTION, TOOLTIP_RESTART_BUTTON
+  }
+
   companion object {
     private const val SOURCE = "source"
     private const val SUCCESS = "success"
     private const val EVENT = "event"
     private const val TYPE = "type"
     private const val EDU_TAB = "tab"
+    private const val UI_ONBOARDING_STEP_INDEX = "index"
+    private const val UI_ONBOARDING_STEP_KEY = "key"
+    private const val UI_ONBOARDING_RELAUNCH_LOCATION = "location"
 
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      22,
+      23,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -319,6 +326,27 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       EventFields.Boolean(SUCCESS)
     )
 
+    private val UI_ONBOARDING_STARTED = GROUP.registerEvent(
+      "ui.onboarding.started",
+      """Track when a user clicks the "Next" button to begin the onboarding tour."""
+    )
+    private val UI_ONBOARDING_SKIPPED = GROUP.registerEvent(
+      "ui.onboarding.skipped",
+      """Track when a user clicks "Skip" button. The index and the step key are recorded""",
+      EventFields.Int(UI_ONBOARDING_STEP_INDEX),
+      // the list of step keys is taken from com.jetbrains.edu.uiOnboarding.EduUiOnboardingService.getDefaultStepsOrder
+      EventFields.String(UI_ONBOARDING_STEP_KEY, listOf("welcome", "taskDescription", "codeEditor", "checkSolution", "courseView"))
+    )
+    private val UI_ONBOARDING_FINISHED = GROUP.registerEvent(
+      "ui.onboarding.finished",
+      """Track when a user completes the onboarding tour and clicks the final "Finish" button."""
+    )
+    private val UI_ONBOARDING_RELAUNCHED = GROUP.registerEvent(
+      "ui.onboarding.relaunched",
+      """Track when a user manually opens the onboarding tour again from an alternative entry point (e.g. Help menu).""",
+      enumField<UiOnboardingRelaunchLocation>(UI_ONBOARDING_RELAUNCH_LOCATION)
+    )
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -417,5 +445,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun openCommunityTab() = OPEN_COMMUNITY_TAB.log()
 
     fun communityTabOpenedByLink(success: Boolean) = COMMUNITY_TAB_OPENED_BY_LINK.log(success)
+
+    fun uiOnboardingStarted() = UI_ONBOARDING_STARTED.log()
+
+    fun uiOnboardingSkipped(index: Int, key: String) = UI_ONBOARDING_SKIPPED.log(index, key)
+
+    fun uiOnboardingFinished() = UI_ONBOARDING_FINISHED.log()
+
+    fun uiOnboardingRelaunched(location: UiOnboardingRelaunchLocation) = UI_ONBOARDING_RELAUNCHED.log(location)
   }
 }
