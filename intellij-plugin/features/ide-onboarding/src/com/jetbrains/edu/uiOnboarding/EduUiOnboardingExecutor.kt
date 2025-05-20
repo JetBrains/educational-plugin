@@ -11,16 +11,14 @@ import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
-import com.jetbrains.edu.uiOnboarding.transitions.JumpDown
-import com.jetbrains.edu.uiOnboarding.transitions.JumpLeft
-import com.jetbrains.edu.uiOnboarding.transitions.JumpRight
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UiOnboardingRelaunchLocation
+import com.jetbrains.edu.uiOnboarding.transitions.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
-import com.jetbrains.edu.uiOnboarding.transitions.HappyJumpDown
-import com.jetbrains.edu.uiOnboarding.transitions.SadJumpDown
 
 // copy-pasted from mono-repo
 class EduUiOnboardingExecutor(
@@ -73,37 +71,44 @@ class EduUiOnboardingExecutor(
     }
 
     builder.onEscapePressed {
+      EduCounterUsageCollector.uiOnboardingSkipped(ind, stepId)
       Disposer.dispose(stepDisposable)
-        cs.launch(Dispatchers.EDT) {
-          finishOnboarding(gotItData, isHappy = false)
-        }
-      }.requestFocus(true)
+      cs.launch(Dispatchers.EDT) {
+        finishOnboarding(gotItData, isHappy = false)
+      }
+    }.requestFocus(true)
 
     if (ind < steps.lastIndex) {
       builder.withButtonLabel(EduUiOnboardingBundle.message("gotIt.button.next")).onButtonClick {
-          Disposer.dispose(stepDisposable)
-          cs.launch(Dispatchers.EDT) {
-            runStep(ind + 1, curStepId, gotItData)
-          }
-        }.withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.skipAll")) {
-          Disposer.dispose(stepDisposable)
-          cs.launch(Dispatchers.EDT) {
-            finishOnboarding(gotItData, isHappy = false)
-          }
+        if (ind == 0) {
+          EduCounterUsageCollector.uiOnboardingStarted()
         }
+        Disposer.dispose(stepDisposable)
+        cs.launch(Dispatchers.EDT) {
+          runStep(ind + 1, curStepId, gotItData)
+        }
+      }.withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.skipAll")) {
+        EduCounterUsageCollector.uiOnboardingSkipped(ind, stepId)
+        Disposer.dispose(stepDisposable)
+        cs.launch(Dispatchers.EDT) {
+          finishOnboarding(gotItData, isHappy = false)
+        }
+      }
     }
     else {
       builder.withButtonLabel(EduUiOnboardingBundle.message("gotIt.button.finish")).withContrastButton(true).onButtonClick {
-          cs.launch(Dispatchers.EDT) {
-            Disposer.dispose(stepDisposable)
-            finishOnboarding(gotItData, isHappy = true)
-          }
-        }.withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.restart")) {
+        EduCounterUsageCollector.uiOnboardingFinished()
+        cs.launch(Dispatchers.EDT) {
           Disposer.dispose(stepDisposable)
-          cs.launch(Dispatchers.EDT) {
-            runStep(1, curStepId, gotItData)
-          }
+          finishOnboarding(gotItData, isHappy = true)
         }
+      }.withSecondaryButton(EduUiOnboardingBundle.message("gotIt.button.restart")) {
+        EduCounterUsageCollector.uiOnboardingRelaunched(UiOnboardingRelaunchLocation.TOOLTIP_RESTART_BUTTON)
+        Disposer.dispose(stepDisposable)
+        cs.launch(Dispatchers.EDT) {
+          runStep(1, curStepId, gotItData)
+        }
+      }
     }
 
     val balloon = builder.build(stepDisposable) {

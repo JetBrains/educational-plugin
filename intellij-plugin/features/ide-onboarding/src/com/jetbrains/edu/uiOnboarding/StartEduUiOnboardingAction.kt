@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UiOnboardingRelaunchLocation
 
 class StartEduUiOnboardingAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
@@ -12,6 +14,8 @@ class StartEduUiOnboardingAction : DumbAwareAction() {
     if (project == null) {
       return
     }
+
+    EduCounterUsageCollector.uiOnboardingRelaunched(UiOnboardingRelaunchLocation.MENU_OR_ACTION)
     EduUiOnboardingService.getInstance(project).startOnboarding()
   }
 
