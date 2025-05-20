@@ -16,14 +16,22 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotion
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.ai.debugger.core.connector.AIDebuggerServiceConnector
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
+import com.jetbrains.edu.ai.debugger.core.service.TaskDescription
+import com.jetbrains.edu.ai.debugger.core.service.TestInfo
+import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getLanguage
+import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getTaskDescriptionText
+import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.toNameTextMap
+import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.toTaskDescriptionType
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResult
-import com.jetbrains.edu.learning.courseFormat.ext.languageById
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.document
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.educational.ml.debugger.dto.*
+import com.jetbrains.educational.ml.debugger.dto.Breakpoint
+import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -40,10 +48,9 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
 
   fun runDebuggingSession(
     task: Task,
-    description: TaskDescription,
-    virtualFiles: List<VirtualFile>,
+    taskFiles: List<TaskFile>,
     testResult: CheckResult,
-    testText: String, // TODO: add a test to the request?
+    testInfo: TestInfo,
     closeAIDebuggingHint: () -> Unit
   ) {
     coroutineScope.launch {
@@ -52,14 +59,24 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         return@launch
       }
       try {
-        val fixes = withBackgroundProgress(
+        val finalBreakpoints = withBackgroundProgress(
           project,
           EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")
         ) {
-          AIDebuggerServiceConnector.getInstance().getCodeFix(
-            taskDescription = description,
-            files = virtualFiles.toNumberedLineMap(),
-            testDescription = testResult.details ?: testResult.message
+          AIDebuggerServiceConnector.getInstance().getBreakpoints(
+            authorSolution = task.taskFiles.values.filter { !it.isTestFile }.associate { it.name to it.getSolution() },
+            // TODO: positive number / non-nullable
+            courseId = project.course?.id ?: 0,
+            programmingLanguage = project.getLanguage(),
+            taskDescription = TaskDescription(
+              descriptionFormat = task.descriptionFormat.toTaskDescriptionType(),
+              text = task.getTaskDescriptionText(project)
+            ),
+            taskId = task.id,
+            testInfo = testInfo,
+            // TODO: positive number
+            updateVersion = project.course?.marketplaceCourseVersion,
+            userSolution = taskFiles.toNameTextMap(project),
           )
         }.onError {
           unlock()
@@ -71,11 +88,12 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         }
 
         val language = project.course?.languageById ?: error("Language is not found")
+        val virtualFiles = runReadAction { taskFiles.mapNotNull { it.getVirtualFile(project) } }
         val fileMap = virtualFiles.associateBy { it.name }
-        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(fixes, fileMap, language)
-        fixes.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
+        val intermediateBreakpoints = calculateIntermediateBreakpointPositions(finalBreakpoints, fileMap, language)
+        finalBreakpoints.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
         intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
-        val breakpointHints = generateIntermediateBreakpointHints(fileMap, fixes, intermediateBreakpoints)
+        val breakpointHints = generateBreakpointHints(fileMap, finalBreakpoints, intermediateBreakpoints)
         if (breakpointHints == null) {
           EduNotificationManager.showErrorNotification(
             project,
@@ -83,7 +101,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           )
           return@launch
         }
-        val listener = AIBreakpointHintMouseMotionListener(fixes, breakpointHints)
+        val listener = AIBreakpointHintMouseMotionListener(breakpointHints)
         EditorFactory.getInstance().eventMulticaster.apply {
           addEditorMouseMotionListener(listener, this@AIDebugSessionService)
           addEditorMouseListener(listener, this@AIDebugSessionService)
@@ -96,22 +114,22 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     }
   }
 
-  private fun CodeFixResponse.toBreakpointPositionsByFileMap() =
-    content.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
-      fileName to fixesForFile.map { it.wrongCodeLineNumber }
+  private fun List<Breakpoint>.toBreakpointPositionsByFileMap() =
+    groupBy { it.fileName }.mapNotNull { (fileName, breakpoints) ->
+      fileName to breakpoints.map { it.lineNumber }
     }.toMap()
 
   private fun calculateIntermediateBreakpointPositions(
-    fixes: CodeFixResponse,
+    finalBreakpoints: List<Breakpoint>,
     fileMap: Map<String, VirtualFile>,
     language: Language
   ) =
-    fixes.content.groupBy { it.fileName }.mapNotNull { (fileName, fixesForFile) ->
+    finalBreakpoints.groupBy { it.fileName }.mapNotNull { (fileName, breakpoints) ->
       val virtualFile = fileMap[fileName] ?: return@mapNotNull null
       fileName to runReadAction {
         IntermediateBreakpointProcessor.calculateIntermediateBreakpointPositions(
           virtualFile,
-          fixesForFile.map { it.wrongCodeLineNumber }.toList(),
+          breakpoints.map { it.lineNumber },
           project,
           language
         )
@@ -128,21 +146,16 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
     }
   }
 
-  private suspend fun generateIntermediateBreakpointHints(
+  private suspend fun generateBreakpointHints(
     fileMap: Map<String, VirtualFile>,
-    fixes: CodeFixResponse,
+    finalBreakpoints: List<Breakpoint>,
     intermediateBreakpointPositions: Map<String, List<Int>>
-  ): BreakpointHintResponse? {
-    val finalBreakpoints = fixes.content.mapNotNull {
-      val virtualFile = fileMap[it.fileName] ?: return@mapNotNull null
-      val line = virtualFile.getLine(it.wrongCodeLineNumber)
-      FinalBreakpoint(it.fileName, it.wrongCodeLineNumber, line, it.breakpointHint)
-    }
+  ): List<BreakpointHintDetails>? {
     val intermediateBreakpoint = intermediateBreakpointPositions.map { (fileName, positions) ->
       positions.mapNotNull { position ->
         val virtualFile = fileMap[fileName] ?: return@mapNotNull null
         val line = virtualFile.getLine(position)
-        IntermediateBreakpoint(fileName, position, line)
+        Breakpoint(fileName, position, line)
       }
     }.flatten()
     return withBackgroundProgress(
@@ -159,10 +172,6 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       error("Line number $line is out of bounds")
     }
     return document.text.substring(document.getLineStartOffset(line), document.getLineEndOffset(line)).trim()
-  }
-
-  private fun List<VirtualFile>.toNumberedLineMap() = toNumberedLineMap { list ->
-    list.asSequence().map { it.name to it }
   }
 
   private fun Map<String, VirtualFile>.toNumberedLineMap() = toNumberedLineMap { map ->
