@@ -13,13 +13,11 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService.Compani
 import com.jetbrains.edu.ai.debugger.core.ui.AIBreakpointHint
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.educational.ml.debugger.dto.BreakpointHintResponse
-import com.jetbrains.educational.ml.debugger.dto.CodeFixResponse
+import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 
 
 class AIBreakpointHintMouseMotionListener(
-  private val fixes: CodeFixResponse,
-  private val breakpointHints: BreakpointHintResponse,
+  private val breakpointHints: List<BreakpointHintDetails>,
 ) : EditorMouseMotionListener, EditorMouseListener {
 
   private var breakpointHint: AIBreakpointHint? = null
@@ -35,7 +33,7 @@ class AIBreakpointHintMouseMotionListener(
     val virtualFile = editor.virtualFile ?: return
     if (!hasBreakpointAtLine(editor, line, virtualFile)) return
     val fileName = virtualFile.name
-    val message = fixes.getHint(line, fileName) ?: breakpointHints.getHint(line, fileName) ?: error("No breakpoint hint is found")
+    val message = breakpointHints.getHint(line, fileName) ?: error("No breakpoint hint is found")
     breakpointHint = AIBreakpointHint(message, editor, getTextStartOffset(editor, line))
   }
 
@@ -52,13 +50,9 @@ class AIBreakpointHintMouseMotionListener(
     currentLine = null
   }
 
-  private fun CodeFixResponse.getHint(line: Int, fileName: String): String? = content.firstOrNull {
-    it.fileName == fileName && it.wrongCodeLineNumber == line
-  }?.breakpointHint
-
-  private fun BreakpointHintResponse.getHint(line: Int, fileName: String): String? = content.firstOrNull {
+  private fun List<BreakpointHintDetails>.getHint(line: Int, fileName: String): String? = firstOrNull {
     it.fileName == fileName && it.lineNumber == line
-  }?.breakpointHint
+  }?.hint
 
   private fun getTextStartOffset(editor: Editor, line: Int): Int {
     val document = editor.document
