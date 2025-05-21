@@ -51,7 +51,7 @@ class AIBreakpointHintMouseMotionListener(
   }
 
   private fun List<BreakpointHintDetails>.getHint(line: Int, fileName: String): String? = firstOrNull {
-    it.fileName == fileName && it.lineNumber == line
+    it.fileName.substringAfterLast("/") == fileName && it.lineNumber == line
   }?.hint
 
   private fun getTextStartOffset(editor: Editor, line: Int): Int {
