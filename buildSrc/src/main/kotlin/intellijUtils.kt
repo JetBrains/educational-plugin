@@ -8,6 +8,7 @@ const val VERIFY_CLASSES_TASK_NAME = "verifyClasses"
 
 val Project.environmentName: String by Properties
 val Project.isAtLeast251: Boolean get() = environmentName.toInt() >= 251
+val Project.isAtLeast252: Boolean get() = environmentName.toInt() >= 252
 
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -81,10 +82,10 @@ val Project.rustPlugins: List<String> get() = listOf(
   tomlPlugin
 )
 
-val Project.cppPlugins: List<String> get() = listOf(
+val Project.cppPlugins: List<String> get() = listOfNotNull(
   "com.intellij.cidr.lang",
   "com.intellij.clion",
-  "com.intellij.clion.runFile",
+  "com.intellij.clion.runFile".takeIf { !isAtLeast252 },
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"
