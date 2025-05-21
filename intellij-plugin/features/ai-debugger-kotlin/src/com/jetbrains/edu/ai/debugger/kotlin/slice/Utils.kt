@@ -1,5 +1,6 @@
 package com.jetbrains.edu.ai.debugger.kotlin.slice
 
+import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -64,3 +65,11 @@ inline fun Iterator<PsiElement>.forEachReachable(action: (PsiElement) -> Unit) =
   }
   action(it)
 }
+
+fun Document.getLineNumberSafe(offset: Int) =
+  if (offset in 0 until textLength) {
+    getLineNumber(offset)
+  } else {
+    null
+  }
+
