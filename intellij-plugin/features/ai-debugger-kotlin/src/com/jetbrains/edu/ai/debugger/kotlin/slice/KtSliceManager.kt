@@ -15,6 +15,6 @@ class KtSliceManager : SliceManager {
     val analyzer = CodeDependencyAnalyzer()
     val forwardDependency = analyzer.processDependency(function, FORWARD).filter { it.key == element }.values.flatten()
     val backwardDependency = analyzer.processDependency(function, BACKWARD).filter { it.key == element }.values.flatten()
-    return (forwardDependency + backwardDependency).map { document.getLineNumber(it.textRange.startOffset) }.toSet()
+    return (forwardDependency + backwardDependency).mapNotNull { document.getLineNumberSafe(it.textRange.startOffset) }.toSet()
   }
 }
