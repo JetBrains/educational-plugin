@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.impl.ExecutionManagerImpl
 import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -46,6 +46,7 @@ import com.jetbrains.edu.learning.toPsiFile
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+
 object CheckUtils {
 
   private val LOG: Logger = logger<CheckUtils>()
@@ -70,6 +71,9 @@ object CheckUtils {
       EXECUTION_ERROR_MESSAGE
     )
   private val EMPTY_BYTE_ARRAY = byteArrayOf()
+
+  private val executor: Executor
+    get() = DefaultDebugExecutor.getDebugExecutorInstance()
 
   /**
    * Some testing frameworks add attributes to be shown in console (ex. Jest - ANSI color codes)
@@ -168,7 +172,7 @@ object CheckUtils {
     runInEdt {
       connection.subscribe(
         ExecutionManager.EXECUTION_TOPIC,
-        CheckExecutionListener(DefaultRunExecutor.EXECUTOR_ID, context)
+        CheckExecutionListener(executor.id, context)
       )
 
       for (configuration in configurations) {
@@ -204,13 +208,13 @@ object CheckUtils {
    */
   @Throws(ExecutionException::class)
   private fun RunnerAndConfigurationSettings.startRunConfigurationExecution(context: Context): Boolean {
-    val runner = ProgramRunner.getRunner(DefaultRunExecutor.EXECUTOR_ID, configuration)
+    val runner = ProgramRunner.getRunner(executor.id, configuration)
     if (runner == null) {
       context.latch.countDown()
       return false
     }
 
-    val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), this).activeTarget().build()
+    val env = ExecutionEnvironmentBuilder.create(executor, this).activeTarget().build()
     @Suppress("UnstableApiUsage")
     env.callback = ProgramRunner.Callback { descriptor ->
       // Descriptor can be null in some cases.
