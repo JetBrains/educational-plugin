@@ -69,6 +69,7 @@ class EduCoursePluginInstallerCommandTest(
               - https://plugins.jetbrains.com/plugin/16630
               - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
             --hyperskill=<value>                              Hyperskill project id
+            --coursera=<value>                                Marketplace project id
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
             -h, --help                                        Show this message and exit
         """
@@ -79,7 +80,7 @@ class EduCoursePluginInstallerCommandTest(
         """
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
-          Error: must provide one of --archive, --marketplace, --hyperskill
+          Error: must provide one of --archive, --marketplace, --hyperskill, --coursera
         """
       ),
       EduCommandTestData(
@@ -89,7 +90,7 @@ class EduCoursePluginInstallerCommandTest(
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
           Error: got unexpected extra argument (/path/to/project2)
-          Error: must provide one of --archive, --marketplace, --hyperskill
+          Error: must provide one of --archive, --marketplace, --hyperskill, --coursera
         """
       ),
       EduCommandTestData(
@@ -107,7 +108,7 @@ class EduCoursePluginInstallerCommandTest(
         """
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
-          Error: option --archive cannot be used with --marketplace or --hyperskill
+          Error: option --archive cannot be used with --marketplace or --hyperskill or --coursera
         """
       ),
       EduCommandTestData(
@@ -117,7 +118,7 @@ class EduCoursePluginInstallerCommandTest(
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
           Error: no such option --foo
-          Error: must provide one of --archive, --marketplace, --hyperskill
+          Error: must provide one of --archive, --marketplace, --hyperskill, --coursera
         """
       ),
     )

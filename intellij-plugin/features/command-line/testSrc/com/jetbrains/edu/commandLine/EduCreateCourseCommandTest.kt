@@ -32,6 +32,7 @@ class EduCreateCourseCommandTest(
               - https://plugins.jetbrains.com/plugin/16630
               - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
             --hyperskill=<value>                              Hyperskill project id
+            --coursera=<value>                                Marketplace project id
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
             -h, --help                                        Show this message and exit
         """

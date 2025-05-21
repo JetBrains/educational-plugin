@@ -17,7 +17,8 @@ enum class CourseSource(val option: String, val description: String) {
     }
   },
 
-  MARKETPLACE("marketplace", """Marketplace course link. Supported formats:
+  MARKETPLACE(
+    "marketplace", """Marketplace course link. Supported formats:
     - %course-id%
     - %course-id%-%plugin-name%
     - https://plugins.jetbrains.com/plugin/%course-id%
@@ -28,7 +29,8 @@ enum class CourseSource(val option: String, val description: String) {
     - 16630-introduction-to-python
     - https://plugins.jetbrains.com/plugin/16630
     - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
-  """.trimIndent()) {
+  """.trimIndent()
+  ) {
     override suspend fun loadCourse(marketplaceCourseLink: String): Result<Course, String> {
       val course = MarketplaceConnector.getInstance().getCourseInfoByLink(marketplaceCourseLink, searchPrivate = true)
       return if (course != null) Ok(course) else Err("Failed to load Marketplace course `$marketplaceCourseLink`")
@@ -48,6 +50,17 @@ enum class CourseSource(val option: String, val description: String) {
       HyperskillConnector.getInstance().loadStages(hyperskillCourse)
 
       return Ok(hyperskillCourse)
+    }
+  },
+
+  /**
+   * Currently, we only support marketplace courses embedded to coursera
+   */
+  COURSERA("coursera", "Marketplace project id") {
+    override suspend fun loadCourse(value: String): Result<Course, String> {
+      val courseId = value.toIntOrNull() ?: return Err("Marketplace course id should be integer. Got `$value`")
+      val course = MarketplaceConnector.getInstance().searchCourse(courseId) ?: return Err("Failed to load Coursera course `$value`")
+      return Ok(course)
     }
   };
 

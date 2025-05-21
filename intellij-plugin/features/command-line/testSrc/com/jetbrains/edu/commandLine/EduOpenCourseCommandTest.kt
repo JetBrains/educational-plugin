@@ -58,6 +58,7 @@ class EduOpenCourseCommandTest(
               - https://plugins.jetbrains.com/plugin/16630
               - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
             --hyperskill=<value>                              Hyperskill project id
+            --coursera=<value>                                Marketplace project id
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
             --course-params=<value>                           Additional parameters for a course project in JSON object format (default: {})
             -h, --help                                        Show this message and exit
@@ -70,7 +71,7 @@ class EduOpenCourseCommandTest(
           Usage: openCourse [<options>]
           
           Error: got unexpected extra argument (/path/to/project)
-          Error: must provide one of --archive, --marketplace, --hyperskill
+          Error: must provide one of --archive, --marketplace, --hyperskill, --coursera
         """
       ),
       EduCommandTestData(
@@ -97,7 +98,7 @@ class EduOpenCourseCommandTest(
         """
           Usage: openCourse [<options>]
 
-          Error: option --archive cannot be used with --marketplace or --hyperskill
+          Error: option --archive cannot be used with --marketplace or --hyperskill or --coursera
         """
       ),
       EduCommandTestData(
@@ -107,7 +108,7 @@ class EduOpenCourseCommandTest(
           Usage: openCourse [<options>]
 
           Error: no such option --foo
-          Error: must provide one of --archive, --marketplace, --hyperskill
+          Error: must provide one of --archive, --marketplace, --hyperskill, --coursera
         """
       ),
       EduCommandTestData(
