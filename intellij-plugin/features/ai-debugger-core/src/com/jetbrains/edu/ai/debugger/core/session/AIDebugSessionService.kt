@@ -88,8 +88,9 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         }
 
         val language = project.course?.languageById ?: error("Language is not found")
-        val virtualFiles = runReadAction { taskFiles.mapNotNull { it.getVirtualFile(project) } }
-        val fileMap = virtualFiles.associateBy { it.name }
+        val fileMap = runReadAction {
+          taskFiles.associate { it.name to (it.getVirtualFile(project) ?: error("Virtual file is not found")) }
+        }
         val intermediateBreakpoints = calculateIntermediateBreakpointPositions(finalBreakpoints, fileMap, language)
         finalBreakpoints.toBreakpointPositionsByFileMap().toggleLineBreakpoint(fileMap, language)
         intermediateBreakpoints.toggleLineBreakpoint(fileMap, language)
@@ -99,6 +100,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             project,
             content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
           )
+          unlock()
           return@launch
         }
         val listener = AIBreakpointHintMouseMotionListener(breakpointHints)
