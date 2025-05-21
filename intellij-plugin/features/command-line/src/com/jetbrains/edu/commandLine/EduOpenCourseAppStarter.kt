@@ -20,7 +20,11 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.platform.diagnostic.telemetry.impl.span
+import com.jetbrains.edu.commandLine.messages.CommandLineBundle
+import com.jetbrains.edu.commandLine.processors.CourseParamsProcessor
 import com.jetbrains.edu.learning.authUtils.requestFocus
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
@@ -59,12 +63,15 @@ class EduOpenCourseAppStarter : IdeStarter() {
     }
 
     invokeAppListeners(args, lifecyclePublisher, asyncCoroutineScope)
-
     val result = showOpenCourseDialog(command.source, command.courseId)
     when (result) {
-      OpenCourseDialogResult.Ok -> Unit
       OpenCourseDialogResult.Canceled -> app.saveAndExit(0)
       is OpenCourseDialogResult.Error -> app.saveAndExit(1)
+      is OpenCourseDialogResult.Ok -> {
+        val course = result.course
+        val project = course.project ?: return
+        CourseParamsProcessor.applyProcessors(project, course, command.courseParams)
+      }
     }
   }
 
@@ -95,9 +102,14 @@ class EduOpenCourseAppStarter : IdeStarter() {
       command.parse(args.drop(1))
       val dialogResult = showOpenCourseDialog(command.source, command.courseId)
       when (dialogResult) {
-        OpenCourseDialogResult.Ok,
         OpenCourseDialogResult.Canceled -> CliResult.OK
         is OpenCourseDialogResult.Error -> CliResult(1, dialogResult.message)
+        is OpenCourseDialogResult.Ok -> {
+          val course = dialogResult.course
+          val project = course.project ?: return CliResult(1, CommandLineBundle.message("failed.to.open.project", course.name))
+          CourseParamsProcessor.applyProcessors(project, course, command.courseParams)
+          return CliResult.OK
+        }
       }
     }
     catch (e: CliktError) {
@@ -121,7 +133,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
         requestFocus()
         JoinCourseDialog(course, downloadCourseContext = TOOLBOX).showAndGet()
       }
-      if (result) OpenCourseDialogResult.Ok else OpenCourseDialogResult.Canceled
+      if (result) OpenCourseDialogResult.Ok(course) else OpenCourseDialogResult.Canceled
     }.onError { error ->
       LOG.error(error)
       OpenCourseDialogResult.Error(error)
@@ -139,15 +151,20 @@ class EduOpenCourseAppStarter : IdeStarter() {
   }
 
   private sealed interface OpenCourseDialogResult {
-    data object Ok : OpenCourseDialogResult
+    data class Ok(val course: Course) : OpenCourseDialogResult
     data object Canceled : OpenCourseDialogResult
-    data class Error(val message: String) : OpenCourseDialogResult
+    data class Error(val message: String) : OpenCourseDialogResult {
+      override fun toString(): String = message
+    }
   }
 }
 
 class EduOpenCourseCommand : EduCommand("openCourse") {
 
-  val courseParams: Map<String, String> by option("--course-params", help = "Additional parameters for a course project in JSON object format")
+  val courseParams: Map<String, String> by option(
+    "--course-params",
+    help = "Additional parameters for a course project in JSON object format"
+  )
     .convert { parseCourseParams(it) }
     .default(emptyMap())
 

@@ -1,8 +1,22 @@
 <idea-plugin package="com.jetbrains.edu.commandLine">
+
+  <resource-bundle>messages.CommandLineBundle</resource-bundle>
+
   <extensions defaultExtensionNs="com.intellij">
     <appStarter id="createCourse" implementation="com.jetbrains.edu.commandLine.EduCourseCreatorAppStarter"/>
     <appStarter id="installCoursePlugins" implementation="com.jetbrains.edu.commandLine.EduCoursePluginInstallerAppStarter"/>
     <appStarter id="validateCourse" implementation="com.jetbrains.edu.commandLine.validation.EduCourseValidatorAppStarter"/>
     <appStarter id="openCourse" implementation="com.jetbrains.edu.commandLine.EduOpenCourseAppStarter"/>
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.courseParamsProcessor"
+                    interface="com.jetbrains.edu.commandLine.processors.CourseParamsProcessor"
+                    dynamic="true"/>
+  </extensionPoints>
+
+
+  <extensions defaultExtensionNs="Educational">
+    <courseParamsProcessor implementation="com.jetbrains.edu.commandLine.processors.LtiCourseParamsProcessor"/>
   </extensions>
 </idea-plugin>
