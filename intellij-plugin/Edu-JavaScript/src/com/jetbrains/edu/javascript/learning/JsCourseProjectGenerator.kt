@@ -16,7 +16,12 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : CourseProjectGenerator<JsNewProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: JsNewProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(
+    project: Project,
+    projectSettings: JsNewProjectSettings,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     val interpreter = projectSettings.selectedInterpreter
     if (interpreter == null) {
       // It's ok not to have NodeJS interpreter in tests
@@ -38,7 +43,7 @@ class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : Cours
     configureNodeJS(interpreter, project, onConfigurationFinished)
     // Pass empty callback here because Core library configuration will be made asynchronously
     // Before this, we can't consider JS course project is fully configured
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished = {})
+    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished = {})
   }
 
   private fun configureNodeJS(

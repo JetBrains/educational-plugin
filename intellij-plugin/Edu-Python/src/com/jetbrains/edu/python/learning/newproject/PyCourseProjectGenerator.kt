@@ -23,10 +23,16 @@ open class PyCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PyProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(project: Project, projectSettings: PyProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(
+    project: Project,
+    projectSettings: PyProjectSettings,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     var sdk = projectSettings.sdk
     if (sdk is PySdkToInstall) {
       val selectedSdk = sdk
+
       @Suppress("UnstableApiUsage")
       val installedSdk = invokeAndWaitIfNeeded {
         selectedSdk.install(null) {
@@ -52,7 +58,7 @@ open class PyCourseProjectGenerator(
       return
     }
     installRequiredPackages(project, sdk)
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
   }
 
   private fun createAndAddVirtualEnv(project: Project, settings: PyProjectSettings, baseSdk: PyDetectedSdk) {

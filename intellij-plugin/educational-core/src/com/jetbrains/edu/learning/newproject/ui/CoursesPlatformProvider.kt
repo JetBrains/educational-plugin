@@ -31,8 +31,8 @@ abstract class CoursesPlatformProvider {
 
   abstract fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel
 
-  open fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
-    joinCourse(courseInfo, courseMode, coursePanel) { coursePanel.setError(it) }
+  open fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel, openCourseParams: Map<String, String> = emptyMap()) {
+    joinCourse(courseInfo, courseMode, coursePanel, openCourseParams) { coursePanel.setError(it) }
   }
 
   suspend fun loadCourses(): List<CoursesGroup> {
@@ -73,6 +73,7 @@ abstract class CoursesPlatformProvider {
       courseInfo: CourseCreationInfo,
       courseMode: CourseMode,
       component: JPanel?,
+      openCourseParams: Map<String, String> = emptyMap(),
       errorHandler: (ErrorState) -> Unit
     ): Project? {
       val (course, location, projectSettings) = courseInfo
@@ -95,7 +96,7 @@ abstract class CoursesPlatformProvider {
           }
           course.courseMode = courseMode
           val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
-          val project = projectGenerator?.doCreateCourseProject(location, projectSettings)
+          val project = projectGenerator?.doCreateCourseProject(location, projectSettings, openCourseParams = openCourseParams)
           // null project means that user hasn't created course project at all.
           // For example, he/she may choose `Don't Open` option in `Trust and Open Project` dialog
           if (project != null) {

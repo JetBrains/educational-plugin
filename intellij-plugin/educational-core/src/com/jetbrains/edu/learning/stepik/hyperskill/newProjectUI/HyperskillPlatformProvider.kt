@@ -46,7 +46,8 @@ class HyperskillPlatformProvider : CoursesPlatformProvider() {
   override fun joinAction(
     courseInfo: CourseCreationInfo,
     courseMode: CourseMode,
-    coursePanel: CoursePanel
+    coursePanel: CoursePanel,
+    openCourseParams: Map<String, String>
   ) {
 
     val course = courseInfo.course
@@ -54,7 +55,7 @@ class HyperskillPlatformProvider : CoursesPlatformProvider() {
       computeUnderProgress(title = EduCoreBundle.message("hyperskill.loading.stages")) {
         HyperskillConnector.getInstance().loadStages(course)
       }
-      super.joinAction(courseInfo, courseMode, coursePanel)
+      super.joinAction(courseInfo, courseMode, coursePanel, openCourseParams)
       return
     }
 

@@ -17,7 +17,8 @@ import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 
 class MarketplaceCoursePanel(
   disposable: Disposable,
-  private val downloadCourseContext: DownloadCourseContext = IDE_UI
+  private val downloadCourseContext: DownloadCourseContext = IDE_UI,
+  private val openCourseParams: Map<String, String> = emptyMap()
 ): CoursePanel(disposable, true) {
 
   init {
@@ -38,7 +39,7 @@ class MarketplaceCoursePanel(
   }
 
   override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
-    MarketplacePlatformProvider(downloadCourseContext).joinAction(info, mode, this)
+    MarketplacePlatformProvider(downloadCourseContext).joinAction(info, mode, this, openCourseParams)
   }
 
   private class LegalTermsPanel: NonOpaquePanel(), CourseSelectionListener {

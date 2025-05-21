@@ -65,7 +65,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
     course.configurator
       ?.courseBuilder
       ?.getCourseProjectGenerator(course)
-      ?.doCreateCourseProject(location, projectSettings, lessonProducer)
+      ?.doCreateCourseProject(location, projectSettings, initialLessonProducer = lessonProducer)
   }
 
   override fun createActions(): Array<Action> = arrayOf(backAction, nextAction, okAction)

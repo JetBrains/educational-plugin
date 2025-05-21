@@ -61,9 +61,9 @@ class MarketplacePlatformProvider(
     return CoursesGroup.fromCourses(courses)
   }
 
-  override fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel) {
+  override fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel, openCourseParams: Map<String, String>) {
     courseInfo.course.loadMarketplaceCourseStructure(downloadCourseContext)
-    super.joinAction(courseInfo, courseMode, coursePanel)
+    super.joinAction(courseInfo, courseMode, coursePanel, openCourseParams)
   }
 
   private fun loadBundledCourses(): List<Course> {

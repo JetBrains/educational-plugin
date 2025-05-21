@@ -59,8 +59,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
     }
 
     invokeAppListeners(args, lifecyclePublisher, asyncCoroutineScope)
-
-    val result = showOpenCourseDialog(command.source, command.courseId)
+    val result = showOpenCourseDialog(command)
     when (result) {
       OpenCourseDialogResult.Ok -> Unit
       OpenCourseDialogResult.Canceled -> app.saveAndExit(0)
@@ -93,7 +92,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
     val command = openCourseCommand()
     return try {
       command.parse(args.drop(1))
-      val dialogResult = showOpenCourseDialog(command.source, command.courseId)
+      val dialogResult = showOpenCourseDialog(command)
       when (dialogResult) {
         OpenCourseDialogResult.Ok,
         OpenCourseDialogResult.Canceled -> CliResult.OK
@@ -113,13 +112,13 @@ class EduOpenCourseAppStarter : IdeStarter() {
     }
   }
 
-  private suspend fun showOpenCourseDialog(source: CourseSource, courseId: String): OpenCourseDialogResult {
-    return source.loadCourse(courseId).map { course ->
+  private suspend fun showOpenCourseDialog(command: EduOpenCourseCommand): OpenCourseDialogResult {
+    return command.source.loadCourse(command.courseId).map { course ->
       val result = withContext(Dispatchers.EDT) {
         // If it's called from external command, the application frame can be not in focus,
         // but we want to show the corresponding dialog to a user
         requestFocus()
-        JoinCourseDialog(course, downloadCourseContext = TOOLBOX).showAndGet()
+        JoinCourseDialog(course, downloadCourseContext = TOOLBOX, params = command.courseParams).showAndGet()
       }
       if (result) OpenCourseDialogResult.Ok else OpenCourseDialogResult.Canceled
     }.onError { error ->
@@ -147,7 +146,10 @@ class EduOpenCourseAppStarter : IdeStarter() {
 
 class EduOpenCourseCommand : EduCommand("openCourse") {
 
-  val courseParams: Map<String, String> by option("--course-params", help = "Additional parameters for a course project in JSON object format")
+  val courseParams: Map<String, String> by option(
+    "--course-params",
+    help = "Additional parameters for a course project in JSON object format"
+  )
     .convert { parseCourseParams(it) }
     .default(emptyMap())
 

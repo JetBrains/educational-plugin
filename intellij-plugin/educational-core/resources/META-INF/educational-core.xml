@@ -100,6 +100,9 @@
     <extensionPoint qualifiedName="Educational.hyperskillCourseCreator"
                     interface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.courseParamsProcessor"
+                    interface="com.jetbrains.edu.learning.newproject.CourseParamsProcessor"
+                    dynamic="true"/>
   </extensionPoints>
 
   <actions>

@@ -14,6 +14,7 @@ import com.jetbrains.php.composer.ComposerUtils
 import com.jetbrains.php.composer.actions.ComposerInstallAction
 import com.jetbrains.php.composer.actions.ComposerOptionsManager
 import com.jetbrains.php.composer.execution.phar.PharComposerExecution
+import kotlin.String
 
 class PhpCourseProjectGenerator(
   builder: PhpCourseBuilder,
@@ -23,12 +24,17 @@ class PhpCourseProjectGenerator(
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> =
     listOfNotNull(createComposerFile(holder))
 
-  override fun afterProjectGenerated(project: Project, projectSettings: PhpProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(
+    project: Project,
+    projectSettings: PhpProjectSettings,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     if (!isUnitTestMode) {
       downloadPhar(project, projectSettings)
       installComposer(project)
     }
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
   }
 
   private fun createComposerFile(holder: CourseInfoHolder<Course>): EduFile? {

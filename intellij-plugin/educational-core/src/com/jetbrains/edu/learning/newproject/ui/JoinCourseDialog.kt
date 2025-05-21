@@ -18,7 +18,8 @@ import javax.swing.JComponent
 open class JoinCourseDialog(
   protected val course: Course,
   protected val settings: CourseDisplaySettings = CourseDisplaySettings(),
-  private val downloadCourseContext: DownloadCourseContext = IDE_UI
+  private val downloadCourseContext: DownloadCourseContext = IDE_UI,
+  private val params: Map<String, String> = emptyMap()
 ) : OpenCourseDialogBase() {
 
   init {
@@ -35,7 +36,7 @@ open class JoinCourseDialog(
 
   protected open fun createCoursePanel(): CoursePanel {
     return when {
-      course.isMarketplace && course.visibility != LocalVisibility -> MarketplaceCoursePanel(disposable, downloadCourseContext)
+      course.isMarketplace && course.visibility != LocalVisibility -> MarketplaceCoursePanel(disposable, downloadCourseContext, params)
       else -> JoinCoursePanel(disposable)
     }
   }
@@ -44,7 +45,7 @@ open class JoinCourseDialog(
 
   private inner class JoinCoursePanel(parentDisposable: Disposable) : CoursePanel(parentDisposable, true) {
     override fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode) {
-      CoursesPlatformProvider.joinCourse(info, mode, this) {
+      CoursesPlatformProvider.joinCourse(info, mode, this, params) {
         setError(it)
       }
     }

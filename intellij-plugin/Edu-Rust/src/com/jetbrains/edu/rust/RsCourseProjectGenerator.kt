@@ -17,7 +17,12 @@ import org.rust.openapiext.pathAsPath
 class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
   CourseProjectGenerator<RsProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(project: Project, projectSettings: RsProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(
+    project: Project,
+    projectSettings: RsProjectSettings,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     project.rustSettings.modify {
       it.toolchain = projectSettings.toolchain
     }
@@ -30,7 +35,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
         }
       }
     }
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
   }
 
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
