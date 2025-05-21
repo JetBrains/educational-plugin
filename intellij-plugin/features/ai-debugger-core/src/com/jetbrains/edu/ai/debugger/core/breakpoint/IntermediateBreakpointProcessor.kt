@@ -34,7 +34,7 @@ interface IntermediateBreakpointProcessor {
       val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
       val document = psiFile?.viewProvider?.document ?: return emptyList()
       return wrongCodeLineNumbers.map { wrongCodeLineNumber ->
-        val psiElement = document.getPsiElementAtLine(psiFile, wrongCodeLineNumber) ?: return emptyList()
+        val psiElement = document.getPsiElementAtLine(psiFile, wrongCodeLineNumber) ?: return@map emptyList()
         val breakpointLines = intermediateBreakpointProcessor.findBreakpointLines(psiElement, document, psiFile)
         val functionCalls = getParentFunctionCallLines(psiElement, psiFile, document, intermediateBreakpointProcessor)
         if (withSlicing) {
