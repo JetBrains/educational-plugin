@@ -31,9 +31,9 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
         mainCMakeTemplateInfo.getText(sanitizedProjectName, course.languageVersion ?: "")
       )
     ) +
-    getCppTemplates(course).extraTopLevelFiles.map { templateInfo ->
-      EduFile(templateInfo.generatedFileName, templateInfo.getText(sanitizedProjectName))
-    }
+           getCppTemplates(course).extraTopLevelFiles.map { templateInfo ->
+             EduFile(templateInfo.generatedFileName, templateInfo.getText(sanitizedProjectName))
+           }
   }
 
   private fun addCMakeListToStepikTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
@@ -46,7 +46,12 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     }
   }
 
-  override fun afterProjectGenerated(project: Project, projectSettings: CppProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(
+    project: Project,
+    projectSettings: CppProjectSettings,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     if (course is StepikCourse) {
       course.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
     }
@@ -54,6 +59,6 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
     val googleTestSrc = FileUtil.join(project.courseDir.path, TEST_FRAMEWORKS_BASE_DIR_VALUE, GTEST_SOURCE_DIR_VALUE)
     VcsConfiguration.getInstance(project).addIgnoredUnregisteredRoots(listOf(googleTestSrc))
 
-    super.afterProjectGenerated(project, projectSettings, onConfigurationFinished)
+    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
   }
 }

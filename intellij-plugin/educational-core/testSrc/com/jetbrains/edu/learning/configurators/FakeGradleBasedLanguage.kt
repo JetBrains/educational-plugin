@@ -69,7 +69,8 @@ class FakeGradleCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
   }
 
   override fun getCourseProjectGenerator(course: Course): FakeGradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
-    this, course)
+    this, course
+  )
 
   override fun refreshProject(project: Project, cause: RefreshCause) {}
   override fun mainTemplateName(course: Course): String = "Main.kt"
@@ -80,7 +81,12 @@ class FakeGradleCourseProjectGenerator(
   builder: FakeGradleCourseBuilder,
   course: Course
 ) : CourseProjectGenerator<EmptyProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(project: Project, projectSettings: EmptyProjectSettings, onConfigurationFinished: () -> Unit) {
+  override fun afterProjectGenerated(
+    project: Project,
+    projectSettings: EmptyProjectSettings,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     onConfigurationFinished()
   }
 

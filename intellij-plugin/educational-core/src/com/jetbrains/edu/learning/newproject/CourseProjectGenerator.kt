@@ -77,10 +77,16 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 ) {
 
   @RequiresBlockingContext
-  open fun afterProjectGenerated(project: Project, projectSettings: S, onConfigurationFinished: () -> Unit) {
+  open fun afterProjectGenerated(
+    project: Project,
+    projectSettings: S,
+    openCourseParams: Map<String, String>,
+    onConfigurationFinished: () -> Unit
+  ) {
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
     project.isLocalCourse = course.isLocal
+    CourseParamsProcessor.applyProcessors(project, course, openCourseParams)
 
     val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
     statusBarWidgetsManager.updateAllWidgets()
@@ -107,17 +113,27 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   // we use Object instead of S and cast to S when it needed
   @RequiresEdt
   @RequiresBlockingContext
-  fun doCreateCourseProject(location: String, projectSettings: EduProjectSettings, initialLessonProducer: () -> Lesson = ::Lesson): Project? {
+  fun doCreateCourseProject(
+    location: String,
+    projectSettings: EduProjectSettings,
+    openCourseParams: Map<String, String> = emptyMap(),
+    initialLessonProducer: () -> Lesson = ::Lesson
+  ): Project? {
     return runWithModalProgressBlocking(
       ModalTaskOwner.guess(),
       EduCoreBundle.message("generate.course.progress.title"),
       TaskCancellation.cancellable()
     ) {
-      doCreateCourseProjectAsync(location, projectSettings, initialLessonProducer)
+      doCreateCourseProjectAsync(location, projectSettings, openCourseParams, initialLessonProducer)
     }
   }
 
-  private suspend fun doCreateCourseProjectAsync(location: String, projectSettings: EduProjectSettings, initialLessonProducer: () -> Lesson): Project? {
+  private suspend fun doCreateCourseProjectAsync(
+    location: String,
+    projectSettings: EduProjectSettings,
+    openCourseParams: Map<String, String>,
+    initialLessonProducer: () -> Lesson
+  ): Project? {
     @Suppress("UNCHECKED_CAST")
     val castedProjectSettings = projectSettings as S
     applySettings(castedProjectSettings)
@@ -125,7 +141,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     withContext(Dispatchers.EDT) {
       blockingContext {
-        afterProjectGenerated(createdProject, castedProjectSettings) {
+        afterProjectGenerated(createdProject, castedProjectSettings, openCourseParams) {
           ApplicationManager.getApplication().messageBus
             .syncPublisher(COURSE_PROJECT_CONFIGURATION)
             .onCourseProjectConfigured(createdProject)
