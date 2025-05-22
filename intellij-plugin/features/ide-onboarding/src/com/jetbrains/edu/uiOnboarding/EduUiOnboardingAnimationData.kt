@@ -4,6 +4,7 @@ import com.intellij.util.ImageLoader
 import java.awt.Image
 import com.intellij.openapi.diagnostic.logger
 import java.awt.Dimension
+import kotlin.math.roundToInt
 
 class EduUiOnboardingAnimationData private constructor(
   val lookRight: Image,
@@ -27,14 +28,18 @@ class EduUiOnboardingAnimationData private constructor(
   companion object {
     val LOG = logger<EduUiOnboardingAnimationData>()
 
-    val ZHABA_DIMENSION: Dimension = Dimension(121, 107)
-    const val EYE_SHIFT: Int = 40
+    private const val ZHABA_SCALE: Double = 0.80
+    fun zhabaScale(length: Int): Int = (length * ZHABA_SCALE).roundToInt()
+
+    val ZHABA_DIMENSION: Dimension = Dimension(zhabaScale(121), zhabaScale(107))
+    val EYE_SHIFT: Int = zhabaScale(40)
+
     const val FRAME_DURATION: Long = 42 // is approximately 24 FPS
     const val JUMP_DURATION: Long = 300
 
     fun load(): EduUiOnboardingAnimationData? {
       fun loadImage(fileName: String): Image {
-        val image = ImageLoader.loadFromResource("/images/$fileName.png", this::class.java)
+        val image = ImageLoader.loadFromResource("/images/$fileName.svg", this::class.java)
         if (image == null) {
           LOG.error("Failed to load image '$fileName' for in ide onboarding")
           throw Exception("Failed to load image '$fileName' for in ide onboarding")

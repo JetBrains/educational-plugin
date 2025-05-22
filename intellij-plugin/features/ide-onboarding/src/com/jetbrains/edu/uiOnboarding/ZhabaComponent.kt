@@ -5,8 +5,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
 import kotlinx.coroutines.delay
 import java.awt.Graphics2D
+import java.awt.Rectangle
+import java.awt.RenderingHints
 import javax.swing.JComponent
 
 class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
@@ -20,12 +23,28 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     val animation = this.animation ?: return
 
     val g2d = g as Graphics2D
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
 
     val step = animation.steps[stepIndex]
     val x1 = step.fromPoint.getPoint(this).x
     val y1 = step.fromPoint.getPoint(this).y
 
-    fun drawImage(x: Int, y: Int) = UIUtil.drawImage(g2d, step.image, x - step.imageShift.x, y - step.imageShift.y, null)
+    fun drawImage(x: Int, y: Int) {
+      val image = step.image
+      val w = image.getWidth(this)
+      val h = image.getHeight(this)
+
+      val scaledW = zhabaScale(w)
+      val scaledH = zhabaScale(h)
+
+      UIUtil.drawImage(
+        g2d,
+        step.image,
+        Rectangle(x - zhabaScale(step.imageShift.x), y - zhabaScale(step.imageShift.y), scaledW, scaledH),
+        Rectangle(0, 0, w, h),
+        null
+      )
+    }
 
     if (step.notMoving) { // do less computation if there is no movement
       drawImage(x1, y1)
