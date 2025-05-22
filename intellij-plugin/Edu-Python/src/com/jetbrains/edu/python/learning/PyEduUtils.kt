@@ -82,7 +82,7 @@ fun installRequiredPackages(project: Project, sdk: Sdk) {
           )
 
           reporter.itemStep(it.name) {
-            packageManager.installPackage(spec, emptyList())
+            installRequiredPackage(packageManager, spec)
           }
         }
       }
