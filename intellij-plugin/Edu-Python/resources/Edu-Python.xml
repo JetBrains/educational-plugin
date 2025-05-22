@@ -33,4 +33,10 @@
                   environment="unittest"
                   displayName="Python"/>
   </extensions>
+
+  <actions resource-bundle="messages.EduPythonBundle">
+      <action
+          id="Educational.Python.InstallDependenciesWorkaround"
+          class="com.jetbrains.edu.python.learning.InstallDependenciesWorkaroundAction"/>
+  </actions>
 </idea-plugin>
