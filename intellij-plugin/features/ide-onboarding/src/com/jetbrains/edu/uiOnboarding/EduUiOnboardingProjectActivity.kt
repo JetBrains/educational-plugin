@@ -11,10 +11,10 @@ class EduUiOnboardingProjectActivity : ProjectActivity {
     if (!project.isEduProject()) return
     if (!project.isStudentProject()) return
 
-    val propertiesComponent = PropertiesComponent.getInstance(project)
+    val propertiesComponent = PropertiesComponent.getInstance()
 
     val shown = propertiesComponent.getBoolean(EDU_UI_ONBOARDING_TOUR_SHOWN)
-    if (shown == true) return
+    if (shown) return
     propertiesComponent.setValue(EDU_UI_ONBOARDING_TOUR_SHOWN, true)
 
     EduUiOnboardingService.getInstance(project).startOnboarding()
