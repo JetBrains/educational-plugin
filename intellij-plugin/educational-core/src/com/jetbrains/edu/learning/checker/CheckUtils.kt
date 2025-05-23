@@ -16,6 +16,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
@@ -199,6 +200,8 @@ object CheckUtils {
     }
 
     val env = ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), this).activeTarget().build()
+    env.isEduTaskEnvironment = true
+
     @Suppress("UnstableApiUsage")
     env.callback = ProgramRunner.Callback { descriptor ->
       // Descriptor can be null in some cases.
@@ -285,4 +288,13 @@ object CheckUtils {
 
     override fun dispose() {}
   }
+
+  /**
+   * A key used to determine whether edu plugin created the environment of a specific run configuration for checking purposes.
+   */
+  val EDU_ENV_KEY = Key.create<Boolean>("edu.environment")
+
+  var ExecutionEnvironment.isEduTaskEnvironment: Boolean
+    get() = getUserData(EDU_ENV_KEY) == true
+    set(value) = putUserData(EDU_ENV_KEY, value)
 }
