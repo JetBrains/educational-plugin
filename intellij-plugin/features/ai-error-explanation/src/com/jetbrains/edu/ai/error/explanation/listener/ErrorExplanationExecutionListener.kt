@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.error.explanation.ErrorExplanationManager
 import com.jetbrains.edu.learning.checker.CheckUtils.isEduTaskEnvironment
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 
@@ -32,7 +33,7 @@ class ErrorExplanationOutputListener(private val project: Project) : OutputListe
 
     val stderr = output.stderr.takeIf { output.exitCode != 0 && it.isNotBlank() }
 
-    // setStderr
+    ErrorExplanationManager.getInstance(project).setStderr(stderr)
   }
 
   companion object {
