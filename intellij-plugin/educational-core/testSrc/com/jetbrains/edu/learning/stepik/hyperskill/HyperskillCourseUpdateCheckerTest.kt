@@ -2,9 +2,12 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
+import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
@@ -95,6 +98,12 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     lesson.parent = course
     course.addLesson(lesson)
     course.hyperskillProject!!.title = "Outdated title"
+
+    // Make sure the lesson has a name and the corresponding folder
+    lesson.name = "lesson-new"
+    runWriteActionAndWait {
+      VfsUtil.createDirectoryIfMissing(project.courseDir, "lesson-new")
+    }
 
     var notificationShown = false
     val connection = project.messageBus.connect(testRootDisposable)

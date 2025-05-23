@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
+import com.jetbrains.edu.learning.EduExperimentalFeatures.NEW_COURSE_UPDATE
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.navigate.NavigationTestBase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -9,9 +10,11 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.rules.WithExperimentalFeature
 import org.junit.Test
 import java.util.*
 
+@WithExperimentalFeature(id = NEW_COURSE_UPDATE, value = false)
 abstract class FrameworkLessonsUpdateTest<T : Course> : NavigationTestBase() {
   protected lateinit var localCourse: T
 
