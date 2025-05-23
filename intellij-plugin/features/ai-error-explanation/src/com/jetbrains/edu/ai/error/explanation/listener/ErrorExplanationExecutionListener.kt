@@ -19,24 +19,20 @@ class ErrorExplanationExecutionListener(private val project: Project) : Executio
   override fun processStarting(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
     super.processStarted(executorId, env, handler)
 
-    if (!project.isMarketplaceStudentCourse() || env.isEduTaskEnvironment) return
+    val outputListener = object : OutputListener() {
+      override fun processTerminated(event: ProcessEvent) {
+        super.processTerminated(event)
+        LOG.info("Process terminated with exit code ${event.exitCode}")
 
-    handler.addProcessListener(ErrorExplanationOutputListener(project))
-  }
-}
+        val stderr = output.stderr.takeIf { output.exitCode != 0 && it.isNotEmpty() }
+        ErrorExplanationManager.getInstance(project).setStderr(stderr)
+      }
+    }
 
-class ErrorExplanationOutputListener(private val project: Project) : OutputListener() {
-  override fun processTerminated(event: ProcessEvent) {
-    super.processTerminated(event)
-
-    LOG.info("Process terminated with exit code ${event.exitCode}")
-
-    val stderr = output.stderr.takeIf { output.exitCode != 0 && it.isNotBlank() }
-
-    ErrorExplanationManager.getInstance(project).setStderr(stderr)
+    handler.addProcessListener(outputListener)
   }
 
   companion object {
-    private val LOG = logger<ErrorExplanationOutputListener>()
+    private val LOG = logger<ErrorExplanationExecutionListener>()
   }
 }
