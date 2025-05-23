@@ -1,6 +1,8 @@
 package com.jetbrains.edu.ai.error.explanation.listener
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.error.explanation.ErrorExplanationManager
+import com.jetbrains.edu.ai.error.explanation.isErrorExplanationEnabled
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -13,7 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class ErrorExplanationCheckListener : CheckListener {
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     super.afterCheck(project, task, result)
+    if (!isErrorExplanationEnabled(project)) return
     if (result.status != CheckStatus.Failed) return
-    //set stderr
+
+    ErrorExplanationManager.getInstance(project).setStderr(result.details)
   }
 }

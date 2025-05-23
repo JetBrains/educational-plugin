@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.error.explanation.ErrorExplanationManager
 import com.jetbrains.edu.learning.checker.CheckUtils.isEduTaskEnvironment
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 
@@ -20,22 +21,20 @@ class ErrorExplanationExecutionListener(private val project: Project) : Executio
 
     if (!project.isMarketplaceStudentCourse() || env.isEduTaskEnvironment) return
 
-    handler.addProcessListener(ErrorExplanationOutputListener(project))
-  }
-}
+    val outputListener = object : OutputListener() {
+      override fun processTerminated(event: ProcessEvent) {
+        super.processTerminated(event)
+        LOG.info("Process terminated with exit code ${event.exitCode}")
 
-class ErrorExplanationOutputListener(private val project: Project) : OutputListener() {
-  override fun processTerminated(event: ProcessEvent) {
-    super.processTerminated(event)
+        val stderr = output.stderr.takeIf { output.exitCode != 0 && it.isNotEmpty() }
+        ErrorExplanationManager.getInstance(project).setStderr(stderr)
+      }
+    }
 
-    LOG.info("Process terminated with exit code ${event.exitCode}")
-
-    val stderr = output.stderr.takeIf { output.exitCode != 0 && it.isNotBlank() }
-
-    // setStderr
+    handler.addProcessListener(outputListener)
   }
 
   companion object {
-    private val LOG = logger<ErrorExplanationOutputListener>()
+    private val LOG = logger<ErrorExplanationExecutionListener>()
   }
 }
