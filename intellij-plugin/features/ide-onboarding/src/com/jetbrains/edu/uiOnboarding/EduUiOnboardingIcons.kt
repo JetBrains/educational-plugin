@@ -6,5 +6,5 @@ import javax.swing.Icon
 
 object EduUiOnboardingIcons {
   @JvmField
-  val ToadIcon: Icon = EduTextIcon("\uD83D\uDC38", JBFont.label())
+  val ToadIcon: Icon = EduTextIcon(EduUiOnboardingBundle.message("toad.emoji"), JBFont.label())
 }

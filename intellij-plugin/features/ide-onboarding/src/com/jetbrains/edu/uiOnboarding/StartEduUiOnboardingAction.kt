@@ -4,6 +4,7 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.SystemInfo
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UiOnboardingRelaunchLocation
@@ -21,6 +22,17 @@ class StartEduUiOnboardingAction : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {
     val project = e.project
+
+    val actionTitle = EduUiOnboardingBundle.message("action.StartNewUiOnboardingAction.text")
+    e.presentation.text = when {
+      SystemInfo.isMac -> {
+        // Mac does not show icons in the menu, so we add the icon to the text
+        val toadEmoji = EduUiOnboardingBundle.message("toad.emoji")
+        "$actionTitle $toadEmoji"
+      }
+      else -> actionTitle
+    }
+
     e.presentation.isEnabledAndVisible = project != null
                                          && project.isEduProject()
                                          && !EduUiOnboardingService.getInstance(project).tourInProgress
