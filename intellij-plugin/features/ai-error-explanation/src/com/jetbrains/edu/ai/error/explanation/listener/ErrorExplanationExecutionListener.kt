@@ -8,8 +8,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.ai.error.explanation.ErrorExplanationManager
-import com.jetbrains.edu.learning.checker.CheckUtils.isEduTaskEnvironment
-import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 
 /**
  * Collects stderr for error explanation after a failed run configuration.
