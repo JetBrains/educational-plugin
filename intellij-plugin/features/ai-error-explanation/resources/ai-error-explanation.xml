@@ -2,7 +2,12 @@
 <idea-plugin package="com.jetbrains.edu.ai.error.explanation">
   <resource-bundle>messages.EduAIErrorExplanationBundle</resource-bundle>
 
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.ai.error.explanation.listener.ErrorExplanationCheckListener"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.ai.error.explanation.ErrorExplanationProjectActivity"/>
     <!--suppress PluginXmlValidity -->
     <experimentalFeature id="edu.learning.ai.error.explanation" percentOfUsers="100" internalFeature="true">
       <description>Enables error explanation</description>
