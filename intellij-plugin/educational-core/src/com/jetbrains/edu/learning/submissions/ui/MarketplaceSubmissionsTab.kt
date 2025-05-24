@@ -9,6 +9,7 @@ import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.ext.canShowCommunitySolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
@@ -17,6 +18,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import com.jetbrains.edu.learning.submissions.ui.linkHandler.EnableSolutionSharingLinkHandler
 import com.jetbrains.edu.learning.submissions.ui.linkHandler.SubmissionsDifferenceLinkHandler
 import com.jetbrains.edu.learning.submissions.ui.linkHandler.SubmissionsDifferenceLinkHandler.Companion.showMoreLink
 import com.jetbrains.edu.learning.submissions.ui.segmentedButton.CommunitySegmentedButtonItem
@@ -50,19 +52,13 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
   override fun updateContent(task: Task, isLoggedIn: Boolean) {
     val submissionsManager = SubmissionsManager.getInstance(project)
 
-    val isAllowedToLoadCommunitySolutions = task.canShowCommunitySolutions()
-
     val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
-    val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(
-      task,
-      submissionsManager,
-      isAllowedToLoadCommunitySolutions
-    )
+    val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(task, submissionsManager)
 
     project.invokeLater {
       segmentedButton.updateCommunityButton(
         isLoggedIn = isLoggedIn,
-        isEnabled = isAllowedToLoadCommunitySolutions,
+        isEnabled = task.canShowCommunitySolutions(),
       )
       updatePanel(panel, descriptionText, customLinkHandler)
       updatePanel(communityPanel, communityDescriptionText, communityLinkHandler)
@@ -70,25 +66,25 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
   }
 
   private fun prepareCommunityContent(
-    task: Task, submissionsManager: SubmissionsManager, isAllowedToShowCommunitySolutions: Boolean
+    task: Task,
+    submissionsManager: SubmissionsManager
   ): Pair<String, SwingToolWindowLinkHandler?> {
-    if (isAllowedToShowCommunitySolutions) {
-      val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
+    if (!UserAgreementSettings.getInstance().solutionSharing) {
+      return EnableSolutionSharingLinkHandler.enableSolutionSharingString() to EnableSolutionSharingLinkHandler(project)
+    }
 
-      if (submissionsList.isNullOrEmpty()) {
-        return emptyCommunitySolutionsMessage() to null
-      }
-      val isToDisplayShowMore = submissionsManager.hasMoreCommunitySubmissions(task.id)
-      return getCommunitySolutionsText(submissionsList, isToDisplayShowMore).toString() to SubmissionsDifferenceLinkHandler(
-        project,
-        task,
-        submissionsManager,
-        isCommunity = true
-      )
+    val submissionsList = submissionsManager.getCommunitySubmissionsFromMemory(task.id)
+
+    if (submissionsList.isNullOrEmpty()) {
+      return emptyCommunitySolutionsMessage() to null
     }
-    else {
-      return EduCoreBundle.message("submissions.button.community.tooltip.text.disabled") to null
-    }
+    val isToDisplayShowMore = submissionsManager.hasMoreCommunitySubmissions(task.id)
+    return getCommunitySolutionsText(submissionsList, isToDisplayShowMore).toString() to SubmissionsDifferenceLinkHandler(
+      project,
+      task,
+      submissionsManager,
+      isCommunity = true
+    )
   }
 
   private fun SegmentedButton<SegmentedButtonItem>.updateCommunityButton(
