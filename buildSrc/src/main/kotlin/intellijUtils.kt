@@ -91,12 +91,16 @@ val Project.cppPlugins: List<String> get() = listOfNotNull(
   "org.jetbrains.plugins.clion.test.catch"
 )
 
-val Project.sqlPlugins: List<String> get() = listOfNotNull(
-  sqlPlugin,
-  // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
-  "intellij.charts",
-  "intellij.grid.plugin".takeIf { isAtLeast251 }
-)
+val Project.sqlPlugins: List<String>
+  get() = when {
+    isAtLeast252 -> listOf(sqlPlugin)
+    else -> listOfNotNull( // BACKCOMPAT: 2025.1. Drop it.
+      sqlPlugin,
+      // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
+      "intellij.charts",
+      "intellij.grid.plugin".takeIf { isAtLeast251 }
+    )
+  }
 
 val Project.csharpPlugins: List<String> get() = listOf(
   "com.intellij.resharper.unity"
