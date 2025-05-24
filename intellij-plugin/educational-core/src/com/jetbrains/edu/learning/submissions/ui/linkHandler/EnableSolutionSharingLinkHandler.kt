@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.ui.EduColors
 
 class EnableSolutionSharingLinkHandler(project: Project) : SwingToolWindowLinkHandler(project) {
   override fun process(url: String, referUrl: String?): Boolean = when {
-    url.startsWith(SOLUTION_SHARING_URL) -> {
+    url.startsWith(SOLUTION_SHARING_URL) -> { // TODO: FUS Event
       UserAgreementSettings.getInstance().setSolutionSharing(SolutionSharingPreference.ALWAYS)
       val task = project.getCurrentTask()
       if (task != null) {
