@@ -94,7 +94,7 @@ val Project.cppPlugins: List<String> get() = listOfNotNull(
 val Project.sqlPlugins: List<String> get() = listOfNotNull(
   sqlPlugin,
   // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
-  "intellij.charts",
+  "intellij.charts".takeIf { !isAtLeast252 }, // BACKCOMPAT: 2025.1. Drop it.
   "intellij.grid.plugin".takeIf { isAtLeast251 }
 )
 
