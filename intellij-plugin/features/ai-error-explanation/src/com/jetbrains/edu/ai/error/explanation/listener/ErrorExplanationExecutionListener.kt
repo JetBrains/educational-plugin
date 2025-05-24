@@ -8,6 +8,8 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.ai.error.explanation.ErrorExplanationManager
+import com.jetbrains.edu.learning.checker.CheckUtils.isEduTaskEnvironment
+import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 
 /**
  * Collects stderr for error explanation after a failed run configuration.
@@ -16,6 +18,8 @@ import com.jetbrains.edu.ai.error.explanation.ErrorExplanationManager
 class ErrorExplanationExecutionListener(private val project: Project) : ExecutionListener {
   override fun processStarting(executorId: String, env: ExecutionEnvironment, handler: ProcessHandler) {
     super.processStarted(executorId, env, handler)
+
+    if (!project.isMarketplaceStudentCourse() || env.isEduTaskEnvironment) return
 
     val outputListener = object : OutputListener() {
       override fun processTerminated(event: ProcessEvent) {
