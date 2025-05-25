@@ -5,6 +5,9 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.python.packaging.common.PythonSimplePackageSpecification
 import com.jetbrains.python.packaging.management.PythonPackageManager
+import com.jetbrains.python.psi.LanguageLevel
+import com.jetbrains.python.sdk.flavors.PyFlavorData
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.setAssociationToModule
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.functions
@@ -33,3 +36,15 @@ internal fun setAssociationToModule(sdk: Sdk, module: Module) {
     sdk.setAssociationToModule(module)
   }
 }
+
+// BACKCOMPAT: 2024.3. Inline it.
+internal fun <D : PyFlavorData> getVersionString(
+  @Suppress("unused") flavor: PythonSdkFlavor<D>,
+  sdkPath: String?
+): String? = PythonSdkFlavor.getVersionStringStatic(sdkPath)
+
+// BACKCOMPAT: 2024.3. Inline it.
+internal fun <D : PyFlavorData> getLanguageLevelFromVersionStringStatic(
+  @Suppress("unused") flavor: PythonSdkFlavor<D>,
+  versionString: String
+): LanguageLevel = PythonSdkFlavor.getLanguageLevelFromVersionStringStatic(versionString)
