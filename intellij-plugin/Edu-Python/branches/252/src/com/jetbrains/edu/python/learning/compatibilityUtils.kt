@@ -1,7 +1,11 @@
 package com.jetbrains.edu.python.learning
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.python.packaging.common.PythonSimplePackageSpecification
 import com.jetbrains.python.packaging.management.PythonPackageManager
+import com.jetbrains.python.sdk.setAssociationToModule
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.functions
 
@@ -20,5 +24,12 @@ internal suspend fun installRequiredPackage(packageManager: PythonPackageManager
     } ?: throw NoSuchMethodError("installPackage() method not found")
 
     method.callSuspend(packageManager, spec, emptyList<String>())
+  }
+}
+
+// BACKCOMPAT: 2025.1. Inline it.
+internal fun setAssociationToModule(sdk: Sdk, module: Module) {
+  runWithModalProgressBlocking(module.project, "") {
+    sdk.setAssociationToModule(module)
   }
 }
