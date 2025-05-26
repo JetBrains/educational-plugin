@@ -23,15 +23,7 @@ class StartEduUiOnboardingAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     val project = e.project
 
-    val actionTitle = EduUiOnboardingBundle.message("action.StartNewUiOnboardingAction.text")
-    e.presentation.text = when {
-      SystemInfo.isMac -> {
-        // Mac does not show icons in the menu, so we add the icon to the text
-        val toadEmoji = EduUiOnboardingBundle.message("toad.emoji")
-        "$actionTitle $toadEmoji"
-      }
-      else -> actionTitle
-    }
+    e.presentation.text = actionName()
 
     e.presentation.isEnabledAndVisible = project != null
                                          && project.isEduProject()
@@ -39,4 +31,21 @@ class StartEduUiOnboardingAction : DumbAwareAction() {
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
+
+  fun actionName(): String {
+    val actionTitle = EduUiOnboardingBundle.message("action.StartNewUiOnboardingAction.text")
+
+    return when {
+      SystemInfo.isMac -> {
+        // Mac does not show icons in the menu, so we add the icon to the text
+        val toadEmoji = EduUiOnboardingBundle.message("toad.emoji")
+        "$actionTitle $toadEmoji"
+      }
+      else -> actionTitle
+    }
+  }
+
+  companion object {
+    const val ACTION_ID: String = "StartNewUiOnboardingAction"
+  }
 }
