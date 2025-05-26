@@ -22,10 +22,8 @@ object EduAIHintsUtils {
   const val GET_HINT_ACTION_ID: String = "Educational.Hints.GetHint"
 
   /**
-   * Temporary solution because currently [com.jetbrains.edu.aiHints.core.action.GetHint]'s presentation is not propagated to corresponding
-   * button in the [com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckDetailsPanel].
-   *
-   * @see <a href="https://youtrack.jetbrains.com/issue/EDU-7584">EDU-7584</a>
+   * Temporary solution because currently [com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckDetailsPanel]'s content depends on the
+   * presentation of the [com.jetbrains.edu.aiHints.core.action.GetHint] action.
    */
   fun getHintActionPresentation(project: Project): GetHintActionPresentation {
     val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID)
@@ -47,8 +45,6 @@ object EduAIHintsUtils {
 
   enum class GetHintActionPresentation {
     ENABLED_AND_VISIBLE, ENABLED, VISIBLE, OTHER;
-
-    fun isEnabledAndVisible(): Boolean = this == ENABLED_AND_VISIBLE
 
     fun isVisible(): Boolean = this == VISIBLE || this == ENABLED_AND_VISIBLE
   }

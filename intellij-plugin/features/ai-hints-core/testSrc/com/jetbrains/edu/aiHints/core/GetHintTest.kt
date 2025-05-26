@@ -31,7 +31,7 @@ class GetHintTest : EduActionTestCase() {
   @Test
   fun `GetHint action NOT available by default`() {
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -41,7 +41,7 @@ class GetHintTest : EduActionTestCase() {
     registerPlainTextEduAiHintsProcessor(testRootDisposable)
 
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -52,7 +52,7 @@ class GetHintTest : EduActionTestCase() {
     registerPlainTextEduAiHintsProcessor(testRootDisposable)
 
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -68,7 +68,7 @@ class GetHintTest : EduActionTestCase() {
 
     // then
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -80,7 +80,7 @@ class GetHintTest : EduActionTestCase() {
 
     // then
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -93,7 +93,7 @@ class GetHintTest : EduActionTestCase() {
 
     // then
     testGetHintAction(shouldBeEnabled = true, shouldBeVisible = true)
-    assertTrue(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertTrue(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -106,7 +106,7 @@ class GetHintTest : EduActionTestCase() {
 
     // then
     testGetHintAction(shouldBeEnabled = false, shouldBeVisible = false)
-    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertFalse(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   @Test
@@ -120,7 +120,7 @@ class GetHintTest : EduActionTestCase() {
 
     // then
     testGetHintAction(shouldBeEnabled = true, shouldBeVisible = true)
-    assertTrue(EduAIHintsUtils.getHintActionPresentation(project).isEnabledAndVisible())
+    assertTrue(EduAIHintsUtils.getHintActionPresentation(project).isVisible())
   }
 
   private fun acceptAgreement() {
