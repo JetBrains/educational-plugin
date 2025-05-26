@@ -3,6 +3,8 @@ package com.jetbrains.edu.uiOnboarding
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
@@ -175,10 +177,20 @@ class EduUiOnboardingExecutor(
     Disposer.dispose(disposable)
     EduUiOnboardingService.getInstance(project).onboardingFinished()
     NotificationGroupManager.getInstance().getNotificationGroup("EduOnboarding")
-      .createNotification(EduUiOnboardingBundle.message("finished.reminder"), MessageType.INFO).notify(project)
+      .createNotification(EduUiOnboardingBundle.message("finished.reminder", getMenuPath()), MessageType.INFO).notify(project)
 
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.MEET_NEW_UI)
     toolWindow?.activate(null)
+  }
+
+  private fun getMenuPath(): String {
+    val helpAction = ActionManager.getInstance().getAction(IdeActions.GROUP_HELP_MENU)
+    val zhabaAction = ActionManager.getInstance().getAction(StartEduUiOnboardingAction.ACTION_ID) as? StartEduUiOnboardingAction
+
+    val helpName = helpAction.templatePresentation.text ?: ""
+    val actionName = zhabaAction?.actionName() ?: ""
+
+    return "$helpName > $actionName"
   }
 
   private fun createLastAnimation(data: EduUiOnboardingStepData, isHappy: Boolean, lastZhaba: ZhabaComponent): EduUiOnboardingAnimation {
