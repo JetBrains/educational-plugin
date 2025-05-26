@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
 import com.jetbrains.python.packaging.PyPackageUtil
-import com.jetbrains.python.packaging.common.PythonSimplePackageSpecification
 import com.jetbrains.python.packaging.management.PythonPackageManager
 import com.jetbrains.python.psi.LanguageLevel
 
@@ -73,18 +72,7 @@ fun installRequiredPackages(project: Project, sdk: Sdk) {
     val packageManager = PythonPackageManager.forSdk(project, sdk)
     runWithModalProgressBlocking(project, EduPythonBundle.message("installing.requirements.progress")) {
       reportSequentialProgress(requirements.size) { reporter ->
-        requirements.forEach {
-          val spec = PythonSimplePackageSpecification(
-            it.installOptions.joinToString(" "),
-            version = null,
-            repository = null,
-            relation = null
-          )
-
-          reporter.itemStep(it.name) {
-            installRequiredPackage(packageManager, spec)
-          }
-        }
+        installRequiredPackages(reporter, packageManager, requirements)
       }
     }
 
