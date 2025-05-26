@@ -335,7 +335,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       """Track when a user clicks "Skip" button. The index and the step key are recorded""",
       EventFields.Int(UI_ONBOARDING_STEP_INDEX),
       // the list of step keys is taken from com.jetbrains.edu.uiOnboarding.EduUiOnboardingService.getDefaultStepsOrder
-      EventFields.String(UI_ONBOARDING_STEP_KEY, listOf("welcome", "taskDescription", "codeEditor", "checkSolution", "courseView"))
+      EventFields.String(UI_ONBOARDING_STEP_KEY, listOf("welcome", "taskDescription", "codeEditor", "checkSolution"))
     )
     private val UI_ONBOARDING_FINISHED = GROUP.registerEvent(
       "ui.onboarding.finished",
