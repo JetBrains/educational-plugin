@@ -49,12 +49,15 @@ class GetHint : ActionWithButtonCustomComponent() {
     // Action is not available for tasks with no functions in the Author's Solution
     if (!task.isFunctionsPresented(project)) return
 
-    val isMarketplaceStudyCourse = course.isMarketplace && course.isStudy
-    e.presentation.isEnabledAndVisible =
-      isMarketplaceStudyCourse
+    e.presentation.isEnabled =
+      course.isMarketplace && course.isStudy
       && task.status == CheckStatus.Failed
       && EduAIHintsProcessor.forCourse(course) != null
-      && HintStateManager.isDefault(project)
+    /**
+     * Even though the action is enabled, we make it invisible in case the user has accepted the Code Hint
+     * so to prevent them to perform an action again before the Check
+     */
+    e.presentation.isVisible = e.presentation.isEnabled && HintStateManager.isDefault(project)
     e.presentation.putClientProperty(PROJECT_KEY, project)
   }
 

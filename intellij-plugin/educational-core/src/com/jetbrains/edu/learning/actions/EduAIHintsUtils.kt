@@ -46,6 +46,6 @@ object EduAIHintsUtils {
   enum class GetHintActionPresentation {
     ENABLED_AND_VISIBLE, ENABLED, VISIBLE, OTHER;
 
-    fun isVisible(): Boolean = this == VISIBLE || this == ENABLED_AND_VISIBLE
+    fun isEnabled(): Boolean = this == ENABLED || this == ENABLED_AND_VISIBLE
   }
 }
