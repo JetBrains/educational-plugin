@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
 import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper.Companion.firstAvailable
+import com.jetbrains.edu.python.learning.setAssociationToModule
 import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.*
 
@@ -81,12 +82,8 @@ open class PyCourseProjectGenerator(
     }
     settings.sdk = sdk
     SdkConfigurationUtil.addSdk(sdk)
-    sdk.setAssociationToModule(project)
-  }
-
-  private fun Sdk.setAssociationToModule(project: Project) {
     val module = ModuleManager.getInstance(project).sortedModules.firstOrNull() ?: return
-    setAssociationToModule(module)
+    setAssociationToModule(sdk, module)
   }
 
   companion object {
