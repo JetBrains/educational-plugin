@@ -41,7 +41,7 @@ object AIDebugUtils {
     EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible
   }
 
-  fun Task.getAllTestFiles() = taskFiles.values.filter {
+  private fun Task.getAllTestFiles() = taskFiles.values.filter {
     EduUtilsKt.isTestsFile(this, it.name)
   }
 
