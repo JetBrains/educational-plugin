@@ -3,31 +3,31 @@ package com.jetbrains.edu.python.learning
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
-import com.jetbrains.python.packaging.common.PythonSimplePackageSpecification
+import com.intellij.platform.util.progress.SequentialProgressReporter
+import com.jetbrains.python.packaging.PyRequirement
 import com.jetbrains.python.packaging.management.PythonPackageManager
+import com.jetbrains.python.packaging.management.PythonPackagesInstaller
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.flavors.PyFlavorData
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.setAssociationToModule
 import kotlin.reflect.full.callSuspend
+import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.functions
+import kotlin.reflect.jvm.isAccessible
 
-// BACKCOMPAT: 2024.3. inline it
-internal suspend fun installRequiredPackage(packageManager: PythonPackageManager, spec: PythonSimplePackageSpecification) {
-  try {
-    packageManager.installPackage(spec, emptyList(), withBackgroundProgress = false)
-  }
-  catch (_: NoSuchMethodError) {
-    // For versions of the py plugin before 251.25410. The installPackage() method didn't have the last boolean argument
-
-    val method = packageManager::class.functions.find { function ->
-      // Match name and parameter types
-      function.name == "installPackage" &&
-      function.parameters.size == 3 // 1 receiver + 2 arguments
-    } ?: throw NoSuchMethodError("installPackage() method not found")
-
-    method.callSuspend(packageManager, spec, emptyList<String>())
-  }
+// BACKCOMPAT: 2025.1. Inline it.
+internal suspend fun installRequiredPackages(
+  @Suppress("unused") reporter: SequentialProgressReporter,
+  packageManager: PythonPackageManager,
+  requirements: List<PyRequirement>
+) {
+  val method = PythonPackagesInstaller::class.companionObject?.functions?.find { function ->
+    function.name == "installWithRequirements"
+    && function.parameters.size == 4 // 1 receiver, 3 arguments
+  } ?: throw NoSuchMethodError("No static `installWithRequirements` method was found")
+  method.isAccessible = true
+  method.callSuspend(PythonPackagesInstaller.Companion, packageManager, requirements, emptyList<String>())
 }
 
 // BACKCOMPAT: 2025.1. Inline it.
