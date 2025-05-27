@@ -172,7 +172,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     return "${baseUrl.withTrailingSlash()}api/projects/$hyperskillProjectId/additional-files/${StepikNames.ADDITIONAL_INFO}"
   }
 
-  fun getLesson(course: HyperskillCourse): Lesson {
+  fun getLesson(course: HyperskillCourse): Lesson? {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
     val lesson = FrameworkLesson()
@@ -196,6 +196,20 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     val attachmentLink = getAdditionalFilesLink(hyperskillProject.id)
     loadAndFillAdditionalCourseInfo(course, attachmentLink)
     loadAndFillLessonAdditionalInfo(lesson)
+
+    val stages = course.stages
+    val projectId = hyperskillProject.id
+
+    if (lesson.taskList.size != stages.size) {
+      LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
+      return null
+    }
+
+    lesson.taskList.forEachIndexed { index, task ->
+      task.feedbackLink = feedbackLink(projectId, stages[index])
+      task.name = stages[index].title
+    }
+
     return lesson
   }
 
@@ -212,17 +226,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       val stages = getStages(projectId) ?: return
       hyperskillCourse.stages = stages
     }
-    val stages = hyperskillCourse.stages
-    val lesson = getLesson(hyperskillCourse)
-    if (lesson.taskList.size != stages.size) {
-      LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
-      return
-    }
-
-    lesson.taskList.forEachIndexed { index, task ->
-      task.feedbackLink = feedbackLink(projectId, stages[index])
-      task.name = stages[index].title
-    }
+    val lesson = getLesson(hyperskillCourse) ?: return
 
     // We want project lesson to be the first
     // It's possible to open Problems in IDE without loading project lesson (stages)
