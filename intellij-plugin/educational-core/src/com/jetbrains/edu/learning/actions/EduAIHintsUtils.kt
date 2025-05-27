@@ -36,16 +36,14 @@ object EduAIHintsUtils {
     )
     runReadAction { ActionUtil.performDumbAwareUpdate(action, anActionEvent, false) }
     return when {
-      anActionEvent.presentation.isEnabledAndVisible -> GetHintActionPresentation.ENABLED_AND_VISIBLE
       anActionEvent.presentation.isEnabled -> GetHintActionPresentation.ENABLED
-      anActionEvent.presentation.isVisible -> GetHintActionPresentation.VISIBLE
       else -> GetHintActionPresentation.OTHER
     }
   }
 
   enum class GetHintActionPresentation {
-    ENABLED_AND_VISIBLE, ENABLED, VISIBLE, OTHER;
+    ENABLED, OTHER;
 
-    fun isEnabled(): Boolean = this == ENABLED || this == ENABLED_AND_VISIBLE
+    fun isEnabled(): Boolean = this == ENABLED
   }
 }
