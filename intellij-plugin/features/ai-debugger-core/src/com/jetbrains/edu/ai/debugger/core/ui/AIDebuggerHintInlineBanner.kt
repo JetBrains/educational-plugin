@@ -1,31 +1,40 @@
 package com.jetbrains.edu.ai.debugger.core.ui
 
-import com.intellij.ui.InlineBanner
-import com.intellij.ui.NotificationBalloonRoundShadowBorderProvider
-import com.intellij.ui.RoundedLineBorder
-import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
-import com.jetbrains.edu.learning.ui.EduColors
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.debugger.core.feedback.AIDebuggerFeedbackDialog
+import com.jetbrains.edu.ai.debugger.core.service.TestInfo
+import com.jetbrains.edu.ai.translation.ui.LikeBlock
+import com.jetbrains.edu.ai.ui.HintInlineBanner
+import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.educational.ml.debugger.dto.Breakpoint
+import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 import org.jetbrains.annotations.Nls
-import javax.swing.BorderFactory
-import javax.swing.border.CompoundBorder
 
-class AIDebuggerHintInlineBanner(@Nls message: String) : InlineBanner(message) {
-  init {
-    setIcon(AIDebuggerIcons.AIHint)
-    isOpaque = false
-    border = createBorder()
-    background = EduColors.aiGetHintInlineBannersBackgroundColor
-    toolTipText = EduAIDebuggerCoreBundle.message("hints.label.ai.generated.content.tooltip")
-  }
+class AIDebuggerHintInlineBanner(
+  project: Project,
+  task: Task,
+  message: @Nls String,
+) : HintInlineBanner(project, task, message) {
 
-  private fun createBorder(): CompoundBorder = BorderFactory.createCompoundBorder(
-    RoundedLineBorder(
-      EduColors.aiGetHintInlineBannersBorderColor, NotificationBalloonRoundShadowBorderProvider.CORNER_RADIUS.get()
-    ), JBUI.Borders.empty(BORDER_OFFSET)
-  )
-
-  companion object {
-    private const val BORDER_OFFSET: Int = 10
+  fun addFeedbackLikenessButtons(
+    task: Task,
+    userSolution: Map<String, String>,
+    testInfo: TestInfo,
+    finalBreakpoints: List<Breakpoint>,
+    intermediateBreakpoints: Map<String, List<Int>>,
+    breakpointHints: List<BreakpointHintDetails>
+  ): AIDebuggerHintInlineBanner {
+    val project = task.project ?: return this
+    addLikeDislikeActions {
+      val dialog = AIDebuggerFeedbackDialog(project, task, userSolution, testInfo,
+        finalBreakpoints, intermediateBreakpoints, breakpointHints, likeness)
+      if (dialog.showAndGet()) {
+        dialog.getLikenessAnswer() ?: likeness
+      } else {
+        LikeBlock.FeedbackLikenessAnswer.NO_ANSWER
+      }.also { close() }
+    }
+    return this
   }
 }

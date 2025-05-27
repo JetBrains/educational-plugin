@@ -113,7 +113,8 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           addEditorMouseMotionListener(listener, this@AIDebugSessionService)
           addEditorMouseListener(listener, this@AIDebugSessionService)
         }
-        AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
+        AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language, userSolution,
+          testInfo, finalBreakpoints, intermediateBreakpoints, breakpointHints).runDebuggingSession(testResult)
         AIDebuggerLogEntry(
           task = task.toTaskData(),
           actionType = "RunDebugSession",
