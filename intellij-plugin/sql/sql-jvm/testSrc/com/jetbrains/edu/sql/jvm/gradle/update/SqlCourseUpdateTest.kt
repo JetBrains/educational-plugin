@@ -133,8 +133,8 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
     assertEquals(course.allTasks.size, LocalDataSourceManager.getInstance(project).dataSources.size)
   }
 
-  override fun createCourseStructure(course: Course) {
-    super.createCourseStructure(course)
+  override fun createCourseStructure(course: Course, waitForProjectConfiguration: Boolean) {
+    super.createCourseStructure(course, waitForProjectConfiguration)
     if (course is EduCourse) {
       setTopLevelSection(course)
     }

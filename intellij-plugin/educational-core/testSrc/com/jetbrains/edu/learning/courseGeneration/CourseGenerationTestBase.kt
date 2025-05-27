@@ -37,7 +37,7 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeav
 
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
-  protected open fun createCourseStructure(course: Course) {
+  protected open fun createCourseStructure(course: Course, waitForProjectConfiguration: Boolean = true) {
     val configurator = course.configurator ?: error("Failed to find `EduConfigurator` for `${course.name}` course")
     val generator = configurator.courseBuilder.getCourseProjectGenerator(course)
                     ?: error("The provided builder returned null as the course project generator")
@@ -45,8 +45,10 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeav
       generator.doCreateCourseProject(rootDir.path, defaultSettings) ?: error("Cannot create project")
     }
 
-    waitForCourseConfiguration(project)
-    IndexingTestUtil.waitUntilIndexesAreReady(project)
+    if (waitForProjectConfiguration) {
+      waitForCourseConfiguration(project)
+      IndexingTestUtil.waitUntilIndexesAreReady(project)
+    }
     TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
     runInEdtAndWait {
       myProject = project
