@@ -55,7 +55,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     val hyperskillCourse = HyperskillCourseCreator.createHyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment)
     return hyperskillCourse.apply {
       stages = stagesFromServer
-      val lessonFromServer = connector.getLesson(this)
+      val lessonFromServer = connector.getLesson(this) ?: return null
       addLesson(lessonFromServer)
       init(this, false)
     }
