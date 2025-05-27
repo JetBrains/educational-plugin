@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning
 import com.intellij.ide.plugins.ContainerDescriptor
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.contentModules
+import com.intellij.ide.plugins.getMainDescriptor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
@@ -182,8 +184,8 @@ private class ClasspathServiceCollector : TestAwareServiceCollector {
           }
         }
 
-        for (module in pluginDescriptor.content.modules) {
-          collectServicesFromPluginManifest(module.requireDescriptor(), containerDescriptor, serviceMap)
+        for (module in pluginDescriptor.contentModules) {
+          collectServicesFromPluginManifest(module.getMainDescriptor(), containerDescriptor, serviceMap)
         }
       }
     }
