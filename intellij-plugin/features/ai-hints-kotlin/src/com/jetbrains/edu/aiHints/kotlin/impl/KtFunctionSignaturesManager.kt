@@ -53,6 +53,13 @@ object KtFunctionSignaturesManager : FunctionSignaturesManager {
     return functionSignatures
   }
 
+  /**
+   * Kotlin analysis API requires indices to be ready once entered, please make sure you call this function is a smart mode
+   *
+   * See also the `KtFunctionSignaturesManagerTest`
+   *
+   * @see com.intellij.openapi.project.IndexNotReadyException
+   */
   internal fun KtNamedFunction.generateSignature(signatureSource: SignatureSource): FunctionSignature? = runReadAction {
     val ktFunction = this
 
