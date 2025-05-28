@@ -18,7 +18,6 @@ include(
   "intellij-plugin:Edu-Python",
   "intellij-plugin:Edu-Python:Idea", // python support for IDEA and Android Studio
   "intellij-plugin:Edu-Python:PyCharm", // python support for PyCharm and CLion
-  "intellij-plugin:Edu-Android",
   "intellij-plugin:Edu-JavaScript",
   "intellij-plugin:Edu-Rust",
   "intellij-plugin:Edu-Cpp",

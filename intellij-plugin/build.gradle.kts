@@ -63,7 +63,6 @@ dependencies {
     pluginModule(implementation(project("Edu-Python:Idea")))
     pluginModule(implementation(project("Edu-Python:PyCharm")))
     pluginModule(implementation(project("Edu-Scala")))
-    pluginModule(implementation(project("Edu-Android")))
     pluginModule(implementation(project("Edu-JavaScript")))
     pluginModule(implementation(project("Edu-Rust")))
     pluginModule(implementation(project("Edu-Cpp")))
