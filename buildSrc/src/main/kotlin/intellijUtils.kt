@@ -88,10 +88,10 @@ val Project.rustPlugins: List<String> get() = listOf(
   tomlPlugin
 )
 
-val Project.cppPlugins: List<String> get() = listOfNotNull(
+val Project.cppPlugins: List<String> get() = listOf(
   "com.intellij.cidr.lang",
   "com.intellij.clion",
-  "com.intellij.clion.runFile".takeIf { !isAtLeast252 },
+  "com.intellij.clion.runFile",
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch"

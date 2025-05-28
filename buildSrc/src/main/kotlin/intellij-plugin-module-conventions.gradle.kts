@@ -40,7 +40,13 @@ dependencies {
   testOutput(sourceSets.test.get().output.classesDirs)
 
   intellijPlatform {
-    testIntellijPlugins(commonTestPlugins)
+    // FIXME: Drop when new version (`clionVersion`) of EAP supported
+    // Reason: Neither `com.jetbrains.modules.json`, nor `com.jetbrains.json` is resolved
+    if (isAtLeast252 && project.path.contains("Edu-Cpp")) {
+      testIntellijPlugins(imagesPlugin, yamlPlugin)
+    } else {
+      testIntellijPlugins(commonTestPlugins)
+    }
     testFramework(TestFrameworkType.Bundled)
   }
 }
