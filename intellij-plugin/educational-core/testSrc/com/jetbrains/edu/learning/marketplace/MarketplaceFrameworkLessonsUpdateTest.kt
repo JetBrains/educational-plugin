@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.EduExperimentalFeatures.NEW_COURSE_UPDATE
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -11,11 +10,9 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.stepik.hyperskill.FrameworkLessonsUpdateTest
 import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.rules.WithExperimentalFeature
 import org.junit.Test
 import kotlin.test.assertNotEquals
 
-@WithExperimentalFeature(id = NEW_COURSE_UPDATE, value = false)
 class MarketplaceFrameworkLessonsUpdateTest : FrameworkLessonsUpdateTest<EduCourse>() {
 
   @Test

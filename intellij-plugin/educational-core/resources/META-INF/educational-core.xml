@@ -474,7 +474,7 @@
     <experimentalFeature id="edu.course.sql" percentOfUsers="100" internalFeature="true">
       <description>Enables support for SQL courses</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.update.new" percentOfUsers="100">
+    <experimentalFeature id="edu.course.update.new" percentOfUsers="0" internalFeature="true">
       <description>Enable the new course update functionality to provide more efficient course updates</description>
     </experimentalFeature>
     <experimentalFeature id="edu.educator.help" percentOfUsers="100">

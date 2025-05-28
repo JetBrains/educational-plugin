@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.EduExperimentalFeatures.NEW_COURSE_UPDATE
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -18,11 +17,9 @@ import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdat
 import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdater.Companion.shouldBeUpdated
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
-import com.jetbrains.edu.rules.WithExperimentalFeature
 import org.junit.Test
 import java.util.*
 
-@WithExperimentalFeature(id = NEW_COURSE_UPDATE, value = false)
 class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>() {
 
   @Test

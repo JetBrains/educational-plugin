@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduExperimentalFeatures.NEW_COURSE_UPDATE
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -11,13 +10,11 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.rules.WithExperimentalFeature
 import com.jetbrains.rd.util.firstOrNull
 import org.junit.Test
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-@WithExperimentalFeature(id = NEW_COURSE_UPDATE, value = false)
 class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
