@@ -200,7 +200,6 @@ tasks {
       setClionSystemProperties(withRadler = true)
     }
     customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
-    customRunIdeTask(AndroidStudio, studioVersion)
     customRunIdeTask(WebStorm)
     customRunIdeTask(GoLand)
     customRunIdeTask(PhpStorm)

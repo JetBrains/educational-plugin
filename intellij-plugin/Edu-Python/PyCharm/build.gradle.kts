@@ -4,10 +4,8 @@ plugins {
 
 dependencies {
   intellijPlatform {
-    val ideVersion = if (isStudioIDE) ideaVersion else baseVersion
-    intellijIde(ideVersion)
+    intellijIde(baseVersion)
 
-    // TODO: incorrect plugin version in case of AS
     intellijPlugins(pythonPlugin)
   }
 

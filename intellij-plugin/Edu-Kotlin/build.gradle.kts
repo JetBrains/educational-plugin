@@ -4,9 +4,7 @@ plugins {
 
 dependencies {
   intellijPlatform {
-    val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-
-    intellijIde(ideVersion)
+    intellijIde(ideaVersion)
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(kotlinPlugin)
