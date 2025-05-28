@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
   intellijPlatform {
-    val ideVersion = if (isStudioIDE || isPycharmIDE) ideaVersion else baseVersion
+    val ideVersion = if (isPycharmIDE) ideaVersion else baseVersion
     intellijIde(ideVersion)
 
     intellijPlugins(sqlPlugins)

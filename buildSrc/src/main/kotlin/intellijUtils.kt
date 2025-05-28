@@ -12,25 +12,21 @@ val Project.isAtLeast251: Boolean get() = environmentName.toInt() >= 251
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
 val Project.baseIDE: String by Properties
-val Project.isJvmCenteredIDE: Boolean get() = baseIDE in listOf("idea", "studio")
 
 val Project.ideaVersion: String by Properties
 val Project.clionVersion: String by Properties
 val Project.pycharmVersion: String by Properties
-val Project.studioVersion: String by Properties
 val Project.riderVersion: String by Properties
 
 val Project.isIdeaIDE: Boolean get() = baseIDE == "idea"
 val Project.isClionIDE: Boolean get() = baseIDE == "clion"
 val Project.isPycharmIDE: Boolean get() = baseIDE == "pycharm"
-val Project.isStudioIDE: Boolean get() = baseIDE == "studio"
 val Project.isRiderIDE: Boolean get() = baseIDE == "rider"
 
 val Project.baseVersion: String get() = when {
   isIdeaIDE -> ideaVersion
   isClionIDE -> clionVersion
   isPycharmIDE -> pycharmVersion
-  isStudioIDE -> studioVersion
   isRiderIDE -> riderVersion
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
@@ -44,7 +40,6 @@ val Project.pythonPlugin: String get() = when {
   isIdeaIDE -> pythonCommunityPlugin
   isClionIDE -> "PythonCore"
   isPycharmIDE -> "PythonCore"
-  isStudioIDE -> pythonCommunityPlugin
   isRiderIDE -> pythonCommunityPlugin
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
@@ -65,7 +60,6 @@ val Project.javaScriptPlugin: String get() = "JavaScript"
 val Project.nodeJsPlugin: String get() = "NodeJS"
 val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
-val Project.androidPlugin: String get() = "org.jetbrains.android"
 val Project.codeWithMePlugin: String get() = "com.jetbrains.codeWithMe"
 val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"

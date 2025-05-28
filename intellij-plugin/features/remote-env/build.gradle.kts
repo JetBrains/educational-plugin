@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
   intellijPlatform {
-    val ideVersion = if (isStudioIDE || isRiderIDE) ideaVersion else baseVersion
+    val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
     intellijIde(ideVersion)
 
     intellijPlugins(codeWithMePlugin)

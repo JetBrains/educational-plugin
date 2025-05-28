@@ -4,11 +4,10 @@ plugins {
 
 dependencies {
   intellijPlatform {
-    val ideVersion = if (!isJvmCenteredIDE) ideaVersion else baseVersion
-    intellijIde(ideVersion)
+    intellijIde(ideaVersion)
 
     val pluginList = listOf(
-      if (!isJvmCenteredIDE) pythonCommunityPlugin else pythonPlugin,
+      pythonCommunityPlugin,
       javaPlugin
     )
     intellijPlugins(pluginList)
