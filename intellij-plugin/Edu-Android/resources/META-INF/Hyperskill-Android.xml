@@ -1,6 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.android.hyperskill.AndroidHyperskillConfigurator"
-                  language="kotlin" courseType="Hyperskill" environment="Android"/>
-  </extensions>
-</idea-plugin>

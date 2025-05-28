@@ -1,6 +1,0 @@
-package com.jetbrains.edu.android.compatibility
-
-import com.jetbrains.edu.learning.compatibility.AndroidCourseCompatibilityProvider
-import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderTestBase
-
-class AndroidCourseCompatibilityProviderTest : CourseCompatibilityProviderTestBase(AndroidCourseCompatibilityProvider::class)
