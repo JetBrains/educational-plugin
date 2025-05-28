@@ -18,7 +18,6 @@
     <module name="Edu-Java"/>
     <module name="Edu-Kotlin"/>
     <module name="Edu-Scala"/>
-    <module name="Edu-Android"/>
     <module name="Edu-JavaScript"/>
     <module name="Edu-Rust"/>
     <module name="Edu-Cpp"/>
