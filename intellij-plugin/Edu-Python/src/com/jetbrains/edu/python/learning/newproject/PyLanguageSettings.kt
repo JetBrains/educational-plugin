@@ -147,7 +147,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       if (baseSdks.isEmpty()) {
         return null
       }
-      return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxByOrNull { it.version }
+      return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxByOrNull { it.languageLevel }
     }
 
     private class NoApplicablePythonError(requiredVersion: Int,
