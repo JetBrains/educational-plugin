@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.project.Project
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
@@ -36,9 +37,9 @@ object UserAgreementUtil {
 
   private const val USER_AGREEMENT_NOTIFICATION_IGNORE: String = "edu.user.agreement.editor.notification.ignore"
 
-  fun isEditorNotificationIgnored(): Boolean =
-    PropertiesComponent.getInstance().getBoolean(USER_AGREEMENT_NOTIFICATION_IGNORE, false)
+  fun Project.isEditorNotificationIgnored(): Boolean =
+    PropertiesComponent.getInstance(this).getBoolean(USER_AGREEMENT_NOTIFICATION_IGNORE, false)
 
-  fun setEditorNotificationIgnored(ignored: Boolean = true) =
-    PropertiesComponent.getInstance().setValue(USER_AGREEMENT_NOTIFICATION_IGNORE, ignored)
+  fun Project.setEditorNotificationIgnored(ignored: Boolean = true) =
+    PropertiesComponent.getInstance(this).setValue(USER_AGREEMENT_NOTIFICATION_IGNORE, ignored)
 }

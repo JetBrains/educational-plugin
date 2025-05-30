@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.jetbrains.edu.learning.NotificationsTestBase
+import com.jetbrains.edu.learning.agreement.UserAgreementUtil.setEditorNotificationIgnored
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import org.junit.Test
@@ -58,14 +59,14 @@ class UserAgreementEditorNotificationsProviderTest : NotificationsTestBase() {
       )
     )
     // and
-    UserAgreementUtil.setEditorNotificationIgnored(ignored = true)
+    project.setEditorNotificationIgnored(ignored = true)
 
     checkNoEditorNotification<UserAgreementEditorNotificationsProvider>(findFile("lesson/task/task.txt"))
   }
 
   override fun tearDown() {
     try {
-      UserAgreementUtil.setEditorNotificationIgnored(ignored = false)
+      project.setEditorNotificationIgnored(ignored = false)
     }
     catch (e: Throwable) {
       addSuppressedException(e)
