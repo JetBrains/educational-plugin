@@ -4,6 +4,8 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.readText
+import com.jetbrains.edu.ai.debugger.core.api.TestFinder
+import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.checker.CheckUtils.createTests
 import com.jetbrains.edu.learning.course
@@ -20,7 +22,8 @@ import com.jetbrains.educational.ml.debugger.dto.TaskDescriptionFormat
 
 object AIDebugUtils {
 
-  fun CheckResult.failedTestName() = executedTestsInfo.firstFailed()?.name ?: error("No failed test is found")
+  fun CheckResult.failedTestName() = executedTestsInfo.firstFailed()?.name?.substringBefore("(")
+                                     ?: error("No failed test is found")
 
   fun Project.language() = course?.languageById ?: error("Language is not found")
 
@@ -36,6 +39,10 @@ object AIDebugUtils {
 
   fun Task.getInvisibleTestFiles() = taskFiles.values.filter {
     EduUtilsKt.isTestsFile(this, it.name) && !it.isVisible
+  }
+
+  fun Task.getAllTestFiles() = taskFiles.values.filter {
+    EduUtilsKt.isTestsFile(this, it.name)
   }
 
   private val LOG: Logger = Logger.getInstance(AIDebugUtils::class.java)
@@ -58,5 +65,20 @@ object AIDebugUtils {
       "JAVA" -> ProgrammingLanguage.JAVA
       else -> error("Language is not supported")
     }
+
+  fun CheckResult.collectTestInfo(project: Project, task: Task): TestInfo {
+    val testName = failedTestName()
+    val testText = TestFinder.findTestByName(project, task, testName)
+    val testFiles = runWithTests(project, task, {
+      task.getAllTestFiles().toNameTextMap(project)
+    }) ?: emptyMap()
+    return TestInfo(
+      errorMessage = details ?: message,
+      expectedOutput = diff?.expected ?: "There are no expected output",
+      name = testName,
+      testFiles = testFiles,
+      text = testText
+    )
+  }
 
 }
