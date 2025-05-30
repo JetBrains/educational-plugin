@@ -3,17 +3,13 @@ package com.jetbrains.edu.ai.debugger.core.listener
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.ai.debugger.core.api.TestFinder
 import com.jetbrains.edu.ai.debugger.core.log.AIDebuggerLogEntry
 import com.jetbrains.edu.ai.debugger.core.log.logInfo
 import com.jetbrains.edu.ai.debugger.core.log.toTaskData
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
-import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.ai.debugger.core.session.AIDebugSessionService
 import com.jetbrains.edu.ai.debugger.core.ui.AIDebuggerHintInlineBanner
-import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.failedTestName
-import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getInvisibleTestFiles
-import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.runWithTests
+import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.collectTestInfo
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.toNameTextMap
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -52,25 +48,14 @@ class AIDebuggerCheckListener : CheckListener {
     val virtualFileMap = runReadAction {
       taskFiles.associate { it.name to (it.getVirtualFile(project) ?: error("Virtual file is not found")) }
     }
-    val testName = testResult.failedTestName()
-    val testText = runReadAction { TestFinder.findTestByName(project, task, testName) } ?: ""
-    val testFiles = runWithTests(project, task, {
-      task.getInvisibleTestFiles().toNameTextMap(project)
-    }) ?: emptyMap()
-    val testInfo = TestInfo(
-      errorMessage = testResult.details ?: testResult.message,
-      expectedOutput = testResult.diff?.expected ?: "There are no expected output",
-      name = testName,
-      testFiles = testFiles,
-      text = testText
-    )
+    val testInfo = testResult.collectTestInfo(project, task)
     project.service<AIDebugSessionService>()
       .runDebuggingSession(task, userSolution, virtualFileMap, testResult, testInfo, closeAIDebuggingHint)
     AIDebuggerLogEntry(
       task = task.toTaskData(),
       actionType = "StartDebugSessionIsClicked",
       testResult = testResult,
-      testText = testText,
+      testText = testInfo.text,
       userCode = userSolution.toString(),
     ).logInfo()
   }

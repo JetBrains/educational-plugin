@@ -1,9 +1,9 @@
 package com.jetbrains.edu.ai.debugger.core.api
 
 import com.intellij.lang.LanguageExtension
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getInvisibleTestFiles
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.language
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.runWithTests
@@ -19,16 +19,17 @@ interface TestFinder {
   companion object {
     private val EP_NAME = LanguageExtension<TestFinder>("Educational.testFinder")
 
-    @RequiresReadLock
-    fun findTestByName(project: Project, task: Task, testName: String): String? =
+    fun findTestByName(project: Project, task: Task, testName: String): String =
       runWithTests(project, task, {
-        EP_NAME.forLanguage(project.language())?.findTestByName(
-          project,
-          task.taskFiles.values.filter { it.isTestFile }.mapNotNull { it.getVirtualFile(project) },
-          testName
-        )
+        runReadAction {
+          EP_NAME.forLanguage(project.language())?.findTestByName(
+            project,
+            task.taskFiles.values.filter { it.isTestFile }.mapNotNull { it.getVirtualFile(project) },
+            testName
+          )
+        }
       }).also {
         deleteTests(task.getInvisibleTestFiles(), project)
-      }
+      } ?: error("Can't find test text for $testName")
   }
 }
