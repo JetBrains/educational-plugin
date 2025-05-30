@@ -182,8 +182,8 @@ private class ClasspathServiceCollector : TestAwareServiceCollector {
           }
         }
 
-        for (module in pluginDescriptor.content.modules) {
-          collectServicesFromPluginManifest(module.requireDescriptor(), containerDescriptor, serviceMap)
+        collectFromModules(pluginDescriptor) { moduleDescriptor ->
+          collectServicesFromPluginManifest(moduleDescriptor, containerDescriptor, serviceMap)
         }
       }
     }
