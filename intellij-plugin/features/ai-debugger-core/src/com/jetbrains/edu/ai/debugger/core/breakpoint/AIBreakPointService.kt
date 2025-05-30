@@ -1,6 +1,7 @@
 package com.jetbrains.edu.ai.debugger.core.breakpoint
 
 import com.intellij.lang.Language
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.markup.RangeHighlighter
@@ -72,9 +73,9 @@ class AIBreakPointService(private val project: Project, private val scope: Corou
     highlighterRangers[breakpoint] = range
   }
 
-  fun removeHighlighter(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+  fun removeHighlighter(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) = invokeLater {
     val position = breakpoint.sourcePosition ?: error("There are no position for the breakpoint")
-    val range = highlighterRangers[breakpoint] ?: return
+    val range = highlighterRangers[breakpoint] ?: return@invokeLater
     position.file.getEditor(project)?.markupModel?.removeHighlighter(range)
   }
 
