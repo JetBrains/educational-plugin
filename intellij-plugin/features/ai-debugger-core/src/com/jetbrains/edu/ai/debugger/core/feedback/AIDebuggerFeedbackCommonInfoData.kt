@@ -2,10 +2,6 @@ package com.jetbrains.edu.ai.debugger.core.feedback
 
 import com.intellij.platform.feedback.dialog.CommonFeedbackSystemData
 import com.intellij.platform.feedback.dialog.SystemDataJsonSerializable
-import com.jetbrains.edu.ai.debugger.core.service.TestInfo
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.educational.ml.debugger.dto.Breakpoint
-import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -38,27 +34,24 @@ data class AIDebuggerFeedbackCommonInfoData(
     @JvmStatic
     fun create(
       commonSystemInfo: CommonFeedbackSystemData,
-      task: Task,
-      userSolution: Map<String, String>,
-      testInfo: TestInfo,
-      finalBreakpoints: List<Breakpoint>,
-      intermediateBreakpoints: Map<String, List<Int>>,
-      breakpointHints: List<BreakpointHintDetails>
-    ): AIDebuggerFeedbackCommonInfoData = AIDebuggerFeedbackCommonInfoData(
-      commonSystemInfo = commonSystemInfo,
-      courseId = task.course.id,
-      courseUpdateVersion = task.course.marketplaceCourseVersion,
-      courseName = task.course.name,
-      taskId = task.id,
-      taskName = task.name,
-      studentSolution = userSolution,
-      testName = testInfo.name,
-      testErrorMessage = testInfo.errorMessage,
-      testExpectedOutput = testInfo.expectedOutput,
-      testText = testInfo.text,
-      finalBreakpoints = finalBreakpoints.groupBy { it.fileName }.mapValues { (_, breakpoints) -> breakpoints.map { it.lineNumber } },
-      intermediateBreakpoints = intermediateBreakpoints,
-      breakpointHints = breakpointHints.groupBy { it.fileName }.mapValues { (_, hints) -> hints.map { it.lineNumber to it.hint } }
-    )
+      debugContext: AIDebugContext
+    ): AIDebuggerFeedbackCommonInfoData = with(debugContext) {
+      AIDebuggerFeedbackCommonInfoData(
+        commonSystemInfo = commonSystemInfo,
+        courseId = task.course.id,
+        courseUpdateVersion = task.course.marketplaceCourseVersion,
+        courseName = task.course.name,
+        taskId = task.id,
+        taskName = task.name,
+        studentSolution = userSolution,
+        testName = testInfo.name,
+        testErrorMessage = testInfo.errorMessage,
+        testExpectedOutput = testInfo.expectedOutput,
+        testText = testInfo.text,
+        finalBreakpoints = finalBreakpoints.groupBy { it.fileName }.mapValues { (_, breakpoints) -> breakpoints.map { it.lineNumber } },
+        intermediateBreakpoints = intermediateBreakpoints,
+        breakpointHints = breakpointHints.groupBy { it.fileName }.mapValues { (_, hints) -> hints.map { it.lineNumber to it.hint } }
+      )
+    }
   }
 }

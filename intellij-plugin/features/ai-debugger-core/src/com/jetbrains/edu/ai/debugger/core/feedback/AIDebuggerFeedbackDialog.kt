@@ -7,23 +7,14 @@ import com.intellij.platform.feedback.dialog.showFeedbackSystemInfoDialog
 import com.intellij.platform.feedback.dialog.uiBlocks.FeedbackBlock
 import com.intellij.platform.feedback.dialog.uiBlocks.TextAreaBlock
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
-import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.ai.translation.ui.LikeBlock
 import com.jetbrains.edu.ai.translation.ui.LikeBlock.FeedbackLikenessAnswer
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.educational.ml.debugger.dto.Breakpoint
-import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 
 class AIDebuggerFeedbackDialog(
   private val project: Project,
-  private val task: Task,
-  private val userSolution: Map<String, String>,
-  private val testInfo: TestInfo,
-  private val finalBreakpoints: List<Breakpoint>,
-  private val intermediateBreakpoints: Map<String, List<Int>>,
-  private val breakpointHints: List<BreakpointHintDetails>,
+  private val debugContext: AIDebugContext,
   defaultLikeness: FeedbackLikenessAnswer = FeedbackLikenessAnswer.NO_ANSWER
 ) : BlockBasedFeedbackDialog<AIDebuggerFeedbackCommonInfoData>(project, false) {
 
@@ -76,12 +67,7 @@ class AIDebuggerFeedbackDialog(
   override val mySystemInfoData: AIDebuggerFeedbackCommonInfoData by lazy {
     AIDebuggerFeedbackCommonInfoData.create(
       commonSystemInfo = CommonFeedbackSystemData.getCurrentData(),
-      task = task,
-      userSolution = userSolution,
-      testInfo = testInfo,
-      finalBreakpoints = finalBreakpoints,
-      intermediateBreakpoints = intermediateBreakpoints,
-      breakpointHints = breakpointHints,
+      debugContext = debugContext
     )
   }
 

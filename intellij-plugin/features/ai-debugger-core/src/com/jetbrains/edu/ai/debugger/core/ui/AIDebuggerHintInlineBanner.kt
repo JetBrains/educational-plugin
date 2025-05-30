@@ -1,14 +1,12 @@
 package com.jetbrains.edu.ai.debugger.core.ui
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.debugger.core.feedback.AIDebugContext
 import com.jetbrains.edu.ai.debugger.core.feedback.AIDebuggerFeedbackDialog
-import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.ai.translation.ui.LikeBlock
 import com.jetbrains.edu.ai.ui.HintInlineBanner
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.educational.ml.debugger.dto.Breakpoint
-import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
 import org.jetbrains.annotations.Nls
 
 class AIDebuggerHintInlineBanner(
@@ -19,16 +17,11 @@ class AIDebuggerHintInlineBanner(
 
   fun addFeedbackLikenessButtons(
     task: Task,
-    userSolution: Map<String, String>,
-    testInfo: TestInfo,
-    finalBreakpoints: List<Breakpoint>,
-    intermediateBreakpoints: Map<String, List<Int>>,
-    breakpointHints: List<BreakpointHintDetails>
+    debugContext: AIDebugContext
   ): AIDebuggerHintInlineBanner {
     val project = task.project ?: return this
     addLikeDislikeActions {
-      val dialog = AIDebuggerFeedbackDialog(project, task, userSolution, testInfo,
-        finalBreakpoints, intermediateBreakpoints, breakpointHints, likeness)
+      val dialog = AIDebuggerFeedbackDialog(project, debugContext, likeness)
       if (dialog.showAndGet()) {
         dialog.getLikenessAnswer() ?: likeness
       } else {
