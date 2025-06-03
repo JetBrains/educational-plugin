@@ -13,11 +13,14 @@ import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikTestUtils
 import com.jetbrains.edu.learning.stepik.StepikTestUtils.logOutFakeStepikUser
 import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import org.apache.commons.codec.binary.Base64
 import org.junit.Test
 import java.io.File
@@ -142,6 +145,32 @@ class HyperskillLessonTest : EduTestCase() {
     assertEquals(1, additionalFiles.size)
     assertEquals("build.gradle", additionalFiles[0].name)
     assertEquals("additional file text", additionalFiles[0].text)
+  }
+
+  @Test
+  fun `test getting lesson does not override task titles`() {
+    val mockConnector = HyperskillConnector.getInstance() as MockHyperskillConnector
+
+    val course = hyperskillCourse {
+      frameworkLesson {
+        eduTask {}
+      }
+    }
+
+    course.stages = listOf(HyperskillStage(stageId = 1, stageTitle = "stage1", stageStepId = 3885098))
+
+    mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
+      val responseFileName = when (request.pathWithoutPrams) {
+        "/api/steps" -> "steps_response_3885098.json"
+        "/api/project/${course.hyperskillProject?.id}/additional-files/additional-files.json" -> "attachments_response_278738129.json"
+        else -> return@withResponseHandler MockResponseFactory.notFound()
+      }
+      mockResponse(responseFileName)
+    }
+
+    val lesson = mockConnector.getLesson(course)!!
+    assertEquals(1, lesson.taskList.size)
+    assertEquals("stage1", lesson.taskList[0].name)
   }
 
   override fun getTestDataPath(): String = super.getTestDataPath() + "/stepik/hyperskill/"
