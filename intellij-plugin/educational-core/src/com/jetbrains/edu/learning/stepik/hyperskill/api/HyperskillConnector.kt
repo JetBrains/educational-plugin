@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.stepik.PyCharmStepOptions
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.api.StepikBasedConnector.Companion.createObjectMapper
 import com.jetbrains.edu.learning.stepik.hyperskill.*
@@ -137,6 +136,12 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       ).executeAndExtractFromBody()
     }.flatMap { hyperskillStepsLists -> Ok(hyperskillStepsLists.flatMap { it.steps }) }
 
+  private fun getAdditionalFiles(projectId: Int): Result<CourseAdditionalInfo, String> {
+    return hyperskillEndpoints
+      .additionalFiles(projectId)
+      .executeAndExtractFromBody()
+  }
+
   fun getStepsForTopic(topic: Int): Result<List<HyperskillStepSource>, String> =
     withPageIteration { page ->
       hyperskillEndpoints.steps(topic, page).executeAndExtractFromBody()
@@ -168,10 +173,6 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       .filter { it.theoryId != null }
   }
 
-  fun getAdditionalFilesLink(hyperskillProjectId: Int): String {
-    return "${baseUrl.withTrailingSlash()}api/projects/$hyperskillProjectId/additional-files/${StepikNames.ADDITIONAL_INFO}"
-  }
-
   fun getLesson(course: HyperskillCourse): Lesson? {
     val progressIndicator = ProgressManager.getInstance().progressIndicator
 
@@ -193,9 +194,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     }
     lesson.sortItems()
     val hyperskillProject = course.hyperskillProject ?: error("No Hyperskill project")
-    val attachmentLink = getAdditionalFilesLink(hyperskillProject.id)
-    loadAndFillAdditionalCourseInfo(course, attachmentLink)
-    loadAndFillLessonAdditionalInfo(lesson)
+    loadAndFillAdditionalCourseInfo(course, hyperskillProject.id)
 
     val stages = course.stages
     val projectId = hyperskillProject.id
@@ -211,6 +210,16 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
     }
 
     return lesson
+  }
+
+  private fun loadAndFillAdditionalCourseInfo(course: HyperskillCourse, projectId: Int) {
+    val courseInfo = getAdditionalFiles(projectId).onError { e ->
+      LOG.warn("Failed to load additional files for $projectId stages because of: $e")
+      return
+    }
+
+    course.additionalFiles = courseInfo.additionalFiles
+    course.solutionsHidden = courseInfo.solutionsHidden
   }
 
   fun getProblems(course: Course, lesson: Lesson): List<Task> {
@@ -380,8 +389,6 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       else Ok(result)
     }
   }
-
-  private fun String.withTrailingSlash(): String = if (!endsWith('/')) "$this/" else this
 
   companion object {
     private val LOG: Logger = logger<HyperskillConnector>()

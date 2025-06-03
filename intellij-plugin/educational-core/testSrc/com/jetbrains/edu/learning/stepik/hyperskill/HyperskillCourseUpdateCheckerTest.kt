@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.openapi.application.runWriteActionAndWait
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
@@ -14,8 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.getActionById
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.api.MockStepikConnector
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
@@ -23,7 +20,6 @@ import com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdat
 import com.jetbrains.edu.learning.stepik.hyperskill.update.SyncHyperskillCourseAction
 import com.jetbrains.edu.learning.update.CourseUpdateCheckerTestBase
 import org.junit.Test
-import java.io.File
 import java.util.*
 import kotlin.test.assertNotEquals
 
@@ -32,6 +28,10 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   private fun configureResponse(stagesResponse: String, courseResponse: String = "course_response.json") {
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      ADDITIONAL_FILES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
+      mockResponse("attachments.json")
+    }
     mockConnector.withResponseHandler(testRootDisposable) { _, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse(courseResponse)
@@ -44,9 +44,6 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
       STEPS_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       mockResponse("steps_response_111.json")
     }
-    val lessonAttachmentLink = mockConnector.getAdditionalFilesLink(1)
-    val stepikConnector = StepikConnector.getInstance() as MockStepikConnector
-    stepikConnector.withAttachments(mapOf(lessonAttachmentLink to FileUtil.loadFile(File(getTestFile("attachments.json")))))
   }
 
   @Test
@@ -188,5 +185,6 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     private val COURSES_REQUEST_RE = """/api/projects?.*""".toRegex()
     private val STAGES_REQUEST_RE = """/api/stages?.*""".toRegex()
     private val STEPS_REQUEST_RE = """/api/steps?.*""".toRegex()
+    private val ADDITIONAL_FILES_REQUEST_RE = """/api/projects/\d+/additional-files?.*""".toRegex()
   }
 }

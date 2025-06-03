@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.api
 
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
+import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.AttemptsList
+import com.jetbrains.edu.learning.stepik.api.CourseAdditionalInfo
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.api.SubmissionsList
 import okhttp3.ResponseBody
@@ -26,6 +28,9 @@ interface HyperskillEndpoints {
 
   @GET("api/steps")
   fun steps(@Query("ids", encoded = true) ids: String): Call<HyperskillStepsList>
+
+  @GET("api/projects/{id}/additional-files/${StepikNames.ADDITIONAL_INFO}")
+  fun additionalFiles(@Path("id") id: Int): Call<CourseAdditionalInfo>
 
   @GET("api/submissions")
   fun submissions(@Query("user") user: Int, @Query("step", encoded = true) step: String, @Query("page") page: Int, @Query("page_size") pageSize: Int = 100): Call<SubmissionsList>
