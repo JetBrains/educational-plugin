@@ -1,31 +1,44 @@
 package com.jetbrains.edu.ai.debugger.core.ui
 
-import com.intellij.ui.InlineBanner
-import com.intellij.ui.NotificationBalloonRoundShadowBorderProvider
-import com.intellij.ui.RoundedLineBorder
-import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
-import com.jetbrains.edu.learning.ui.EduColors
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.debugger.core.feedback.AIDebugContext
+import com.jetbrains.edu.ai.debugger.core.feedback.AIDebuggerFeedbackDialog
+import com.jetbrains.edu.ai.debugger.core.log.AIDebuggerLogEntry
+import com.jetbrains.edu.ai.debugger.core.log.logInfo
+import com.jetbrains.edu.ai.debugger.core.log.toTaskData
+import com.jetbrains.edu.ai.translation.ui.LikeBlock
+import com.jetbrains.edu.ai.ui.HintInlineBanner
+import com.jetbrains.edu.learning.courseFormat.ext.project
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.Nls
-import javax.swing.BorderFactory
-import javax.swing.border.CompoundBorder
 
-class AIDebuggerHintInlineBanner(@Nls message: String) : InlineBanner(message) {
-  init {
-    setIcon(AIDebuggerIcons.AIHint)
-    isOpaque = false
-    border = createBorder()
-    background = EduColors.aiGetHintInlineBannersBackgroundColor
-    toolTipText = EduAIDebuggerCoreBundle.message("hints.label.ai.generated.content.tooltip")
-  }
+class AIDebuggerHintInlineBanner(
+  project: Project,
+  task: Task,
+  message: @Nls String,
+) : HintInlineBanner(project, task, message) {
 
-  private fun createBorder(): CompoundBorder = BorderFactory.createCompoundBorder(
-    RoundedLineBorder(
-      EduColors.aiGetHintInlineBannersBorderColor, NotificationBalloonRoundShadowBorderProvider.CORNER_RADIUS.get()
-    ), JBUI.Borders.empty(BORDER_OFFSET)
-  )
-
-  companion object {
-    private const val BORDER_OFFSET: Int = 10
+  fun addFeedbackLikenessButtons(
+    task: Task,
+    debugContext: AIDebugContext
+  ): AIDebuggerHintInlineBanner {
+    val project = task.project ?: return this
+    addLikeDislikeActions {
+      val dialog = AIDebuggerFeedbackDialog(project, debugContext, likeness)
+      val likenessAnswer = if (dialog.showAndGet()) {
+        dialog.getLikenessAnswer() ?: likeness
+      } else {
+        LikeBlock.FeedbackLikenessAnswer.NO_ANSWER
+      }
+      AIDebuggerLogEntry(
+        task = task.toTaskData(),
+        actionType = "DebugSessionStopped",
+        feedbackLikenessAnswer = likenessAnswer,
+        feedbackText = dialog.getExperienceText()
+      ).logInfo()
+      close()
+      likenessAnswer
+    }
+    return this
   }
 }

@@ -1,6 +1,11 @@
 <idea-plugin package="com.jetbrains.edu.ai.debugger.core">
   <resource-bundle>messages.EduAIDebuggerCoreBundle</resource-bundle>
 
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="AI"/>
+  </dependencies>
+
   <actions>
     <action id="Educational.EduAIDebuggerServiceChangeHost"
             class="com.jetbrains.edu.ai.debugger.core.action.EduAIDebuggerServiceChangeHost"

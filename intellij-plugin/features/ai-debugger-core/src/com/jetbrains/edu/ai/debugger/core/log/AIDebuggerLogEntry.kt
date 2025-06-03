@@ -1,6 +1,7 @@
 package com.jetbrains.edu.ai.debugger.core.log
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.jetbrains.edu.ai.translation.ui.LikeBlock.FeedbackLikenessAnswer
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.educational.ml.debugger.dto.Breakpoint
 import com.jetbrains.educational.ml.debugger.response.BreakpointHintDetails
@@ -15,6 +16,8 @@ data class AIDebuggerLogEntry(
   val finalBreakpoints: List<Breakpoint> = emptyList(),
   val intermediateBreakpoints: Map<String, List<Int>> = emptyMap(),
   val breakpointHints: List<BreakpointHintDetails> = emptyList(),
+  val feedbackLikenessAnswer: FeedbackLikenessAnswer = FeedbackLikenessAnswer.NO_ANSWER,
+  val feedbackText: String = "",
 ) {
   override fun toString(): String = jacksonObjectMapper().writeValueAsString(this)
 }
