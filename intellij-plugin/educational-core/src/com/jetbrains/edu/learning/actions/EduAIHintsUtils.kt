@@ -28,21 +28,22 @@ object EduAIHintsUtils {
    * @see <a href="https://youtrack.jetbrains.com/issue/EDU-7584">EDU-7584</a>
    */
   fun getHintActionPresentation(project: Project): GetHintActionPresentation {
-    val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID)
-    val anActionEvent = AnActionEvent.createEvent(
-      SimpleDataContext.builder().add(CommonDataKeys.PROJECT, project).build(),
-      action.templatePresentation.clone(),
-      ACTION_PLACE,
-      ActionUiKind.NONE,
-      null
-    )
-    runReadAction { ActionUtil.performDumbAwareUpdate(action, anActionEvent, false) }
-    return when {
-      anActionEvent.presentation.isEnabledAndVisible -> GetHintActionPresentation.ENABLED_AND_VISIBLE
-      anActionEvent.presentation.isEnabled -> GetHintActionPresentation.ENABLED
-      anActionEvent.presentation.isVisible -> GetHintActionPresentation.VISIBLE
-      else -> GetHintActionPresentation.OTHER
-    }
+    return GetHintActionPresentation.OTHER
+//    val action = ActionManager.getInstance().getAction(GET_HINT_ACTION_ID)
+//    val anActionEvent = AnActionEvent.createEvent(
+//      SimpleDataContext.builder().add(CommonDataKeys.PROJECT, project).build(),
+//      action.templatePresentation.clone(),
+//      ACTION_PLACE,
+//      ActionUiKind.NONE,
+//      null
+//    )
+//    runReadAction { ActionUtil.performDumbAwareUpdate(action, anActionEvent, false) }
+//    return when {
+//      anActionEvent.presentation.isEnabledAndVisible -> GetHintActionPresentation.ENABLED_AND_VISIBLE
+//      anActionEvent.presentation.isEnabled -> GetHintActionPresentation.ENABLED
+//      anActionEvent.presentation.isVisible -> GetHintActionPresentation.VISIBLE
+//      else -> GetHintActionPresentation.OTHER
+//    }
   }
 
   enum class GetHintActionPresentation {

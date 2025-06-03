@@ -23,8 +23,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class AIDebuggerCheckListener : CheckListener {
+  val lessonIds = hashSetOf(815582437)
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     if (!isAvailable(task, result)) return
+    if (task.lesson.id !in lessonIds) return
     val textToShow = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.text")
 
     val aiDebuggerHintBanner = AIDebuggerHintInlineBanner(project, task, textToShow).apply {
