@@ -15,6 +15,7 @@ import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotionListener
 import com.jetbrains.edu.ai.debugger.core.breakpoint.IntermediateBreakpointProcessor
 import com.jetbrains.edu.ai.debugger.core.connector.AIDebuggerServiceConnector
+import com.jetbrains.edu.ai.debugger.core.feedback.AIDebugContext
 import com.jetbrains.edu.ai.debugger.core.log.*
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
 import com.jetbrains.edu.ai.debugger.core.service.TaskDescription
@@ -113,7 +114,15 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           addEditorMouseMotionListener(listener, this@AIDebugSessionService)
           addEditorMouseListener(listener, this@AIDebugSessionService)
         }
-        AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language).runDebuggingSession(testResult)
+        val debugContext = AIDebugContext(
+          task = task,
+          userSolution = userSolution,
+          testInfo = testInfo,
+          finalBreakpoints = finalBreakpoints,
+          intermediateBreakpoints = intermediateBreakpoints,
+          breakpointHints = breakpointHints
+        )
+        AIDebugSessionRunner(project, task, closeAIDebuggingHint, listener, language, debugContext).runDebuggingSession(testResult)
         AIDebuggerLogEntry(
           task = task.toTaskData(),
           actionType = "RunDebugSession",
