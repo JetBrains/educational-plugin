@@ -110,7 +110,7 @@ fun testAction(
     IndexingTestUtil.waitUntilIndexesAreReady(project)
   }
 
-  action.beforeActionPerformedUpdate(e)
+  updateAction(action, e)
   val presentation = e.presentation
 
   if (presentation.isEnabled != shouldBeEnabled) {
