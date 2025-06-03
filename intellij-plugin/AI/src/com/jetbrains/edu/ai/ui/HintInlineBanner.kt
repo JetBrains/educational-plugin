@@ -1,4 +1,4 @@
-package com.jetbrains.edu.aiHints.core.ui
+package com.jetbrains.edu.ai.ui
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
@@ -11,10 +11,10 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBDimension
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.ai.messages.EduAIBundle
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
-import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.HintBannerType
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields
 import com.jetbrains.edu.ai.translation.ui.LikeBlock.FeedbackLikenessAnswer
-import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.ui.EduColors
@@ -93,13 +93,7 @@ open class HintInlineBanner(
   }
 
   @RequiresEdt
-  fun display() {
-    val hintBannerType = when (this) {
-      is CodeHintInlineBanner -> HintBannerType.CODE
-      is TextHintInlineBanner -> HintBannerType.TEXT
-      is ErrorHintInlineBanner -> HintBannerType.ERROR
-      else -> error("Unexpected hint banner type: ${javaClass.simpleName}")
-    }
+  fun display(hintBannerType: EduAIFeaturesEventFields.HintBannerType) {
     EduAIFeaturesCounterUsageCollector.hintBannerShown(hintBannerType, task)
     TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(this@HintInlineBanner)
   }
@@ -108,7 +102,7 @@ open class HintInlineBanner(
     Success(
       EduColors.aiGetHintInlineBannersBackgroundColor,
       EduColors.aiGetHintInlineBannersBorderColor,
-      EduAIHintsCoreBundle.message("hints.label.ai.generated.content.tooltip")
+      EduAIBundle.message("hints.label.ai.generated.content.tooltip")
     ),
     Error(JBUI.CurrentTheme.Banner.ERROR_BACKGROUND, JBUI.CurrentTheme.Banner.ERROR_BORDER_COLOR, null);
 
@@ -254,7 +248,7 @@ open class HintInlineBanner(
 
   private fun setIcon() {
     val myIcon = JBLabel()
-    myIcon.icon = EduAiHintsIcons.Hint
+    myIcon.icon = EducationalAIIcons.Hint
     myIcon.isVisible = true
     iconPanel.isVisible = true
     iconPanel.add(myIcon, BorderLayout.NORTH)
