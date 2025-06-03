@@ -86,7 +86,7 @@ fun getRequiredPluginsMessage(plugins: Collection<PluginInfo>, actionAsLink: Boo
   }
 }
 
-fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
+fun createCourseDescriptionStylesheet() = CssBuilder().apply {
   body {
     fontFamily = "SF UI Text"
     fontSize = JBUI.scaleFontSize(13.0f).pt
@@ -94,7 +94,7 @@ fun createCourseDescriptionStylesheet() = CSSBuilder().apply {
   }
 }
 
-fun createErrorStylesheet() = CSSBuilder().apply {
+fun createErrorStylesheet() = CssBuilder().apply {
   a {
     color = EduColors.hyperlinkColor.asCssColor()
   }

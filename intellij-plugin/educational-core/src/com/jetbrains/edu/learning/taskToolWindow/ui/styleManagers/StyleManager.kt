@@ -45,7 +45,7 @@ class StyleManager {
   }
 
   fun typographyAndColorStylesheet(): String {
-    return CSSBuilder().apply {
+    return CssBuilder().apply {
       body {
         fontFamily = bodyFont
         fontSize = if (isJCEF()) bodyFontSize.px else bodyFontSize.pt
@@ -58,7 +58,7 @@ class StyleManager {
         fontFamily = codeFont
         backgroundColor = codeBackground
         fontSize = if (isJCEF()) codeFontSize.px else codeFontSize.pt
-        padding = "4 4 4 4"
+        padding = Padding(4.px)
         // For unknown reason Swing panel fails to start when
         // it is kotlinx.css.StyledElement.borderRadius
         "border-radius" to 5.px
@@ -85,10 +85,10 @@ class StyleManager {
       else -> Color(TaskToolWindowBundle.value("dracula.table.border.color"))
     }
 
-    val cellsPadding = TaskToolWindowBundle.value("table.cell.padding")
+    val cellsPadding = Padding(0.375.em, 0.8125.em)
 
     val tableCss = if (JavaUILibrary.isJCEF())
-      CSSBuilder().apply {
+      CssBuilder().apply {
         "table" {
           borderCollapse = BorderCollapse.collapse
         }
@@ -101,7 +101,7 @@ class StyleManager {
         }
       }
     else // Swing JTextPane does not support border-collapse, so we implement a workaround
-      CSSBuilder().apply {
+      CssBuilder().apply {
         "table" {
           backgroundColor = themeDependentBorderColor
         }
@@ -116,7 +116,7 @@ class StyleManager {
   }
 
   fun hintsStylesheet(): String {
-    val hintsCss = CSSBuilder().apply {
+    val hintsCss = CssBuilder().apply {
       ".hint_content > p.first-paragraph, .hint_text > p.first-paragraph" {
         marginTop = 0.px
       }

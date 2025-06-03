@@ -39,7 +39,7 @@ class TableTaskResourcesManager: TaskResourcesManager<TableTask> {
   private val stylesheet: String
     get() {
       val styleManager = StyleManager()
-      return CSSBuilder().apply {
+      return CssBuilder().apply {
         "#table" {
           fontFamily = styleManager.bodyFont
           fontSize = if (JavaUILibrary.isJCEF()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
@@ -52,9 +52,8 @@ class TableTaskResourcesManager: TaskResourcesManager<TableTask> {
         }
 
         "#table td" {
-          border = "1px solid"
-          borderColor = getBorderColor()
-          padding = "8px"
+          border = Border(1.px, BorderStyle.solid, getBorderColor())
+          padding = Padding(8.px)
           verticalAlign = VerticalAlign.middle
           wordWrap = WordWrap.breakWord
         }

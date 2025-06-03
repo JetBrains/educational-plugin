@@ -11,12 +11,12 @@ class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTa
 
   override val stylesheet: String
     get() {
-      return super.stylesheet + CSSBuilder().apply {
+      return super.stylesheet + CssBuilder().apply {
         "#options" {
           paddingLeft = 8.px
         }
         "#keyValueGrid" {
-          columnGap = ColumnGap(8.px.value)
+          columnGap = 8.px
           gridTemplateColumns = GridTemplateColumns(
             GridAutoRows("fit-content(50%)"),
             GridAutoRows.auto
@@ -25,7 +25,7 @@ class MatchingTaskResourcesManager : SortingBasedTaskResourcesManager<MatchingTa
         ".key" {
           display = Display.table
           gridColumn = GridColumn("1")
-          padding = "10px 12px 10px 12px"
+          padding = Padding(10.px, 12.px)
           background = MatchingTaskUI.Key.background().asCssColor().value
           borderRadius = 4.px
         }

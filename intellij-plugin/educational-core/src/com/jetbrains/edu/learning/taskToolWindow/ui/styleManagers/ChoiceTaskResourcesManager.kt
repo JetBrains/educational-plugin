@@ -35,11 +35,11 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
 
   private fun choiceOptionsStylesheet(): String {
     val styleManager = StyleManager()
-    return CSSBuilder().apply {
+    return CssBuilder().apply {
       "code" {
         fontFamily = styleManager.codeFont
         backgroundColor = styleManager.codeBackground
-        padding = "4 4 4 4"
+        padding = Padding(4.px)
         borderRadius = 5.px
       }
       "#choiceOptions" {
@@ -55,8 +55,8 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
         gridTemplateColumns = GridTemplateColumns(GridAutoRows.minContent, GridAutoRows.auto)
         justifyContent = JustifyContent.stretch
         alignItems = Align.stretch
-        columnGap = ColumnGap(0.px.value)
-        rowGap = RowGap(5.px.value)
+        columnGap = 0.px
+        rowGap = 5.px
       }
       ".buttonBox" {
         display = Display.flex
@@ -69,7 +69,7 @@ class ChoiceTaskResourcesManager : TaskResourcesManager<ChoiceTask> {
         verticalAlign = VerticalAlign.middle
       }
       "#choiceOptions .text" {
-        padding = "8px"
+        padding = Padding(8.px)
       }
     }.toString()
       .plus(getRadioButtonCSS())

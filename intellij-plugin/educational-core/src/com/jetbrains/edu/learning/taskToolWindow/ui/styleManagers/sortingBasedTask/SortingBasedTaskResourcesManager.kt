@@ -20,8 +20,8 @@ import kotlinx.css.*
 import kotlinx.css.Float
 import kotlinx.css.properties.LineHeight
 import kotlinx.css.properties.Timing
+import kotlinx.css.properties.Transition
 import kotlinx.css.properties.s
-import kotlinx.css.properties.transition
 
 abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskResourcesManager<T> {
   private val templateName: String = "matchingTask.html"
@@ -61,10 +61,10 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
   protected open val stylesheet: String
     get() {
       val styleManager = StyleManager()
-      return CSSBuilder().apply {
+      return CssBuilder().apply {
         "#keyValueGrid" {
           display = Display.grid
-          rowGap = RowGap(12.px.value)
+          rowGap = 12.px
           alignItems = Align.stretch
           justifyContent = JustifyContent.stretch
         }
@@ -73,17 +73,16 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
           flexDirection = FlexDirection.row
           alignItems = Align.center
           justifyContent = JustifyContent.stretch
-          padding = "10px 8px 10px 12px"
-          gap = Gap(8.px.value)
+          padding = Padding(10.px, 8.px, 10.px, 12.px)
+          gap = 8.px
           background = MatchingTaskUI.Value.background().asCssColor().value
-          border = "1px solid"
-          borderColor = MatchingTaskUI.Value.borderColor().asCssColor()
+          border = Border(1.px, BorderStyle.solid, MatchingTaskUI.Value.borderColor().asCssColor())
           borderRadius = 4.px
         }
         ".value:focus" {
-          val focusedBorderColor = UIUtil.getFocusedBorderColor().asCssColor().value
-          put("outline", "1px solid $focusedBorderColor")
-          border = "1px solid $focusedBorderColor"
+          val focusedBorderColor = UIUtil.getFocusedBorderColor().asCssColor()
+          put("outline", "1px solid ${focusedBorderColor.value}")
+          border = Border(1.px, BorderStyle.solid, focusedBorderColor)
         }
         label {
           fontFamily = styleManager.bodyFont
@@ -97,7 +96,7 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
           fontFamily = styleManager.codeFont
         }
         ".labelPanel" {
-          padding = "0"
+          padding = Padding(0.px)
         }
         ".buttonPanel" {
           display = Display.flex
@@ -106,20 +105,20 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
           justifyContent = JustifyContent.flexEnd
           marginLeft = LinearDimension.auto
           flexShrink = 0.0
-          padding = "0"
-          gap = Gap(4.px.value)
+          padding = Padding(0.px)
+          gap = 4.px
         }
         button {
           width = 16.px
           height = 16.px
-          padding = "0"
-          border = "0"
+          padding = Padding(0.px)
+          border = Border.none
           overflow = Overflow.visible
           backgroundColor = Color.transparent
-          transition("color", .15.s, Timing.easeInOut)
-          transition("background-color", .15.s, Timing.easeInOut)
-          transition("border-color", .15.s, Timing.easeInOut)
-          transition("box-shadow", .15.s, Timing.easeInOut)
+          transition += Transition("color", .15.s, Timing.easeInOut)
+          transition += Transition("background-color", .15.s, Timing.easeInOut)
+          transition += Transition("border-color", .15.s, Timing.easeInOut)
+          transition += Transition("box-shadow", .15.s, Timing.easeInOut)
         }
         "button:not(:disabled)" {
           cursor = Cursor.pointer
@@ -128,7 +127,7 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
           cursor = Cursor.notAllowed
         }
         "#shortcutLabel" {
-          padding = "4px 0"
+          padding = Padding(4.px, 0.px)
           marginBottom = 8.px
         }
         "#shortcutLabel > label" {
@@ -145,14 +144,14 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
           verticalAlign = VerticalAlign.middle
         }
         ".imgShortcut" {
-          padding = "2px"
+          padding = Padding(2.px)
           height = 16.px
           width = 16.px
           float = Float.left
           verticalAlign = VerticalAlign.middle
         }
         ".textShortcut" {
-          padding = "2px 4px"
+          padding = Padding(2.px, 4.px)
         }
       }.toString()
     }

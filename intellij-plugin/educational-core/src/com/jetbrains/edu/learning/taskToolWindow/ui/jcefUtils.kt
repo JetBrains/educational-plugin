@@ -124,7 +124,7 @@ fun getTaskSpecificQueryManager(task: Task?, browserBase: JBCefBrowser): TaskQue
 
 fun getRadioButtonCSS(): String {
   val styleManager = StyleManager()
-  return CSSBuilder().apply {
+  return CssBuilder().apply {
     ".checkbox, .radio" {
       marginTop = 2.px
       marginRight = 9.px
@@ -139,7 +139,7 @@ fun getRadioButtonCSS(): String {
     ".checkbox" {
       borderRadius = 3.px
       //sets size of the element
-      padding = "8px"
+      padding = Padding(8.px)
     }
     ".radio" {
       borderRadius = 50.pct
@@ -147,7 +147,7 @@ fun getRadioButtonCSS(): String {
       height = 16.px
     }
     ".radio:checked" {
-      padding = "3.2px"
+      padding = Padding(3.2.px)
       color = styleManager.bodyColor
       backgroundColor = getRadioButtonCheckedBackgroundColor()
       borderColor = getRadioButtonCheckedBorderColor()
@@ -169,7 +169,7 @@ fun getRadioButtonCSS(): String {
       width = 3.px
       height = 8.px
       backgroundColor = getRadioButtonCheckedBorderColor()
-      border = "solid"
+      borderStyle = BorderStyle.solid
       borderColor = getRadioButtonCheckedBackgroundColor()
       borderTopWidth = 0.px
       borderBottomWidth = 2.px
@@ -178,7 +178,7 @@ fun getRadioButtonCSS(): String {
       transform.rotate(35.deg)
     }
     ".radio:focus, .radio:before, .radio:hover, .checkbox:focus, .checkbox:before, .checkbox:hover" {
-      boxShadow += BoxShadow(false, 0.px, 0.px, 2.px, 2.px, getRadioButtonFocusColor())
+      boxShadow += BoxShadow(color = getRadioButtonFocusColor(), 0.px, 0.px, 2.px, 2.px)
     }
     ".disable:focus, .disable:before, .disable:hover" {
       boxShadow = BoxShadows.none
@@ -236,14 +236,14 @@ private fun getRadioButtonBackgroundColor(): Color {
 
 private fun getRadioButtonSystemSpecificCss(): String {
   if (SystemInfo.isWindows) {
-    return CSSBuilder().apply {
+    return CssBuilder().apply {
       ".radio:checked" {
         marginRight = 7.3.px
         left = (-1).px
       }
       ".checkbox:checked" {
         borderStyle = BorderStyle.none
-        padding = "8.7px"
+        padding = Padding(8.7.px)
       }
     }.toString()
   }

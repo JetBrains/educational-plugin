@@ -9,7 +9,7 @@ class SortingTaskResourcesManager : SortingBasedTaskResourcesManager<SortingTask
 
   override val stylesheet: String
     get() {
-      return super.stylesheet + CSSBuilder().apply {
+      return super.stylesheet + CssBuilder().apply {
         "#options" {
           paddingLeft = 8.px
         }
