@@ -4,6 +4,7 @@
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <content>
+    <module name="AI"/>
     <module name="ai-debugger-core"/>
     <module name="ai-debugger-kotlin"/>
   </content>
