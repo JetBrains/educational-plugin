@@ -2,7 +2,10 @@ package com.jetbrains.edu.aiHints.core.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.HintBannerType
 import com.jetbrains.edu.ai.translation.ui.LikeBlock
+import com.jetbrains.edu.ai.ui.HintInlineBanner
 import com.jetbrains.edu.aiHints.core.feedback.dialog.TextHintFeedbackDialog
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -28,5 +31,10 @@ class TextHintInlineBanner(
       }
     }
     return this
+  }
+
+  @RequiresEdt
+  fun display() {
+    super.display(HintBannerType.TEXT)
   }
 }
