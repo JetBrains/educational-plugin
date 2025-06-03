@@ -21,9 +21,9 @@ import com.intellij.xdebugger.XDebuggerManagerListener
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakPointService.Companion.getAIBreakpointType
 import com.jetbrains.edu.ai.debugger.core.breakpoint.AIBreakpointHintMouseMotionListener
-import com.jetbrains.edu.ai.debugger.core.log.AIDebuggerLogEntry
-import com.jetbrains.edu.ai.debugger.core.log.logInfo
-import com.jetbrains.edu.ai.debugger.core.log.toTaskData
+import com.jetbrains.edu.ai.debugger.core.feedback.AIDebugContext
+import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
+import com.jetbrains.edu.ai.debugger.core.ui.AIDebuggerHintInlineBanner
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.failedTestName
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getInvisibleTestFiles
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.runWithTests
@@ -31,13 +31,15 @@ import com.jetbrains.edu.learning.checker.CheckUtils.deleteTests
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
 class AIDebugSessionRunner(
   private val project: Project,
   private val task: Task,
   private val closeAIDebuggingHint: () -> Unit,
   private val listener: AIBreakpointHintMouseMotionListener,
-  private val language: Language
+  private val language: Language,
+  private val debugContext: AIDebugContext
 ) {
 
   fun runDebuggingSession(testResult: CheckResult) {
@@ -54,10 +56,11 @@ class AIDebugSessionRunner(
       removeEditorMouseMotionListener(listener)
       removeEditorMouseListener(listener)
     }
-    AIDebuggerLogEntry(
-      task = task.toTaskData(),
-      actionType = "DebugSessionStopped",
-    ).logInfo()
+
+    val textToShow = EduAIDebuggerCoreBundle.message("ai.debugger.feedback.notification.banner.text")
+    val aiDebuggerFeedbackBanner = AIDebuggerHintInlineBanner(project, task, textToShow)
+      .addFeedbackLikenessButtons(task, debugContext)
+    TaskToolWindowView.getInstance(project).addInlineBannerToCheckPanel(aiDebuggerFeedbackBanner)
   }
 
   private fun makeBreakpointsRegular() {

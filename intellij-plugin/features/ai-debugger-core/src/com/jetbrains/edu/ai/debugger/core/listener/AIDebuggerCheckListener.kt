@@ -27,7 +27,7 @@ class AIDebuggerCheckListener : CheckListener {
     if (!isAvailable(task, result)) return
     val textToShow = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.text")
 
-    val aiDebuggerHintBanner = AIDebuggerHintInlineBanner(textToShow).apply {
+    val aiDebuggerHintBanner = AIDebuggerHintInlineBanner(project, task, textToShow).apply {
       addAction(EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.start.debugging.session")) {
         showDebugNotification(task, result) { this.close() }
       }
