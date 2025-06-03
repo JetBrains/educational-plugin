@@ -3,8 +3,11 @@ package com.jetbrains.edu.aiHints.core.ui
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesCounterUsageCollector
+import com.jetbrains.edu.ai.translation.statistics.EduAIFeaturesEventFields.HintBannerType
 import com.jetbrains.edu.ai.translation.ui.LikeBlock
+import com.jetbrains.edu.ai.ui.HintInlineBanner
 import com.jetbrains.edu.aiHints.core.feedback.dialog.CodeHintFeedbackDialog
 import com.jetbrains.edu.aiHints.core.messages.EduAIHintsCoreBundle
 import com.jetbrains.edu.learning.course
@@ -47,5 +50,10 @@ class CodeHintInlineBanner(
       }
     }
     return this
+  }
+
+  @RequiresEdt
+  fun display() {
+    super.display(HintBannerType.CODE)
   }
 }
