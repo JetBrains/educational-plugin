@@ -5,7 +5,9 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
+import com.jetbrains.edu.learning.courseFormat.ext.ValidationErrorMessage
+import com.jetbrains.edu.learning.courseFormat.ext.validateLanguage
 import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
@@ -13,7 +15,7 @@ import com.jetbrains.edu.learning.marketplace.checkForUpdates
 import com.jetbrains.edu.learning.marketplace.lti.LTISettingsManager
 import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
 
 object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceOpenCourseRequest>() {
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("action.get.course.loading")
@@ -58,15 +60,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
 
   private fun openStudyItem(studyItemId: Int, project: Project) {
     if (studyItemId == -1) return
-    val course = project.course ?: return
-
-    course.allTasks.firstOrNull {
-      it.id == studyItemId
-      || it.lesson.id == studyItemId
-      || it.lesson.section?.id == studyItemId
-    }?.let {
-      NavigationUtils.navigateToTask(project, it)
-    }
+    StudyItemSelectionService.getInstance(project).setCurrentStudyItem(studyItemId)
   }
 
   private fun synchronizeCourse(project: Project, course: EduCourse) {

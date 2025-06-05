@@ -88,7 +88,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     // project.isLocalCourse info is stored in PropertiesComponent to keep it after course restart on purpose
     // not to show login widget for local course
     project.isLocalCourse = course.isLocal
-    CourseParamsProcessor.applyProcessors(project, course, openCourseParams)
 
     val statusBarWidgetsManager = project.service<StatusBarWidgetsManager>()
     statusBarWidgetsManager.updateAllWidgets()
@@ -99,6 +98,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     if (!SubmissionSettings.getInstance(project).stateOnClose) {
       NavigationUtils.openFirstTask(course, project)
     }
+
+    CourseParamsProcessor.applyProcessors(project, course, openCourseParams)
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)

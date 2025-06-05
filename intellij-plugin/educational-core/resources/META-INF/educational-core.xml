@@ -557,6 +557,7 @@
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
 
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
+    <courseParamsProcessor implementation="com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor"/>
   </extensions>
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
