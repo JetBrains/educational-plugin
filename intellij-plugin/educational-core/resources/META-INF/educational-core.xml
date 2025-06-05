@@ -357,6 +357,7 @@
 
     <postStartupActivity implementation="com.jetbrains.edu.learning.EduProjectActivity"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.agreement.UserAgreementProjectActivity"/>
+    <postStartupActivity implementation="com.jetbrains.edu.learning.navigation.NavigationProjectActivity"/>
 
     <registryKey key="edu.task.description.update.delay"
                  description="The delay in ms before loading page by Task Description view. \nRequires project reopening"
@@ -557,6 +558,7 @@
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
 
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
+    <courseParamsProcessor implementation="com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor"/>
   </extensions>
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
