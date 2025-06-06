@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
+import com.jetbrains.edu.learning.doWithoutReadOnlyAttribute
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.removeWithEmptyParents
 import com.jetbrains.edu.learning.toCourseInfoHolder
@@ -176,8 +177,10 @@ sealed class Change {
       }
 
       if (file.isToEncodeContent) {
-        runWriteAction {
-          file.setBinaryContent(Base64.decodeBase64(text))
+        file.doWithoutReadOnlyAttribute {
+          runWriteAction {
+            file.setBinaryContent(Base64.decodeBase64(text))
+          }
         }
       }
       else {
@@ -185,7 +188,9 @@ sealed class Change {
           val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
           if (document != null) {
             val expandedText = StringUtil.convertLineSeparators(EduMacroUtils.expandMacrosForFile(project.toCourseInfoHolder(), file, text))
-            runUndoTransparentWriteAction { document.setText(expandedText) }
+            file.doWithoutReadOnlyAttribute {
+              runUndoTransparentWriteAction { document.setText(expandedText) }
+            }
           }
           else {
             LOG.warn("Can't get document for `$file`")
