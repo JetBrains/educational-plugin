@@ -70,8 +70,7 @@ class AIDebuggerValidationAction : AnAction() {
     val format = CSVFormat.Builder.create().setHeader().setSkipHeaderRecord(true).build()
     val writer = FileWriter(validationOutputFile, true)
     format.print(writer).use { printer ->
-      printer.printRecord(AUTHOR_SOLUTION, COURSE_ID, PROGRAMMING_LANGUAGE, TASK_DESCRIPTION_TEXT, TASK_DESCRIPTION_FORMAT, TASK_ID,
-        TEST_TEXT, TEST_NAME, TEST_EXPECTED_OUTPUT, TEST_ERROR_MESSAGE, TEST_FILES, UPDATE_VERSION, USER_SOLUTION)
+      printer.printRecord(recordNames)
       forEach {
         printer.printRecord(
           it.authorSolution,
@@ -93,18 +92,20 @@ class AIDebuggerValidationAction : AnAction() {
   }
 
   companion object {
-    private const val AUTHOR_SOLUTION = "authorSolution"
-    private const val COURSE_ID = "courseId"
-    private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
-    private const val TASK_DESCRIPTION_TEXT = "taskDescriptionText"
-    private const val TASK_DESCRIPTION_FORMAT = "taskDescriptionFormat"
-    private const val TASK_ID = "taskId"
-    private const val TEST_TEXT = "testText"
-    private const val TEST_NAME = "testName"
-    private const val TEST_EXPECTED_OUTPUT = "testExpectedOutput"
-    private const val TEST_ERROR_MESSAGE = "testErrorMessage"
-    private const val TEST_FILES = "testFiles"
-    private const val UPDATE_VERSION = "updateVersion"
-    private const val USER_SOLUTION = "userSolution"
+    private val recordNames: Set<String> = setOf(
+      "authorSolution",
+      "courseId",
+      "programmingLanguage",
+      "taskDescriptionText",
+      "taskDescriptionFormat",
+      "taskId",
+      "testText",
+      "testName",
+      "testExpectedOutput",
+      "testErrorMessage",
+      "testFiles",
+      "updateVersion",
+      "userSolution"
+    )
   }
 }
