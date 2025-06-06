@@ -118,7 +118,6 @@ data class FrameworkTaskUpdateInfo(
 
       if (virtualChangedFile != null) {
         ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualChangedFile, false)
-        virtualChangedFile.delete(this)
       }
     }
 
