@@ -105,6 +105,24 @@ class YamlSchemaCompletionTest : YamlCompletionTestBase() {
   }
 
   @Test
+  fun `test completion for disabled_features`() {
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {}
+    }
+
+    openConfigFileWithText(getCourse(), """
+      |title: Test Course
+      |content:
+      |- lesson1
+      |di<caret>
+    """.trimMargin("|"))
+
+    val lookupElements = myFixture.completeBasic()
+    assertNotNull(lookupElements)
+    assertContainsElements(lookupElements.map { it.lookupString }, "disabled_features")
+  }
+
+  @Test
   fun `test no completion in non-config file`() {
     myFixture.configureByText("random.yaml", """
       |title: Test Course
