@@ -26,7 +26,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBLoadingPanel
+import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
+import com.intellij.util.io.ReadOnlyAttributeUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
@@ -349,6 +351,25 @@ fun VirtualFile.removeWithEmptyParents(taskDir: VirtualFile) {
   delete(javaClass)
   if (parent != taskDir && parent.children.isEmpty()) {
     parent.removeWithEmptyParents(taskDir)
+  }
+}
+
+@RequiresBlockingContext
+fun VirtualFile.doWithoutReadOnlyAttribute(action: () -> Unit) {
+  val readOnly = runReadAction { !isWritable }
+
+  try {
+    runWriteAction {
+      ReadOnlyAttributeUtil.setReadOnlyAttribute(this, false)
+    }
+    action()
+  }
+  finally {
+    if (readOnly) {
+      runWriteAction {
+        ReadOnlyAttributeUtil.setReadOnlyAttribute(this, true)
+      }
+    }
   }
 }
 
