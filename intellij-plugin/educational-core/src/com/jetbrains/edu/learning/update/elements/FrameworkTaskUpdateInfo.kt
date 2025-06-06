@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.update.elements
 
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -111,14 +113,15 @@ data class FrameworkTaskUpdateInfo(
   }
 
   private suspend fun updateFile(project: Project, taskDir: VirtualFile, fileName: String, contents: FileContents, isEditable: Boolean) {
-    // First delete the file if it exists, then write it
 
-    writeAction {
-      val virtualChangedFile = taskDir.findFileByRelativePath(fileName)
+    val virtualChangedFile = readAction {
+      taskDir.findFileByRelativePath(fileName)
+    }
 
-      if (virtualChangedFile != null) {
+    if (virtualChangedFile != null) {
+      writeAction {
+        FileDocumentManager.getInstance().reloadFiles(virtualChangedFile)
         ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualChangedFile, false)
-        virtualChangedFile.delete(this)
       }
     }
 
