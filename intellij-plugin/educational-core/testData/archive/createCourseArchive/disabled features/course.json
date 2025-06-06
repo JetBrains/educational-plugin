@@ -1,0 +1,27 @@
+{
+  "summary" : "disabled features test summary",
+  "title" : "Test Course",
+  "programming_language_id" : "TEXT",
+  "language" : "en",
+  "course_type" : "PyCharm",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "files" : { },
+          "description_text" : "solve task",
+          "description_format" : "MD",
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "version" : <last version>,
+  "disabled_features" : [
+    "ai-hints"
+  ],
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}

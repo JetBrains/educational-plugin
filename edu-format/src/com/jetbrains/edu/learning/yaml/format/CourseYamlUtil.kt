@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import com.jetbrains.edu.learning.json.mixins.IntValueFilter
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_CONTENT_PATH
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DISABLED_FEATURES
 import com.jetbrains.edu.learning.json.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
@@ -152,6 +153,10 @@ abstract class CourseYamlMixin {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   lateinit var customContentPath: String
 
+  @JsonProperty(DISABLED_FEATURES)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  lateinit var disabledFeatures: List<String>
+
   @JsonIgnore
   private var programmingLanguage: String? = null
 }
@@ -244,7 +249,8 @@ open class CourseBuilder(
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
   @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
   @JsonProperty(ADDITIONAL_FILES) val yamlAdditionalFiles: List<EduFile> = emptyList(),
-  @JsonProperty(CUSTOM_CONTENT_PATH) val pathToContent: String = ""
+  @JsonProperty(CUSTOM_CONTENT_PATH) val pathToContent: String = "",
+  @JsonProperty(DISABLED_FEATURES) val yamlDisabledFeatures: List<String> = emptyList()
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
@@ -261,6 +267,7 @@ open class CourseBuilder(
       contentTags = yamlContentTags
       environmentSettings = yamlEnvironmentSettings
       additionalFiles = yamlAdditionalFiles
+      disabledFeatures = yamlDisabledFeatures
 
       languageId = Language.findLanguageByName(displayProgrammingLanguageName)
                       ?: formatError(message("yaml.editor.invalid.unsupported.language", displayProgrammingLanguageName))

@@ -457,6 +457,17 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
+  fun `test disabled features`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "disabled features test summary") {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+    }
+    course.disabledFeatures = listOf("ai-hints")
+    doTest(course)
+  }
+
+  @Test
   fun `test gradle properties additional file`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
