@@ -664,11 +664,13 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     }
   }
 
-  fun updateCourse(isShouldBeUpdated: Boolean = true, courseChanger: T.() -> Unit) = updateCourse(toRemoteCourse {
-    courseChanger()
-    val updateDate = Date(MINUTES.toMillis(2))
-    lessons[0].taskList.forEach { it.updateDate = updateDate }
-  }, isShouldBeUpdated = isShouldBeUpdated)
+  fun updateCourse(isShouldBeUpdated: Boolean = true, courseChanger: T.() -> Unit) = withVirtualFileListener(localCourse) {
+    updateCourse(toRemoteCourse {
+      courseChanger()
+      val updateDate = Date(MINUTES.toMillis(2))
+      lessons[0].taskList.forEach { it.updateDate = updateDate }
+    }, isShouldBeUpdated = isShouldBeUpdated)
+  }
 
   protected val T.taskList: List<Task> get() = lessons[0].taskList
   protected val frameworkLesson: FrameworkLesson get() = localCourse.lessons[0] as FrameworkLesson
