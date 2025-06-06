@@ -112,6 +112,14 @@
     "custom_content_path": {
       "description": "Path to the content inside the course",
       "type": "string"
+    },
+    "disabled_features": {
+      "description": "Disabled features for the course",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
     }
   },
   "required": [
