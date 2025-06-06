@@ -19,6 +19,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.languageVersion = deserializedItem.languageVersion
     existingItem.additionalFiles = deserializedItem.additionalFiles
     existingItem.customContentPath = deserializedItem.customContentPath
+    existingItem.disabledFeatures = deserializedItem.disabledFeatures
     if (deserializedItem is CourseraCourse && existingItem is CourseraCourse) {
       existingItem.submitManually = deserializedItem.submitManually
     }

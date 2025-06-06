@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DEPENDENCY
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DISABLED_FEATURES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT_SETTINGS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
@@ -160,6 +161,10 @@ abstract class LocalEduCourseMixin {
 
   @JsonProperty(VERSION)
   private var formatVersion = JSON_FORMAT_VERSION
+
+  @JsonProperty(DISABLED_FEATURES)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private lateinit var disabledFeatures: List<String>
 }
 
 private class UserInfoToString : StdConverter<UserInfo, String?>() {
