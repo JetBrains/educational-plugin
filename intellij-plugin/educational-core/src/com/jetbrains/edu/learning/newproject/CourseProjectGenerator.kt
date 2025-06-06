@@ -51,6 +51,8 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.unpackAdditionalFiles
+import com.jetbrains.edu.learning.management.EduFeatureManager
+import com.jetbrains.edu.learning.management.EduManagedFeature
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -92,6 +94,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     statusBarWidgetsManager.updateAllWidgets()
 
     setUpPluginDependencies(project, course)
+    initializeFeatureManagement(project, course)
 
     if (!SubmissionSettings.getInstance(project).stateOnClose) {
       NavigationUtils.openFirstTask(course, project)
@@ -302,6 +305,14 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       createAdditionalFiles(holder)
       EduCounterUsageCollector.eduProjectCreated(course)
     }
+  }
+
+  private fun initializeFeatureManagement(project: Project, course: Course) {
+    val featureManager = project.service<EduFeatureManager>()
+    val features = course.disabledFeatures.mapNotNull { EduManagedFeature.forKey(it) }.associateWith { false }
+    featureManager.updateManagerState(EduFeatureManager.CourseFeatureState(features))
+    // Disabled features should not be persisted into the course-info.yaml file, the state is stored in the service
+    course.disabledFeatures = emptyList()
   }
 
   private fun checkIfAvailableOnRemote(course: EduCourse) {
