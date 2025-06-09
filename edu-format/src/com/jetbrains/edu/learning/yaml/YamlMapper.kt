@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.cfg.JsonNodeFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.jsontype.NamedType
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -102,6 +103,11 @@ object YamlMapper {
       .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
       .serializationInclusion(JsonInclude.Include.NON_EMPTY)
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      // In some cases (f.e. deserialization of course): we deserialize YAML content as a tree and then try to cast it to a necessary object.
+      // Therefore, some properties (such as `course.languageVersion`) could be interpreted as float during a deserialization.
+      // This can lead to removing trailing zeros and incorrect deserialization. Thus, we disable this behavior implicitly.
+      .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
+      .disable(JsonNodeFeature.STRIP_TRAILING_BIGDECIMAL_ZEROES)
       .disable(MapperFeature.AUTO_DETECT_FIELDS, MapperFeature.AUTO_DETECT_GETTERS, MapperFeature.AUTO_DETECT_IS_GETTERS)
       .build()
   }
