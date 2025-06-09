@@ -209,7 +209,8 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     }
   }
 
-  private suspend fun addTopicSectionToRemoteCourseIfAbsent(remoteCourse: HyperskillCourse) {
+  @VisibleForTesting
+  suspend fun addTopicSectionToRemoteCourseIfAbsent(remoteCourse: HyperskillCourse) {
     if (remoteCourse.getTopicsSection() != null) return
 
     val topicSection = course.getTopicsSection()

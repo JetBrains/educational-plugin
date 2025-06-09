@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "code",
+        "text": "<p>There are animals hiding in the boxes.</p>\n\n<p>Finish the <code class=\"java\">showAnimal</code> method that accepts an instance of <code class=\"java\">Box</code> and writes to the console the name of the animal from the box.</p>\n\n<p>It is important that the box has to be the one that can only contain animals (objects of class <code class=\"java\">Animal</code> or its subclasses) and not any other objects.</p>",
+        "video": null,
+        "options": {
+          "execution_time_limit": 5,
+          "execution_memory_limit": 256,
+          "limits": {
+            "java11": {
+              "time": 8,
+              "memory": 256
+            }
+          },
+          "code_templates": {
+            "java11": "class BoxInside {\n\n    // Complete this method\n    public static void showAnimal...\n}\n\n// Don't change the code below\nclass Animal {\n\n    private String name;\n\n    public Animal(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass Box<T> {\n\n    private T animal;\n\n    void setAnimal(T animal) {\n        this.animal = animal;\n    }\n\n    T getAnimal() {\n        return animal;\n    }\n}"
+          },
+          "code_templates_header_lines_count": {
+            "java11": 18
+          },
+          "code_templates_footer_lines_count": {
+            "java11": 237
+          },
+          "code_templates_options": {},
+          "samples": [],
+          "is_run_user_code_allowed": true,
+          "language": ""
+        }
+      },
+      "bloom_level": 2,
+      "can_abandon": true,
+      "can_skip": true,
+      "check_profile": "",
+      "comments_statistics": [
+        {
+          "thread": "comment",
+          "total_count": 4
+        },
+        {
+          "thread": "hint",
+          "total_count": 2
+        },
+        {
+          "thread": "useful link",
+          "total_count": 0
+        },
+        {
+          "thread": "solutions",
+          "total_count": 30
+        }
+      ],
+      "content_created_at": "2020-04-29T22:13:46Z",
+      "id": 11,
+      "is_abandoned": false,
+      "is_completed": false,
+      "is_cribbed": false,
+      "is_recommended": false,
+      "is_next": false,
+      "is_skipped": false,
+      "last_completed_at": "2021-02-04T22:32:51.336192Z",
+      "likes_statistics": [
+        {
+          "subject": "",
+          "value": 2,
+          "total_count": 39
+        },
+        {
+          "subject": "skip",
+          "value": 100,
+          "total_count": 19
+        },
+        {
+          "subject": "",
+          "value": -2,
+          "total_count": 2
+        },
+        {
+          "subject": "skip",
+          "value": 102,
+          "total_count": 8
+        },
+        {
+          "subject": "skip",
+          "value": 0,
+          "total_count": 1
+        },
+        {
+          "subject": "",
+          "value": -1,
+          "total_count": 2
+        },
+        {
+          "subject": "",
+          "value": 1,
+          "total_count": 4
+        },
+        {
+          "subject": "",
+          "value": 0,
+          "total_count": 2
+        },
+        {
+          "subject": "skip",
+          "value": 101,
+          "total_count": 1
+        }
+      ],
+      "lesson_stepik_id": 349653,
+      "position": 1,
+      "seconds_to_complete": 257.6341150000226,
+      "solved_by": 554,
+      "stage": null,
+      "stepik_id": 1279760,
+      "success_rate": 0.424,
+      "title": "Pets in boxes",
+      "topic": 1,
+      "topic_theory": 9455,
+      "type": "practice",
+      "updated_at": "2020-09-30T20:04:27.939191Z",
+      "content_updated_at": "2020-09-30T18:37:33Z",
+      "progress_updated_at": "2021-02-04T22:36:06.732297Z",
+      "popular_ide": "Idea",
+      "project": null,
+      "is_beta": false,
+      "is_deprecated": false,
+      "error_issues_count": 0,
+      "warning_issues_count": 0
+    }
+  ]
+}
