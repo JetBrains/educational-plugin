@@ -154,7 +154,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       if (result == null) Err("Can't get step source with $stepId id") else Ok(result)
     }
 
-  fun getTaskToTopicsTopics(course: HyperskillCourse): MutableMap<Int, List<HyperskillTopic>> {
+  fun getTaskToTopics(course: HyperskillCourse): MutableMap<Int, List<HyperskillTopic>> {
     val result = ConcurrentHashMap<Int, List<HyperskillTopic>>()
     for ((taskIndex, stage) in course.stages.withIndex()) {
       val topics = getAllTopics(stage)
@@ -165,7 +165,7 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
   }
 
   fun fillTopics(project: Project, course: HyperskillCourse) {
-    course.taskToTopics = getTaskToTopicsTopics(course)
+    course.taskToTopics = getTaskToTopics(course)
     runInEdt {
       if (project.isDisposed) return@runInEdt
       TaskToolWindowView.getInstance(project).updateTab(TOPICS_TAB)

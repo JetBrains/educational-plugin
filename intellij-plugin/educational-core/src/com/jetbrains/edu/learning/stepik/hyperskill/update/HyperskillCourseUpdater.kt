@@ -4,6 +4,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.edu.learning.*
@@ -27,6 +28,8 @@ import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillLanguages
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator
+import com.jetbrains.edu.learning.stepik.hyperskill.createTopicLesson
+import com.jetbrains.edu.learning.stepik.hyperskill.createTopicsSection
 import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
@@ -37,12 +40,14 @@ import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.util.*
 
 class HyperskillCourseUpdater(private val project: Project, val course: HyperskillCourse) {
+  // TODO(rewrite using coroutines)
   private fun HyperskillProject.getCourseFromServer(): HyperskillCourse? {
     val connector = HyperskillConnector.getInstance()
     val hyperskillProject = when (val response = connector.getProject(id)) {
@@ -52,11 +57,18 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     val (languageId, languageVersion) = HyperskillLanguages.getLanguageIdAndVersion(hyperskillProject.language) ?: return null
     val eduEnvironment = hyperskillProject.eduEnvironment ?: return null
     val stagesFromServer = connector.getStages(id) ?: return null
+    val topics = connector.getTaskToTopics(course)
     val hyperskillCourse = HyperskillCourseCreator.createHyperskillCourse(hyperskillProject, languageId, languageVersion, eduEnvironment)
     return hyperskillCourse.apply {
       stages = stagesFromServer
+      taskToTopics = topics
       val lessonFromServer = connector.getLesson(this) ?: return null
       addLesson(lessonFromServer)
+      if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE)) {
+        runBlockingCancellable {
+          addTopicSectionToRemoteCourseIfAbsent(hyperskillCourse)
+        }
+      }
       init(this, false)
     }
   }
@@ -68,7 +80,6 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       val problemLessons = listOfNotNull(legacyProblemLesson, *newProblemLessons.toTypedArray())
       return problemLessons.flatMap { lesson -> lesson.getProblemsUpdates() }
     }
-
     runInBackground(project, EduCoreBundle.message("update.check")) {
       val projectLesson = course.getProjectLesson()
       val courseFromServer = course.hyperskillProject?.getCourseFromServer()
@@ -160,8 +171,8 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
   @VisibleForTesting
   fun doUpdate(remoteCourse: HyperskillCourse?, problemsUpdates: List<TaskUpdateInfo>) {
     if (remoteCourse != null) {
-      if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE) && remoteCourse != null) {
-        runBlocking {
+      if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE)) {
+        runBlockingCancellable {
           HyperskillCourseUpdaterNew(project, course).update(remoteCourse)
         }
         doAfterUpdate()
@@ -195,6 +206,28 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
     runInEdt {
       if (project.isDisposed) return@runInEdt
       project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)
+    }
+  }
+
+  private suspend fun addTopicSectionToRemoteCourseIfAbsent(remoteCourse: HyperskillCourse) {
+    if (remoteCourse.getTopicsSection() != null) return
+
+    val topicSection = course.getTopicsSection()
+    val localTopics = topicSection?.lessons ?: return
+
+    val remoteTopicsSection = remoteCourse.createTopicsSection()
+    for (topic in localTopics) {
+      val remoteSteps = withContext(Dispatchers.IO) {
+        HyperskillConnector.getInstance().getProblems(course, topic).associateBy { it.id }
+      }
+      if (remoteSteps.isEmpty()) continue
+
+      val remoteTopic = remoteTopicsSection.createTopicLesson(topic.presentableName)
+      for (step in topic.taskList) {
+        val remoteTask = remoteSteps[step.id] ?: continue
+        remoteTopic.addTask(remoteTask)
+      }
+      remoteTopic.init(remoteCourse, false)
     }
   }
 
