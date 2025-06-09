@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "block": {
+        "name": "choice",
+        "text": "Select a correct way to make <code class=\"java\">Box</code> upper bounded by class <code class=\"java\">MyClass</code>.<br><br>",
+        "video": null,
+        "options": {
+          "is_multiple_choice": false,
+          "language": ""
+        }
+      },
+      "bloom_level": 1,
+      "can_abandon": false,
+      "can_skip": true,
+      "check_profile": "",
+      "comments_statistics": [
+        {
+          "thread": "comment",
+          "total_count": 0
+        },
+        {
+          "thread": "hint",
+          "total_count": 0
+        },
+        {
+          "thread": "useful link",
+          "total_count": 0
+        },
+        {
+          "thread": "solutions",
+          "total_count": 0
+        }
+      ],
+      "content_created_at": "2018-04-15T05:44:55Z",
+      "id": 22,
+      "is_abandoned": false,
+      "is_completed": false,
+      "is_cribbed": false,
+      "is_recommended": false,
+      "is_next": false,
+      "is_skipped": false,
+      "last_completed_at": "2021-02-01T16:17:04.494291Z",
+      "likes_statistics": [
+        {
+          "subject": "",
+          "value": 2,
+          "total_count": 24
+        },
+        {
+          "subject": "",
+          "value": 1,
+          "total_count": 4
+        }
+      ],
+      "lesson_stepik_id": 85301,
+      "position": 1,
+      "seconds_to_complete": 20.0,
+      "solved_by": 308,
+      "stage": null,
+      "stepik_id": 312712,
+      "success_rate": 0.7944162436548223,
+      "title": "Upper-bound",
+      "topic": 2,
+      "topic_theory": 9455,
+      "type": "practice",
+      "updated_at": "2020-07-16T08:20:21.649758Z",
+      "content_updated_at": "2018-08-17T16:11:06Z",
+      "progress_updated_at": "2021-02-04T22:36:06.732297Z",
+      "popular_ide": null,
+      "project": null,
+      "is_beta": false,
+      "is_deprecated": false,
+      "error_issues_count": 0,
+      "warning_issues_count": 0
+    }
+  ]
+}
