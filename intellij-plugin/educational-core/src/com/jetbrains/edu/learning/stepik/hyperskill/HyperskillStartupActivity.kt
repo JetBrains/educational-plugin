@@ -48,7 +48,7 @@ class HyperskillStartupActivity : StartupActivity {
   companion object {
     fun synchronizeTopics(project: Project, hyperskillCourse: HyperskillCourse) {
       ApplicationManager.getApplication().executeOnPooledThread {
-        HyperskillConnector.getInstance().fillTopics(hyperskillCourse, project)
+        HyperskillConnector.getInstance().fillTopics(project, hyperskillCourse)
         YamlFormatSynchronizer.saveRemoteInfo(hyperskillCourse)
       }
     }

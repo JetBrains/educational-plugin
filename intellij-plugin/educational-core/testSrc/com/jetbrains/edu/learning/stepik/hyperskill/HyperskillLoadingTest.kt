@@ -437,7 +437,7 @@ class HyperskillLoadingTest : SolutionLoadingTestBase() {
       items[stepId]?.let { mockResponse(it) } ?: mockResponse("response_empty.json")
     }
     val course = createHyperskillCourse()
-    mockConnector.fillTopics(course, project)
+    mockConnector.fillTopics(project, course)
     assertEquals(3, course.taskToTopics[0]?.size)
   }
 

@@ -37,6 +37,7 @@ import okhttp3.*
 import org.apache.http.client.utils.URIBuilder
 import org.jetbrains.ide.BuiltInServerManager
 import retrofit2.Call
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -153,16 +154,21 @@ abstract class HyperskillConnector : EduOAuthCodeFlowConnector<HyperskillAccount
       if (result == null) Err("Can't get step source with $stepId id") else Ok(result)
     }
 
-  fun fillTopics(course: HyperskillCourse, project: Project) {
+  fun getTaskToTopicsTopics(course: HyperskillCourse): MutableMap<Int, List<HyperskillTopic>> {
+    val result = ConcurrentHashMap<Int, List<HyperskillTopic>>()
     for ((taskIndex, stage) in course.stages.withIndex()) {
       val topics = getAllTopics(stage)
       if (topics.isEmpty()) continue
+      result[taskIndex] = topics
+    }
+    return result
+  }
 
-      course.taskToTopics[taskIndex] = topics
-      runInEdt {
-        if (project.isDisposed) return@runInEdt
-        TaskToolWindowView.getInstance(project).updateTab(TOPICS_TAB)
-      }
+  fun fillTopics(project: Project, course: HyperskillCourse) {
+    course.taskToTopics = getTaskToTopicsTopics(course)
+    runInEdt {
+      if (project.isDisposed) return@runInEdt
+      TaskToolWindowView.getInstance(project).updateTab(TOPICS_TAB)
     }
   }
 
