@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.KOTLIN
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -252,24 +251,6 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
     val tasks = HyperskillConnector.getTasks(course, stepsSourceForAdding)
     tasks.forEach(this::addTask)
     return Ok(tasks)
-  }
-
-  private fun HyperskillCourse.createTopicsSection(): Section {
-    val section = Section()
-    section.name = HYPERSKILL_TOPICS
-    section.index = items.size + 1
-    section.parent = this
-    addSection(section)
-    return section
-  }
-
-  private fun Section.createTopicLesson(name: String): Lesson {
-    val lesson = Lesson()
-    lesson.name = name
-    lesson.index = this.items.size + 1
-    lesson.parent = this
-    addLesson(lesson)
-    return lesson
   }
 
   private fun HyperskillStepSource.getTopicWithRecommendedSteps(): Result<Pair<String, List<HyperskillStepSource>>, String> {

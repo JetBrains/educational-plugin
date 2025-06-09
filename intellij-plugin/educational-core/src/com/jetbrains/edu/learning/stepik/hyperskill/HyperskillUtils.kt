@@ -19,7 +19,10 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_TOPICS
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
@@ -348,4 +351,22 @@ private sealed class NextActivityInfo {
 fun getUnsupportedTaskDescriptionText(name: String, stepId: Int): String {
   val fixedTaskName = name.lowercase().replaceFirstChar { it.titlecaseChar() }
   return EduCoreBundle.message("hyperskill.unsupported.task.description.text", fixedTaskName, stepLink(stepId), HYPERSKILL)
+}
+
+fun HyperskillCourse.createTopicsSection(): Section {
+  val section = Section()
+  section.name = HYPERSKILL_TOPICS
+  section.index = items.size + 1
+  section.parent = this
+  addSection(section)
+  return section
+}
+
+fun Section.createTopicLesson(name: String): Lesson {
+  val lesson = Lesson()
+  lesson.name = name
+  lesson.index = this.items.size + 1
+  lesson.parent = this
+  addLesson(lesson)
+  return lesson
 }
