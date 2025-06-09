@@ -20,12 +20,14 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.psi.LanguageLevel
+import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PySdkUtil
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addInterpretersAsync
 import com.jetbrains.python.sdk.findBaseSdks
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.getSdksToInstall
+import com.jetbrains.python.sdk.sdkFlavor
 import com.jetbrains.python.sdk.sdkSeemsValid
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
@@ -104,17 +106,25 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
   private val Sdk.languageLevel: LanguageLevel
     get() {
-      return if (this is PySdkToCreateVirtualEnv) {
-        val pythonVersion = versionString
-        if (pythonVersion == null) {
-          LanguageLevel.getDefault()
+      return when(this) {
+        is PySdkToCreateVirtualEnv -> {
+          val pythonVersion = versionString
+          if (pythonVersion == null) {
+            LanguageLevel.getDefault()
+          }
+          else {
+            LanguageLevel.fromPythonVersion(pythonVersion) ?: LanguageLevel.getDefault()
+          }
         }
-        else {
-          LanguageLevel.fromPythonVersion(pythonVersion) ?: LanguageLevel.getDefault()
+        is PyDetectedSdk -> {
+          // PyDetectedSdk has empty `sdk.versionString`, so we should manually get language level from homePath if it exists
+          homePath?.let {
+            sdkFlavor.getLanguageLevel(it)
+          } ?: LanguageLevel.getDefault()
         }
-      }
-      else {
-        PySdkUtil.getLanguageLevelForSdk(this)
+        else -> {
+          PySdkUtil.getLanguageLevelForSdk(this)
+        }
       }
     }
 
