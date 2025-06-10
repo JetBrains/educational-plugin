@@ -38,6 +38,7 @@ include(
   "intellij-plugin:features:ai-debugger-core",
   "intellij-plugin:features:ai-debugger-jvm",
   "intellij-plugin:features:ai-debugger-kotlin",
+  "intellij-plugin:features:ai-validation",
   "intellij-plugin:features:ai-error-explanation",
   "intellij-plugin:features:ai-hints-core",
   "intellij-plugin:features:ai-hints-kotlin",
@@ -179,3 +180,5 @@ pluginManagement {
     }
   }
 }
+
+include("intellij-plugin:features:ai-validation")
