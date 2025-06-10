@@ -88,4 +88,9 @@
     <postStartupActivity implementation="com.jetbrains.edu.csharp.CSharpProjectActivity"/>
     <rdclient.priorityRenameHandler implementation="com.jetbrains.edu.csharp.refactoring.CSharpRenameHandler" order="first"/>
   </extensions>
+
+  <projectListeners>
+    <listener class="com.jetbrains.edu.csharp.CSharpCourseSetListener"
+              topic="com.jetbrains.edu.learning.CourseSetListener"/>
+  </projectListeners>
 </idea-plugin>

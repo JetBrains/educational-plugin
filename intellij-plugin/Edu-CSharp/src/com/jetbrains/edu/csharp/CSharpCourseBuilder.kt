@@ -42,9 +42,12 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
   override fun beforeStudyItemDeletion(project: Project, item: StudyItem) {
     super.beforeStudyItemDeletion(project, item)
     when (item) {
-      is Task -> CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(listOf(item))
+      is Task -> CSharpBackendService.getInstance(project)
+        .removeProjectModelEntitiesFromSolution(listOfNotNull(item.toProjectModelEntity(project)))
+
       is Lesson -> {
-        CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(item.taskList)
+        val entities = item.taskList.mapNotNull { it.toProjectModelEntity(project) }
+        CSharpBackendService.getInstance(project).removeProjectModelEntitiesFromSolution(entities)
         val parentDir = item.getDir(project.courseDir)?.parent ?: return
         if (parentDir == project.courseDir) {
           CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOfNotNull(parentDir.toIOFile()))
@@ -55,7 +58,8 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
         val lessons = item.lessons
         // check if section is being unwrapped
         if (lessons.all { it.getDir(project.courseDir) != null }) {
-          CSharpBackendService.getInstance(project).removeCSProjectFilesFromSolution(lessons.flatMap { it.taskList })
+          val entities = lessons.flatMap { it.taskList }.mapNotNull { it.toProjectModelEntity(project) }
+          CSharpBackendService.getInstance(project).removeProjectModelEntitiesFromSolution(entities)
         }
         CSharpBackendService.getInstance(project).excludeFilesFromCourseView(listOfNotNull(item.getDir(project.courseDir)?.toIOFile()))
       }
