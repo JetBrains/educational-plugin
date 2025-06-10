@@ -1,8 +1,13 @@
 package com.jetbrains.edu.csharp
 
+import com.intellij.notification.NotificationType.ERROR
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
+import com.jetbrains.edu.csharp.messages.EduCSharpBundle
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -12,7 +17,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.getLesson
 import com.jetbrains.edu.learning.getSection
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.rdclient.util.idea.toIOFile
+import com.jetbrains.rider.environmentSetup.EnvironmentSetupConfigurable
 import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
 import com.jetbrains.rider.projectView.projectTemplates.components.ProjectTemplateTargetFramework
 import com.jetbrains.rider.projectView.workspace.ProjectModelEntity
@@ -46,4 +53,18 @@ fun includeTopLevelDirsInCourseView(project: Project, course: Course) {
 fun VirtualFile.isTopLevelDirectory(project: Project, course: Course): Boolean {
   return getSection(project) != null || getLesson(project) != null
          || course.configurator?.shouldFileBeVisibleToStudent(this) == true
+}
+
+fun showInstallMSBuildNotification(project: Project) {
+  EduNotificationManager.create(
+    ERROR,
+    EduCSharpBundle.message("notification.title.check.net.installed"),
+    EduCSharpBundle.message("notification.content.net.required.to.add.c.projects.to.solution")
+  ).apply {
+    addAction(object : AnAction(EduCSharpBundle.message("action.open.environment.settings.text")) {
+      override fun actionPerformed(e: AnActionEvent) {
+        ShowSettingsUtil.getInstance().showSettingsDialog(project, EnvironmentSetupConfigurable::class.java)
+      }
+    }).notify(project)
+  }
 }
