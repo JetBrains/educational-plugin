@@ -1,0 +1,20 @@
+<idea-plugin package="com.jetbrains.edu.ai.validation">
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-debugger-core"/>
+  </dependencies>
+
+  <resource-bundle>messages.EduAIValidationCoreBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.ai.validation.core.listener.UserCheckListener"/>
+  </extensions>
+
+  <actions>
+    <action id="Validation.AIDebuggerValidation"
+            class="com.jetbrains.edu.ai.validation.debugger.AIDebuggerValidationAction">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>

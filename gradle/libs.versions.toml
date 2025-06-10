@@ -8,6 +8,7 @@ retrofit = "2.9.0"
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version = "23.0.0" }
 clikt-core = { module = "com.github.ajalt.clikt:clikt-core", version = "5.0.1" }
+commons-csv = { group = "org.apache.commons", name = "commons-csv", version = "1.10.0" }
 converter-jackson = { group = "com.squareup.retrofit2", name = "converter-jackson", version.ref = "retrofit" }
 edu-ai-format = { group = "com.jetbrains.edu", name = "edu-ai-format", version = "0.0.11" }
 educational-ml-library-core = { group = "com.jetbrains.educational.ml", name = "educational-ml-library-core", version.ref = "educational-ml-library" }
