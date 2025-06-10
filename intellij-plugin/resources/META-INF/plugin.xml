@@ -42,6 +42,7 @@
     <module name="ai-debugger-core"/>
     <module name="ai-debugger-jvm"/>
     <module name="ai-debugger-kotlin"/>
+    <module name="ai-validation"/>
     <module name="ai-error-explanation"/>
     <module name="ai-hints-core"/>
     <module name="ai-hints-kotlin"/>
