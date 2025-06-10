@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -215,6 +216,12 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
       file("Tests2.kt", "fun test2() {}")
       file("NewFileProp.kt", "boo 1")
       file("NewFileNonProp.kt", "boo 2")
+    }
+
+    localCourse.allTasks.forEach { task ->
+      task.taskFiles.values.forEach { taskFile ->
+        assertFalse("Task files are not created by learners", taskFile.isLearnerCreated)
+      }
     }
   }
 
