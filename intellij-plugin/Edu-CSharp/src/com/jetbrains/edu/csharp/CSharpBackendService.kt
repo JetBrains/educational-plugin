@@ -140,6 +140,10 @@ class CSharpBackendService(private val project: Project, private val scope: Coro
               addTasksCSProjectToSolution(tasksToRetry)
             }
           }
+          val message = e.message ?: return
+          if (message.contains("Ensure MsBuild is installed.")) {
+            showInstallMSBuildNotification(project)
+          }
         }
       }
 
