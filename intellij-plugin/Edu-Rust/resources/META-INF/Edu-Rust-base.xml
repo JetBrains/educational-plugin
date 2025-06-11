@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="Educational">
-    <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
-  </extensions>
-</idea-plugin>

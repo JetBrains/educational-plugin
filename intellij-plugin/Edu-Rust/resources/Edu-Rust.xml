@@ -1,9 +1,11 @@
-<idea-plugin package="com.jetbrains.edu.rust" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin package="com.jetbrains.edu.rust">
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.jetbrains.rust"/>
     <plugin id="org.toml.lang"/>
   </dependencies>
 
-  <xi:include href="/META-INF/Edu-Rust-base.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
+  </extensions>
 </idea-plugin>
