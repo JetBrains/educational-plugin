@@ -704,5 +704,21 @@ class StudentYamlDeserializationTest : EduTestCase() {
     """.trimMargin()
     ), expectedPlaceholderVisibility = false)
 
+  @Test
+  fun `test disabled features`() {
+    val course = studentMapper().deserializeCourse("""
+      |title: Test Course
+      |mode: Study
+      |language: Russian
+      |summary: Test course
+      |programming_language: Plain text
+      |disabled_features:
+      |- ai-hints
+    """.trimMargin())
+
+    assertNotNull(course)
+    assertContainsElements(course.disabledFeatures, "ai-hints")
+  }
+
   private fun deserializeTask(yamlContent: String) = studentMapper().deserializeTask(yamlContent)
 }

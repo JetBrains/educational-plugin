@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.management
+package com.jetbrains.edu.learning.featureManagement
 
 
 enum class EduManagedFeature(val featureKey: String) {

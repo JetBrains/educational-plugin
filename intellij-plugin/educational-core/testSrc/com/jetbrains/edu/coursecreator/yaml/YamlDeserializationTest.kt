@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertContains
 
 
 class YamlDeserializationTest : YamlTestCase() {
@@ -1066,6 +1067,20 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = deserializeNotNull(yamlContent)
     assertEquals(mapOf("foo" to "bar"), course.environmentSettings)
+  }
+
+  @Test
+  fun `test disabled features`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |disabled_features:
+      |- ai-hints
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+    assertContains(course.disabledFeatures, "ai-hints")
   }
 
   private fun deserializeNotNull(yamlContent: String): Course = basicMapper().deserializeCourse(yamlContent)
