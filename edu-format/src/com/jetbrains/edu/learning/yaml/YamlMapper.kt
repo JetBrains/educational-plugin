@@ -39,7 +39,7 @@ import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 object YamlMapper {
-  const val CURRENT_YAML_VERSION = 3
+  const val CURRENT_YAML_VERSION = 4
 
   fun basicMapper(): ObjectMapper {
     val mapper = createMapper()

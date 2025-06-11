@@ -1056,6 +1056,11 @@
     ```json
        "custom_content_path": "some/path/to"
      ```
+21. Introduced "disabled_features" field, represented by a list of strings.This field should allow course authors to control which IDE 
+    features should be available to students. 
+    ```json
+    "disabled_features": ["ai-hints", "theory-lookup"]
+     ```
 
 ### Yaml format version
 
@@ -1097,6 +1102,13 @@ To pass some data to migrator, unavailable in the `edu-format` module, use
     "custom_content_path": "some/path/to"
     "yaml_version": 3
      ```
+4. Introduced "disabled_features" field, represented by a list of strings.This field should allow course authors to control which IDE
+    features should be available to students.
+    ```yaml
+    "disabled_features": 
+      - ai-hints
+      - theory-lookup
+     ```  
 
 
 ### Courseignore format version

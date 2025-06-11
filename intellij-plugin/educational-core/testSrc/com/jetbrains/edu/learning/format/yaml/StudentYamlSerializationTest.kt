@@ -594,6 +594,24 @@ class StudentYamlSerializationTest : EduTestCase() {
     testCodeTaskProgrammingLanguage("scala")
   }
 
+  @Test
+  fun `test disabled features`() {
+    val course = course {}
+    course.disabledFeatures = listOf("ai-hints")
+
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |mode: Study
+      |disabled_features:
+      |- ai-hints
+      |yaml_version: $CURRENT_YAML_VERSION
+      |
+    """.trimMargin())
+  }
+
   private fun testCodeTaskProgrammingLanguage(programmingLanguage: String) {
     val task: CodeTask = courseWithFiles {
       lesson {
