@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -26,6 +27,7 @@ private const val ENVIRONMENT = "environment"
 private const val GTE = "gte"
 private const val IS_PRIVATE = "isPrivate"
 private const val LANGUAGE = "language"
+private const val METADATA = "metadata"
 private const val PLUGIN_ID = "pluginId"
 private const val PLUGINS = "plugins"
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
@@ -238,13 +240,18 @@ class MarketplaceSubmission() : MarketplaceSubmissionBase() {
   @JsonProperty(TEST_RESULTS)
   var testsInfo: List<EduTestInfo> = emptyList()
 
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  @JsonProperty(METADATA)
+  var metadata: Map<String, String> = emptyMap()
+
   constructor(
     taskId: Int,
     checkStatus: CheckStatus,
     solutionText: String,
     solutionFiles: List<SolutionFile>?,
     courseVersion: Int,
-    testsInfo: List<EduTestInfo> = emptyList()
+    testsInfo: List<EduTestInfo> = emptyList(),
+    metadata: Map<String, String> = emptyMap(),
   ) : this() {
     this.taskId = taskId
     this.status = checkStatus.rawStatus
@@ -252,6 +259,7 @@ class MarketplaceSubmission() : MarketplaceSubmissionBase() {
     this.courseVersion = courseVersion
     solution = solutionText
     this.testsInfo = testsInfo
+    this.metadata = metadata
   }
 }
 
