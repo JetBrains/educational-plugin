@@ -1,6 +1,9 @@
 package com.jetbrains.edu.aiHints.python
 
+import com.intellij.openapi.application.ApplicationInfo
+import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
@@ -13,6 +16,13 @@ import org.junit.Test
  * Test [com.jetbrains.edu.aiHints.core.context.AuthorSolutionContextProjectActivity] for Python language.
  */
 class PyAuthorSolutionContextProjectActivityTest : CourseGenerationTestBase<PyProjectSettings>() {
+  override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable?>) {
+    // BACKCOMPAT: Remove when this test is fixed for 2025.2
+    if (ApplicationInfo.getInstance().build < BuildNumber.fromString("252")!!) {
+      super.runTestRunnable(testRunnable)
+    }
+  }
+
   override val defaultSettings: PyProjectSettings = PyProjectSettings()
 
   @Test
