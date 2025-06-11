@@ -15,9 +15,10 @@ interface CourseParamsProcessor<T> {
   fun findApplicableContext(params: Map<String, String>): T?
 
   /**
-   * Processes the course parameters for the given course. Used for persisting data, not for actual heavy tasks.
+   * Processes the [context] collected by [findApplicableContext] for the given [course].
+   * Used for persisting data, not for actual heavy tasks.
    */
-  fun processCourseParams(project: Project, course: Course, params: T)
+  fun processCourseParams(project: Project, course: Course, context: T)
 
   companion object {
     val EP_NAME = ExtensionPointName.create<CourseParamsProcessor<*>>("Educational.courseParamsProcessor")
