@@ -42,9 +42,13 @@ include(
   "intellij-plugin:features:ai-hints-python",
   "intellij-plugin:features:ai-test-generation",
   "intellij-plugin:features:ide-onboarding",
-  "intellij-plugin:features:remote-env",
   "intellij-plugin:features:social-media",
 )
+
+// BACKCOMPAT: Temporarily exclude for 2025.2 as it doesn't compile
+if (settings.providers.gradleProperty("environmentName").get() != "252") {
+  include("intellij-plugin:features:remote-env")
+}
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
