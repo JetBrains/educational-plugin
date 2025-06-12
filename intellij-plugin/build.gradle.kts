@@ -86,7 +86,9 @@ dependencies {
     pluginModule(implementation(project("features:ai-hints-python")))
     pluginModule(implementation(project("features:ai-test-generation")))
     pluginModule(implementation(project("features:ide-onboarding")))
-    pluginModule(implementation(project("features:remote-env")))
+    if (!isAtLeast252) { // BACKCOMPAT: Temporarily exclude for 2025.2 as it doesn't compile
+      pluginModule(implementation(project("features:remote-env")))
+    }
     pluginModule(implementation(project("features:social-media")))
     pluginModule(implementation(project("localization")))
 
