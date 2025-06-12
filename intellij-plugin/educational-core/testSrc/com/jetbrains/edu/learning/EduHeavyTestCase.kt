@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.jetbrains.edu.rules.CustomValuesRule
+import io.mockk.clearAllMocks
 import org.junit.Rule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -21,6 +22,8 @@ abstract class EduHeavyTestCase : HeavyPlatformTestCase() {
   override fun tearDown() {
     try {
       EduTestServiceStateHelper.cleanUpState(null)
+      // Workaround to minimize how test cases affect each other with leaking mocks
+      clearAllMocks()
     }
     catch (e: Throwable) {
       addSuppressedException(e)

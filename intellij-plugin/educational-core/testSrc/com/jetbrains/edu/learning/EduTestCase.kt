@@ -47,6 +47,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.rules.CustomValuesRule
+import io.mockk.clearAllMocks
 import okhttp3.mockwebserver.MockResponse
 import org.apache.http.HttpStatus
 import org.junit.Rule
@@ -104,6 +105,8 @@ abstract class EduTestCase : BasePlatformTestCase() {
   override fun tearDown() {
     try {
       EduTestServiceStateHelper.cleanUpState(project)
+      // Workaround to minimize how test cases affect each other with leaking mocks
+      clearAllMocks()
     }
     catch (e: Throwable) {
       addSuppressedException(e)
