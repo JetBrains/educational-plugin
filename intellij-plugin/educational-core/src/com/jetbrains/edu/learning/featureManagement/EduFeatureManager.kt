@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.EduTestAware
 import kotlinx.serialization.Serializable
 
 @Service(Service.Level.PROJECT)
-@State(name = "CourseFeatures", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
+@State(name = "EduFeatureManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class EduFeatureManager : SerializablePersistentStateComponent<EduFeatureManager.CourseFeatureState>(CourseFeatureState()), EduTestAware {
 
   fun updateManagerState(state: Set<EduManagedFeature>) {

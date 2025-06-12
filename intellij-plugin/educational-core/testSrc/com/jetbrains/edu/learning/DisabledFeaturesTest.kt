@@ -23,7 +23,7 @@ class DisabledFeaturesTest : CourseGenerationTestBase<EmptyProjectSettings>() {
     course.disabledFeatures = listOf("ai-hints")
     createCourseStructure(course)
 
-    val featureManager = course.project?.service<EduFeatureManager>()!!
+    val featureManager = project.service<EduFeatureManager>()
     assertTrue(featureManager.checkDisabled(EduManagedFeature.AI_HINTS))
   }
 }
