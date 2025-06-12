@@ -11,8 +11,7 @@ class EduAIServiceChangeHostActionTest : ServiceChangeHostActionTest() {
   override var initialUrl: String = EduAIDebuggerServiceHost.PRODUCTION.url
 
   override val productionUrl: String = EduAIDebuggerServiceHost.PRODUCTION.url
-  // TODO: change to staging url after staging is set up
-  override val stagingUrl: String = "STAGING_URL"
+  override val stagingUrl: String = EduAIDebuggerServiceHost.STAGING.url
   override val localhostUrl: String = LOCALHOST_URL
 
   override fun getSelectedUrl(): String = EduAIDebuggerServiceHost.getSelectedUrl()
