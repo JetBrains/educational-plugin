@@ -13,6 +13,7 @@ import com.jetbrains.edu.ai.debugger.core.EDU_AI_DEBUGGER_SERVICE_HOST_PROPERTY
 import com.jetbrains.edu.ai.debugger.core.host.EduAIDebuggerServiceHost
 import com.jetbrains.edu.ai.debugger.core.host.EduAIDebuggerServiceHost.OTHER
 import com.jetbrains.edu.ai.debugger.core.host.EduAIDebuggerServiceHost.PRODUCTION
+import com.jetbrains.edu.ai.debugger.core.host.EduAIDebuggerServiceHost.STAGING
 import com.jetbrains.edu.ai.debugger.core.messages.EduAIDebuggerCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.services.dialog.ServiceHostChanger
@@ -54,7 +55,7 @@ class EduAIDebuggerServiceChangeHostDialog : ServiceHostChanger, DialogWrapper(t
   override fun getResultUrl(): String? {
     if (!showAndGet()) return null
     val host = selectedHost ?: return null
-    return if (host == PRODUCTION) host.url else otherServer
+    return if (host in listOf(PRODUCTION, STAGING)) host.url else otherServer
   }
 
   companion object {
