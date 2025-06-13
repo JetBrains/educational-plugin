@@ -14,11 +14,8 @@ import com.jetbrains.edu.socialMedia.x.api.TweetData
 import com.jetbrains.edu.socialMedia.x.api.TweetResponse
 import com.jetbrains.rd.util.ConcurrentHashMap
 import org.junit.Test
-import java.net.HttpURLConnection.*
 import java.nio.file.Paths
 import java.util.Collections
-import kotlin.collections.ArrayDeque
-import kotlin.test.assertContains
 import kotlin.test.assertNotNull as kAssertNotNull
 
 class XConnectorTest : EduTestCase() {
@@ -76,14 +73,12 @@ class XConnectorTest : EduTestCase() {
   @Test
   fun `test tweet posting with media`() {
     // given
-    val uploadMediaAnswers = ArrayDeque(MEDIA_RESPONSES)
     helper.addResponseHandlerWithRequestBodyRecording { request, path ->
       when (path) {
         "/2/tweets" -> MockResponseFactory.fromString(TWEET_RESPONSE)
-        "/2/media/upload" -> {
-          val (code, body) = uploadMediaAnswers.removeFirst()
-          MockResponseFactory.fromString(body, code)
-        }
+        "/2/media/upload/initialize" -> MockResponseFactory.fromString(MEDIA_UPLOAD_INIT_RESPONSE)
+        "/2/media/upload/$MEDIA_ID/append" -> MockResponseFactory.fromString(MEDIA_UPLOAD_APPEND_RESPONSE)
+        "/2/media/upload/$MEDIA_ID/finalize" -> MockResponseFactory.fromString(MEDIA_UPLOAD_FINALIZE_RESPONSE)
         "/2/media/upload?media_id=$MEDIA_ID" -> MockResponseFactory.fromString(MEDIA_STATUS_RESPONSE)
         else -> null
       }
@@ -94,16 +89,12 @@ class XConnectorTest : EduTestCase() {
     val response = XConnector.getInstance().tweet(TWEET_TEXT, mediaPath)
 
     // then
-    val uploadMediaRequests = kAssertNotNull(requestBodies["/2/media/upload"])
-
-    // check that we pass INIT command
-    assertContains(uploadMediaRequests[0], "INIT")
-    // check that we pass APPEND command with the correct media id
-    assertContains(uploadMediaRequests[1], "APPEND")
-    assertContains(uploadMediaRequests[1], MEDIA_ID)
-    // check that we pass FINALIZE command with the correct media id
-    assertContains(uploadMediaRequests[2], "FINALIZE")
-    assertContains(uploadMediaRequests[2], MEDIA_ID)
+    // check that we initialized media uploading
+    kAssertNotNull(requestBodies["/2/media/upload/initialize"]?.singleOrNull())
+    // check that we upload media data with the correct media id
+    kAssertNotNull(requestBodies["/2/media/upload/$MEDIA_ID/append"]?.singleOrNull())
+    // check that we finalized media uploading with the correct media id
+    kAssertNotNull(requestBodies["/2/media/upload/$MEDIA_ID/finalize"]?.singleOrNull())
 
     // check that the corresponding request was called
     kAssertNotNull(requestBodies["/2/media/upload?media_id=$MEDIA_ID"]?.singleOrNull())
@@ -121,7 +112,7 @@ class XConnectorTest : EduTestCase() {
     helper.addResponseHandlerWithRequestBodyRecording { request, path ->
       when (path) {
         "/2/tweets" -> MockResponseFactory.fromString(TWEET_RESPONSE)
-        "/2/media/upload" -> MockResponseFactory.badRequest()
+        "/2/media/upload/initialize" -> MockResponseFactory.badRequest()
         else -> null
       }
     }
@@ -131,7 +122,7 @@ class XConnectorTest : EduTestCase() {
     val response = XConnector.getInstance().tweet(TWEET_TEXT, mediaPath)
 
     // then
-    kAssertNotNull(requestBodies["/2/media/upload"]?.singleOrNull())
+    kAssertNotNull(requestBodies["/2/media/upload/initialize"]?.singleOrNull())
     assertNull(requestBodies["/2/tweets"])
     assertNull(null, response)
   }
@@ -180,12 +171,11 @@ class XConnectorTest : EduTestCase() {
 
     //language=json
     private const val MEDIA_STATUS_RESPONSE = """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86398,"processing_info":{"state":"succeeded","progress_percent":100},"size":708679}}"""
-
     //language=json
-    private val MEDIA_RESPONSES = listOf(
-      HTTP_ACCEPTED to """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86400}}""",
-      HTTP_NO_CONTENT to "",
-      HTTP_OK to """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86400,"processing_info":{"state":"pending","check_after_secs":1},"size":708679}}""",
-    )
+    private const val MEDIA_UPLOAD_INIT_RESPONSE = """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86400}}"""
+    //language=json
+    private const val MEDIA_UPLOAD_APPEND_RESPONSE = """{"data":{"expires_at":1749908627578}}"""
+    //language=json
+    private const val MEDIA_UPLOAD_FINALIZE_RESPONSE = """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86400,"processing_info":{"state":"pending","check_after_secs":1},"size":708679}}"""
   }
 }
