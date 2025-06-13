@@ -6,15 +6,11 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.platform.util.progress.SequentialProgressReporter
 import com.jetbrains.python.packaging.PyRequirement
 import com.jetbrains.python.packaging.management.PythonPackageManager
-import com.jetbrains.python.packaging.management.PythonPackagesInstaller
+import com.jetbrains.python.packaging.management.toInstallRequest
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.flavors.PyFlavorData
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.setAssociationToModule
-import kotlin.reflect.full.callSuspend
-import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.functions
-import kotlin.reflect.jvm.isAccessible
 
 // BACKCOMPAT: 2025.1. Inline it.
 internal suspend fun installRequiredPackages(
@@ -22,12 +18,15 @@ internal suspend fun installRequiredPackages(
   packageManager: PythonPackageManager,
   requirements: List<PyRequirement>
 ) {
-  val method = PythonPackagesInstaller::class.companionObject?.functions?.find { function ->
-    function.name == "installWithRequirements"
-    && function.parameters.size == 4 // 1 receiver, 3 arguments
-  } ?: throw NoSuchMethodError("No static `installWithRequirements` method was found")
-  method.isAccessible = true
-  method.callSuspend(PythonPackagesInstaller.Companion, packageManager, requirements, emptyList<String>())
+  for (pyRequirement in requirements) {
+    reporter.itemStep(pyRequirement.name) {
+      val packageSpecification = packageManager.findPackageSpecificationWithVersionSpec(
+        packageName = pyRequirement.name,
+        versionSpec = pyRequirement.versionSpecs.firstOrNull()
+      ) ?: return@itemStep
+      packageManager.installPackage(packageSpecification.toInstallRequest())
+    }
+  }
 }
 
 // BACKCOMPAT: 2025.1. Inline it.
