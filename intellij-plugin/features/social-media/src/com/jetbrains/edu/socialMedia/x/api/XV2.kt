@@ -14,14 +14,30 @@ interface XV2 {
   fun usersMe(): Call<XUserLookup>
 
   /**
-   * [Media Upload](https://docs.x.com/x-api/media/media-upload)
+   * Initialize a media upload [request](https://docs.x.com/x-api/media/media-upload-initialize)
    */
-  @Multipart
-  @POST("/2/media/upload")
-  fun uploadMedia(@PartMap params: @JvmSuppressWildcards Map<String, RequestBody>): Call<XMediaUploadResponse>
+  @POST("/2/media/upload/initialize")
+  fun mediaUploadInitialize(@Body request: XMediaUploadInitializeRequest): Call<XMediaUploadResponse>
 
   /**
-   * [Media Upload Status]( https://docs.x.com/x-api/media/media-upload-status)
+   * Loading media chunk [request](https://docs.x.com/x-api/media/media-upload-append)
+   */
+  @Multipart
+  @POST("/2/media/upload/{id}/append")
+  fun mediaUploadAppend(
+    @Path("id") mediaId: String,
+    @Part("segment_index") segmentIndex: Int,
+    @Part("media") media: RequestBody
+  ): Call<XMediaUploadAppendResponse>
+
+  /**
+   * Finalize a media upload [request](https://docs.x.com/x-api/media/media-upload-finalize)
+   */
+  @POST("/2/media/upload/{id}/finalize")
+  fun mediaUploadFinalize(@Path("id") mediaId: String): Call<XMediaUploadResponse>
+
+  /**
+   * [Media Upload Status](https://docs.x.com/x-api/media/media-upload-status)
    */
   @GET("/2/media/upload")
   fun mediaUploadStatus(@Query("media_id") mediaId: String): Call<XMediaUploadResponse>

@@ -12,9 +12,7 @@ import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.socialMedia.x.api.*
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.apache.http.client.utils.URIBuilder
 import java.nio.file.Files
 import java.nio.file.Path
@@ -107,38 +105,37 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
     val mediaType = imagePath.mediaType()
     val media = imagePath.toFile().asRequestBody(mediaType)
 
-    // Supposed workflow for media uploading - https://docs.x.com/x-api/media/quickstart/media-upload-chunked
+    // Supposed workflow for media uploading - https://docs.x.com/x-api/media/quickstart/media-upload-chunked.
+    // At the moment of writing this comment, described workflow was a bit outdated and referred to `/2/media/upload` endpoint.
+    // After https://devcommunity.x.com/t/media-upload-endpoints-update-and-extended-migration-deadline/241818 changes
+    // actual workflow is almost the same, but commands (INIT, APPEND, FINALIZE) are represented with three separate endpoints:
+    //   - /2/media/upload/initialize
+    //   - /2/media/upload/{id}/append
+    //   - /2/media/upload/{id}/finalize
 
     // 1. Init media loading and receiving media id
-    val initResult = endpoints.uploadMedia(
-      mapOf(
-        "command" to UploadCommand.INIT,
-        "media_type" to mediaType,
-        "media_category" to "tweet_gif", // Hardcoded value. Need to be dynamic if we decide to use new media types
-        "total_bytes" to media.contentLength()
-      ).convertToRequestBodies()
+    val initResult = endpoints.mediaUploadInitialize(
+      XMediaUploadInitializeRequest(
+        mediaCategory = "tweet_gif", // Hardcoded value. Need to be dynamic if we decide to use new media types
+        mediaType = mediaType.toString(),
+        shared = false,
+        totalBytes = media.contentLength()
+      )
     ).executeHandlingExceptions(omitErrors = true)?.body() ?: return null
 
     val mediaId = initResult.data.id
 
     // 2. Upload media chunks.
     // Right now we do it with a single chunk
-    endpoints.uploadMedia(
-      mapOf(
-        "command" to UploadCommand.APPEND,
-        "media_id" to mediaId,
-        "segment_index" to 0, // Do we need to split media data into several chunks?
-        "media" to media
-      ).convertToRequestBodies()
+    endpoints.mediaUploadAppend(
+      mediaId = mediaId,
+      segmentIndex = 0, // Do we need to split media data into several chunks?
+      media = media,
     ).executeHandlingExceptions(omitErrors = true) ?: return null
 
     // 3. Finalize uploading and receiving media status
-    var uploadInfo = endpoints.uploadMedia(
-      mapOf(
-        "command" to UploadCommand.FINALIZE,
-        "media_id" to mediaId,
-      ).convertToRequestBodies()
-    ).executeHandlingExceptions(omitErrors = true)?.body() ?: return null
+    var uploadInfo = endpoints.mediaUploadFinalize(mediaId)
+      .executeHandlingExceptions(omitErrors = true)?.body() ?: return null
 
     // 4. Checking uploading status
     var totalWaitingDuration = 0L
@@ -163,15 +160,6 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
   }
 
   /**
-   * Converts all values to [RequestBody].
-   * If value is [RequestBody], does nothing.
-   * Otherwise, converts values to string with text/plain media type
-   */
-  private fun Map<String, Any>.convertToRequestBodies(): Map<String, RequestBody> = mapValues { (_, value) ->
-    value as? RequestBody ?: value.toString().toRequestBody(TEXT_PLAIN)
-  }
-
-  /**
    * In case of any issues with content type detection, `image/gif` will be used as default media type.
    * Maybe be a reason for a wrong media type if we start using anything except gif images for tweets.
    */
@@ -192,7 +180,6 @@ class XConnector : EduOAuthCodeFlowConnector<XAccount, XUserInfo> {
       "media.write"     // to upload media (gifs in our case) for tweets (`/2/media/upload` calls)
     )
 
-    private val TEXT_PLAIN: MediaType = "text/plain".toMediaType()
     private val IMAGE_GIF: MediaType = "image/gif".toMediaType()
 
     private val IMAGE_PROCESSING_WAITING_TIMEOUT = TimeUnit.SECONDS.toMillis(10)

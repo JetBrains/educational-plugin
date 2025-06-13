@@ -2,6 +2,13 @@ package com.jetbrains.edu.socialMedia.x.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
+data class XMediaUploadInitializeRequest(
+  @get:JsonProperty("media_category") val mediaCategory: String,
+  @get:JsonProperty("media_type") val mediaType: String,
+  @get:JsonProperty("shared") val shared: Boolean,
+  @get:JsonProperty("total_bytes") val totalBytes: Long,
+)
+
 data class XMediaUploadResponse(
   @JsonProperty("data") val data: XUploadData
 )
@@ -25,8 +32,10 @@ enum class PendingState {
   @JsonProperty("failed") FAILED;
 }
 
-enum class UploadCommand {
-  INIT,
-  APPEND,
-  FINALIZE
-}
+data class XMediaUploadAppendResponse(
+  @JsonProperty("data") val data: XMediaUploadAppendData
+)
+
+data class XMediaUploadAppendData(
+  @JsonProperty("expires_at") val expiresAt: Long,
+)
