@@ -13,7 +13,6 @@ import com.jetbrains.python.sdk.setAssociationToModule
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.functions
 
-// BACKCOMPAT: 2024.3. Inline it.
 internal suspend fun installRequiredPackages(
   reporter: SequentialProgressReporter,
   packageManager: PythonPackageManager,
