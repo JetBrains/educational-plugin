@@ -96,7 +96,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
     val sdkApplicable = isSdkApplicable(course, sdk.languageLevel)
     if (sdkApplicable is Err) {
-      val message = "${sdkApplicable.error} ${EduPythonBundle.message("configure.python.environment.help")}"
+      val message = "${sdkApplicable.error}<br>${EduPythonBundle.message("configure.python.environment.help")}"
       val validationMessage = ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
       return SettingsValidationResult.Ready(validationMessage)
     }
