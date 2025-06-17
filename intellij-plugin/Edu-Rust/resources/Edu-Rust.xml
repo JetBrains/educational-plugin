@@ -8,4 +8,13 @@
   <extensions defaultExtensionNs="Educational">
     <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
   </extensions>
+
+  <actions>
+    <!-- Temporary internal action to check Learn Rust course creation like in RustRover banner -->
+    <!-- https://youtrack.jetbrains.com/issue/EDU-8189 -->
+    <action id="OpenLearnRustCourseAction"
+            class="com.jetbrains.edu.rust.learn.OpenLearnRustCourseAction"
+            text="Open Learn Rust"
+            internal="true"/>
+  </actions>
 </idea-plugin>
