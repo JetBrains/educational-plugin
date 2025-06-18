@@ -51,10 +51,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
 
     val ltiSettings = request.ltiSettingsDTO
     if (ltiSettings != null) {
-      val settingsState = LTISettingsManager.instance(project).state
-      settingsState.launchId = ltiSettings.launchId
-      settingsState.lmsDescription = ltiSettings.lmsDescription
-      settingsState.onlineService = ltiSettings.onlineService
+      LTISettingsManager.instance(project).settings = ltiSettings
     }
   }
 
