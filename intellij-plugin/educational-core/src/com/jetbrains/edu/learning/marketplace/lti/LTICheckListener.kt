@@ -25,12 +25,12 @@ class LTICheckListener : CheckListener {
 
     if (!course.isStudy || !course.isMarketplaceRemote) return
 
-    val ltiSettings = LTISettingsManager.getInstance(project).state
+    val ltiSettings = LTISettingsManager.getInstance(project).settings ?: return
 
     val solved = result.isSolved
     if (!solved && ltiSettings.onlineService == LTIOnlineService.ALPHA_TEST_2024) return
 
-    val launchId = ltiSettings.launchId ?: return
+    val launchId = ltiSettings.launchId
 
     logger<LTICheckListener>().info("Posting completion status for task ${task.name}: solved=$solved, launchId=$launchId")
 
