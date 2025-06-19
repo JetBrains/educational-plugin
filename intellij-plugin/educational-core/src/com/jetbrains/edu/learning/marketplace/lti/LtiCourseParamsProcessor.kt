@@ -5,14 +5,20 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
 import com.jetbrains.edu.learning.newproject.CourseParamsProcessor
 
-data class LtiCourseParams(val launchId: String, val lmsDescription: String, val studyItemId: Int?)
+data class LtiCourseParams(
+  val launchId: String,
+  val lmsDescription: String,
+  val studyItemId: Int?,
+  val ltiCourseraCourse: String?
+)
 
 class LtiCourseParamsProcessor : CourseParamsProcessor<LtiCourseParams> {
   override fun findApplicableContext(params: Map<String, String>): LtiCourseParams? {
     val studyItem = params[LTI_STUDY_ITEM_ID]?.toIntOrNull()
     val ltiLaunchId = params[LTI_LAUNCH_ID] ?: return null
     val lmsDescription = params[LTI_LMS_DESCRIPTION] ?: return null
-    return LtiCourseParams(ltiLaunchId, lmsDescription, studyItem)
+    val ltiCourseraCourse = params[LTI_COURSERA_COURSE]
+    return LtiCourseParams(ltiLaunchId, lmsDescription, studyItem, ltiCourseraCourse)
   }
 
   override fun processCourseParams(project: Project, course: Course, context: LtiCourseParams) {
@@ -20,7 +26,7 @@ class LtiCourseParamsProcessor : CourseParamsProcessor<LtiCourseParams> {
       context.launchId,
       context.lmsDescription,
       LTIOnlineService.STANDALONE,
-      null
+      context.ltiCourseraCourse?.courseraCourseNameToLink()
     )
     LTISettingsManager.instance(project).settings = ltiSettings
 
@@ -32,5 +38,6 @@ class LtiCourseParamsProcessor : CourseParamsProcessor<LtiCourseParams> {
     const val LTI_STUDY_ITEM_ID = "study_item_id"
     const val LTI_LAUNCH_ID = "lti_launch_id"
     const val LTI_LMS_DESCRIPTION = "lti_lms_description"
+    const val LTI_COURSERA_COURSE = "lti_coursera_course"
   }
 }
