@@ -1,5 +1,6 @@
 import java.io.IOException
 import java.net.URL
+import java.net.UnknownHostException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
@@ -57,7 +58,6 @@ if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
 apply(from = "common.gradle.kts")
 
 val secretProperties: String by extra
-val inJetBrainsNetwork: () -> Boolean by extra
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
@@ -66,10 +66,11 @@ configureSecretProperties()
 downloadHyperskillCss()
 
 fun configureSecretProperties() {
-  if (inJetBrainsNetwork() || isTeamCity) {
+  try {
     download(URL("https://repo.labs.intellij.net/edu-tools/secret.properties"), secretProperties)
   }
-  else {
+  catch (_: UnknownHostException) {
+    println("repo.labs.intellij.net is not reachable")
     val secretProperties = file(secretProperties)
     if (!secretProperties.exists()) {
       secretProperties.createNewFile()
