@@ -55,9 +55,7 @@ if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
 }
 
-apply(from = "common.gradle.kts")
-
-val secretProperties: String by extra
+val secretProperties: String = "secret.properties"
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
