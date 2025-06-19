@@ -68,6 +68,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             authorSolution = task.taskFiles.values.filter { !it.isTestFile }.associate { it.name to it.getSolution() },
             // TODO: positive number / non-nullable
             courseId = project.course?.id ?: 0,
+            task = task,
             programmingLanguage = project.getLanguage(),
             taskDescription = TaskDescription(
               descriptionFormat = task.descriptionFormat.toTaskDescriptionType(),

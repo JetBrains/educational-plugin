@@ -9,8 +9,8 @@ import com.jetbrains.educational.ml.debugger.request.TestInfoBase
 data class DebuggerHintRequest(
   override val authorSolution: FileContentMap,
   override val courseId: Int,
-  override val dependencies: List<String> = emptyList(),
-  override val mavenRepositories: List<String> = emptyList(),
+  override val lessonName: String,
+  override val taskName: String,
   override val programmingLanguage: ProgrammingLanguage,
   override val taskDescription: TaskDescriptionBase,
   override val taskId: Int,
