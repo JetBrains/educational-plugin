@@ -11,6 +11,13 @@ class EduUiOnboardingProjectActivity : ProjectActivity {
     if (!project.isEduProject()) return
     if (!project.isStudentProject()) return
 
+    // Check if the tour should be skipped via system property
+    if (System.getProperty("edu.ui.onboarding.skip")?.toBoolean() == true) {
+      // Mark the tour as shown without actually showing it
+      PropertiesComponent.getInstance().setValue(EDU_UI_ONBOARDING_TOUR_SHOWN, true)
+      return
+    }
+
     val propertiesComponent = PropertiesComponent.getInstance()
 
     val shown = propertiesComponent.getBoolean(EDU_UI_ONBOARDING_TOUR_SHOWN)
