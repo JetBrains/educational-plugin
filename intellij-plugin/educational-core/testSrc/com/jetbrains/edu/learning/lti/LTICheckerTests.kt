@@ -22,7 +22,8 @@ class LTICheckerTests : EduTestCase() {
     get() = LTISettingsManager.instance(project).settings ?: LTISettingsDTO(
       "some random launch id",
       lmsDescription = null,
-      onlineService = LTIOnlineService.STANDALONE
+      onlineService = LTIOnlineService.STANDALONE,
+      returnLink = null
     )
     set(value) {
       LTISettingsManager.instance(project).settings = value

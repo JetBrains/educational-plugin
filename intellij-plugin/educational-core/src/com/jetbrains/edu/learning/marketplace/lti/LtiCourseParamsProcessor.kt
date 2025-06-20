@@ -19,7 +19,8 @@ class LtiCourseParamsProcessor : CourseParamsProcessor<LtiCourseParams> {
     val ltiSettings = LTISettingsDTO(
       context.launchId,
       context.lmsDescription,
-      LTIOnlineService.STANDALONE
+      LTIOnlineService.STANDALONE,
+      null
     )
     LTISettingsManager.instance(project).settings = ltiSettings
 
