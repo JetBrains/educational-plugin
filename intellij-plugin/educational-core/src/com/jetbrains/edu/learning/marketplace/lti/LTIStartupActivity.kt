@@ -22,13 +22,14 @@ class LTIStartupActivity : ProjectActivity {
       return
     }
 
-    val lmsDescription = settings.lmsDescription
+    val lmsDescription = settings.lmsDescription?.xmlEscaped
+    val returnLink = settings.returnLink
 
-    val message = if (lmsDescription.isNullOrEmpty()) {
-      EduCoreBundle.message("lti.check.button.hint")
-    }
-    else {
-      EduCoreBundle.message("lti.check.button.hint.with.lms", lmsDescription.xmlEscaped)
+    val message = when {
+      lmsDescription.isNullOrEmpty() && !returnLink.isNullOrEmpty() -> EduCoreBundle.message("lti.check.button.hint.link", returnLink)
+      lmsDescription.isNullOrEmpty() -> EduCoreBundle.message("lti.check.button.hint")
+      !returnLink.isNullOrEmpty() -> EduCoreBundle.message("lti.check.button.hint.with.lms.link", returnLink, lmsDescription)
+      else -> EduCoreBundle.message("lti.check.button.hint.with.lms", lmsDescription)
     }
 
     additionalInformationManager.setInformation(LTI_ADDITIONAL_INFORMATION_KEY, message)
