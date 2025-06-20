@@ -25,6 +25,7 @@ class LTISettingsManager : SimplePersistentStateComponent<LTISettings>(LTISettin
         launchId = value?.launchId
         lmsDescription = value?.lmsDescription
         onlineService = value?.onlineService ?: LTIOnlineService.STANDALONE
+        returnLink = value?.returnLink
       }
 
       _settingsFlow.value = value
@@ -42,7 +43,8 @@ class LTISettingsManager : SimplePersistentStateComponent<LTISettings>(LTISettin
       LTISettingsDTO(
         launchId,
         state.lmsDescription,
-        state.onlineService
+        state.onlineService,
+        state.returnLink
       )
     }
   }
