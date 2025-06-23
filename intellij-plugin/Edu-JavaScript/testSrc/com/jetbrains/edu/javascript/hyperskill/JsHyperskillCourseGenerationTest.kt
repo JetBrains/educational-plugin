@@ -1,7 +1,7 @@
 package com.jetbrains.edu.javascript.hyperskill
 
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.edu.javascript.JavascriptLanguage
 import com.jetbrains.edu.javascript.learning.JsConfigurator.Companion.TASK_JS
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CourseMode

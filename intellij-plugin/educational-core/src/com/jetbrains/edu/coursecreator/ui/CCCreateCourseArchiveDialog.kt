@@ -42,9 +42,7 @@ class CCCreateCourseArchiveDialog(project: Project, courseName: String) : Dialog
   private fun createPanel(project: Project): DialogPanel {
     return panel {
       row {
-        // BACKCOMPAT: 2024.3. Use `singleDir` instead of `createSingleFolderDescriptor`
-        @Suppress("UsagesOfObsoleteApi")
-        val fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+        val fileChooserDescriptor = FileChooserDescriptorFactory.singleDir()
           .withTitle(EduCoreBundle.message("course.creator.create.archive.location.title"))
         textFieldWithBrowseButton(fileChooserDescriptor, project)
           .label(EduCoreBundle.message("course.creator.create.archive.panel.location"))

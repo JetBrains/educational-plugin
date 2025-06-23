@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import org.jetbrains.plugins.scala.project.Version
 import org.jetbrains.sbt.Sbt
+import org.jetbrains.sbt.SbtVersion
 import org.jetbrains.sbt.project.SbtProjectSystem
 import org.jetbrains.sbt.project.settings.SbtProjectSettings
 
@@ -25,7 +26,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
 ) {
 
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
-    val sbtVersion = maxOf(latestSbtVersion, MIN_RECOMMENDED_SBT_VERSION)
+    val sbtVersion = maxOf(SbtVersion.`Latest$`.`MODULE$`.Sbt_1().value(), MIN_RECOMMENDED_SBT_VERSION)
     val templateVariables = mapOf(
       PROJECT_NAME to gradleSanitizeName(holder.courseDir.name),
       "SBT_VERSION" to sbtVersion.toString()

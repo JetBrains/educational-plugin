@@ -1,7 +1,7 @@
 package com.jetbrains.edu.javascript.hyperskill
 
 import com.intellij.lang.Language
-import com.jetbrains.edu.javascript.JavascriptLanguage
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTaskDescriptionHighlightingTest
 
 class JsHyperskillTaskDescriptionHighlightingTest : HyperskillTaskDescriptionHighlightingTest() {

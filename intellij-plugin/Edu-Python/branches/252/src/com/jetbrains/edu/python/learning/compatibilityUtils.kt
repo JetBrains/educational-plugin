@@ -7,9 +7,6 @@ import com.intellij.platform.util.progress.SequentialProgressReporter
 import com.jetbrains.python.packaging.PyRequirement
 import com.jetbrains.python.packaging.management.PythonPackageManager
 import com.jetbrains.python.packaging.management.toInstallRequest
-import com.jetbrains.python.psi.LanguageLevel
-import com.jetbrains.python.sdk.flavors.PyFlavorData
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.setAssociationToModule
 
 // BACKCOMPAT: 2025.1. Inline it.
@@ -35,15 +32,3 @@ internal fun setAssociationToModule(sdk: Sdk, module: Module) {
     sdk.setAssociationToModule(module)
   }
 }
-
-// BACKCOMPAT: 2024.3. Inline it.
-internal fun <D : PyFlavorData> getVersionString(
-  @Suppress("unused") flavor: PythonSdkFlavor<D>,
-  sdkPath: String?
-): String? = PythonSdkFlavor.getVersionStringStatic(sdkPath)
-
-// BACKCOMPAT: 2024.3. Inline it.
-internal fun <D : PyFlavorData> getLanguageLevelFromVersionStringStatic(
-  @Suppress("unused") flavor: PythonSdkFlavor<D>,
-  versionString: String
-): LanguageLevel = PythonSdkFlavor.getLanguageLevelFromVersionStringStatic(versionString)

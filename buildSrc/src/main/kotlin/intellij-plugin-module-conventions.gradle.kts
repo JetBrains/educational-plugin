@@ -23,14 +23,7 @@ tasks {
     // Needed for both `:intellij-plugin:features:ai-hints-kotlin` and `:intellij-plugin:Edu-Kotlin`
     // Does nothing otherwise because Kotlin does not exist in the classpath
     jvmArgumentProviders += CommandLineArgumentProvider {
-      listOf(
-        if (isAtLeast251) {
-          "-Didea.kotlin.plugin.use.k2=true"
-        }
-        else {
-          "-Didea.kotlin.plugin.use.k2=false"
-        }
-      )
+      listOf("-Didea.kotlin.plugin.use.k2=true")
     }
   }
 }

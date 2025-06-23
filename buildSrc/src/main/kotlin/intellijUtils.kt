@@ -7,7 +7,7 @@ import kotlin.reflect.KProperty
 const val VERIFY_CLASSES_TASK_NAME = "verifyClasses"
 
 val Project.environmentName: String by Properties
-val Project.isAtLeast251: Boolean get() = environmentName.toInt() >= 251
+// BACKCOMPAT: 2025.1
 val Project.isAtLeast252: Boolean get() = environmentName.toInt() >= 252
 
 val Project.pluginVersion: String by Properties
@@ -95,7 +95,7 @@ val Project.sqlPlugins: List<String> get() = listOfNotNull(
   sqlPlugin,
   // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1791
   "intellij.charts".takeIf { !isAtLeast252 }, // BACKCOMPAT: 2025.1. Drop it.
-  "intellij.grid.plugin".takeIf { isAtLeast251 }
+  "intellij.grid.plugin"
 )
 
 val Project.csharpPlugins: List<String> get() = listOf(

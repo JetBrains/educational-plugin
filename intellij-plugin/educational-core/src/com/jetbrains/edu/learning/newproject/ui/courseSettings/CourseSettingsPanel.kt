@@ -102,9 +102,7 @@ class CourseSettingsPanel(
 
   private fun createLocationComponent(): LabeledComponent<TextFieldWithBrowseButton> {
     val field = TextFieldWithBrowseButton()
-    // BACKCOMPAT: 2024.3. Use `singleDir` instead of `createSingleFolderDescriptor`
-    @Suppress("UsagesOfObsoleteApi")
-    val fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
+    val fileChooserDescriptor = FileChooserDescriptorFactory.singleDir()
       .withTitle(EduCoreBundle.message("action.select.course.location.title"))
       .withDescription(EduCoreBundle.message("action.select.course.location.description"))
     field.addBrowseFolderListener(null, fileChooserDescriptor)

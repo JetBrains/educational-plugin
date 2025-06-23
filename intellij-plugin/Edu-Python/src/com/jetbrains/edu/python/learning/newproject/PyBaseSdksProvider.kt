@@ -3,10 +3,10 @@ package com.jetbrains.edu.python.learning.newproject
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.concurrency.annotations.RequiresReadLockAbsence
-import com.jetbrains.edu.python.learning.getLanguageLevelFromVersionStringStatic
-import com.jetbrains.edu.python.learning.getVersionString
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor.getLanguageLevelFromVersionStringStatic
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor.getVersionStringStatic
 import kotlin.io.path.pathString
 
 /**
@@ -32,8 +32,8 @@ object PyBaseSdksProvider {
         newDescriptors[sdkPath] = sdkDescriptor
         continue
       }
-      val versionString = getVersionString(flavor, sdkPath) ?: continue
-      val languageLevel = getLanguageLevelFromVersionStringStatic(flavor, versionString)
+      val versionString = getVersionStringStatic(sdkPath) ?: continue
+      val languageLevel = getLanguageLevelFromVersionStringStatic(versionString)
       newDescriptors[sdkPath] = PyBaseSdkDescriptor(sdkPath, versionString, languageLevel)
     }
 

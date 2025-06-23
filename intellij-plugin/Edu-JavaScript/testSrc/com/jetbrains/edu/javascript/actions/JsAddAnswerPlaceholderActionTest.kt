@@ -1,7 +1,7 @@
 package com.jetbrains.edu.javascript.actions
 
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholderActionTestBase
-import com.jetbrains.edu.javascript.JavascriptLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.junit.Test
 

@@ -5,12 +5,11 @@
     <module name="jvm-core"/>
 
     <plugin id="org.intellij.scala"/>
+    <module name="scalaCommunity.testing-support"/>
+
     <plugin id="org.jetbrains.plugins.gradle"/>
     <plugin id="JUnit"/>
   </dependencies>
-
-  <!-- BACKCOMPAT: 2024.3. inline it-->
-  <xi:include href="/META-INF/platform-Edu-Scala.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <xi:include href="/META-INF/Hyperskill-Scala.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <extensions defaultExtensionNs="Educational">

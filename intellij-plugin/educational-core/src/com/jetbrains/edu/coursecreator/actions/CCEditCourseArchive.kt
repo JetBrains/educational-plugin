@@ -22,10 +22,8 @@ class CCEditCourseArchive : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
-    // BACKCOMPAT: 2024.3. Use `singleFile` instead of `createSingleLocalFileDescriptor`
-    @Suppress("DEPRECATION")
     val descriptor = FileChooserDescriptorFactory
-      .createSingleLocalFileDescriptor()
+      .singleFile()
       .withExtensionFilter("zip")
     val virtualFile = FileChooser.chooseFile(descriptor, project, null) ?: return
     val course = EduUtilsKt.getLocalCourse(virtualFile.path)

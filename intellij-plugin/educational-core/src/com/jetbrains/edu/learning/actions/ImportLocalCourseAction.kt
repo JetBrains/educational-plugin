@@ -37,10 +37,8 @@ class ImportLocalCourseAction : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
-    // BACKCOMPAT: 2024.3. Use `singleFile` instead of `createSingleLocalFileDescriptor`
-    @Suppress("DEPRECATION")
     val fileChooserDescriptor = FileChooserDescriptorFactory
-      .createSingleLocalFileDescriptor()
+      .singleFile()
       .withExtensionFilter("zip")
 
     FileChooser.chooseFile(fileChooserDescriptor, null, importLocation()) { file ->

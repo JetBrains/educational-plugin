@@ -1,9 +1,9 @@
 package com.jetbrains.edu.javascript.courseGeneration
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
+import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
 import com.intellij.openapi.project.ProjectManager
-import com.jetbrains.edu.javascript.JavascriptLanguage
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode

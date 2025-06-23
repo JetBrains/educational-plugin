@@ -1,5 +1,0 @@
-<idea-plugin>
-  <dependencies>
-    <plugin id="com.intellij.modules.json"/>
-  </dependencies>
-</idea-plugin>

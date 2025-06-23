@@ -7,9 +7,7 @@ dependencies {
     intellijIde(baseVersion)
 
     intellijPlugins(yamlPlugin)
-    if (isAtLeast251) {
-      intellijPlugins(jsonPlugin)
-    }
+    intellijPlugins(jsonPlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))
