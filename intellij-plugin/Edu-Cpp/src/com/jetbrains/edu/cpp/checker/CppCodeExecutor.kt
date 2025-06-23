@@ -38,7 +38,9 @@ class CppCodeExecutor : DefaultCodeExecutor() {
     }
 
     val context = ConfigurationContext(mainElement)
-    val configuration = CidrTargetRunConfigurationProducer.getInstances(project).firstOrNull()?.findOrCreateConfigurationFromContext(context)
+    val configuration = CidrTargetRunConfigurationProducer.getInstances(project)
+      .firstOrNull { it.getExecutableTargetsForFile(entryPoint.containingFile).isNotEmpty() }
+      ?.findOrCreateConfigurationFromContext(context)
     if (configuration == null) {
       LOG.warn("Failed to create a configuration from main function in the file '${entryPoint.containingFile.name}'")
       return null
