@@ -84,7 +84,7 @@ class AIDebuggerServiceConnector {
     val responseBody = body()
     if (responseBody == null) {
       LOG.warn("Response body is null")
-      return Err("Empty response received")
+      return Err("Status code: $code. Empty response received")
     }
     return Ok(responseBody)
   }
