@@ -89,7 +89,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
             task = task.toTaskData(),
             actionType = "ErrorInRunDebugSession",
             testResult = testResult,
-            testText = testInfo.text,
+            testInfo = testInfo,
             userCode = userSolution.toString(),
             error = "An error occurred. AI Debugging is currently unavailable: $error"
           ).logError()
@@ -123,7 +123,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           task = task.toTaskData(),
           actionType = "RunDebugSession",
           testResult = testResult,
-          testText = testInfo.text,
+          testInfo = testInfo,
           userCode = userSolution.toString(),
           finalBreakpoints = finalBreakpoints,
           intermediateBreakpoints = intermediateBreakpoints,
@@ -136,7 +136,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           task = task.toTaskData(),
           actionType = "ErrorInRunDebugSession",
           testResult = testResult,
-          testText = testInfo.text,
+          testInfo = testInfo,
           userCode = userSolution.toString(),
           error = "An error occurred in the ai debugging session: ${e.message}"
         ).logError()
