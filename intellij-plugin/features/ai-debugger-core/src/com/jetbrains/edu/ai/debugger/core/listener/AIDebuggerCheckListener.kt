@@ -25,6 +25,13 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 class AIDebuggerCheckListener : CheckListener {
   val lessonIds = hashSetOf(815582437)
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    AIDebuggerLogEntry(
+      task = task.toTaskData(),
+      actionType = "TestInfo",
+      firstFailedTestName = result.executedTestsInfo.firstFailed()?.name ?: "",
+      testResult = result,
+    ).logInfo()
+
     if (!isAvailable(task, result)) return
     if (task.lesson.id !in lessonIds) return
     val textToShow = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.text")
@@ -57,7 +64,7 @@ class AIDebuggerCheckListener : CheckListener {
       task = task.toTaskData(),
       actionType = "StartDebugSessionIsClicked",
       testResult = testResult,
-      testText = testInfo.text,
+      testInfo = testInfo,
       userCode = userSolution.toString(),
     ).logInfo()
   }

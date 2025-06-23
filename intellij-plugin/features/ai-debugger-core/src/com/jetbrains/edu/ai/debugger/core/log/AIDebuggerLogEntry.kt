@@ -1,6 +1,7 @@
 package com.jetbrains.edu.ai.debugger.core.log
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.ai.translation.ui.LikeBlock.FeedbackLikenessAnswer
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.educational.ml.debugger.dto.Breakpoint
@@ -10,7 +11,8 @@ data class AIDebuggerLogEntry(
   val task: TaskData,
   val actionType: String,
   val testResult: CheckResult? = null,
-  val testText: String = "",
+  val firstFailedTestName: String = "",
+  val testInfo: TestInfo? = null,
   val userCode: String = "",
   val error: String = "",
   val finalBreakpoints: List<Breakpoint> = emptyList(),
