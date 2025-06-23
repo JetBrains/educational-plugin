@@ -81,7 +81,10 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           )
         }.onError { error ->
           unlock()
-          showErrorNotification(error)
+          EduNotificationManager.showErrorNotification(
+            project,
+            content = error.message()
+          )
           AIDebuggerLogEntry(
             task = task.toTaskData(),
             actionType = "ErrorInRunDebugSession",
@@ -99,10 +102,6 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         intermediateBreakpoints.toggleLineBreakpoint(virtualFileMap, language)
         val breakpointHints = generateBreakpointHints(virtualFileMap, finalBreakpoints, intermediateBreakpoints)
         if (breakpointHints == null) {
-          EduNotificationManager.showErrorNotification(
-            project,
-            content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
-          )
           unlock()
           return@launch
         }
@@ -143,18 +142,6 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         ).logError()
       }
     }
-  }
-
-  private fun showErrorNotification(error: String) {
-    val code = Regex("""Status code:\s*(\d+)""").find(error)?.groupValues?.get(1)?.toIntOrNull()
-    val errorMessage = when (code) {
-      204 -> EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.no.suitable.breakpoints.found")
-      else -> EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
-    }
-    EduNotificationManager.showErrorNotification(
-      project,
-      content = errorMessage
-    )
   }
 
   private fun List<Breakpoint>.toBreakpointPositionsByFileMap() =
@@ -206,7 +193,13 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
       EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session")
     ) {
       AIDebuggerServiceConnector.getInstance().getBreakpointHint(fileMap.toNumberedLineMap(), finalBreakpoints, intermediateBreakpoint)
-    }.onError { return null }
+    }.onError { error ->
+      EduNotificationManager.showErrorNotification(
+        project,
+        content = error.message()
+      )
+      return null
+    }
   }
 
   private suspend fun VirtualFile.getLine(line: Int): String {

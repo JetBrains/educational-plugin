@@ -5,6 +5,9 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
+import com.jetbrains.edu.ai.debugger.core.error.AIDebuggerServiceError
+import com.jetbrains.edu.ai.debugger.core.error.BreakpointHintError
+import com.jetbrains.edu.ai.debugger.core.error.BreakpointsError
 import com.jetbrains.edu.ai.debugger.core.host.EduAIDebuggerServiceHost
 import com.jetbrains.edu.ai.debugger.core.service.AIDebuggerService
 import com.jetbrains.edu.ai.debugger.core.service.BreakpointHintRequest
@@ -46,7 +49,7 @@ class AIDebuggerServiceConnector {
     files: Map<String, String>,
     finalBreakpoints: List<Breakpoint>,
     intermediateBreakpoints: List<Breakpoint>
-  ): Result<List<BreakpointHintDetails>, String> {
+  ): Result<List<BreakpointHintDetails>, AIDebuggerServiceError> {
     val request = BreakpointHintRequest(intermediateBreakpoints, finalBreakpoints, files)
     return service.getBreakpointHint(request).handleResponse()
   }
@@ -60,7 +63,7 @@ class AIDebuggerServiceConnector {
     testInfo: TestInfo,
     updateVersion: Int?,
     userSolution: FileContentMap
-  ): Result<List<Breakpoint>, String> {
+  ): Result<List<Breakpoint>, AIDebuggerServiceError> {
     val request = DebuggerHintRequest(
       authorSolution = authorSolution,
       courseId = courseId,
@@ -74,19 +77,33 @@ class AIDebuggerServiceConnector {
     return service.getBreakpoints(request).handleResponse()
   }
 
-  private fun <T> Response<T>.handleResponse(): Result<T, String> {
+  private inline fun <reified T> Response<List<T>>.handleResponse(): Result<List<T>, AIDebuggerServiceError> {
     val code = code()
-    if (!isSuccessful) {
-      val errorBody = errorBody()?.string()
+    val errorBody = errorBody()?.string()
+    if (!errorBody.isNullOrEmpty()) {
       LOG.warn("Request failed. Status code: $code. Error message: $errorBody")
-      return Err(errorBody ?: "Request failed with code $code")
     }
     val responseBody = body()
-    if (responseBody == null) {
-      LOG.warn("Response body is null")
-      return Err("Status code: $code. Empty response received")
+    return when {
+      code == HTTP_OK && responseBody != null -> Ok(responseBody)
+      code == HTTP_NO_CONTENT -> Err(getNoContentError<T>())
+      else -> Err(getDefaultError<T>())
     }
-    return Ok(responseBody)
+  }
+
+  private inline fun <reified T> getNoContentError(): AIDebuggerServiceError {
+    return when (T::class) {
+      Breakpoint::class -> BreakpointsError.NO_BREAKPOINTS
+      BreakpointHintDetails::class -> BreakpointHintError.NO_BREAKPOINT_HINTS
+      else -> BreakpointsError.NO_BREAKPOINTS
+    }
+  }
+
+  private inline fun <reified T> getDefaultError(): AIDebuggerServiceError {
+    return when (T::class) {
+      BreakpointHintDetails::class -> BreakpointHintError.DEFAULT_ERROR
+      else -> BreakpointsError.DEFAULT_ERROR
+    }
   }
 
   companion object {
