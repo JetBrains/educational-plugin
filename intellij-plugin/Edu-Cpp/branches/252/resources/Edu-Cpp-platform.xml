@@ -1,5 +1,2 @@
 <idea-plugin>
-  <dependencies>
-    <plugin id="com.intellij.cidr.lang"/>
-  </dependencies>
 </idea-plugin>
