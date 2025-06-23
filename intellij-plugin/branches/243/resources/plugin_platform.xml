@@ -1,6 +1,0 @@
-<idea-plugin>
-  <content>
-    <!--suppress PluginXmlValidity -->
-    <module name="remote-env"/>
-  </content>
-</idea-plugin>

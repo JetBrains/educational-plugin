@@ -1,6 +1,0 @@
-<idea-plugin>
-  <dependencies>
-    <!--suppress PluginXmlValidity -->
-    <module name="scalaCommunity.testing-support"/>
-  </dependencies>
-</idea-plugin>
