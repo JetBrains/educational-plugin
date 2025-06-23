@@ -81,10 +81,7 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
           )
         }.onError { error ->
           unlock()
-          EduNotificationManager.showErrorNotification(
-            project,
-            content = EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
-          )
+          showErrorNotification(error)
           AIDebuggerLogEntry(
             task = task.toTaskData(),
             actionType = "ErrorInRunDebugSession",
@@ -146,6 +143,18 @@ class AIDebugSessionService(private val project: Project, private val coroutineS
         ).logError()
       }
     }
+  }
+
+  private fun showErrorNotification(error: String) {
+    val code = Regex("""Status code:\s*(\d+)""").find(error)?.groupValues?.get(1)?.toIntOrNull()
+    val errorMessage = when (code) {
+      204 -> EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.no.suitable.breakpoints.found")
+      else -> EduAIDebuggerCoreBundle.message("action.Educational.AiDebuggerNotification.modal.session.fail")
+    }
+    EduNotificationManager.showErrorNotification(
+      project,
+      content = errorMessage
+    )
   }
 
   private fun List<Breakpoint>.toBreakpointPositionsByFileMap() =
