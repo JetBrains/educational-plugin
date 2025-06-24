@@ -3,8 +3,10 @@
     <!--suppress PluginXmlValidity -->
     <module name="code-insight-core"/>
     <plugin id="org.jetbrains.plugins.yaml"/>
-    <plugin id="com.intellij.modules.json"/>
   </dependencies>
+
+  <!-- BACKCOMPAT: 2025.1. inline it -->
+  <xi:include href="/code-insight-yaml-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="JavaScript">
     <JsonSchema.ProviderFactory implementation="com.jetbrains.edu.yaml.EduYamlSchemaProviderFactory"/>
