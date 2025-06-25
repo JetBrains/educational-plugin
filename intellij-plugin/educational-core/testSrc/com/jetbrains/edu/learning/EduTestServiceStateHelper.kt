@@ -224,6 +224,7 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
       "com.jetbrains.edu.learning.framework.FrameworkLessonManager",
       "com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker",
       "com.jetbrains.edu.learning.statistics.CoursePageExperimentManager",
+      "com.jetbrains.edu.learning.statistics.EntryPointManager",
       "com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker",
       "com.jetbrains.edu.learning.storage.LearningObjectsStorageManager",
       "com.jetbrains.edu.learning.submissions.SubmissionsManager",
