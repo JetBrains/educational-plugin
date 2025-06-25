@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.CoursePageExperimentManager
+import com.jetbrains.edu.learning.statistics.EntryPointManager
 import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
@@ -286,6 +287,11 @@ class MarketplaceSubmissionsConnector {
     if (experiment != null) {
       metadata["experiment_id"] = experiment.experimentId
       metadata["experiment_variant"] = experiment.experimentVariant
+    }
+
+    val entryPoint = EntryPointManager.getInstance(project).entryPoint
+    if (entryPoint != null) {
+      metadata["entry_point"] = entryPoint
     }
     return metadata
   }
