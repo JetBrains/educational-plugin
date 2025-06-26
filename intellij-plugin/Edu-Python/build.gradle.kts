@@ -15,6 +15,4 @@ dependencies {
   implementation(project(":intellij-plugin:educational-core"))
 
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  testImplementation(project(":intellij-plugin:Edu-Python:Idea"))
-  testImplementation(project(":intellij-plugin:Edu-Python:PyCharm"))
 }
