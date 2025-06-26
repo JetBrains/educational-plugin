@@ -23,6 +23,11 @@ Read the [course creator start guide](https://plugins.jetbrains.com/plugin/10081
 ### Issue tracker
 Please submit your issues to the JetBrains Academy tracker on [YouTrack](https://youtrack.jetbrains.com/issues/EDU).
 
+### Configuration Properties
+The plugin behavior can be customized using the following system properties:
+
+* `edu.skip.toad.tour` - Set to `true` to disable the Tode (Code Toad) onboarding tour. By default, the tour is enabled.
+
 ### Resources
 * This plugin comes with integration with [JetBrains Academy on Hyperskill](https://hi.hyperskill.org/how-we-teach), a hands-on platform for learning to program.
 * You can read more about plugin development in [IntelliJ Platform SDK docs](http://www.jetbrains.org/intellij/sdk/docs/index.html).

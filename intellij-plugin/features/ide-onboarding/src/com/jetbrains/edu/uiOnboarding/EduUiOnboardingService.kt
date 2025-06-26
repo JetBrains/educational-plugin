@@ -61,5 +61,12 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   companion object {
     @JvmStatic
     fun getInstance(project: Project): EduUiOnboardingService = project.service()
+
+    const val SKIP_TOAD_TOUR_PROPERTY = "edu.skip.toad.tour"
+
+    @JvmStatic
+    fun isToadTourEnabled(): Boolean {
+      return System.getProperty(SKIP_TOAD_TOUR_PROPERTY)?.toBoolean() != true
+    }
   }
 }

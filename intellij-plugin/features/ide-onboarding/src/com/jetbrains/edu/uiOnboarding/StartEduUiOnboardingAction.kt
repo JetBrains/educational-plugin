@@ -28,6 +28,7 @@ class StartEduUiOnboardingAction : DumbAwareAction() {
     e.presentation.isEnabledAndVisible = project != null
                                          && project.isEduProject()
                                          && !EduUiOnboardingService.getInstance(project).tourInProgress
+                                         && EduUiOnboardingService.isToadTourEnabled()
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
