@@ -4,17 +4,7 @@
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
 
-  <extensionPoints>
-    <extensionPoint qualifiedName="Educational.pySdkSettingsHelper"
-                    interface="com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper"
-                    dynamic="true"/>
-  </extensionPoints>
-
   <xi:include href="/META-INF/Hyperskill-Python.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <!-- Extensions available only in IDEA and Android Studio -->
-  <xi:include href="/META-INF/Edu-Python-Idea.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <!-- Extensions available only in PyCharm and CLion -->
-  <xi:include href="/META-INF/Edu-Python-PyCharm.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.edu.python.learning.run.PyRunTestsConfigurationType"/>

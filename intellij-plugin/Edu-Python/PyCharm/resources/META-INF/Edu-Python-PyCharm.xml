@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="Educational">
-    <pySdkSettingsHelper implementation="com.jetbrains.edu.python.learning.PyPyCharmSdkSettingsHelper"/>
-  </extensions>
-</idea-plugin>
