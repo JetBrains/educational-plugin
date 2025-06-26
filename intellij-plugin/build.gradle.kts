@@ -60,8 +60,6 @@ dependencies {
     pluginModule(implementation(project("Edu-Java")))
     pluginModule(implementation(project("Edu-Kotlin")))
     pluginModule(implementation(project("Edu-Python")))
-    pluginModule(implementation(project("Edu-Python:Idea")))
-    pluginModule(implementation(project("Edu-Python:PyCharm")))
     pluginModule(implementation(project("Edu-Scala")))
     pluginModule(implementation(project("Edu-JavaScript")))
     pluginModule(implementation(project("Edu-Rust")))

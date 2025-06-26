@@ -96,8 +96,7 @@ private fun manifestFile(project: Project): File? {
     ":intellij-plugin" -> {
       filePath = "META-INF/plugin.xml"
     }
-    ":intellij-plugin:educational-core",
-    ":intellij-plugin:Edu-Python:Idea", ":intellij-plugin:Edu-Python:PyCharm" -> return manifestFile(project.parent!!)
+    ":intellij-plugin:educational-core" -> return manifestFile(project.parent!!)
     // Localization module is not supposed to have a plugin manifest.
     // Since it also is not supposed to have any code, only resources, no need to verify anything for it
     ":intellij-plugin:localization" -> return null
