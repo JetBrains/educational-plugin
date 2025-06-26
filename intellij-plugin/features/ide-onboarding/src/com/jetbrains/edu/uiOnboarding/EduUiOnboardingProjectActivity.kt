@@ -10,6 +10,7 @@ class EduUiOnboardingProjectActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
     if (!project.isEduProject()) return
     if (!project.isStudentProject()) return
+    if (skipToadTourOnProjectOpen()) return
 
     val propertiesComponent = PropertiesComponent.getInstance()
 
@@ -22,3 +23,9 @@ class EduUiOnboardingProjectActivity : ProjectActivity {
 }
 
 private const val EDU_UI_ONBOARDING_TOUR_SHOWN = "edu.ui.onboarding.tour.shown"
+
+const val SKIP_TOAD_TOUR_SYSTEM_PROPERTY = "edu.skip.toad.tour"
+
+fun skipToadTourOnProjectOpen(): Boolean {
+  return System.getProperty(SKIP_TOAD_TOUR_SYSTEM_PROPERTY).toBoolean()
+}
