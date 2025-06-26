@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.execution.ExecutionException
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.ModuleManager
@@ -9,13 +10,15 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.jetbrains.edu.learning.*
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
-import com.jetbrains.edu.python.learning.newproject.PySdkSettingsHelper.Companion.firstAvailable
 import com.jetbrains.edu.python.learning.setAssociationToModule
+import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.*
 
@@ -75,7 +78,7 @@ open class PyCourseProjectGenerator(
         val packageManager = PyPackageManager.getInstance(baseSdk)
         return packageManager.createVirtualEnv(virtualEnvPath, false)
       }
-    }, allSdks, baseSdk, project.basePath, null)
+    }, PyConfigurableInterpreterList.getInstance(null).allPythonSdks, baseSdk, project.basePath, null)
     if (sdk == null) {
       LOG.warn("Failed to create virtual env in $virtualEnvPath")
       return
@@ -90,14 +93,18 @@ open class PyCourseProjectGenerator(
     private val LOG = logger<PyCourseProjectGenerator>()
 
     private fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? {
-      val helper = firstAvailable()
-      return helper.updateSdkIfNeeded(project, sdk)
-    }
-
-    private val allSdks: List<Sdk>
-      get() {
-        val helper = firstAvailable()
-        return helper.getAllSdks()
+      if (sdk !is PyDetectedSdk) {
+        return sdk
       }
+      val name = sdk.name
+      val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByPath(name) }
+      val newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.path, PythonSdkType.getInstance())
+      if (newSdk != null) {
+        @Suppress("UnstableApiUsage")
+        PythonSdkUpdater.updateOrShowError(newSdk, project, null)
+        SdkConfigurationUtil.addSdk(newSdk)
+      }
+      return newSdk
+    }
   }
 }
