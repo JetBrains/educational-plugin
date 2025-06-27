@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.statistics
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduTestAware
+import org.jetbrains.annotations.TestOnly
 
 // TODO: merge with `CoursePageExperimentManager`
 @Service(Service.Level.PROJECT)
@@ -14,6 +15,11 @@ class EntryPointManager : SimplePersistentStateComponent<EntryPointManager.State
     set(value) {
       state.entryPoint = value
     }
+
+  @TestOnly
+  override fun cleanUpState() {
+    entryPoint = null
+  }
 
   companion object {
     fun getInstance(project: Project): EntryPointManager = project.service()
