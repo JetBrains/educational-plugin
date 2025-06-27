@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.learning.statistics.EntryPointParamProcessor
 import com.jetbrains.edu.rust.RsConfigurator
 import com.jetbrains.edu.rust.RsProjectSettings
 import com.jetbrains.edu.rust.messages.EduRustBundle
@@ -23,6 +24,8 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
 object RsOpenCourseHelper {
+
+  private const val RUST_ROVER_BANNER = "rustrover_banner"
 
   private val LOG = logger<RsOpenCourseHelper>()
 
@@ -69,7 +72,11 @@ object RsOpenCourseHelper {
       configurator.beforeCourseStarted(course)
 
       val projectGenerator = configurator.courseBuilder.getCourseProjectGenerator(course)
-      val project = projectGenerator?.doCreateCourseProject(location, projectSettings)
+      val project = projectGenerator?.doCreateCourseProject(
+        location = location,
+        projectSettings = projectSettings,
+        openCourseParams = mapOf(EntryPointParamProcessor.ENTRY_POINT to RUST_ROVER_BANNER)
+      )
       if (project != null) {
         CoursesStorage.getInstance().addCourse(course, location)
       }

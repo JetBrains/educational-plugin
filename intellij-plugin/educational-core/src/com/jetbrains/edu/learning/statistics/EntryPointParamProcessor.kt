@@ -5,8 +5,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseParamsProcessor
 
-private const val ENTRY_POINT = "entry_point"
-
 private const val MAX_VALUE_LENGTH = 16
 
 class EntryPointParamProcessor : CourseParamsProcessor<String> {
@@ -21,5 +19,9 @@ class EntryPointParamProcessor : CourseParamsProcessor<String> {
 
   override fun processCourseParams(project: Project, course: Course, context: String) {
     EntryPointManager.getInstance(project).entryPoint = context
+  }
+
+  companion object {
+    const val ENTRY_POINT = "entry_point"
   }
 }
