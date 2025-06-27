@@ -22,6 +22,7 @@ import org.rust.cargo.toolchain.RsToolchainBase
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
+// BACKCOMPAT: 2025.1. Merge it into RsOpenCourseHandler
 object RsOpenCourseHelper {
 
   private val LOG = logger<RsOpenCourseHelper>()
