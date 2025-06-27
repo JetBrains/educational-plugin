@@ -8,6 +8,11 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(sqlPlugins)
+    // Temporary workaround to make test work as expected
+    // For some reason, the corresponding module is not loaded automatically
+    if (isAtLeast252) {
+      bundledModule("com.intellij.modules.ultimate")
+    }
   }
 
   api(project(":intellij-plugin:sql"))
