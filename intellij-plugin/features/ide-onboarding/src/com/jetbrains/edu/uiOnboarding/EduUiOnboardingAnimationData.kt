@@ -28,10 +28,34 @@ class EduUiOnboardingAnimationData private constructor(
   companion object {
     val LOG = logger<EduUiOnboardingAnimationData>()
 
-    private const val ZHABA_SCALE: Double = 0.80
-    fun zhabaScale(length: Int): Int = (length * ZHABA_SCALE).roundToInt()
+    private const val BASE_WIDTH = 121
+    private const val BASE_HEIGHT = 107
+    private const val MIN_SCALE = 0.4
+    private const val MAX_SCALE = 1.0
+    private const val DEFAULT_SCALE = 0.80
 
-    val ZHABA_DIMENSION: Dimension = Dimension(zhabaScale(121), zhabaScale(107))
+    fun calculateScale(windowSize: Dimension): Double {
+        val widthScale = windowSize.width / (BASE_WIDTH * 8.0)  // Toad should take ~1/8 of window width
+        val heightScale = windowSize.height / (BASE_HEIGHT * 6.0)  // Toad should take ~1/6 of window height
+        return (minOf(widthScale, heightScale) * DEFAULT_SCALE).coerceIn(MIN_SCALE, MAX_SCALE)
+    }
+
+    fun calculateDimension(windowSize: Dimension): Dimension {
+        val scale = calculateScale(windowSize)
+        return Dimension(
+            (BASE_WIDTH * scale).roundToInt(),
+            (BASE_HEIGHT * scale).roundToInt()
+        )
+    }
+
+    fun zhabaScale(length: Int, windowSize: Dimension? = null): Int {
+        val scale = windowSize?.let { calculateScale(it) } ?: DEFAULT_SCALE
+        return (length * scale).roundToInt()
+    }
+
+    val ZHABA_DIMENSION: Dimension
+        get() = calculateDimension(Dimension(1920, 1080))  // Default size for initial layout
+
     val EYE_SHIFT: Int = zhabaScale(40)
 
     const val FRAME_DURATION: Long = 42 // is approximately 24 FPS
