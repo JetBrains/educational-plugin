@@ -18,7 +18,7 @@ class LTICheckerTests : EduTestCase() {
     get() = LTIConnector.getInstance() as MockLTIConnector
 
   private val ltiSettings
-    get() = LTISettingsManager.instance(project).state
+    get() = LTISettingsManager.getInstance(project).state
 
   private var launchId: String
     get() = ltiSettings.launchId!!

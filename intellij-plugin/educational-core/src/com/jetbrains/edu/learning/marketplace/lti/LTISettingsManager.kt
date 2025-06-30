@@ -10,6 +10,6 @@ import com.intellij.openapi.project.Project
 @State(name="LTISettings", reloadable = true, storages = [Storage("lti.xml")])
 class LTISettingsManager : SimplePersistentStateComponent<LTISettings>(LTISettings()) {
   companion object {
-    fun instance(project: Project) = project.service<LTISettingsManager>()
+    fun getInstance(project: Project): LTISettingsManager = project.service()
   }
 }

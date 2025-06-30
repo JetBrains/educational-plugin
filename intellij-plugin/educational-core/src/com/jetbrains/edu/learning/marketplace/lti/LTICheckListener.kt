@@ -25,7 +25,7 @@ class LTICheckListener : CheckListener {
 
     if (!course.isStudy || !course.isMarketplaceRemote) return
 
-    val ltiSettings = LTISettingsManager.instance(project).state
+    val ltiSettings = LTISettingsManager.getInstance(project).state
 
     val solved = result.isSolved
     if (!solved && ltiSettings.onlineService == LTIOnlineService.ALPHA_TEST_2024) return

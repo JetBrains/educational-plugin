@@ -16,7 +16,7 @@ class LtiCourseParamsProcessor : CourseParamsProcessor<LtiCourseParams> {
   }
 
   override fun processCourseParams(project: Project, course: Course, context: LtiCourseParams) {
-    val ltiSettingsState = LTISettingsManager.instance(project).state
+    val ltiSettingsState = LTISettingsManager.getInstance(project).state
     ltiSettingsState.launchId = context.launchId
     ltiSettingsState.lmsDescription = context.lmsDescription
     ltiSettingsState.onlineService = LTIOnlineService.STANDALONE
