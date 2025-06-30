@@ -44,8 +44,12 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     }
   }
 
-  override fun createCourseStructure(course: Course, waitForProjectConfiguration: Boolean) {
-    super.createCourseStructure(course, waitForProjectConfiguration)
+  override fun createCourseStructure(
+    course: Course,
+    metadata: Map<String, String>,
+    waitForProjectConfiguration: Boolean
+  ) {
+    super.createCourseStructure(course, metadata, waitForProjectConfiguration)
     waitWhileDataSourceSyncInProgress()
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
   }
