@@ -3,10 +3,12 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
 import kotlinx.coroutines.delay
+import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.RenderingHints
@@ -18,6 +20,22 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
   private var stepIndex: Int = 0
   private var stepStartTime: Long = 0 // nano time of step start
+  private var currentWindowSize: Dimension? = null
+
+  init {
+    val frame = WindowManager.getInstance().getFrame(project)
+    frame?.addComponentListener(object : java.awt.event.ComponentAdapter() {
+      override fun componentResized(e: java.awt.event.ComponentEvent) {
+        val newSize = frame.size
+        if (newSize != currentWindowSize) {
+          currentWindowSize = newSize
+          revalidate()
+          repaint()
+        }
+      }
+    })
+    currentWindowSize = frame?.size
+  }
 
   override fun paintComponent(g: java.awt.Graphics) {
     val animation = this.animation ?: return
@@ -26,21 +44,23 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
 
     val step = animation.steps[stepIndex]
-    val x1 = step.fromPoint.getPoint(this).x
-    val y1 = step.fromPoint.getPoint(this).y
+    val relativePoint = RelativePoint(step.fromPoint.originalComponent, step.fromPoint.originalPoint)
+    val x1 = relativePoint.point.x
+    val y1 = relativePoint.point.y
 
     fun drawImage(x: Int, y: Int) {
       val image = step.image
       val w = image.getWidth(this)
       val h = image.getHeight(this)
 
-      val scaledW = zhabaScale(w)
-      val scaledH = zhabaScale(h)
+      val windowSize = currentWindowSize
+      val scaledW = zhabaScale(w, windowSize)
+      val scaledH = zhabaScale(h, windowSize)
 
       UIUtil.drawImage(
         g2d,
         step.image,
-        Rectangle(x - zhabaScale(step.imageShift.x), y - zhabaScale(step.imageShift.y), scaledW, scaledH),
+        Rectangle(x - zhabaScale(step.imageShift.x, currentWindowSize), y - zhabaScale(step.imageShift.y, currentWindowSize), scaledW, scaledH),
         Rectangle(0, 0, w, h),
         null
       )
