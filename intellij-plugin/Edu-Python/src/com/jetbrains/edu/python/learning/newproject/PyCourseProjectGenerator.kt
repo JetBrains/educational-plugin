@@ -102,7 +102,6 @@ open class PyCourseProjectGenerator(
       if (newSdk != null) {
         @Suppress("UnstableApiUsage")
         PythonSdkUpdater.updateOrShowError(newSdk, project, null)
-        SdkConfigurationUtil.addSdk(newSdk)
       }
       return newSdk
     }
