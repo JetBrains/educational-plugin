@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.lti
 
+import com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor.Companion.LTI_COURSERA_COURSE
 import com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor.Companion.LTI_LAUNCH_ID
 import com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor.Companion.LTI_LMS_DESCRIPTION
 import com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor.Companion.LTI_STUDY_ITEM_ID
@@ -21,8 +22,8 @@ class LtiCourseParamsProcessorTest : CourseParamsProcessorTestBase() {
     createCourseWithMetadata(metadata)
     // then
     assertEquals(
-      LTISettings("id", "description", LTIOnlineService.STANDALONE),
-      LTISettingsManager.getInstance(project).state
+      LTISettingsDTO("id", "description", LTIOnlineService.STANDALONE, null),
+      LTISettingsManager.getInstance(project).settings
     )
     assertEquals(NavigationProperties(-1), StudyItemSelectionService.getInstance(project).studyItemSettings.value)
   }
@@ -39,8 +40,8 @@ class LtiCourseParamsProcessorTest : CourseParamsProcessorTestBase() {
     createCourseWithMetadata(metadata)
     // then
     assertEquals(
-      LTISettings("id", "description", LTIOnlineService.STANDALONE),
-      LTISettingsManager.getInstance(project).state
+      LTISettingsDTO("id", "description", LTIOnlineService.STANDALONE, null),
+      LTISettingsManager.getInstance(project).settings
     )
     assertEquals(NavigationProperties(12345), StudyItemSelectionService.getInstance(project).studyItemSettings.value)
   }
@@ -55,19 +56,24 @@ class LtiCourseParamsProcessorTest : CourseParamsProcessorTestBase() {
     // when
     createCourseWithMetadata(metadata)
     // then
-    assertEquals(
-      LTISettings(null, null, LTIOnlineService.ALPHA_TEST_2024),
-      LTISettingsManager.getInstance(project).state
-    )
+    assertNull(LTISettingsManager.getInstance(project).settings)
     assertNull(StudyItemSelectionService.getInstance(project).studyItemSettings.value)
   }
 
-  @Suppress("TestFunctionName")
-  private fun LTISettings(launchId: String?, lmsDescription: String?, onlineService: LTIOnlineService): LTISettings {
-    return LTISettings().apply {
-      this.launchId = launchId
-      this.lmsDescription = lmsDescription
-      this.onlineService = onlineService
-    }
+  @Test
+  fun `coursera_course affects return link`() {
+    // given
+    val metadata = mapOf(
+      LTI_LAUNCH_ID to "id",
+      LTI_LMS_DESCRIPTION to "moodle",
+      LTI_COURSERA_COURSE to "cats"
+    )
+    // when
+    createCourseWithMetadata(metadata)
+    // then
+    assertEquals(
+      LTISettingsDTO("id", "moodle", LTIOnlineService.STANDALONE, "https://www.coursera.org/learn/cats"),
+      LTISettingsManager.getInstance(project).settings
+    )
   }
 }

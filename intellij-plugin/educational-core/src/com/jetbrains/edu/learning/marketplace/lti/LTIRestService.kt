@@ -33,7 +33,14 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
     val lmsDescription = getStringParameter(LMS_DESCRIPTION, urlDecoder)
     val onlineService = LTIOnlineService.detect(urlDecoder)
 
-    return Ok(MarketplaceOpenCourseRequest(courseId, studyItemId, LTISettingsDTO(launchId, lmsDescription, onlineService)))
+    val courseraCourse = getStringParameter(COURSERA_COURSE, urlDecoder)
+
+    return Ok(MarketplaceOpenCourseRequest(courseId, studyItemId, LTISettingsDTO(
+      launchId,
+      lmsDescription,
+      onlineService,
+      courseraCourse?.courseraCourseNameToLink()
+    )))
   }
 
   override fun getServiceName(): String = "edu/lti"
@@ -42,5 +49,6 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
     private const val LAUNCH_ID = "launch_id"
     private const val LMS_DESCRIPTION = "lms_description"
     private const val COURSE_ID = "marketplace_course_id"
+    private const val COURSERA_COURSE = "coursera_course"
   }
 }
