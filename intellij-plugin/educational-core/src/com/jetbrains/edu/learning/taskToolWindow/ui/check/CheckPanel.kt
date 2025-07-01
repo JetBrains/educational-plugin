@@ -40,6 +40,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
 
   val checkActionsPanel: JPanel = JPanel(BorderLayout())
 
+  val checkAdditionalInformationPanel: AdditionalInformationPanel = AdditionalInformationPanel.create(project, this)
+
   /**
    * FIXME: Should be removed in favor of the [CheckPanel.leftActionsToolbar]
    * @see <a href="https://youtrack.jetbrains.com/issue/EDU-7584">EDU-7584</a>
@@ -62,6 +64,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     checkActionsPanel.add(linkPanel, BorderLayout.NORTH)
     add(checkActionsPanel, BorderLayout.CENTER)
     add(checkDetailsPlaceholder, BorderLayout.NORTH)
+    add(checkAdditionalInformationPanel, BorderLayout.SOUTH)
     asyncProcessIcon.border = JBUI.Borders.empty(8, 6, 0, 10)
     maximumSize = Dimension(Int.MAX_VALUE, 30)
     border = JBUI.Borders.empty(2, 0, 0, 10)
@@ -120,6 +123,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   fun updateCheckPanel(task: Task) {
     updateCheckButtonWrapper(task)
     updateCheckDetails(task)
+    checkAdditionalInformationPanel.updateSize()
   }
 
   fun addHint(inlineBanner: InlineBannerBase) {
@@ -213,6 +217,19 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         isDefault = true, isEnabled = true)
       add(retryComponent, BorderLayout.WEST)
     }
+  }
+
+  /**
+   * Do not allow the component's height to be less than a preferred height
+   */
+  override fun getMinimumSize(): Dimension? {
+    val minimumSize: Dimension? = super.minimumSize
+    val preferredSize: Dimension = super.preferredSize ?: return minimumSize
+
+    return Dimension(
+      minimumSize?.width ?: preferredSize.width,
+      preferredSize.height
+    )
   }
 
   companion object {
