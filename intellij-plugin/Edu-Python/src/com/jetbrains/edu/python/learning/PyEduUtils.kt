@@ -4,16 +4,17 @@ package com.jetbrains.edu.python.learning
 
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
-import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.platform.util.progress.reportSequentialProgress
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
@@ -24,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isTestsFile
+import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
 import com.jetbrains.python.packaging.PyPackageUtil
@@ -70,19 +72,23 @@ fun installRequiredPackages(project: Project, sdk: Sdk) {
     }
 
     val packageManager = PythonPackageManager.forSdk(project, sdk)
-    runWithModalProgressBlocking(project, EduPythonBundle.message("installing.requirements.progress")) {
-      reportSequentialProgress(requirements.size) { reporter ->
-        installRequiredPackages(reporter, packageManager, requirements)
+    runInBackground(project, EduPythonBundle.message("installing.requirements.progress"), canBeCancelled = true) {
+      runBlockingCancellable {
+        reportSequentialProgress(requirements.size) { reporter ->
+                installRequiredPackages(reporter, packageManager, requirements)
+              }
       }
-    }
 
-    // Clear file-level warning that might linger while skeletons are updating
-    val editorManager = FileEditorManager.getInstance(project)
-    val analyzer = DaemonCodeAnalyzerEx.getInstanceEx(module.project)
-    if (editorManager.hasOpenFiles()) {
-      editorManager.openFiles.forEach { file ->
-        file.findPsiFile(project)?.let { psiFile ->
-          analyzer.cleanFileLevelHighlights(Pass.LOCAL_INSPECTIONS, psiFile)
+      // Clear file-level warning that might linger while skeletons are updating
+      invokeLater {
+        val editorManager = FileEditorManager.getInstance(project)
+        val analyzer = DaemonCodeAnalyzerEx.getInstanceEx(module.project)
+        if (editorManager.hasOpenFiles()) {
+          editorManager.openFiles.forEach { file ->
+            file.findPsiFile(project)?.let { psiFile ->
+              analyzer.cleanFileLevelHighlights(Pass.LOCAL_INSPECTIONS, psiFile)
+            }
+          }
         }
       }
     }
