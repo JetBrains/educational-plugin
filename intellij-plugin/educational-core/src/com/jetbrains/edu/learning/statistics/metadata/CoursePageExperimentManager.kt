@@ -1,9 +1,9 @@
-package com.jetbrains.edu.learning.statistics
+package com.jetbrains.edu.learning.statistics.metadata
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduTestAware
-import com.jetbrains.edu.learning.statistics.CoursePageExperimentManager.ExperimentState
+import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager.ExperimentState
 import kotlinx.serialization.Serializable
 
 

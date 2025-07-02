@@ -12,9 +12,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.statistics.CoursePageExperiment
-import com.jetbrains.edu.learning.statistics.CoursePageExperimentManager
-import com.jetbrains.edu.learning.statistics.EntryPointManager
+import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperiment
+import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager
+import com.jetbrains.edu.learning.statistics.metadata.EntryPointManager
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import io.mockk.every
 import io.mockk.mockkObject

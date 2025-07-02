@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.statistics.EntryPointMetadataProcessor
+import com.jetbrains.edu.learning.statistics.metadata.EntryPointMetadataProcessor
 import com.jetbrains.edu.rust.RsConfigurator
 import com.jetbrains.edu.rust.RsProjectSettings
 import com.jetbrains.edu.rust.messages.EduRustBundle

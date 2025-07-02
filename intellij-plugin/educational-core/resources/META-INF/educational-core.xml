@@ -561,8 +561,8 @@
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
 
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor"/>
-    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.CoursePageExperimentMetadataProcessor"/>
-    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.EntryPointMetadataProcessor"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentMetadataProcessor"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.EntryPointMetadataProcessor"/>
   </extensions>
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>

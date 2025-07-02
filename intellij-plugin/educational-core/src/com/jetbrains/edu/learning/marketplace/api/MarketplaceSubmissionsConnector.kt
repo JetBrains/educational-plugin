@@ -31,8 +31,8 @@ import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.statistics.CoursePageExperimentManager
-import com.jetbrains.edu.learning.statistics.EntryPointManager
+import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager
+import com.jetbrains.edu.learning.statistics.metadata.EntryPointManager
 import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
