@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.marketplace.lti
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
-import com.jetbrains.edu.learning.newproject.CourseParamsProcessor
+import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
 
 data class LtiCourseParams(
   val launchId: String,
@@ -12,25 +12,25 @@ data class LtiCourseParams(
   val ltiCourseraCourse: String?
 )
 
-class LtiCourseParamsProcessor : CourseParamsProcessor<LtiCourseParams> {
-  override fun findApplicableContext(params: Map<String, String>): LtiCourseParams? {
-    val studyItem = params[LTI_STUDY_ITEM_ID]?.toIntOrNull()
-    val ltiLaunchId = params[LTI_LAUNCH_ID] ?: return null
-    val lmsDescription = params[LTI_LMS_DESCRIPTION] ?: return null
-    val ltiCourseraCourse = params[LTI_COURSERA_COURSE]
+class LtiCourseMetadataProcessor : CourseMetadataProcessor<LtiCourseParams> {
+  override fun findApplicableMetadata(rawMetadata: Map<String, String>): LtiCourseParams? {
+    val studyItem = rawMetadata[LTI_STUDY_ITEM_ID]?.toIntOrNull()
+    val ltiLaunchId = rawMetadata[LTI_LAUNCH_ID] ?: return null
+    val lmsDescription = rawMetadata[LTI_LMS_DESCRIPTION] ?: return null
+    val ltiCourseraCourse = rawMetadata[LTI_COURSERA_COURSE]
     return LtiCourseParams(ltiLaunchId, lmsDescription, studyItem, ltiCourseraCourse)
   }
 
-  override fun processCourseParams(project: Project, course: Course, context: LtiCourseParams) {
+  override fun processMetadata(project: Project, course: Course, metadata: LtiCourseParams) {
     val ltiSettings = LTISettingsDTO(
-      context.launchId,
-      context.lmsDescription,
+      metadata.launchId,
+      metadata.lmsDescription,
       LTIOnlineService.STANDALONE,
-      context.ltiCourseraCourse?.courseraCourseNameToLink()
+      metadata.ltiCourseraCourse?.courseraCourseNameToLink()
     )
     LTISettingsManager.getInstance(project).settings = ltiSettings
 
-    val studyItemId = context.studyItemId ?: -1
+    val studyItemId = metadata.studyItemId ?: -1
     StudyItemSelectionService.getInstance(project).setCurrentStudyItem(studyItemId)
   }
 
