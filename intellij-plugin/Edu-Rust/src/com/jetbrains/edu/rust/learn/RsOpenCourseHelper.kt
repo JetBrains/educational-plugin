@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.statistics.metadata.EntryPointMetadataProcessor
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
 import com.jetbrains.edu.rust.RsConfigurator
 import com.jetbrains.edu.rust.RsProjectSettings
 import com.jetbrains.edu.rust.messages.EduRustBundle
@@ -76,7 +76,7 @@ object RsOpenCourseHelper {
       val project = projectGenerator?.doCreateCourseProject(
         location = location,
         projectSettings = projectSettings,
-        openCourseParams = mapOf(EntryPointMetadataProcessor.ENTRY_POINT to RUST_ROVER_BANNER)
+        openCourseParams = mapOf(CourseSubmissionMetadataManager.ENTRY_POINT to RUST_ROVER_BANNER)
       )
       if (project != null) {
         CoursesStorage.getInstance().addCourse(course, location)

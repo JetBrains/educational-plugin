@@ -1,15 +1,19 @@
 package com.jetbrains.edu.learning.statistics.metadata
 
 import com.intellij.openapi.diagnostic.logger
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.EXPERIMENT_ID
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.EXPERIMENT_VARIANT
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.MAX_VALUE_LENGTH
 import kotlinx.serialization.Serializable
 
-private const val EXPERIMENT_ID = "experiment_id"
-private const val EXPERIMENT_VARIANT = "experiment_variant"
-
-private const val MAX_VALUE_LENGTH = 16
 
 @Serializable
 data class CoursePageExperiment(val experimentId: String, val experimentVariant: String) {
+
+  fun toMetadataMap(): Map<String, String> = mapOf(
+    EXPERIMENT_ID to experimentId,
+    EXPERIMENT_VARIANT to experimentVariant,
+  )
 
   companion object {
     private val LOG = logger<CoursePageExperiment>()

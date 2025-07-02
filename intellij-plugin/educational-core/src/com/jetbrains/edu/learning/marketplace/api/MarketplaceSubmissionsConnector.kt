@@ -31,8 +31,7 @@ import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager
-import com.jetbrains.edu.learning.statistics.metadata.EntryPointManager
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
 import com.jetbrains.edu.learning.submissions.*
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
@@ -267,7 +266,7 @@ class MarketplaceSubmissionsConnector {
   ): MarketplaceSubmission {
     val solutionFiles = solutionFilesList(project, task).filter { it.isVisible }
     val solutionText = objectMapper.writeValueAsString(solutionFiles).trimIndent()
-    val metadata = collectSubmissionMetadata(project)
+    val metadata = CourseSubmissionMetadataManager.getInstance(project).metadata
 
     return MarketplaceSubmission(
       task.id,
@@ -278,22 +277,6 @@ class MarketplaceSubmissionsConnector {
       testInfo,
       metadata
     )
-  }
-
-  private fun collectSubmissionMetadata(project: Project): Map<String, String> {
-    val metadata = mutableMapOf<String, String>()
-
-    val experiment = CoursePageExperimentManager.getInstance(project).experiment
-    if (experiment != null) {
-      metadata["experiment_id"] = experiment.experimentId
-      metadata["experiment_variant"] = experiment.experimentVariant
-    }
-
-    val entryPoint = EntryPointManager.getInstance(project).entryPoint
-    if (entryPoint != null) {
-      metadata["entry_point"] = entryPoint
-    }
-    return metadata
   }
 
   private fun createStateOnClose(

@@ -4,8 +4,8 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
-
-private const val MAX_VALUE_LENGTH = 16
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.ENTRY_POINT
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.MAX_VALUE_LENGTH
 
 class EntryPointMetadataProcessor : CourseMetadataProcessor<String> {
   override fun findApplicableMetadata(rawMetadata: Map<String, String>): String? {
@@ -18,10 +18,6 @@ class EntryPointMetadataProcessor : CourseMetadataProcessor<String> {
   }
 
   override fun processMetadata(project: Project, course: Course, metadata: String) {
-    EntryPointManager.getInstance(project).entryPoint = metadata
-  }
-
-  companion object {
-    const val ENTRY_POINT = "entry_point"
+    CourseSubmissionMetadataManager.getInstance(project).addMetadata(ENTRY_POINT to metadata)
   }
 }

@@ -8,6 +8,6 @@ class CoursePageExperimentMetadataProcessor : CourseMetadataProcessor<CoursePage
   override fun findApplicableMetadata(rawMetadata: Map<String, String>): CoursePageExperiment? = CoursePageExperiment.fromParams(rawMetadata)
 
   override fun processMetadata(project: Project, course: Course, metadata: CoursePageExperiment) {
-    CoursePageExperimentManager.getInstance(project).experiment = metadata
+    CourseSubmissionMetadataManager.getInstance(project).addMetadata(metadata.toMetadataMap())
   }
 }

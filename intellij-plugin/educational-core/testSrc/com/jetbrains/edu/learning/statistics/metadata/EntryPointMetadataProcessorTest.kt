@@ -12,7 +12,7 @@ class EntryPointMetadataProcessorTest : CourseMetadataProcessorTestBase() {
     // when
     createCourseWithMetadata(metadata)
     // then
-    assertEquals("foo", EntryPointManager.getInstance(project).entryPoint)
+    assertEquals(metadata, CourseSubmissionMetadataManager.getInstance(project).metadata)
   }
 
   @Test
@@ -22,6 +22,6 @@ class EntryPointMetadataProcessorTest : CourseMetadataProcessorTestBase() {
     // when
     createCourseWithMetadata(metadata)
     // then
-    assertNull(EntryPointManager.getInstance(project).entryPoint)
+    assertEquals(0, CourseSubmissionMetadataManager.getInstance(project).metadata.size)
   }
 }

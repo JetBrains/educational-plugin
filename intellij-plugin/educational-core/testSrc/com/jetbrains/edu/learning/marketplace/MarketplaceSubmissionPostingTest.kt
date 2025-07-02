@@ -12,9 +12,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmission
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperiment
-import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager
-import com.jetbrains.edu.learning.statistics.metadata.EntryPointManager
+import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import io.mockk.every
 import io.mockk.mockkObject
@@ -68,13 +66,12 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
   }
 
   @Test
-  fun `test submission metadata with active course page experiment`() {
+  fun `test submission metadata `() {
     // given
     val course = createEduCourse()
     val task = course.findTask("lesson1", "task1")
 
-    val experiment = CoursePageExperiment("123", "456")
-    CoursePageExperimentManager.getInstance(project).experiment = experiment
+    CourseSubmissionMetadataManager.getInstance(project).addMetadata("foo" to "bar", "123" to "456")
 
     val submissionRequestPath = "/api/course/${course.id}/${course.marketplaceCourseVersion}/task/${task.id}/submission"
 
@@ -93,38 +90,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
     val body = kAssertNotNull(requestBodies[submissionRequestPath]?.singleOrNull(), "No request body found for $submissionRequestPath")
     val actualSubmission = MarketplaceSubmissionsConnector.getInstance().objectMapper.readValue<MarketplaceSubmission>(body)
     assertEquals(
-      mapOf("experiment_id" to experiment.experimentId, "experiment_variant" to experiment.experimentVariant),
-      actualSubmission.metadata
-    )
-  }
-
-  @Test
-  fun `test submission metadata with active entry point`() {
-    // given
-    val course = createEduCourse()
-    val task = course.findTask("lesson1", "task1")
-
-    val entryPointValue = "some_entry_point"
-    EntryPointManager.getInstance(project).entryPoint = entryPointValue
-
-    val submissionRequestPath = "/api/course/${course.id}/${course.marketplaceCourseVersion}/task/${task.id}/submission"
-
-    helper.addResponseHandlerWithRequestBodyRecording { request, path ->
-      when (path) {
-        submissionRequestPath -> MockResponseFactory.fromString(SUBMISSION_RESPONSE)
-        else -> MockResponseFactory.badRequest()
-      }
-    }
-
-    // when
-    task.checkTask()
-    PlatformTestUtil.waitWhileBusy { requestBodies[submissionRequestPath] == null }
-
-    // then
-    val body = kAssertNotNull(requestBodies[submissionRequestPath]?.singleOrNull(), "No request body found for $submissionRequestPath")
-    val actualSubmission = MarketplaceSubmissionsConnector.getInstance().objectMapper.readValue<MarketplaceSubmission>(body)
-    assertEquals(
-      mapOf("entry_point" to entryPointValue),
+      mapOf("foo" to "bar", "123" to "456"),
       actualSubmission.metadata
     )
   }
