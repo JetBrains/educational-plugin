@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.statistics
 
-import com.jetbrains.edu.learning.newproject.CourseParamsProcessorTestBase
+import com.jetbrains.edu.learning.newproject.CourseMetadataProcessorTestBase
 import org.junit.Test
 
-class CoursePageExperimentParamProcessorTest : CourseParamsProcessorTestBase() {
+class CoursePageExperimentMetadataProcessorTest : CourseMetadataProcessorTestBase() {
 
   @Test
   fun `course page metadata`() {

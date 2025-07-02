@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.newproject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 
-abstract class CourseParamsProcessorTestBase : CourseGenerationTestBase<EmptyProjectSettings>() {
+abstract class CourseMetadataProcessorTestBase : CourseGenerationTestBase<EmptyProjectSettings>() {
   override val defaultSettings: EmptyProjectSettings get() = EmptyProjectSettings
 
   protected fun createCourseWithMetadata(metadata: Map<String, String>) {

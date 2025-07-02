@@ -102,8 +102,8 @@
     <extensionPoint qualifiedName="Educational.hyperskillCourseCreator"
                     interface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator"
                     dynamic="true"/>
-    <extensionPoint qualifiedName="Educational.courseParamsProcessor"
-                    interface="com.jetbrains.edu.learning.newproject.CourseParamsProcessor"
+    <extensionPoint qualifiedName="Educational.courseMetadataProcessor"
+                    interface="com.jetbrains.edu.learning.newproject.CourseMetadataProcessor"
                     dynamic="true"/>
   </extensionPoints>
 
@@ -560,9 +560,9 @@
 
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
 
-    <courseParamsProcessor implementation="com.jetbrains.edu.learning.marketplace.lti.LtiCourseParamsProcessor"/>
-    <courseParamsProcessor implementation="com.jetbrains.edu.learning.statistics.CoursePageExperimentParamProcessor"/>
-    <courseParamsProcessor implementation="com.jetbrains.edu.learning.statistics.EntryPointParamProcessor"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.CoursePageExperimentMetadataProcessor"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.EntryPointMetadataProcessor"/>
   </extensions>
 
   <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
