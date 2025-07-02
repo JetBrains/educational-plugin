@@ -25,7 +25,7 @@ internal suspend fun installRequiredPackages(
 
     reporter.itemStep(requirement.name) {
       try {
-        packageManager.installPackage(spec, emptyList(), withBackgroundProgress = false)
+        packageManager.installPackage(spec, emptyList(), withBackgroundProgress = true)
       }
       catch (_: NoSuchMethodError) {
         // For versions of the py plugin before 251.25410. The installPackage() method didn't have the last boolean argument
