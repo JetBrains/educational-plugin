@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.statistics
+package com.jetbrains.edu.learning.statistics.metadata
 
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessorTestBase
 import org.junit.Test

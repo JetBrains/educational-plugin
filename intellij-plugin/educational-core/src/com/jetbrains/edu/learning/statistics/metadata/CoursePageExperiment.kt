@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.statistics
+package com.jetbrains.edu.learning.statistics.metadata
 
 import com.intellij.openapi.diagnostic.logger
 import kotlinx.serialization.Serializable

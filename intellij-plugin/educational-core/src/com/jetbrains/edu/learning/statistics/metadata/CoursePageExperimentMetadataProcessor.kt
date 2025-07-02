@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.statistics
+package com.jetbrains.edu.learning.statistics.metadata
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
