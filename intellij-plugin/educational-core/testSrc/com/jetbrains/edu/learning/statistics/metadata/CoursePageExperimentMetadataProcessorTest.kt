@@ -12,7 +12,7 @@ class CoursePageExperimentMetadataProcessorTest : CourseMetadataProcessorTestBas
     // when
     createCourseWithMetadata(metadata)
     // then
-    assertEquals(CoursePageExperiment("123", "456"), CoursePageExperimentManager.getInstance(project).experiment)
+    assertEquals(metadata, CourseMetadataManager.getInstance(project).metadata)
   }
 
   @Test
@@ -22,7 +22,7 @@ class CoursePageExperimentMetadataProcessorTest : CourseMetadataProcessorTestBas
     // when
     createCourseWithMetadata(metadata)
     // then
-    assertNull(CoursePageExperimentManager.getInstance(project).experiment)
+    assertEquals(0, CourseMetadataManager.getInstance(project).metadata.size)
   }
 
   @Test
@@ -32,6 +32,6 @@ class CoursePageExperimentMetadataProcessorTest : CourseMetadataProcessorTestBas
     // when
     createCourseWithMetadata(metadata)
     // then
-    assertNull(CoursePageExperimentManager.getInstance(project).experiment)
+    assertEquals(0, CourseMetadataManager.getInstance(project).metadata.size)
   }
 }

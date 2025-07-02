@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.jetbrains.edu.learning.statistics.metadata
 
 import com.intellij.openapi.components.*
@@ -5,7 +7,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduTestAware
 import org.jetbrains.annotations.TestOnly
 
-// TODO: merge with `CoursePageExperimentManager`
+// BACKCOMPAT: 2025.1. Drop it
+@Deprecated("Use `CourseMetadataManager` instead")
 @Service(Service.Level.PROJECT)
 @State(name = "EntryPointManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class EntryPointManager : SimplePersistentStateComponent<EntryPointManager.State>(State()), EduTestAware {

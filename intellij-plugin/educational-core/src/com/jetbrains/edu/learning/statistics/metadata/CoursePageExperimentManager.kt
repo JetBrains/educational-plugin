@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.jetbrains.edu.learning.statistics.metadata
 
 import com.intellij.openapi.components.*
@@ -7,6 +9,8 @@ import com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManage
 import kotlinx.serialization.Serializable
 
 
+// BACKCOMPAT: 2025.1. Drop it
+@Deprecated("Use `CourseMetadataManager` instead")
 @Service(Service.Level.PROJECT)
 @State(name = "CoursePageExperimentManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class CoursePageExperimentManager : SerializablePersistentStateComponent<ExperimentState>(ExperimentState(null)), EduTestAware {
