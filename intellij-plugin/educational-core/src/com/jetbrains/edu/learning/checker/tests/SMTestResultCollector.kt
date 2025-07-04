@@ -55,7 +55,7 @@ open class SMTestResultCollector : TestResultCollector() {
         if (testCount > 0) {
           testName = "$testName[$testCount]"
         }
-        result.add(it.toEduTestInfo(testName))
+        result.add(createEduTestInfo(it, testName))
       }
       else {
         result.addAll(getEduTestInfo(paths, it.children))
@@ -65,16 +65,29 @@ open class SMTestResultCollector : TestResultCollector() {
     return result
   }
 
-  private fun SMTestProxy.toEduTestInfo(name: String): EduTestInfo {
-    val diff = diffViewerProvider
-    val message = if (diff != null) getComparisonErrorMessage(this) else getErrorMessage(this)
+  /**
+   * Gathers test results info from given [node] and creates [EduTestInfo]
+   */
+  protected open fun createEduTestInfo(node: SMTestProxy, name: String): EduTestInfo {
+    val diff = node.diffViewerProvider
+    val message = if (diff != null) getComparisonErrorMessage(node) else getErrorMessage(node)
+
+    return node.toEduTestInfo(name, message, diff?.let { CheckResultDiff(diff.left, diff.right, diff.diffTitle) })
+  }
+
+  /**
+   * Creates [EduTestInfo] from given data.
+   *
+   * It's not supposed to be overridden and created only to reduce code duplication if you need to override [createEduTestInfo]
+   */
+  protected fun SMTestProxy.toEduTestInfo(name: String, message: String, diff: CheckResultDiff?): EduTestInfo {
     return EduTestInfo(
       name = name,
       status = magnitudeInfo.value,
       message = removeAttributes(fillWithIncorrect(message)),
       details = stacktrace,
       isFinishedSuccessfully = finishedSuccessfully(),
-      checkResultDiff = diff?.let { CheckResultDiff(diff.left, diff.right, diff.diffTitle) }
+      checkResultDiff = diff
     )
   }
 
