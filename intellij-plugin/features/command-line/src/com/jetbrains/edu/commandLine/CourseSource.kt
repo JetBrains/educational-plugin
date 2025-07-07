@@ -17,27 +17,17 @@ enum class CourseSource(val option: String, val description: String) {
     }
   },
 
-  MARKETPLACE("marketplace", """Marketplace course link. Supported formats:
-    - %course-id%
-    - %course-id%-%plugin-name%
-    - https://plugins.jetbrains.com/plugin/%course-id%
-    - https://plugins.jetbrains.com/plugin/%course-id%-%plugin-name%.
-    
-    So, for https://plugins.jetbrains.com/plugin/16630-introduction-to-python course, you can pass:
-    - 16630
-    - 16630-introduction-to-python
-    - https://plugins.jetbrains.com/plugin/16630
-    - https://plugins.jetbrains.com/plugin/16630-introduction-to-python
-  """.trimIndent()) {
-    override suspend fun loadCourse(marketplaceCourseLink: String): Result<Course, String> {
-      val course = MarketplaceConnector.getInstance().getCourseInfoByLink(marketplaceCourseLink, searchPrivate = true)
-      return if (course != null) Ok(course) else Err("Failed to load Marketplace course `$marketplaceCourseLink`")
+  MARKETPLACE("marketplace", "Marketplace course id") {
+    override suspend fun loadCourse(value: String): Result<Course, String> {
+      val courseId = value.toIntOrNull() ?: return Err("Marketplace course id should be an integer. Got `$value`")
+      val course = MarketplaceConnector.getInstance().searchCourse(courseId, searchPrivate = true)
+      return if (course != null) Ok(course) else Err("Failed to load Marketplace course `$value`")
     }
   },
 
   HYPERSKILL("hyperskill", "Hyperskill project id") {
     override suspend fun loadCourse(value: String): Result<Course, String> {
-      val projectId = value.toIntOrNull() ?: return Err("Hyperskill course id should be integer. Got `$value`")
+      val projectId = value.toIntOrNull() ?: return Err("Hyperskill course id should be an integer. Got `$value`")
 
       val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId)
         .onError { return Err(it) }
