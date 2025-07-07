@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.TOOLBOX
+import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -92,6 +93,10 @@ class EduOpenCourseAppStarter : IdeStarter() {
     val command = openCourseCommand()
     return try {
       command.parse(args.drop(1))
+
+      val openCourseFound = command.focusOpenProject()
+      if (openCourseFound) return CliResult.OK
+
       val dialogResult = showOpenCourseDialog(command)
       when (dialogResult) {
         OpenCourseDialogResult.Ok,
@@ -102,6 +107,18 @@ class EduOpenCourseAppStarter : IdeStarter() {
     catch (e: CliktError) {
       CliResult(1, command.getFormattedHelp(e))
     }
+  }
+
+  /**
+   * Looks for an already open course project mentioned in the command and focus its frame.
+   *
+   * Returns `true` if opened course was found and `false` otherwise
+   */
+  private fun EduOpenCourseCommand.focusOpenProject(): Boolean {
+    val result = EduBuiltInServerUtils.focusOpenProject { course ->
+      source.isCourseFromSource(course) && course.id.toString() == courseId
+    }
+    return result != null
   }
 
   private fun openCourseCommand(): EduOpenCourseCommand {
