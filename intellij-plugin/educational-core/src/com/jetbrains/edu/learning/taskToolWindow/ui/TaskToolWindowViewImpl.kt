@@ -22,6 +22,7 @@ import com.intellij.ui.InlineBanner
 import com.intellij.ui.InlineBannerBase
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.scale.JBUIScale
 import com.intellij.ui.util.maximumHeight
 import com.intellij.util.asSafely
 import com.intellij.util.ui.JBEmptyBorder
@@ -31,6 +32,9 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
+import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
+import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
+import com.jetbrains.edu.learning.combineStateFlow
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -50,15 +54,12 @@ import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapAction
 import com.jetbrains.edu.learning.taskToolWindow.ui.navigationMap.NavigationMapToolbar
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
-import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
-import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
-import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
-import com.jetbrains.edu.learning.combineStateFlow
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotification.ActionLabel
 import com.jetbrains.edu.learning.taskToolWindow.ui.notification.TaskToolWindowNotificationsPanel
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
+import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType.SUBMISSIONS_TAB
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +68,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.Dimension
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import javax.swing.*
 
 class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskToolWindowView(project), DataProvider, Disposable {
@@ -265,12 +267,23 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS
     ).apply {
-          border = JBEmptyBorder(0)
-          preferredSize = Dimension(0, 51)
-          minimumSize = Dimension(0, 51)
-          maximumHeight = 51
-        }
+      border = JBEmptyBorder(0)
+      fun setSizes() {
+        preferredSize = JBUI.size(0, 51)
+        minimumSize = JBUI.size(0, 51)
+        maximumHeight = JBUIScale.scale(51)
+      }
+      setSizes()
 
+      addComponentListener(object : ComponentAdapter() {
+        override fun componentResized(e: ComponentEvent?) {
+          val component = e?.component ?: return
+          if (component == navMapPanel) {
+            setSizes()
+          }
+        }
+      })
+    }
     mainPanel.add(navMapPanel)
 
     // setup task name
