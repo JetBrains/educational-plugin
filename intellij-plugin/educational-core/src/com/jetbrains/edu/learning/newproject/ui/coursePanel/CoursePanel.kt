@@ -142,6 +142,12 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   protected abstract fun joinCourseAction(info: CourseCreationInfo, mode: CourseMode)
 
+  /**
+   * In case the user opens an existing course project with the "Open" button, this metadata will be processed after opening
+   * the project.
+   */
+  protected open fun openCourseMetadata(): Map<String, String> = emptyMap()
+
   protected open fun createCourseDetailsPanel(): NonOpaquePanel = CourseDetailsPanel(HORIZONTAL_MARGIN)
 
   fun doValidation() {
@@ -266,7 +272,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     @VisibleForTesting
     val buttons: List<CourseButtonBase> = listOf(
       StartCourseButton(joinCourse = { course, courseMode -> joinCourse(course, courseMode) }),
-      OpenCourseButton()
+      OpenCourseButton{ openCourseMetadata() }
     )
 
     init {

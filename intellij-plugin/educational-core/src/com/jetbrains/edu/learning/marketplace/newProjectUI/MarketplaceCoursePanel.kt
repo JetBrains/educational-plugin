@@ -42,6 +42,8 @@ class MarketplaceCoursePanel(
     MarketplacePlatformProvider(downloadCourseContext).joinAction(info, mode, this, openCourseParams)
   }
 
+  override fun openCourseMetadata(): Map<String, String> = openCourseParams
+
   private class LegalTermsPanel: NonOpaquePanel(), CourseSelectionListener {
 
     private val textPanel = GrayTextHtmlPanel("text")
