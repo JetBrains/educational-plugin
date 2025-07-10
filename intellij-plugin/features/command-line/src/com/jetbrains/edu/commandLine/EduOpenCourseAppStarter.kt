@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.blockingContext
 import com.intellij.platform.diagnostic.telemetry.impl.span
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
+import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.TOOLBOX
@@ -115,10 +116,13 @@ class EduOpenCourseAppStarter : IdeStarter() {
    * Returns `true` if opened course was found and `false` otherwise
    */
   private fun EduOpenCourseCommand.focusOpenProject(): Boolean {
-    val result = EduBuiltInServerUtils.focusOpenProject { course ->
+    val (project, course) = EduBuiltInServerUtils.focusOpenProject { course ->
       source.isCourseFromSource(course) && course.id.toString() == courseId
-    }
-    return result != null
+    } ?: return false
+
+    CourseMetadataProcessor.applyProcessors(project, course, courseParams)
+
+    return true
   }
 
   private fun openCourseCommand(): EduOpenCourseCommand {
