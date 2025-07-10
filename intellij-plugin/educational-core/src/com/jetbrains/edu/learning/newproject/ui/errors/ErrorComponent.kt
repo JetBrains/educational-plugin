@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.newproject.ui.createErrorStylesheet
 import com.jetbrains.edu.learning.taskToolWindow.ui.createTextPane
 import java.awt.*
 import javax.swing.Icon
+import javax.swing.JButton
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkListener
 
@@ -42,10 +43,12 @@ class ErrorComponent(
 
     private val errorTextPane: JTextPane = createTextPane()
     private var messageType: ValidationMessageType = ValidationMessageType.INFO
+    private val actionButton: JButton = JButton()
 
     init {
       border = JBUI.Borders.empty(topMargin, leftMargin, topMargin, 0)
       background = SelectCourseBackgroundColor
+      layout = BorderLayout()
 
       if (icon != null) {
         add(JBLabel(icon), BorderLayout.LINE_START)
@@ -59,6 +62,10 @@ class ErrorComponent(
         addHyperlinkListener(hyperlinkListener)
       }
       add(errorTextPane, BorderLayout.CENTER)
+
+      actionButton.isVisible = false
+      actionButton.border = JBUI.Borders.empty(0, 5, 0, 5)
+      add(actionButton, BorderLayout.LINE_END)
     }
 
     fun setErrorMessage(validationMessage: ValidationMessage) {
@@ -78,6 +85,20 @@ class ErrorComponent(
       errorTextPane.text = wrappedMessage
       errorTextPane.background = getComponentColor()
       validationMessageLink = validationMessage.hyperlinkAddress
+
+      // Handle action button
+      // Remove all existing action listeners to avoid duplicates
+      for (listener in actionButton.actionListeners) {
+        actionButton.removeActionListener(listener)
+      }
+
+      if (validationMessage.actionButtonText != null && validationMessage.action != null) {
+        actionButton.text = validationMessage.actionButtonText
+        actionButton.addActionListener { validationMessage.action?.invoke() }
+        actionButton.isVisible = true
+      } else {
+        actionButton.isVisible = false
+      }
     }
 
     private fun getComponentColor(): Color {

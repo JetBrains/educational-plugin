@@ -16,7 +16,9 @@ import org.jetbrains.annotations.Nls
 data class ValidationMessage(
   @Nls val message: String,
   val hyperlinkAddress: String? = null,
-  val type: ValidationMessageType = ValidationMessageType.ERROR
+  val type: ValidationMessageType = ValidationMessageType.ERROR,
+  val actionButtonText: String? = null,
+  val action: (() -> Unit)? = null
 )
 
 fun ValidationMessage.ready(): SettingsValidationResult = SettingsValidationResult.Ready(this)

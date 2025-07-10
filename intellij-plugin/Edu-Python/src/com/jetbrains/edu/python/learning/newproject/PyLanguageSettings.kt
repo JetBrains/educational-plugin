@@ -1,7 +1,16 @@
 package com.jetbrains.edu.python.learning.newproject
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
@@ -21,14 +30,17 @@ import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
-import com.jetbrains.python.sdk.PySdkUtil
+import com.jetbrains.python.sdk.PySdkToInstall
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addInterpretersAsync
 import com.jetbrains.python.sdk.findBaseSdks
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
+import com.jetbrains.python.sdk.flavors.PythonSdkFlavor.getLanguageLevelFromVersionStringStatic
 import com.jetbrains.python.sdk.getSdksToInstall
 import com.jetbrains.python.sdk.sdkFlavor
 import com.jetbrains.python.sdk.sdkSeemsValid
+import com.jetbrains.python.sdk.PythonSdkType
+import com.jetbrains.python.sdk.detectSystemWideSdks
 import org.jetbrains.annotations.Nls
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
@@ -97,7 +109,32 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
     val sdkApplicable = isSdkApplicable(course, sdk.languageLevel)
     if (sdkApplicable is Err) {
       val message = "${sdkApplicable.error}<br>${EduPythonBundle.message("configure.python.environment.help")}"
-      val validationMessage = ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+
+      // Extract the required version from the error message
+      val requiredVersion = when (sdkApplicable) {
+        is NoApplicablePythonError -> sdkApplicable.requiredVersion.toString()
+        is SpecificPythonRequiredError -> sdkApplicable.requiredVersion
+        else -> null
+      }
+
+      // Add download button if we have a required version
+      val validationMessage = if (requiredVersion != null) {
+        val buttonText = EduPythonBundle.message("action.download.python", requiredVersion)
+        ValidationMessage(
+          message = message,
+          hyperlinkAddress = ENVIRONMENT_CONFIGURATION_LINK_PYTHON,
+          actionButtonText = buttonText,
+          action = { downloadPythonSdk(requiredVersion, null) { sdk ->
+            if (sdk != null) {
+              projectSettings.sdk = sdk
+              notifyListeners()
+            }
+          }}
+        )
+      } else {
+        ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
+      }
+
       return SettingsValidationResult.Ready(validationMessage)
     }
 
@@ -123,7 +160,13 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
           } ?: LanguageLevel.getDefault()
         }
         else -> {
-          PySdkUtil.getLanguageLevelForSdk(this)
+          // Get version string and convert it to language level
+          val versionString = versionString
+          if (versionString != null) {
+            getLanguageLevelFromVersionStringStatic(versionString)
+          } else {
+            LanguageLevel.getDefault()
+          }
         }
       }
     }
@@ -160,11 +203,11 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       return baseSdks.filter { isSdkApplicable(course, it.languageLevel) == OK }.maxByOrNull { it.languageLevel }
     }
 
-    private class NoApplicablePythonError(requiredVersion: Int,
+    private class NoApplicablePythonError(val requiredVersion: Int,
                                           errorMessage: @Nls String = EduPythonBundle.message("error.incorrect.python",
                                                                                               requiredVersion)) : Err<String>(errorMessage)
 
-    private class SpecificPythonRequiredError(requiredVersion: String,
+    private class SpecificPythonRequiredError(val requiredVersion: String,
                                               errorMessage: @Nls String = EduPythonBundle.message("error.old.python",
                                                                                                   requiredVersion)) : Err<String>(
       errorMessage)
@@ -182,6 +225,75 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       val name = "new virtual env $pythonVersion"
 
       return PySdkToCreateVirtualEnv.create(name, baseSdk.path, pythonVersion)
+    }
+
+    /**
+     * Downloads and configures a Python SDK for the specified version.
+     * 
+     * @param requiredVersion The required Python version (e.g., "3.8")
+     * @param project The current project
+     * @param onComplete Callback to be called when the download is complete
+     */
+    fun downloadPythonSdk(requiredVersion: String, project: Project?, onComplete: (Sdk?) -> Unit) {
+      val sdksToInstall = getSdksToInstall().filter { sdk -> 
+        // Filter SDKs that match the required version
+        // The name typically contains the version information
+        sdk.name.contains(requiredVersion)
+      }
+
+      if (sdksToInstall.isEmpty()) {
+        Messages.showErrorDialog(
+          project,
+          EduPythonBundle.message("error.no.python.to.download", requiredVersion),
+          EduPythonBundle.message("error.download.failed")
+        )
+        onComplete(null)
+        return
+      }
+
+      val sdkToInstall = sdksToInstall.first()
+
+      ProgressManager.getInstance().run(object : Task.Backgroundable(
+        project,
+        EduPythonBundle.message("progress.downloading.python", sdkToInstall.name),
+        false
+      ) {
+        override fun run(indicator: ProgressIndicator) {
+          indicator.isIndeterminate = true
+          indicator.text = EduPythonBundle.message("progress.downloading.python", sdkToInstall.name)
+
+          try {
+            // Install the SDK using the Python plugin's functionality
+            // This must be done on the EDT
+            @Suppress("UnstableApiUsage")
+            val installedSdk = invokeAndWaitIfNeeded(ModalityState.any()) {
+              sdkToInstall.install(null) {
+                detectSystemWideSdks(null, emptyList())
+              }.getOrElse {
+                throw RuntimeException("Failed to install SDK: ${it.message}", it)
+              }
+            }
+
+            if (installedSdk != null) {
+              ApplicationManager.getApplication().invokeLater({
+                onComplete(installedSdk)
+              }, ModalityState.any())
+            } else {
+              throw RuntimeException("Failed to create SDK")
+            }
+          }
+          catch (e: Exception) {
+            ApplicationManager.getApplication().invokeLater({
+              Messages.showErrorDialog(
+                project,
+                EduPythonBundle.message("error.download.failed.with.reason", e.message ?: ""),
+                EduPythonBundle.message("error.download.failed")
+              )
+              onComplete(null)
+            }, ModalityState.any())
+          }
+        }
+      })
     }
 
     const val ALL_VERSIONS = "All versions"
