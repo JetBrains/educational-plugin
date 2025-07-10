@@ -50,6 +50,8 @@ open class JoinCourseDialog(
       }
     }
 
+    override fun openCourseMetadata(): Map<String, String> = params
+
     override fun showError(errorState: ErrorState) {
       if (isToShowError(errorState)) {
         super.showError(errorState)

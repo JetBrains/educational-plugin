@@ -8,9 +8,10 @@ import com.intellij.openapi.util.io.toNioPathOrNull
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 
-fun Course.openCourse() {
+fun Course.openCourse(openCourseMetadata: Map<String, String>) {
   val coursesStorage = CoursesStorage.getInstance()
   val coursePath = coursesStorage.getCoursePath(this)?.toNioPathOrNull() ?: return
   val generator = configurator?.courseBuilder?.getCourseProjectGenerator(this) ?: return
@@ -27,7 +28,11 @@ fun Course.openCourse() {
     }
   }
   val project = ProjectUtil.openProject(pathToOpen, openProjectTask)
-  ProjectUtil.focusProjectWindow(project, true)
+
+  if (project != null) {
+    CourseMetadataProcessor.applyProcessors(project, this, openCourseMetadata)
+    ProjectUtil.focusProjectWindow(project, true)
+  }
 }
 
 fun showNoCourseDialog(coursePath: String, cancelButtonText: String): Int {

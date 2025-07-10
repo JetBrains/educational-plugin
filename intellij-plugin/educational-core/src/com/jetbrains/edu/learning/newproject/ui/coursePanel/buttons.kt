@@ -39,7 +39,7 @@ private val ForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.for
 private val FocusedBackground: Color = JBColor.namedColor("SelectCourse.Button.focusedBackground", JBColor(0xE1F6DA, 0xE1F6DA))
 private val BorderColor: Color = JBColor.namedColor("SelectCourse.Button.border", GreenColor)
 
-class OpenCourseButton : CourseButtonBase() {
+class OpenCourseButton(private val openCourseMetadata: () -> Map<String, String>) : CourseButtonBase() {
 
   override fun actionListener(course: Course): ActionListener = ActionListener {
     invokeLater {
@@ -51,7 +51,7 @@ class OpenCourseButton : CourseButtonBase() {
       }
 
       closeDialog()
-      course.openCourse()
+      course.openCourse(openCourseMetadata())
     }
   }
 
