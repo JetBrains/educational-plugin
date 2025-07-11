@@ -125,6 +125,10 @@ open class FileAttributesTest(
         //.coursecreator
         arrayOf(".coursecreator/archive.zip", excluded),
 
+        //vcs
+        arrayOf(".git/objects/ha/hahaha42e136b17b7adfe79921a7a17def1185", excluded),
+        arrayOf(".git/config", excluded),
+
         // other
         arrayOf("hints", excludedButCanBeInside),
         arrayOf("stepik_ids.json", excludedButCanBeInside),

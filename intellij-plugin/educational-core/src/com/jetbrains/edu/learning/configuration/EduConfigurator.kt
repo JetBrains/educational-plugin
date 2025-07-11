@@ -86,6 +86,10 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
   file(EduNames.HINTS, EduNames.STEPIK_IDS_JSON) {
     excludeFromArchive()
   }
+
+  dirAndChildren(EduNames.VCS_GIT) {
+    archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+  }
 }
 
 /**
