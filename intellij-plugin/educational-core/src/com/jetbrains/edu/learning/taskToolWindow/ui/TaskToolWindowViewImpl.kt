@@ -271,18 +271,15 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       fun setSizes() {
         preferredSize = JBUI.size(0, 51)
         minimumSize = JBUI.size(0, 51)
-        maximumHeight = JBUIScale.scale(51)
+        maximumSize = JBUI.size(Int.MAX_VALUE, 51)
       }
       setSizes()
 
       addComponentListener(object : ComponentAdapter() {
         override fun componentResized(e: ComponentEvent?) {
-          val component = e?.component ?: return
-          if (component == navMapPanel) {
-            setSizes()
-          }
+          setSizes()
+          scrollNavMap(currentTask)
         }
-      })
     }
     mainPanel.add(navMapPanel)
 
