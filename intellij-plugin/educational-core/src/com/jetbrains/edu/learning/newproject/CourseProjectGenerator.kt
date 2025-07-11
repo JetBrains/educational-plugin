@@ -99,7 +99,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       NavigationUtils.openFirstTask(course, project)
     }
 
-    CourseMetadataProcessor.applyProcessors(project, course, openCourseParams)
+    CourseMetadataProcessor.applyProcessors(project, course, openCourseParams, CourseProjectState.CREATED_PROJECT)
 
     YamlFormatSynchronizer.saveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
