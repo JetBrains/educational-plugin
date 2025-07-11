@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
+import com.jetbrains.edu.learning.newproject.CourseProjectState
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 
 fun Course.openCourse(openCourseMetadata: Map<String, String>) {
@@ -30,7 +31,7 @@ fun Course.openCourse(openCourseMetadata: Map<String, String>) {
   val project = ProjectUtil.openProject(pathToOpen, openProjectTask)
 
   if (project != null) {
-    CourseMetadataProcessor.applyProcessors(project, this, openCourseMetadata)
+    CourseMetadataProcessor.applyProcessors(project, this, openCourseMetadata, CourseProjectState.OPENED_PROJECT)
     ProjectUtil.focusProjectWindow(project, true)
   }
 }

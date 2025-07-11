@@ -23,6 +23,7 @@ import com.intellij.platform.diagnostic.telemetry.impl.span
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
+import com.jetbrains.edu.learning.newproject.CourseProjectState
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.TOOLBOX
@@ -120,7 +121,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
       source.isCourseFromSource(course) && course.id.toString() == courseId
     } ?: return false
 
-    CourseMetadataProcessor.applyProcessors(project, course, courseParams)
+    CourseMetadataProcessor.applyProcessors(project, course, courseParams, CourseProjectState.FOCUSED_OPEN_PROJECT)
 
     return true
   }

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject
 
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -28,10 +29,18 @@ interface CourseMetadataProcessor<T> {
       processMetadata(project, course, metadata)
     }
 
-    fun applyProcessors(project: Project, course: Course, rawMetadata: Map<String, String>) {
+    fun applyProcessors(project: Project, course: Course, rawMetadata: Map<String, String>, courseProjectState: CourseProjectState) {
+      thisLogger().info("Applying course metadata processors for course ${course.name} in state $courseProjectState: $rawMetadata")
+
       EP_NAME.extensions.forEach { processor ->
         processor.process(project, course, rawMetadata)
       }
     }
   }
+}
+
+enum class CourseProjectState {
+  CREATED_PROJECT,
+  OPENED_PROJECT,
+  FOCUSED_OPEN_PROJECT
 }
