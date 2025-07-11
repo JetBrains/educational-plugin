@@ -26,6 +26,8 @@ object EduNames {
   const val COURSE_IGNORE = ".courseignore"
   const val CHANGE_NOTES = "change-notes.txt"
 
+  const val VCS_GIT = ".git"
+
   // Troubleshooting guide links
   const val NO_COURSES_URL = "$TROUBLESHOOTING_GUIDE_URL#no_courses_found"
   const val FAILED_TO_POST_TO_JBA_URL = "$TROUBLESHOOTING_GUIDE_URL#failed_submission_jba"
