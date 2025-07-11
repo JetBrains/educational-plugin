@@ -24,7 +24,11 @@ enum class CourseSource(val option: String, val description: String) {
   MARKETPLACE("marketplace", "Marketplace course id") {
     override suspend fun loadCourse(location: String): Result<Course, String> {
       val courseId = location.toIntOrNull() ?: return Err("Marketplace course id should be an integer. Got `$location`")
-      val course = MarketplaceConnector.getInstance().searchCourse(courseId, searchPrivate = true)
+
+      val marketplaceConnector = MarketplaceConnector.getInstance()
+      val course = marketplaceConnector.searchCourse(courseId, searchPrivate = false) ?:
+        marketplaceConnector.searchCourse(courseId, searchPrivate = true)
+
       return if (course != null) Ok(course) else Err("Failed to load Marketplace course `$location`")
     }
 
