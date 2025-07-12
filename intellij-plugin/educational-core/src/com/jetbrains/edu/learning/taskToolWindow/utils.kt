@@ -3,7 +3,6 @@
 package com.jetbrains.edu.learning.taskToolWindow
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.LinkLabel
@@ -15,7 +14,6 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.JavaUILibrary.Companion.isSwing
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -23,9 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.SOURCE
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import javax.swing.JPanel
@@ -33,16 +29,13 @@ import javax.swing.JPanel
 private const val SHORTCUT = "shortcut"
 private const val SHORTCUT_ENTITY = "&$SHORTCUT:"
 private const val SHORTCUT_ENTITY_ENCODED = "&amp;$SHORTCUT:"
-private const val VIDEO_TAG = "video"
 private const val IFRAME_TAG = "iframe"
-private const val YOUTUBE_VIDEO_ID_LENGTH = 11
 const val A_TAG = "a"
 const val CODE_TAG = "code"
 const val IMG_TAG = "img"
 const val SCRIPT_TAG = "script"
 const val SRC_ATTRIBUTE = "src"
 private const val SPAN_ATTRIBUTE = "span"
-private const val HEIGHT_ATTRIBUTE = "height"
 const val HREF_ATTRIBUTE = "href"
 private const val STYLE_ATTRIBUTE = "style"
 private const val CLASS_ATTRIBUTE = "class"
@@ -51,14 +44,10 @@ const val CODE_CLASS = "code"
 const val TERM_CLASS = "term"
 private const val SRCSET_ATTRIBUTE = "srcset"
 private const val DARK_SRC_CUSTOM_ATTRIBUTE = "dark-src"
-private const val WIDTH_ATTRIBUTE = "width"
-private const val BORDER_ATTRIBUTE = "border"
 private const val DARK_SUFFIX = "_dark"
-private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.taskToolWindow.utils")
 private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
                               tagsToRegex({ "\\[$it-\\w+](.*)\\[/$it]" }, "ALERT")
 private val YOUTUBE_LINKS_REGEX = "https?://(www\\.)?(youtu\\.be|youtube\\.com)/?(watch\\?v=|embed)?.*".toRegex()
-private val EXTERNAL_LINK_REGEX = "https?://.*".toRegex()
 
 private fun tagsToRegex(pattern: (String) -> String, vararg tags: String): List<Regex> = tags.map { pattern(it).toRegex() }
 
@@ -98,59 +87,6 @@ fun replaceActionIDsWithShortcuts(text: StringBuffer) {
     }
     text.replace(lastIndex, actionIdEnd + 1, shortcutText)
     lastIndex += shortcutText.length
-  }
-}
-
-fun processYoutubeLink(text: String, taskId: Int): String {
-  val document = Jsoup.parse(text)
-  val videoElements = document.getElementsByTag(VIDEO_TAG)
-  for (element in videoElements) {
-    val sourceElements = element.getElementsByTag(SOURCE)
-    if (sourceElements.size != 1) {
-      LOG.warn("Incorrect number of youtube video sources for task ${taskId}")
-      continue
-    }
-    val src = sourceElements.attr(SRC_ATTRIBUTE)
-    val elementToReplaceWith = getClickableImageElement(src, taskId) ?: continue
-    element.replaceWith(elementToReplaceWith)
-  }
-  val iframeElements = document.getElementsByTag(IFRAME_TAG)
-  for (element in iframeElements) {
-    val src = element.attr(SRC_ATTRIBUTE)
-    val elementToReplace = getClickableImageElement(src, taskId) ?: continue
-    element.replaceWith(elementToReplace)
-  }
-  return document.outerHtml()
-}
-
-private fun getClickableImageElement(src: String, taskId: Int): Element? {
-  val youtubeVideoId = src.getYoutubeVideoId()
-  if (youtubeVideoId == null) {
-    LOG.warn("Incorrect youtube video link $src for task $taskId")
-    return null
-  }
-  val textToReplace = "<a href=http://www.youtube.com/watch?v=${youtubeVideoId}><img src=http://img.youtube.com/vi/${youtubeVideoId}/0.jpg></a>"
-  val documentToReplace = Jsoup.parse(textToReplace)
-  val elements = documentToReplace.getElementsByTag("a")
-  return if (elements.isNotEmpty()) {
-    elements[0]
-  }
-  else {
-    null
-  }
-}
-
-fun String.getYoutubeVideoId(): String? {
-  if (!YOUTUBE_LINKS_REGEX.matches(this)) {
-    return null
-  }
-  val splitLink = this.split("?v=", "/embed/", ".be/", "&", "?")
-  return if (splitLink.size >= 2) {
-    val id = splitLink[1]
-    if (id.length == YOUTUBE_VIDEO_ID_LENGTH) id else null
-  }
-  else {
-    null
   }
 }
 
@@ -260,16 +196,6 @@ fun getDashedUnderlineElement(document: Document, text: String): Element =
     attr(CLASS_ATTRIBUTE, TERM_CLASS)
     appendText(text)
   }
-
-fun getPictureSize(fontSize: Int): String {
-  return if (isSwing()) {
-    fontSize
-  }
-  else {
-    // rounding it to int is needed here, because if we are passing a float number, an arrow disappears in studio
-    (fontSize * 1.2).toInt()
-  }.toString()
-}
 
 fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
   if (course is HyperskillCourse) {
