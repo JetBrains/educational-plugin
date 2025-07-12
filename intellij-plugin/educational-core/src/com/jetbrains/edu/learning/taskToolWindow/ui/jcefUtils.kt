@@ -46,12 +46,20 @@ class JCEFToolWindowRequestHandler(private val jcefLinkHandler: JCefToolWindowLi
    *
    * @return true to cancel the navigation or false to allow the navigation to proceed.
    */
-  override fun onBeforeBrowse(browser: CefBrowser?,
-                              frame: CefFrame?,
-                              request: CefRequest?,
-                              user_gesture: Boolean,
-                              is_redirect: Boolean): Boolean {
+  override fun onBeforeBrowse(
+    browser: CefBrowser?,
+    frame: CefFrame?,
+    request: CefRequest?,
+    user_gesture: Boolean,
+    is_redirect: Boolean
+  ): Boolean {
     val url = request?.url ?: return false
+
+    // Load everything inside iframes. It is usually an embedded content such as YouTube video or anything else.
+    if (request.transitionType == CefRequest.TransitionType.TT_AUTO_SUBFRAME) {
+      return false
+    }
+
     val referUrl = request.referrerURL
     return jcefLinkHandler.process(url, referUrl)
   }

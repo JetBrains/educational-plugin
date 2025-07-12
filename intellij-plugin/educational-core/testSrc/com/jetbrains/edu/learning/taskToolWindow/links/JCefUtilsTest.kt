@@ -14,13 +14,14 @@ class JCefUtilsTest : EduTestCase() {
   }
 
   @Test
-  fun `test youtube link`() {
+  fun `test external links`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
-    assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
+    assertTrue(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro"))
+    assertTrue(jCefToolWindowLinkHandler.process("https://google.com"))
   }
 
   @Test
-  fun `test youtube link with ref`() {
+  fun `test external link with ref`() {
     val jCefToolWindowLinkHandler = JCefToolWindowLinkHandler(project)
     assertFalse(jCefToolWindowLinkHandler.process("https://www.youtube.com/watch?v=FWukd9fsRro", "https://google.account"))
   }

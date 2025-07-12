@@ -47,7 +47,6 @@ private const val DARK_SRC_CUSTOM_ATTRIBUTE = "dark-src"
 private const val DARK_SUFFIX = "_dark"
 private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
                               tagsToRegex({ "\\[$it-\\w+](.*)\\[/$it]" }, "ALERT")
-private val YOUTUBE_LINKS_REGEX = "https?://(www\\.)?(youtu\\.be|youtube\\.com)/?(watch\\?v=|embed)?.*".toRegex()
 
 private fun tagsToRegex(pattern: (String) -> String, vararg tags: String): List<Regex> = tags.map { pattern(it).toRegex() }
 
@@ -215,8 +214,6 @@ fun createActionLink(
   link.border = JBUI.Borders.empty(top, left, 0, 0)
   return link
 }
-
-fun String.containsYoutubeLink(): Boolean = contains(YOUTUBE_LINKS_REGEX)
 
 fun String.replaceEncodedShortcuts() = this.replace(SHORTCUT_ENTITY_ENCODED, SHORTCUT_ENTITY)
 

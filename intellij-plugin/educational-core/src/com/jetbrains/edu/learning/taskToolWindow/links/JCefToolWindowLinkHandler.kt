@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.taskToolWindow.links
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.util.io.URLUtil
-import com.jetbrains.edu.learning.taskToolWindow.containsYoutubeLink
 import org.apache.commons.lang3.StringUtils
 
 class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(project) {
@@ -21,11 +20,10 @@ class JCefToolWindowLinkHandler(project: Project) : ToolWindowLinkHandler(projec
    * @return false if need to continue (for example open external link at task description), otherwise true
    */
   override fun process(url: String, referUrl: String?): Boolean {
-    // this links we can open in task description and don't open in browser
-    if (url.contains("about:blank") ||
-        url.containsYoutubeLink() ||
-        StringUtils.isNotBlank(referUrl) // for example: open link from youtube in task description
-    ) {
+    // These links we can open in the task description instead of a Browser.
+    // Non-blank referUrl means that the task description displays, for example, a YouTube page, and a user clicks a link there.
+    // This check stays here for historical reasons, because currently YouTube links are opened outside the TaskDescription
+    if (url.contains("about:blank") || StringUtils.isNotBlank(referUrl)) {
       return false
     }
 
