@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
+import com.jetbrains.edu.learning.newproject.CourseProjectState
 
 data class LtiCourseParams(
   val launchId: String,
@@ -21,7 +22,7 @@ class LtiCourseMetadataProcessor : CourseMetadataProcessor<LtiCourseParams> {
     return LtiCourseParams(ltiLaunchId, lmsDescription, studyItem, ltiCourseraCourse)
   }
 
-  override fun processMetadata(project: Project, course: Course, metadata: LtiCourseParams) {
+  override fun processMetadata(project: Project, course: Course, metadata: LtiCourseParams, courseProjectState: CourseProjectState) {
     val ltiSettings = LTISettingsDTO(
       metadata.launchId,
       metadata.lmsDescription,

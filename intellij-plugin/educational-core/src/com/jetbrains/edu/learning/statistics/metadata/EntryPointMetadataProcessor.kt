@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
+import com.jetbrains.edu.learning.newproject.CourseProjectState
 import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.ENTRY_POINT
 import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager.Companion.MAX_VALUE_LENGTH
 
@@ -17,7 +18,7 @@ class EntryPointMetadataProcessor : CourseMetadataProcessor<String> {
     return entryPointValue
   }
 
-  override fun processMetadata(project: Project, course: Course, metadata: String) {
+  override fun processMetadata(project: Project, course: Course, metadata: String, courseProjectState: CourseProjectState) {
     CourseSubmissionMetadataManager.getInstance(project).addMetadata(ENTRY_POINT to metadata)
   }
 }

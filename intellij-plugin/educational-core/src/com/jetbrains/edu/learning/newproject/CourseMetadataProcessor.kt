@@ -19,21 +19,26 @@ interface CourseMetadataProcessor<T> {
    * Processes the [metadata] collected by [findApplicableMetadata] for the given [course].
    * Used for persisting data, not for actual heavy tasks.
    */
-  fun processMetadata(project: Project, course: Course, metadata: T)
+  fun processMetadata(project: Project, course: Course, metadata: T, courseProjectState: CourseProjectState)
 
   companion object {
     val EP_NAME = ExtensionPointName.create<CourseMetadataProcessor<*>>("Educational.courseMetadataProcessor")
 
-    private fun <T> CourseMetadataProcessor<T>.process(project: Project, course: Course, rawMetadata: Map<String, String>) {
+    private fun <T> CourseMetadataProcessor<T>.process(
+      project: Project,
+      course: Course,
+      rawMetadata: Map<String, String>,
+      courseProjectState: CourseProjectState
+    ) {
       val metadata = findApplicableMetadata(rawMetadata) ?: return
-      processMetadata(project, course, metadata)
+      processMetadata(project, course, metadata, courseProjectState)
     }
 
     fun applyProcessors(project: Project, course: Course, rawMetadata: Map<String, String>, courseProjectState: CourseProjectState) {
       thisLogger().info("Applying course metadata processors for course ${course.name} in state $courseProjectState: $rawMetadata")
 
       EP_NAME.extensions.forEach { processor ->
-        processor.process(project, course, rawMetadata)
+        processor.process(project, course, rawMetadata, courseProjectState)
       }
     }
   }
