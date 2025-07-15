@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
+import com.intellij.ide.projectView.impl.nodes.PsiFileNode
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR
 import com.intellij.openapi.vfs.VfsUtilCore.getRelativePath
 import com.intellij.psi.*
 import com.intellij.ui.LayeredIcon
@@ -35,19 +39,24 @@ object CourseViewUtils {
     fileNodeFactory: (AbstractTreeNode<*>, PsiFile) -> AbstractTreeNode<*>,
     directoryNodeFactory: (PsiDirectory) -> AbstractTreeNode<*>,
   ): AbstractTreeNode<*>? {
+    if (task == null) {
+      val course = project.course ?: return null
+      return childNode.modifyAdditionalFileOrDirectoryForLearner(project, course, showUserCreatedFiles = true)
+    }
+
     val value = childNode.value
     return when (value) {
       is PsiDirectory -> {
         val dirName = value.name
         if (dirName == EduNames.BUILD || dirName == EduNames.OUT) return null
-        if (task != null && isShowDirInView(project, task, value)) directoryNodeFactory(value) else null
+        if (isShowDirInView(project, task, value)) directoryNodeFactory(value) else null
       }
 
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
         val virtualFile = psiFile.virtualFile ?: return null
         val path = virtualFile.pathRelativeToTask(project)
-        val visibleFile = task?.getTaskFile(path)
+        val visibleFile = task.getTaskFile(path)
         if (visibleFile?.isVisible == true) fileNodeFactory(childNode, psiFile) else null
       }
 
@@ -201,5 +210,64 @@ object CourseViewUtils {
   private fun PsiDirectory.isPartOfCustomContentPath(project: Project): Boolean {
     val relativePath = getRelativePath(virtualFile, project.courseDir) ?: return false
     return project.course.customContentPath.contains(relativePath)
+  }
+
+  /**
+   * Returns some node for visible additional files or directories, and returns `null` otherwise.
+   *
+   * If [this] corresponds to a file, check that it is a visible additional file and return the node.
+   * If [showUserCreatedFiles] is `true`, only invisible additional files are hidden. It means that the tree
+   * shows both visible additional files and non-additional files that we created by user after the project has been generated.
+   *
+   * If [this] corresponds to a directory, check that there exist a visible additional file inside.
+   * Return [DirectoryNode] in that case, and return `null` otherwise.
+   *
+   * For directories, the [com.jetbrains.edu.learning.configuration.EduConfigurator.shouldFileBeVisibleToStudent] check is also performed.
+   * In that case the directory node itself is returned to make the entire directory visible.
+   */
+  fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectoryForLearner(
+    project: Project,
+    course: Course,
+    showUserCreatedFiles: Boolean
+  ): AbstractTreeNode<*>? {
+    if (!course.isStudy) return null
+
+    return when (this) {
+      is PsiFileNode -> modifyAdditionalFileForLearner(project, course, showUserCreatedFiles)
+      is PsiDirectoryNode -> modifyAdditionalDirectoryForLearner(project, course)
+      else -> null
+    }
+  }
+
+  private fun PsiFileNode.modifyAdditionalFileForLearner(project: Project, course: Course, showUserCreatedFiles: Boolean): AbstractTreeNode<*>? {
+    val nodePsiElement = value ?: return null
+    val nodeFile = nodePsiElement.virtualFile ?: return null
+
+    val nodePath = getRelativePath(nodeFile, project.courseDir)
+
+    val additionalFile = course.additionalFiles.find { it.name == nodePath }
+
+    if (additionalFile?.isVisible == true || additionalFile?.isVisible != false && showUserCreatedFiles) {
+      return this
+    }
+    else {
+      return null
+    }
+  }
+
+  private fun PsiDirectoryNode.modifyAdditionalDirectoryForLearner(project: Project, course: Course): AbstractTreeNode<*>? {
+    val nodePsiElement = value ?: return null
+    val nodeDirectory = nodePsiElement.virtualFile
+    if (course.configurator?.shouldFileBeVisibleToStudent(nodeDirectory) == true) return this
+
+    val coursePath = project.courseDir.path
+    val nodePath = FileUtil.getRelativePath(coursePath, nodeDirectory.path, VFS_SEPARATOR_CHAR) ?: return null
+
+    return if (course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null) {
+      DirectoryNode(project, nodePsiElement, settings, null)
+    }
+    else {
+      null
+    }
   }
 }
