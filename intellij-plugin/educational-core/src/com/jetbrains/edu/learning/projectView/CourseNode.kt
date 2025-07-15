@@ -5,9 +5,9 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.createNodeFromPsiDirectory
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectoryForLearner
 
 open class CourseNode(
   project: Project,
@@ -17,13 +17,14 @@ open class CourseNode(
 ) : ContentHolderNode, EduNode<Course>(project, value, settings, course) {
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
+    return getStudyItemOrIntermediateDirectoryNode(childNode) ?: childNode.modifyAdditionalFileOrDirectoryForLearner(project, item, showUserCreatedFiles = false)
+  }
+
+  private fun getStudyItemOrIntermediateDirectoryNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
     val directory = childNode.value as? PsiDirectory ?: return null
     val node = createNodeFromPsiDirectory(item, directory)
     if (node != null) {
       return node
-    }
-    if (item.configurator?.shouldFileBeVisibleToStudent(directory.virtualFile) == true) {
-      return childNode
     }
     return null
   }
