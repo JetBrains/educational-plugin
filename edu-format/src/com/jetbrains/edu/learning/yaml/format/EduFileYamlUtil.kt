@@ -30,8 +30,12 @@ abstract class EduFileYamlMixin {
 }
 
 @JsonDeserialize(builder = AdditionalFileBuilder::class)
-@JsonPropertyOrder(NAME, IS_BINARY)
+@JsonPropertyOrder(NAME, VISIBLE, IS_BINARY)
 abstract class AdditionalFileYamlMixin : EduFileYamlMixin() {
+
+  @JsonProperty(VISIBLE)
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  private var isVisible: Boolean = false
 
   private val isBinary: Boolean?
     @JsonProperty(IS_BINARY)
@@ -51,6 +55,7 @@ abstract class TaskFileYamlMixin : EduFileYamlMixin() {
   private lateinit var _answerPlaceholders: List<AnswerPlaceholder>
 
   @JsonProperty(VISIBLE)
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   private var isVisible = true
 
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = TrueValueFilter::class)
@@ -80,6 +85,7 @@ open class EduFileBuilder(
 @JsonPOJOBuilder(buildMethodName = "buildAdditionalFile", withPrefix = "")
 class AdditionalFileBuilder(
   @JsonProperty(IS_BINARY) val isBinary: Boolean? = false,
+  @JsonProperty(VISIBLE) val isVisible: Boolean = false,
   name: String?
 ) : EduFileBuilder(name) {
 
@@ -91,6 +97,7 @@ class AdditionalFileBuilder(
   }
 
   private fun setupAdditionalFile(eduFile: EduFile) {
+    eduFile.isVisible = isVisible
     eduFile.contents = if (isBinary == true) {
       TakeFromStorageBinaryContents
     }
