@@ -1061,6 +1061,39 @@
     ```json
     "disabled_features": ["ai-hints", "theory-lookup"]
      ```
+    
+22. Introduce the `is_visible` field for additional files:
+    ```json
+    "additional_files" : [
+      {
+        "name" : "visible_file.txt",
+        "is_visible" : true,
+        "is_binary" : false
+      },
+      {
+        "name" : "invisible_file.txt",
+        "is_visible" : false,
+        "is_binary" : false
+      },
+      {
+        "name" : "dir/visible_file.txt",
+        "is_visible" : true,
+        "is_binary" : false
+      }
+    ],
+    ```
+    
+    If a file has `is_visible=true`, it should be visible in the course view for a learner. 
+    If a directory has visible additional files inside, (`dir` in the example)
+    it is also visible in the Course View for learners.
+    If a learner creates some file inside such a directory, it is visible. This feature could be used 
+    in case when some visible additional files are not present in the course archive and should be generated or downloaded
+    after a learner has already opened a course.
+
+    In previous versions of the format, additional files has always had `is_visible` field set to `true`.
+    This field was unused, but actually all additional files have always been **invisible**.
+    So, this field had the wrong value (`true` instead of `false`).
+    The older versions of the course JSON must be migrated by changing `true` to `false`.
 
 ### Yaml format version
 

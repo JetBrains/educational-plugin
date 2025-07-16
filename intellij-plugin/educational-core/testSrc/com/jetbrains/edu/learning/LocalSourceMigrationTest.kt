@@ -38,6 +38,8 @@ class LocalSourceMigrationTest : BasePlatformTestCase() {
   fun `test to 12 version`() = doTest(12)
   @Test
   fun `test to 12 version with custom feedback link`() = doTest(12)
+  @Test
+  fun `test to 22 version`() = doTest(22)
 
   private fun doTest(maxVersion: Int) {
     val before = loadJsonText(beforeFileName)

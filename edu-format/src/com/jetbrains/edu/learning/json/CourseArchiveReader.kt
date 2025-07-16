@@ -119,6 +119,7 @@ fun migrate(node: ObjectNode, maxVersion: Int): ObjectNode {
       9 -> converter = To10VersionLocalCourseConverter()
       10 -> converter = To11VersionLocalCourseConverter()
       11 -> converter = To12VersionLocalCourseConverter()
+      21 -> converter = To22VersionLocalCourseConverter()
     }
     if (converter != null) {
       jsonObject = converter.convert(jsonObject)
