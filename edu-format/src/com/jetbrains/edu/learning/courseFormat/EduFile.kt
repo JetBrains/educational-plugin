@@ -50,7 +50,7 @@ open class EduFile {
 
   var isTrackChanges: Boolean = true
   var errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
-  var isVisible: Boolean = true
+  open var isVisible: Boolean = false
   var isEditable: Boolean = true
   var isPropagatable: Boolean = true
 
