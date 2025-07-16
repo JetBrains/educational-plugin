@@ -32,6 +32,8 @@ class TaskFile : EduFile {
       _answerPlaceholders = value.toMutableList()
     }
 
+  override var isVisible: Boolean = true
+
   private var _answerPlaceholders = mutableListOf<AnswerPlaceholder>()
   @Transient
   private var _task: Task? = null
