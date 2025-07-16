@@ -29,32 +29,32 @@
   "additional_files" : [
     {
       "name" : ".idea/scopes/.include me.xml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : ".idea/scopes/.include folder/x.xml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : ".idea/scopes/level_up.xml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : ".idea/inspectionProfiles/profiles_settings.xml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : ".idea/inspectionProfiles/Project_Default.xml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : ".idea/inspectionProfiles/One_more_inspections_profile.xml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],

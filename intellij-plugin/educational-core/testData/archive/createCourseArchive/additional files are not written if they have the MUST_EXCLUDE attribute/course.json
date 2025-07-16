@@ -29,22 +29,22 @@
   "additional_files" : [
     {
       "name" : "additional_file1.txt",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : "some-config.yaml",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : "courseignore-ignored-file.txt",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : ".file_starting_with_dot.txt",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],

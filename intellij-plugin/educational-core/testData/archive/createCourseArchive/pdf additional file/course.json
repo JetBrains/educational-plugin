@@ -22,17 +22,17 @@
   "additional_files" : [
     {
       "name" : "test.pdf",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : true
     },
     {
       "name" : "build.gradle",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : "settings.gradle",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],

@@ -42,7 +42,7 @@
   "additional_files" : [
     {
       "name" : "additional.txt",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],
