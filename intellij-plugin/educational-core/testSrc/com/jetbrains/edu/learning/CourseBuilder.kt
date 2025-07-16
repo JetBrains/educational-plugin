@@ -779,4 +779,8 @@ class EduFileBuilder {
   fun withContents(contents: FileContents) {
     eduFile.contents = contents
   }
+
+  fun withVisibility(visible: Boolean) {
+    eduFile.isVisible = visible
+  }
 }

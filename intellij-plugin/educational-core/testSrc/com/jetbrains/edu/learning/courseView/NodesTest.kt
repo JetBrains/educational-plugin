@@ -5,6 +5,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -678,6 +679,166 @@ class NodesTest : CourseViewTestBase() {
     """.trimMargin())
   }
 
+  @Test
+  fun `test visible additional files`() {
+    courseWithFiles {
+      section {
+        lesson {
+          eduTask {
+            taskFile("task.txt")
+          }
+        }
+      }
+      
+      // additional files in a course
+      additionalFile("visible.txt") {
+        withVisibility(true)
+      }
+      additionalFile("invisible.txt") {
+        withVisibility(false)
+      }
+      
+      additionalFile("dir/visible_in_dir.txt") {
+        withVisibility(true)
+      }
+      additionalFile("dir/invisible_in_dir.txt") {
+        withVisibility(false)
+      }
+
+      // additional files in a section
+      additionalFile("section1/visible.txt") {
+        withVisibility(true)
+      }
+      additionalFile("section1/invisible.txt") {
+        withVisibility(false)
+      }
+
+      additionalFile("section1/dir/visible_in_dir.txt") {
+        withVisibility(true)
+      }
+      additionalFile("section1/dir/invisible_in_dir.txt") {
+        withVisibility(false)
+      }
+
+      // additional files in a lesson
+      additionalFile("section1/lesson1/visible.txt") {
+        withVisibility(true)
+      }
+      additionalFile("section1/lesson1/invisible.txt") {
+        withVisibility(false)
+      }
+
+      additionalFile("section1/lesson1/dir/visible_in_dir.txt") {
+        withVisibility(true)
+      }
+      additionalFile("section1/lesson1/dir/invisible_in_dir.txt") {
+        withVisibility(false)
+      }
+    }
+
+    assertCourseView(
+      """
+      |-Project
+      | -CourseNode Test Course  0/1
+      |  -SectionNode section1
+      |   -LessonNode lesson1
+      |    -TaskNode task1
+      |     task.txt
+      |    -DirectoryNode dir
+      |     visible_in_dir.txt
+      |    visible.txt
+      |   -DirectoryNode dir
+      |    visible_in_dir.txt
+      |   visible.txt
+      |  -DirectoryNode dir
+      |   visible_in_dir.txt
+      |  visible.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `test visible additional folders with user-created files`() {
+    courseWithFiles {
+      section {
+        lesson {
+          eduTask {
+            taskFile("task.txt")
+          }
+        }
+      }
+
+      additionalFile("dir/visible.txt") {
+        withVisibility(true)
+      }
+      additionalFile("dir/invisible.txt") {
+        withVisibility(false)
+      }
+    }
+
+    // a learner creates files ...
+    runInEdtAndWait {
+      runWriteAction {
+        // in the course root folder, it should not be visible
+        project.courseDir.findOrCreateFile("file_in_root.txt")
+        // in the 'dir' folder, it should be visible
+        project.courseDir.findOrCreateFile("dir/file_in_dir.txt")
+      }
+    }
+
+    assertCourseView(
+      """
+      |-Project
+      | -CourseNode Test Course  0/1
+      |  -SectionNode section1
+      |   -LessonNode lesson1
+      |    -TaskNode task1
+      |     task.txt
+      |  -DirectoryNode dir
+      |   file_in_dir.txt
+      |   visible.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `test visible additional files are invisible inside framework lessons`() {
+    courseWithFiles {
+      frameworkLesson("lesson1") {
+        eduTask {
+          taskFile("task1.txt")
+        }
+        eduTask {
+          taskFile("task2.txt")
+        }
+      }
+
+      additionalFile("visible1.txt") {
+        withVisibility(true)
+      }
+      additionalFile("non-lesson-dir/visible2.txt") {
+        withVisibility(true)
+      }
+      additionalFile("lesson1/visible3.txt") {
+        withVisibility(true)
+      }
+      additionalFile("lesson1/dir/visible4.txt") {
+        withVisibility(true)
+      }
+    }
+
+    assertCourseView(
+      """
+        |-Project
+        | -CourseNode Test Course  0/1
+        |  -FrameworkLessonNode lesson1
+        |   task1.txt
+        |  -DirectoryNode non-lesson-dir
+        |   visible2.txt
+        |  visible1.txt
+      """.trimMargin()
+    )
+  }
 
   /**
    * Creates a file on disk that should not go to the list of course additional files
