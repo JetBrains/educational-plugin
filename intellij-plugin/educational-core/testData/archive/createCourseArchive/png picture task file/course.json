@@ -29,12 +29,12 @@
   "additional_files" : [
     {
       "name" : "build.gradle",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : "settings.gradle",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],

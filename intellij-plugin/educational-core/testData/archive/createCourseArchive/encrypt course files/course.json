@@ -35,7 +35,7 @@
   "additional_files" : [
     {
       "name" : "binary_file.png",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : true
     }
   ],

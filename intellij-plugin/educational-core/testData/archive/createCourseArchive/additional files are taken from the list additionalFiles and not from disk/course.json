@@ -35,12 +35,12 @@
   "additional_files" : [
     {
       "name" : "additional_file1.txt",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     },
     {
       "name" : "additional_file3.txt",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],

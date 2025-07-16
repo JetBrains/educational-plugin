@@ -35,7 +35,7 @@
   "additional_files" : [
     {
       "name" : ".hidden_file",
-      "is_visible" : true,
+      "is_visible" : false,
       "is_binary" : false
     }
   ],
