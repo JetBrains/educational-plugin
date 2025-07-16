@@ -1110,6 +1110,23 @@ To pass some data to migrator, unavailable in the `edu-format` module, use
       - theory-lookup
      ```  
 
+5. Introduced the `visible` field for additional files. The default value, if the field is absent, is false.
+    Visible additional files are shown in the Course Tree. If some direcotry has visible additional files inside, it is also shown.
+    Visible directories have a special feature, that they actually show all their contents (except invisible additional files).
+
+   ```yaml
+   additional_files:
+    - name: a.txt
+      visible: true
+    - name: dir/a.txt
+      visible: true
+    - name: invisible.txt
+      visible: false
+    - name: dir/invisible.txt
+   ```
+
+    Both `a.txt` files are visible, both `invisible.txt` files are invisible.
+    If a user creates a file inside a `dir` folder, it will also be visible.
 
 ### Courseignore format version
 
