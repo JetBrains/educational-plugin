@@ -5,4 +5,9 @@
       <description>Enables AWS courses support</description>
     </experimentalFeature>
   </extensions>
+  <actions>
+    <action id="Educational.Student.AWSTracksServiceChangeHost"
+            class="com.jetbrains.edu.learning.marketplace.awsTracks.changeHost.AWSTracksServiceChangeHost"
+            internal="true"/>
+  </actions>
 </idea-plugin>
