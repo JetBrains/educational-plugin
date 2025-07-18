@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.components.service
-import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature

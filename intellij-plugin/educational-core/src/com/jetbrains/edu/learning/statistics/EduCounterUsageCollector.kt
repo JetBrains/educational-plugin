@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.CourseActionSource.values
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD

@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.stepik.api.StepikReplyDeserializer.Companion.m
 import org.junit.Test
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.function.Function
 
 class StepikFormatTest : EduTestCase() {

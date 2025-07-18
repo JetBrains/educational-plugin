@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.bind
-import com.intellij.ui.layout.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 /**
