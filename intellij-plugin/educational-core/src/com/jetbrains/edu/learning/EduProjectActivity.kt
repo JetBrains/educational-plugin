@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.ExactFileNameMatcher
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.waitForSmartMode
 import com.intellij.openapi.startup.ProjectActivity
@@ -20,7 +19,6 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.platform.backend.observation.trackActivity
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
@@ -90,10 +88,8 @@ class EduProjectActivity : ProjectActivity {
     selectProjectView(project, true)
 
     withContext(Dispatchers.EDT) {
-      blockingContext {
-        migrateYaml(project, course)
-        setupProject(project, course)
-      }
+      migrateYaml(project, course)
+      setupProject(project, course)
       val coursesStorage = CoursesStorage.getInstance()
       val location = project.basePath
       if (!coursesStorage.hasCourse(course) && location != null && !course.isPreview) {
@@ -114,7 +110,6 @@ class EduProjectActivity : ProjectActivity {
   }
 
   @VisibleForTesting
-  @RequiresBlockingContext
   fun migrateYaml(project: Project, course: Course) {
     migratePropagatableYamlFields(project, course)
     migrateCanCheckLocallyYaml(project, course)
@@ -198,7 +193,6 @@ class EduProjectActivity : ProjectActivity {
   }
 
   @RequiresEdt
-  @RequiresBlockingContext
   private fun setupProject(project: Project, course: Course) {
     val configurator = course.configurator
     if (configurator == null) {

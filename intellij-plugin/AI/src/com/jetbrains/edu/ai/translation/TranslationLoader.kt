@@ -6,7 +6,6 @@ import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.platform.ide.progress.withBackgroundProgress
@@ -251,9 +250,7 @@ class TranslationLoader(private val project: Project, private val scope: Corouti
     val name = descriptionFormat.fileNameWithTranslation(text.language)
 
     try {
-      blockingContext {
-        GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
-      }
+      GeneratorUtils.createTextChildFile(project, taskDirectory, name, text.text)
     }
     catch (exception: IOException) {
       LOG.error("Failed to write text to $taskDirectory", exception)

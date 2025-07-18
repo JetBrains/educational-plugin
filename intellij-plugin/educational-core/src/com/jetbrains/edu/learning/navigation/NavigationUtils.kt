@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -335,7 +334,6 @@ object NavigationUtils {
   }
 
   @RequiresEdt
-  @RequiresBlockingContext
   fun prepareFilesForTargetTask(
     project: Project,
     frameworkLesson: FrameworkLesson,

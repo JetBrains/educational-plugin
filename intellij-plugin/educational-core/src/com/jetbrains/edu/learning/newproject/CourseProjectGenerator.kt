@@ -11,7 +11,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.progress.blockingContextToIndicator
 import com.intellij.openapi.project.NOTIFICATIONS_SILENT_MODE
 import com.intellij.openapi.project.Project
@@ -32,15 +31,14 @@ import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.ui.jcef.JBCefApp
 import com.intellij.util.PathUtil
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility.FeaturedVisibility
@@ -78,7 +76,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val course: Course
 ) {
 
-  @RequiresBlockingContext
   open fun afterProjectGenerated(
     project: Project,
     projectSettings: S,
@@ -116,7 +113,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   //  * Kotlin and Java do type erasure a little differently
   // we use Object instead of S and cast to S when it needed
   @RequiresEdt
-  @RequiresBlockingContext
   fun doCreateCourseProject(
     location: String,
     projectSettings: EduProjectSettings,
@@ -144,12 +140,10 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     val createdProject = createProject(location, initialLessonProducer) ?: return null
 
     withContext(Dispatchers.EDT) {
-      blockingContext {
-        afterProjectGenerated(createdProject, castedProjectSettings, openCourseParams) {
-          ApplicationManager.getApplication().messageBus
-            .syncPublisher(COURSE_PROJECT_CONFIGURATION)
-            .onCourseProjectConfigured(createdProject)
-        }
+      afterProjectGenerated(createdProject, castedProjectSettings, openCourseParams) {
+        ApplicationManager.getApplication().messageBus
+          .syncPublisher(COURSE_PROJECT_CONFIGURATION)
+          .onCourseProjectConfigured(createdProject)
       }
     }
     return createdProject
@@ -180,16 +174,12 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       }
       return null
     }
-    val baseDir = blockingContext {
-      LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location)
-    }
+    val baseDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location)
     if (baseDir == null) {
       LOG.error("Couldn't find '$location' in VFS")
       return null
     }
-    blockingContext {
-      VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
-    }
+    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
 
     RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(location.parent)
 
@@ -223,9 +213,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       TaskCancellation.nonCancellable()
     ) {
       indeterminateStep(EduCoreBundle.message("generate.project.unpack.course.project.settings.progress.text")) {
-        blockingContext {
-          unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
-        }
+        unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)
       }
     }
 
@@ -264,31 +252,32 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     val isNewCourseCreatorCourse = isNewCourseCreatorCourse
 
     withRawProgressReporter {
-      blockingContext {
-        blockingContextToIndicator {
-          if (isNewCourseCreatorCourse) {
-            // `courseBuilder.createInitialLesson` is under blocking context with progress indicator as a temporary solution
-            // to avoid deadlock during C++ course creation.
-            // Otherwise, it may try to run a background process under modal progress during `CMAKE_MINIMUM_REQUIRED_LINE_VALUE` initialization.
-            // See https://youtrack.jetbrains.com/issue/EDU-6702
-            val lesson = courseBuilder.createInitialLesson(holder, initialLessonProducer)
-            if (lesson != null) {
-              course.addLesson(lesson)
-            }
+      // `courseBuilder.createInitialLesson` is under blocking context with progress indicator as a temporary solution
+      // to avoid deadlock during C++ course creation.
+      // Otherwise, it may try to run a background process under modal progress during `CMAKE_MINIMUM_REQUIRED_LINE_VALUE` initialization.
+      // See https://youtrack.jetbrains.com/issue/EDU-6702
+      blockingContextToIndicator {
+        if (isNewCourseCreatorCourse) {
+          // `courseBuilder.createInitialLesson` is under blocking context with progress indicator as a temporary solution
+          // to avoid deadlock during C++ course creation.
+          // Otherwise, it may try to run a background process under modal progress during `CMAKE_MINIMUM_REQUIRED_LINE_VALUE` initialization.
+          // See https://youtrack.jetbrains.com/issue/EDU-6702
+          val lesson = courseBuilder.createInitialLesson(holder, initialLessonProducer)
+          if (lesson != null) {
+            course.addLesson(lesson)
           }
+        }
 
-          try {
-            generateCourseContent(holder, ProgressManager.getInstance().progressIndicator)
-          }
-          catch (e: IOException) {
-            LOG.error("Failed to generate course", e)
-          }
+        try {
+          generateCourseContent(holder, ProgressManager.getInstance().progressIndicator)
+        }
+        catch (e: IOException) {
+          LOG.error("Failed to generate course", e)
         }
       }
     }
   }
 
-  @RequiresBlockingContext
   @Throws(IOException::class)
   private fun generateCourseContent(
     holder: CourseInfoHolder<Course>,

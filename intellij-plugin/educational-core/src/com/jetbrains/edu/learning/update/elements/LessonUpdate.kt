@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.update.elements
 
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.writeAction
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -28,14 +27,10 @@ data class LessonCreationInfo(
 
     val parentDir = localContainer.getDir(project.courseDir) ?: error("Failed to find parent dir: ${localContainer.name}")
     withContext(Dispatchers.IO) {
-      blockingContext {
-        GeneratorUtils.createLesson(project, remoteItem, parentDir)
-      }
+      GeneratorUtils.createLesson(project, remoteItem, parentDir)
     }
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
   }
 }
 
@@ -65,7 +60,7 @@ data class LessonUpdateInfo(
 
       localItem.name = remoteItem.name
       withContext(Dispatchers.IO) {
-        val toDir = blockingContext { GeneratorUtils.createUniqueDir(parentDir, localItem) }
+        val toDir = GeneratorUtils.createUniqueDir(parentDir, localItem)
         writeAction {
           fromDir.children.forEach { it.move(this, toDir) }
           fromDir.delete(this)
@@ -73,9 +68,7 @@ data class LessonUpdateInfo(
       }
     }
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
   }
 
   private suspend fun ensureFrameworkLessonCurrentTaskIsNotDeleted(
@@ -90,9 +83,7 @@ data class LessonUpdateInfo(
 
     // We explicitly navigate to the last non-deleted task to properly update the state of the framework lesson
     withContext(Dispatchers.EDT) {
-      blockingContext {
-        NavigationUtils.prepareFilesForTargetTask(project, lesson, currentTask, lastNonDeletedTask, showDialogIfConflict = false)
-      }
+      NavigationUtils.prepareFilesForTargetTask(project, lesson, currentTask, lastNonDeletedTask, showDialogIfConflict = false)
     }
   }
 }

@@ -3,9 +3,7 @@ package com.jetbrains.edu.rust.learn
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -53,16 +51,13 @@ object RsOpenCourseHelper {
       }
       else {
         withContext(Dispatchers.EDT) {
-          blockingContext {
-            course.createProject(toolchain, projectLocation)
-          }
+          course.createProject(toolchain, projectLocation)
         }
       }
     }
   }
 
   // TODO: unify with `com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.joinCourse`
-  @RequiresBlockingContext
   private fun Course.createProject(toolchain: RsToolchainBase, projectLocation: Path?) {
     val configurator = course.configurator as? RsConfigurator ?: return
     val projectSettings = RsProjectSettings(toolchain)

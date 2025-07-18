@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectCloseListener
 import com.intellij.openapi.startup.StartupActivity
@@ -59,9 +58,7 @@ class MarketplaceStartupActivity : StartupActivity {
         runWithModalProgressBlocking(project, EduCoreBundle.message("save.course.state.progress.title")) {
           val loggedIn = marketplaceConnector.isLoggedIn()
           if (loggedIn) {
-            blockingContext {
-              MarketplaceSubmissionsConnector.getInstance().saveCurrentState(project, course)
-            }
+            MarketplaceSubmissionsConnector.getInstance().saveCurrentState(project, course)
           }
         }
       }

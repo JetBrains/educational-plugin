@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.update.elements
 
 import com.intellij.openapi.application.writeAction
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -25,14 +24,10 @@ data class SectionCreationInfo(
 
     val parentDir = localCourse.getDir(project.courseDir) ?: error("Failed to find parent dir: ${localCourse.name}")
     withContext(Dispatchers.IO) {
-      blockingContext {
-        GeneratorUtils.createSection(project, remoteItem, parentDir)
-      }
+      GeneratorUtils.createSection(project, remoteItem, parentDir)
     }
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
   }
 }
 
@@ -55,16 +50,14 @@ data class SectionUpdateInfo(
 
       localItem.name = remoteItem.name
       withContext(Dispatchers.IO) {
-        val toDir = blockingContext { GeneratorUtils.createUniqueDir(courseDir, localItem) }
+        val toDir = GeneratorUtils.createUniqueDir(courseDir, localItem)
         writeAction {
           fromDir.children.forEach { it.move(this, toDir) }
           fromDir.delete(this)
         }
       }
 
-      blockingContext {
-        YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
-      }
+      YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
     }
 
   }
