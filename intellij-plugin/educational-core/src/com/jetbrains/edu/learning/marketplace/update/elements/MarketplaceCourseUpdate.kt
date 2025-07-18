@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.marketplace.update.elements
 
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.update.elements.CourseUpdate
@@ -15,8 +14,6 @@ class MarketplaceCourseUpdate(
     localItem.marketplaceCourseVersion = remoteItem.marketplaceCourseVersion
     localItem.updateDate = remoteItem.updateDate
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
   }
 }

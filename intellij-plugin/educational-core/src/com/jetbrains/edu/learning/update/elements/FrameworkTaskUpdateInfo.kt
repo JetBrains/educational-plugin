@@ -4,7 +4,6 @@ import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -71,9 +70,7 @@ data class FrameworkTaskUpdateInfo(
       }
     }
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
   }
 
   @Throws(IOException::class, IllegalStateException::class)
@@ -85,9 +82,7 @@ data class FrameworkTaskUpdateInfo(
       localItem.getTaskDirectory(project) ?: error("Failed to find local task dir: ${localLesson.name}")
     }
 
-    blockingContext {
-      GeneratorUtils.createDescriptionFile(project, newTaskDir, remoteItem)
-    }
+    GeneratorUtils.createDescriptionFile(project, newTaskDir, remoteItem)
   }
 
   @Throws(IOException::class, IllegalStateException::class)
@@ -125,8 +120,6 @@ data class FrameworkTaskUpdateInfo(
       }
     }
 
-    blockingContext {
-      GeneratorUtils.createChildFile(project.toCourseInfoHolder(), taskDir, fileName, contents, isEditable)
-    }
+    GeneratorUtils.createChildFile(project.toCourseInfoHolder(), taskDir, fileName, contents, isEditable)
   }
 }

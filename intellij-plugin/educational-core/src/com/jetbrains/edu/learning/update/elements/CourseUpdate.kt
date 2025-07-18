@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.update.elements
 
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -30,10 +29,8 @@ abstract class CourseUpdate<T : Course>(
         }
       }
 
-      blockingContext {
-        remoteItem.additionalFiles.forEach { file ->
-          GeneratorUtils.createChildFile(project, baseDir, file.name, file.contents)
-        }
+      remoteItem.additionalFiles.forEach { file ->
+        GeneratorUtils.createChildFile(project, baseDir, file.name, file.contents)
       }
 
       localItem.additionalFiles = remoteItem.additionalFiles

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.update.elements
 
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.update.elements.CourseUpdate
@@ -25,8 +24,6 @@ class HyperskillCourseUpdate(
     localItem.updateDate = Date()
     localItem.environment = remoteItem.environment
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
   }
 }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.update.elements
 
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduCourseUpdater
 import com.jetbrains.edu.learning.courseDir
@@ -23,14 +22,10 @@ data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Ta
 
     val lessonDir = localLesson.getDir(project.courseDir) ?: error("Failed to find lesson dir: ${localLesson.name}")
     withContext(Dispatchers.IO) {
-      blockingContext {
-        GeneratorUtils.createTask(project, remoteItem, lessonDir)
-      }
+      GeneratorUtils.createTask(project, remoteItem, lessonDir)
     }
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
   }
 }
 
@@ -51,15 +46,11 @@ data class TaskUpdateInfo(override val localItem: Task, override val remoteItem:
     }
     val lessonDir = lesson.getDir(project.courseDir) ?: error("Lesson dir wasn't found")
     withContext(Dispatchers.IO) {
-      blockingContext {
-        EduCourseUpdater.createTaskDirectories(project, lessonDir, remoteItem)
-      }
+      EduCourseUpdater.createTaskDirectories(project, lessonDir, remoteItem)
     }
     lesson.addItem(remoteItem)
 
-    blockingContext {
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
-    }
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
   }
 }
 

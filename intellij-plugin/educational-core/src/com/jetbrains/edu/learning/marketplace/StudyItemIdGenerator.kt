@@ -6,9 +6,7 @@ import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.openapi.project.Project
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
@@ -30,7 +28,6 @@ class StudyItemIdGenerator(private val project: Project) {
   /**
    * Generates ids for all study items in given [course] if they are not assigned yet (i.e. [StudyItem.id] equals 0)
    */
-  @RequiresBlockingContext
   @Throws(RemoteYamlLoadingException::class)
   fun generateIdsIfNeeded(course: Course) {
     // Load `*-remote-info.yaml` files for each item to have up-to-date ids
@@ -76,11 +73,9 @@ class StudyItemIdGenerator(private val project: Project) {
     // Avoid generating ids which already exist in the remote version to avoid unexpected behavior during course update
     val bannedIds = duplicateIds.keys + remoteCourse?.allItems.orEmpty().map { it.id }
     // TODO: convert other blocking parts into suspend function and drop `blockingContext`
-    blockingContext {
-      generateMissingIds(course, items = itemsToFix, bannedIds = bannedIds)
-      // Dump info about new ids to `*-remote-info.yaml` files
-      YamlFormatSynchronizer.saveRemoteInfo(course)
-    }
+    generateMissingIds(course, items = itemsToFix, bannedIds = bannedIds)
+    // Dump info about new ids to `*-remote-info.yaml` files
+    YamlFormatSynchronizer.saveRemoteInfo(course)
 
     return itemsToFix
   }
@@ -140,7 +135,6 @@ class StudyItemIdGenerator(private val project: Project) {
    * [bannedIds] cannot be used as new ids even if there isn't any study item with such ids.
    * They are supposed to be used when we need to regenerate ids for some items, and we don't want to use old values
    */
-  @RequiresBlockingContext
   private fun generateMissingIds(
     course: Course,
     items: List<StudyItem> = course.allItems,

@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
@@ -61,7 +60,6 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
    * Allows to update project modules and the whole project structure
    */
   @RequiresEdt
-  @RequiresBlockingContext
   fun refreshProject(project: Project, cause: RefreshCause) {}
 
   fun createInitialLesson(holder: CourseInfoHolder<Course>, lessonProducer: () -> Lesson): Lesson? {

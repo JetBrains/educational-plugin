@@ -23,7 +23,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.getOrLogException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.progress.blockingContext
 import com.intellij.platform.diagnostic.telemetry.impl.span
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
@@ -156,9 +155,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
   }
 
   private suspend fun Application.saveAndExit(exitCode: Int) {
-    blockingContext {
-      exit(true, true, false, exitCode)
-    }
+    exit(true, true, false, exitCode)
   }
 
   companion object {

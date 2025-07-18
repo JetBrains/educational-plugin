@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.ui.components.JBLoadingPanel
-import com.intellij.util.concurrency.annotations.RequiresBlockingContext
 import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import com.intellij.util.io.ReadOnlyAttributeUtil
 import com.intellij.util.ui.UIUtil
@@ -353,7 +352,6 @@ fun VirtualFile.removeWithEmptyParents(taskDir: VirtualFile) {
   }
 }
 
-@RequiresBlockingContext
 fun VirtualFile.doWithoutReadOnlyAttribute(action: () -> Unit) {
   val readOnly = runReadAction { !isWritable }
 
