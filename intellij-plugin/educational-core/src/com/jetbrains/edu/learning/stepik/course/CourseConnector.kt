@@ -1,12 +1,15 @@
 package com.jetbrains.edu.learning.stepik.course
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 
 interface CourseConnector {
   fun getCourseIdFromLink(link: String): Int
 
   fun getCourseInfoByLink(link: String): EduCourse?
+
+  fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo?
 
   fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse?
 

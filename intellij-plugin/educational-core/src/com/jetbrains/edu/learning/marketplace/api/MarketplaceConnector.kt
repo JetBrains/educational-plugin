@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showF
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.network.executeCall
@@ -47,6 +48,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import org.jetbrains.annotations.VisibleForTesting
 import retrofit2.Call
 import retrofit2.Response
 import java.io.File
@@ -140,7 +142,13 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     }
   }
 
-  fun getLatestCourseUpdateInfo(courseId: Int): UpdateInfo? {
+  override fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo? {
+    val updateInfo = getMarketplaceCourseUpdateInfo(courseId) ?: return null
+    return CourseUpdateInfo(updateInfo.version, updateInfo.compatibility.gte)
+  }
+
+  @VisibleForTesting
+  fun getMarketplaceCourseUpdateInfo(courseId: Int): UpdateInfo? {
     val updateInfoList = getUpdateInfoList(listOf(courseId))
     if (updateInfoList == null) {
       error("Update info list for course $courseId is null")
@@ -165,7 +173,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
   override fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {
     val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
-    val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
+    val updateInfo = getMarketplaceCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
 
     val link = "$repositoryUrl/plugin/download?updateId=${updateInfo.updateId}&uuid=$uuid&build=$buildNumber&source=$downloadContext"
     val filePrefix = FileUtil.sanitizeFileName("marketplace-${courseId}")

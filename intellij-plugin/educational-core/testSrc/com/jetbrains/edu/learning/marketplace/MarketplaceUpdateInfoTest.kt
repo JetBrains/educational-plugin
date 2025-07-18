@@ -19,7 +19,7 @@ class MarketplaceUpdateInfoTest : EduTestCase() {
   @Test
   fun `test course updateInfo loaded`() {
     configureResponse("updateInfo.json")
-    val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(1)
+    val updateInfo = MarketplaceConnector.getInstance().getMarketplaceCourseUpdateInfo(1)
     checkNotNull(updateInfo)
     assertEquals(102996, updateInfo.updateId)
     assertEquals(1, updateInfo.pluginId)

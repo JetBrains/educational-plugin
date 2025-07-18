@@ -52,7 +52,7 @@ class UpdateCourseNotificationProvider : EditorNotificationProvider, DumbAware {
   private fun updateCourse(project: Project, course: EduCourse) {
     if (!course.isMarketplace) return
     val updateInfo = course.getUpdateInfo() ?: return
-    if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.compatibility.gte)) return
-    MarketplaceCourseUpdater(project, course, updateInfo.version).updateCourse()
+    if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.formatVersion)) return
+    MarketplaceCourseUpdater(project, course, updateInfo.courseVersion).updateCourse()
   }
 }

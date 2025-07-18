@@ -45,10 +45,10 @@ fun getJBAUserInfo(): JBAccountUserInfo? {
 
 private fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
 
-fun Course.setRemoteMarketplaceCourseVersion() {
-  val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(id)
+fun EduCourse.setRemoteMarketplaceCourseVersion() {
+  val updateInfo = getCourseConnector(this).getLatestCourseUpdateInfo(id)
   if (updateInfo != null) {
-    incrementMarketplaceCourseVersion(updateInfo.version)
+    incrementMarketplaceCourseVersion(updateInfo.courseVersion)
   }
   else {
     incrementMarketplaceCourseVersion(marketplaceCourseVersion)
@@ -80,10 +80,10 @@ fun EduCourse.checkForUpdates(project: Project, updateForced: Boolean, onFinish:
 
   ApplicationManager.getApplication().executeOnPooledThread {
     val latestUpdateInfo = getUpdateInfo() ?: return@executeOnPooledThread
-    val remoteCourseVersion = latestUpdateInfo.version
+    val remoteCourseVersion = latestUpdateInfo.courseVersion
     project.invokeLater {
       if (remoteCourseVersion > marketplaceCourseVersion) {
-        if (!isRemoteUpdateFormatVersionCompatible(project, latestUpdateInfo.compatibility.gte)) return@invokeLater
+        if (!isRemoteUpdateFormatVersionCompatible(project, latestUpdateInfo.formatVersion)) return@invokeLater
         isUpToDate = false
         if (updateForced) {
           doUpdateInBackground(remoteCourseVersion)
