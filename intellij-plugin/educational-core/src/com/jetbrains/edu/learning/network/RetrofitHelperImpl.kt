@@ -5,7 +5,11 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
-import com.intellij.util.net.HttpConfigurable
+import com.intellij.util.net.JdkProxyCustomizer
+import com.intellij.util.net.ProxyCredentialStore
+import com.intellij.util.net.ProxySettings
+import com.intellij.util.net.asProxyCredentialProvider
+import com.intellij.util.net.getStaticProxyCredentials
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduFormatBundle
@@ -74,8 +78,7 @@ class RetrofitHelperImpl : RetrofitHelper {
   }
 
   private fun OkHttpClient.Builder.addProxy(baseUrl: String): OkHttpClient.Builder {
-    val proxyConfigurable = HttpConfigurable.getInstance()
-    val proxies = proxyConfigurable.onlyBySettingsSelector.select(URI.create(baseUrl))
+    val proxies = JdkProxyCustomizer.getInstance().originalProxySelector.select(URI.create(baseUrl))
     val address = proxies.firstOrNull()?.address() as? InetSocketAddress
     if (address != null) {
       proxy(Proxy(Proxy.Type.HTTP, address))
@@ -106,18 +109,15 @@ class RetrofitHelperImpl : RetrofitHelper {
 
   private val proxyAuthenticator: Authenticator
     get() = Authenticator { _, response ->
-      val proxyConfigurable = HttpConfigurable.getInstance()
-      if (proxyConfigurable.PROXY_AUTHENTICATION && proxyConfigurable.proxyLogin != null) {
-        val login = proxyConfigurable.proxyLogin ?: return@Authenticator null
-        val password = proxyConfigurable.plainProxyPassword ?: return@Authenticator null
+      val provider = ProxyCredentialStore.getInstance().asProxyCredentialProvider()
+      val ideProxyCredentials = ProxySettings.getInstance().getStaticProxyCredentials(provider) ?: return@Authenticator null
+      val login = ideProxyCredentials.userName ?: return@Authenticator null
+      val password = ideProxyCredentials.getPasswordAsString() ?: return@Authenticator null
 
-        val credentials = Credentials.basic(login, password)
-        return@Authenticator response.request.newBuilder()
-          .header("Proxy-Authorization", credentials)
-          .build()
-      }
-
-      null
+      val credentials = Credentials.basic(login, password)
+      response.request.newBuilder()
+        .header("Proxy-Authorization", credentials)
+        .build()
     }
 
   private fun log(title: String, message: String?, optional: Boolean) {
