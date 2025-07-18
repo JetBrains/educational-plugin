@@ -134,12 +134,6 @@ fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Re
   }
 }
 
-fun <T> Response<T>.checkStatusCode(): Response<T>? {
-  if (isSuccessful) return this
-  LOG.severe("Response is returned with ${this.code()} status code")
-  return null
-}
-
 fun File.toMultipartBody(): MultipartBody.Part {
   val body = asRequestBody("application/octet-stream".toMediaTypeOrNull())
   return MultipartBody.Part.createFormData("file", this.name, body)

@@ -25,7 +25,6 @@ import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
-import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.showUpdateNotification
 import java.util.*
 
@@ -131,5 +130,3 @@ fun markMarketplaceTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
 fun Project.isMarketplaceCourse(): Boolean = course?.isMarketplace == true
 
 fun Project.isMarketplaceStudentCourse(): Boolean = isMarketplaceCourse() && isStudentProject()
-
-fun SolutionSharingPreference?.toBoolean(): Boolean = this == SolutionSharingPreference.ALWAYS

@@ -11,7 +11,6 @@ object PluginInfos {
 
   val ANDROID: PluginInfo = PluginInfo("org.jetbrains.android", "Android")
 
-  val PYTHON_PRO: PluginInfo = PluginInfo("Pythonid", "Python")
   val PYTHON_COMMUNITY: PluginInfo = PluginInfo("PythonCore", "Python")
 
   val JAVA_SCRIPT: PluginInfo = PluginInfo("JavaScript", "JavaScript")
