@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -67,7 +68,7 @@ class CCIgnoreFileInSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazy
         .add(CommonDataKeys.PROJECT, project)
         .add(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(file))
         .build()
-      val actionEvent = AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext)
+      val actionEvent = AnActionEvent.createEvent(dataContext, null, ActionPlaces.UNKNOWN, ActionUiKind.NONE, null)
       CCIgnoreFileInSyncChanges().actionPerformed(actionEvent)
     }
   }

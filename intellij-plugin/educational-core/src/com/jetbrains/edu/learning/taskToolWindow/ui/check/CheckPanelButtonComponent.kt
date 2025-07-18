@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.check
 
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -104,12 +105,13 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
 private fun performAnAction(actionEvent: ActionEvent, component: JComponent, action: AnAction) {
   val dataContext = DataManager.getInstance().getDataContext(component)
   val event = AnActionEvent(
-    null,
     dataContext,
-    CheckPanel.ACTION_PLACE,
     PresentationFactory().getPresentation(action),
-    ActionManager.getInstance(),
-    actionEvent.modifiers
+    CheckPanel.ACTION_PLACE,
+    ActionUiKind.NONE,
+    null,
+    actionEvent.modifiers,
+    ActionManager.getInstance()
   )
 
   ActionUtil.performActionDumbAwareWithCallbacks(action, event)

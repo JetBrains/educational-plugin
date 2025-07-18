@@ -7,7 +7,9 @@ import com.intellij.ide.plugins.PluginStateManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
@@ -27,11 +29,11 @@ import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
 class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : HyperlinkListener {
-  override fun hyperlinkUpdate(e: HyperlinkEvent?) {
-    if (e?.eventType != HyperlinkEvent.EventType.ACTIVATED) return
+  override fun hyperlinkUpdate(e: HyperlinkEvent) {
+    if (e.eventType != HyperlinkEvent.EventType.ACTIVATED) return
 
-    val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e?.source as? JTextPane) ?: return
-    val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e?.source as? JTextPane)
+    val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e.source as? JTextPane) ?: return
+    val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e.source as? JTextPane)
     val postLoginActions = arrayOf(
       Runnable { coursePanel.hideErrorPanel() },
       Runnable { doValidation(coursePanel) },
@@ -87,13 +89,17 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
       Logger.getInstance(CoursesPanel::class.java).error("$switchUILibraryAction action not found")
       return
     }
-    action.actionPerformed(
-      AnActionEvent.createFromAnAction(
-        action, null,
-        ActionPlaces.UNKNOWN,
-        DataManager.getInstance().getDataContext(coursePanel)
-      )
+
+    val event = AnActionEvent.createEvent(
+      action,
+      DataManager.getInstance().getDataContext(coursePanel),
+      null,
+      ActionPlaces.UNKNOWN,
+      ActionUiKind.NONE,
+      null
     )
+    ActionUtil.performActionDumbAwareWithCallbacks(action, event)
+
     doValidation(coursePanel)
   }
 

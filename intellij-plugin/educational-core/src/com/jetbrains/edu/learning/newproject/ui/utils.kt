@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.newproject.ui
 import com.intellij.ide.DataManager
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType.WARNING
+import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.HyperlinkLabel
@@ -107,11 +109,14 @@ fun createHyperlinkWithContextHelp(actionWrapper: ToolbarActionWrapper): JPanel 
   val action = actionWrapper.action
   val hyperlinkLabel = HyperlinkLabel(actionWrapper.text.get())
   hyperlinkLabel.addHyperlinkListener {
-    val actionEvent = AnActionEvent.createFromAnAction(action,
-                                                       null,
-                                                       BrowseCoursesDialog.ACTION_PLACE,
-                                                       DataManager.getInstance().getDataContext(hyperlinkLabel))
-    action.actionPerformed(actionEvent)
+    val actionEvent = AnActionEvent.createEvent(action,
+      DataManager.getInstance().getDataContext(hyperlinkLabel),
+      null,
+      BrowseCoursesDialog.ACTION_PLACE,
+      ActionUiKind.NONE,
+      null
+    )
+    ActionUtil.performActionDumbAwareWithCallbacks(action, actionEvent)
   }
 
   val hyperlinkPanel = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
