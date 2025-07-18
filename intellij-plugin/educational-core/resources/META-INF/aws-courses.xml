@@ -1,6 +1,9 @@
 <!--suppress PluginXmlValidity -->
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.awsTracks.api.AWSConnector"
+                        serviceImplementation="com.jetbrains.edu.learning.marketplace.awsTracks.api.AWSConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.marketplace.aws.MockAWSConnector"/>
     <experimentalFeature id="edu.course.aws" percentOfUsers="100" internalFeature="true">
       <description>Enables AWS courses support</description>
     </experimentalFeature>

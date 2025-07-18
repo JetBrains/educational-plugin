@@ -1,0 +1,11 @@
+{
+  "courseId": 205101,
+  "updateVersion": 1,
+  "title": "TEST AWS Kotlin Course",
+  "summary": "Example of the course made within the EduAWS collaboration.",
+  "formatVersion": 21,
+  "programmingLanguageId": "kotlin",
+  "programmingLanguageVersion": null,
+  "language": "en",
+  "environment": ""
+}

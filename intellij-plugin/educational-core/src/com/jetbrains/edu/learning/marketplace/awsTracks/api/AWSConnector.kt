@@ -3,15 +3,11 @@ package com.jetbrains.edu.learning.marketplace.awsTracks.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
-import com.jetbrains.edu.learning.marketplace.HUB_API_PATH
-import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAuthConnector
 import com.jetbrains.edu.learning.marketplace.awsTracks.changeHost.AWSTracksServiceHost
@@ -22,8 +18,7 @@ import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 
-@Service(Service.Level.APP)
-class AWSConnector : MarketplaceAuthConnector(), CourseConnector {
+abstract class AWSConnector : MarketplaceAuthConnector(), CourseConnector {
   override var account: MarketplaceAccount?
     get () = MarketplaceSettings.INSTANCE.getMarketplaceAccount()
     set(value) {
@@ -39,9 +34,7 @@ class AWSConnector : MarketplaceAuthConnector(), CourseConnector {
     objectMapper
   }
 
-  override val baseUrl: String = "$HUB_AUTH_URL$HUB_API_PATH"
-
-  private val repositoryUrl: String
+  open val repositoryUrl: String
     get() = AWSTracksServiceHost.getSelectedUrl()
 
   override fun getCurrentUserInfo(): JBAccountUserInfo? {
@@ -102,8 +95,6 @@ class AWSConnector : MarketplaceAuthConnector(), CourseConnector {
   }
 
   companion object {
-    private val LOG = logger<AWSConnector>()
-
     fun getInstance(): AWSConnector = service()
   }
 }
