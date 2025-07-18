@@ -6,6 +6,7 @@
     </experimentalFeature>
   </extensions>
   <actions>
+    <action id="Educational.StartAWSCourse" class="com.jetbrains.edu.learning.marketplace.awsTracks.course.StartAWSCourseAction" internal="true"/>
     <action id="Educational.Student.AWSTracksServiceChangeHost"
             class="com.jetbrains.edu.learning.marketplace.awsTracks.changeHost.AWSTracksServiceChangeHost"
             internal="true"/>
