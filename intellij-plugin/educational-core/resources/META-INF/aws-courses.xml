@@ -1,0 +1,8 @@
+<!--suppress PluginXmlValidity -->
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.course.aws" percentOfUsers="100" internalFeature="true">
+      <description>Enables AWS courses support</description>
+    </experimentalFeature>
+  </extensions>
+</idea-plugin>

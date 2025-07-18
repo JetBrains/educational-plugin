@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 object EduExperimentalFeatures {
+  const val AWS_COURSES = "edu.course.aws"
   const val AI_HINTS = "edu.learning.ai.get.hint"
   const val ERROR_EXPLANATION = "edu.learning.ai.error.explanation"
   const val ANDROID_COURSES = "com.jetbrains.edu.android"
