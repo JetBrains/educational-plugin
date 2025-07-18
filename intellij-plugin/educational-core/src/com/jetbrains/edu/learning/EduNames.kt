@@ -42,7 +42,6 @@ object EduNames {
   const val ENVIRONMENT_CONFIGURATION_LINK_CPP = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_cpp"
   const val ENVIRONMENT_CONFIGURATION_LINK_GO = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_go"
   const val ENVIRONMENT_CONFIGURATION_LINK_PHP = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_php"
-  const val ENVIRONMENT_CONFIGURATION_LINK_ANDROID = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_android"
   const val ENVIRONMENT_CONFIGURATION_LINK_GRADLE = "$TROUBLESHOOTING_GUIDE_URL#environment_configuration_gradle"
 
   // Help links
