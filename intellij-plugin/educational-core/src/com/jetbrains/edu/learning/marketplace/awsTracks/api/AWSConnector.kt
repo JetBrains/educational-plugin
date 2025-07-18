@@ -7,8 +7,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.platform.templates.github.DownloadUtil
-import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
@@ -17,9 +15,9 @@ import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAuthConnector
 import com.jetbrains.edu.learning.marketplace.awsTracks.changeHost.AWSTracksServiceHost
+import com.jetbrains.edu.learning.marketplace.downloadEduCourseFromLink
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
-import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
@@ -73,19 +71,12 @@ class AWSConnector : MarketplaceAuthConnector(), CourseConnector {
 
   override fun loadCourse(
     courseId: Int,
-    @Suppress("unused") // TODO(add download context on server side)
-    downloadContext: DownloadCourseContext
+    downloadContext: DownloadCourseContext // TODO(add download context on server side)
   ): EduCourse {
     val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
     val link = getCourseDownloadLink(courseId, updateInfo.courseVersion)
     val filePrefix = FileUtil.sanitizeFileName("aws-${courseId}")
-    val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
-
-    LOG.debug("Downloading $courseId course via $link")
-    DownloadUtil.downloadAtomically(null, link, tempFile)
-
-    return EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse
-           ?: error(message("dialog.title.failed.to.unpack.course"))
+    return downloadEduCourseFromLink(link, filePrefix, courseId)
   }
 
   private fun getCourseDownloadLink(courseId: Int, updateVersion: Int): String {

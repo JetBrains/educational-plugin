@@ -4,10 +4,14 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.currentClassLogger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
@@ -148,4 +152,11 @@ fun getCourseConnector(course: EduCourse): CourseConnector {
     course.isAwsCourse() && isFeatureEnabled(EduExperimentalFeatures.AWS_COURSES) -> AWSConnector.getInstance()
     else -> MarketplaceConnector.getInstance()
   }
+}
+
+fun downloadEduCourseFromLink(link: String, filePrefix: String, courseId: Int): EduCourse {
+  val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
+  currentClassLogger().debug("Downloading $courseId course via $link")
+  DownloadUtil.downloadAtomically(null, link, tempFile)
+  return EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse ?: error(EduCoreBundle.message("dialog.title.failed.to.unpack.course"))
 }
