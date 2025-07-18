@@ -7,6 +7,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
@@ -14,8 +15,10 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.marketplace.awsTracks.api.AWSConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
@@ -135,10 +138,14 @@ fun Project.isMarketplaceStudentCourse(): Boolean = isMarketplaceCourse() && isS
 
 fun SolutionSharingPreference?.toBoolean(): Boolean = this == SolutionSharingPreference.ALWAYS
 
+private const val AWS_COURSE_ID_LOWER_BOUND = 200_000
+
+// TODO(use {AWS-id} ID as id for AWS courses)
+fun EduCourse.isAwsCourse(): Boolean = id >= AWS_COURSE_ID_LOWER_BOUND
 
 fun getCourseConnector(course: EduCourse): CourseConnector {
   return when {
-    //course.isAwsCourse() && isFeatureEnabled(EduExperimentalFeatures.AWS_COURSES) -> AWSConnector.getInstance()
+    course.isAwsCourse() && isFeatureEnabled(EduExperimentalFeatures.AWS_COURSES) -> AWSConnector.getInstance()
     else -> MarketplaceConnector.getInstance()
   }
 }
