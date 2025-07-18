@@ -111,7 +111,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return courses
   }
 
-  fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
+  override fun searchCourse(courseId: Int, searchPrivate: Boolean): EduCourse? {
     val course = loadCourses(QueryData(GraphqlQuery.searchById(courseId, searchPrivate)))?.courses?.firstOrNull() ?: return null
     course.id = courseId
     return course
@@ -155,14 +155,14 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return response?.body()?.data?.updates?.updateInfoList
   }
 
-  fun loadCourseStructure(course: EduCourse, downloadContext: DownloadCourseContext) {
+  override fun loadCourseStructure(course: EduCourse, downloadContext: DownloadCourseContext) {
     val unpackedCourse = loadCourse(course.id, downloadContext)
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
     course.marketplaceCourseVersion = unpackedCourse.marketplaceCourseVersion
   }
 
-  fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {
+  override fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {
     val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
     val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")
