@@ -10,8 +10,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.api.EduOAuthCodeFlowConnector
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
-import com.jetbrains.edu.learning.authUtils.OAuthUtils
-import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
@@ -73,23 +71,6 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
     return true
   }
 
-  // remove it and use method from the base class when LinkedIn secret removed
-  override fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String): TokenInfo? {
-    val codeVerifierField = mapOf(codeVerifierFieldName to codeVerifier)
-    val response = getEduOAuthEndpoints()
-      .getTokensWithSecret(
-        baseOAuthTokenUrl,
-        clientId,
-        CLIENT_SECRET,
-        redirectUri,
-        code,
-        OAuthUtils.GrantType.AUTHORIZATION_CODE,
-        codeVerifierField
-      )
-      .executeHandlingExceptions()
-    return response?.body()
-  }
-
   private fun getMediaUploadLink(): GetUploadLinkResponse? {
     val getMediaUploadLink = GetMediaUploadLink()
     getMediaUploadLink.registerUploadRequest.owner = "urn:li:person:${account!!.userInfo.id}"
@@ -144,7 +125,6 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
 
   companion object {
     private val CLIENT_ID: String = LinkedInOAuthBundle.value("linkedInClientId")
-    private val CLIENT_SECRET: String = LinkedInOAuthBundle.value("linkedInClientSecret")
     private const val LINKEDIN_API_URL = "https://api.linkedin.com"
     const val LINKEDIN_BASE_WWW_URL = "https://www.linkedin.com"
     const val LINKEDIN = "LinkedIn"
