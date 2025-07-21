@@ -90,8 +90,7 @@ fun configureSecretProperties() {
   )
   secretProperties.extractAndStore(
     "intellij-plugin/educational-core/resources/linkedin/linkedin-oauth.properties",
-    "linkedInClientId",
-    "linkedInClientSecret"
+    "linkedInClientId"
   )
   secretProperties.extractAndStore(
     "edu-format/resources/aes/aes.properties",

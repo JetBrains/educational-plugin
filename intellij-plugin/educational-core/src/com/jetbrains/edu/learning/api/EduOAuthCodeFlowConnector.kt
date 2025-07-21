@@ -36,8 +36,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
 
   private var state: String = generateSafeRandomString()
 
-  // change to private after LinkedIn secret removed
-  protected var codeVerifier: String = generateSafeRandomString()
+  private var codeVerifier: String = generateSafeRandomString()
   private var codeChallenge: String? = null
 
   protected abstract val authorizationUrlBuilder: URIBuilder
@@ -151,8 +150,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     error("Failed to refresh token")
   }
 
-  // remove open when LinkedIn secret removed
-  protected open fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String = "code_verifier"): TokenInfo? {
+  protected fun retrieveLoginToken(code: String, redirectUri: String, codeVerifierFieldName: String = "code_verifier"): TokenInfo? {
     val codeVerifierField = mapOf(codeVerifierFieldName to codeVerifier)
     val response = getEduOAuthEndpoints()
       .getTokens(baseOAuthTokenUrl, clientId, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifierField)
