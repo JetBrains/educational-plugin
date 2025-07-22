@@ -55,7 +55,7 @@ class RsTheoryTaskCheckerTest : RsCheckersTestBase() {
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
                   <option name="command" value="run --package theory-with-custom-run-configuration --bin theory-with-custom-run-configuration" />
-                  <option name="workingDirectory" value="file://${'$'}PROJECT_DIR${'$'}" />
+                  <option name="workingDirectory" value="file://${'$'}PROJECT_DIR$" />
                   <option name="channel" value="DEFAULT" />
                   <option name="requiredFeatures" value="true" />
                   <option name="allFeatures" value="false" />

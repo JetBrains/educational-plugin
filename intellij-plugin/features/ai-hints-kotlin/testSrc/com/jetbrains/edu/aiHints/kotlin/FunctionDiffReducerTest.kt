@@ -53,11 +53,11 @@ class FunctionDiffReducerTest : EduTestCase() {
       $mainFunction
     """.trimIndent()
     val codeHint = """
-      fun greet(name: String, age: String) = "Hello, \${'$'}\{name\}\${'$'}\{age\}!"
+      fun greet(name: String, age: String) = "Hello, \$\{name\}\$\{age\}!"
       $mainFunction
     """.trimIndent()
     val greetFunctionWithNewArgumentAndUnchangedBody = """
-      fun greet(name: String, age: String) = "Hello, \${'$'}\{name\}!"
+      fun greet(name: String, age: String) = "Hello, \$\{name\}!"
     """.trimIndent()
     reduceChangesInCodeHint(codeStr, codeHint, greetFunctionWithNewArgumentAndUnchangedBody, GREET_FUNCTION_NAME)
   }
@@ -636,7 +636,7 @@ class FunctionDiffReducerTest : EduTestCase() {
 
   companion object {
     private val greetFunction = """
-      fun greet(name: String) = "Hello, \${'$'}\{name\}!"
+      fun greet(name: String) = "Hello, \$\{name\}!"
     """.trimIndent()
 
     private val mainFunction = """

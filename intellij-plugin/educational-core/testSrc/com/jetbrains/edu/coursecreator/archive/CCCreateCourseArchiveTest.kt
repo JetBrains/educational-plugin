@@ -653,13 +653,13 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}PROJECT_DIR${'$'}/lesson1/TheoryWithCustomRunConfiguration" />
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}PROJECT_DIR$/lesson1/TheoryWithCustomRunConfiguration" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}PROJECT_DIR${'$'}/lesson1/TheoryWithCustomRunConfiguration/main.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}PROJECT_DIR$/lesson1/TheoryWithCustomRunConfiguration/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />
@@ -681,13 +681,13 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}PROJECT_DIR${'$'}/lesson1/TheoryWithCustomRunConfiguration" />
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}PROJECT_DIR$/lesson1/TheoryWithCustomRunConfiguration" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}PROJECT_DIR${'$'}/lesson1/TheoryWithCustomRunConfiguration/main.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}PROJECT_DIR$/lesson1/TheoryWithCustomRunConfiguration/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />

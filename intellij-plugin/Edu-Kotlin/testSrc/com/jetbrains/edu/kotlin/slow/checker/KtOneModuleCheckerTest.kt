@@ -64,7 +64,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="" />
                   <option name="taskDescriptions">

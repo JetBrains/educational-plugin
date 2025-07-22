@@ -47,7 +47,7 @@ class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -90,7 +90,7 @@ class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -98,7 +98,7 @@ class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
                   </option>
                   <option name="taskNames">
                     <list>
-                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:run" />
+                      <option value=":${'$'}TASK_GRADLE_PROJECT$:run" />
                     </list>
                   </option>
                   <option name="vmOptions" value="" />
@@ -131,7 +131,7 @@ class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -139,7 +139,7 @@ class JTheoryTaskCheckerTest : JdkCheckerTestBase() {
                   </option>
                   <option name="taskNames">
                     <list>
-                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:run" />
+                      <option value=":${'$'}TASK_GRADLE_PROJECT$:run" />
                     </list>
                   </option>
                   <option name="vmOptions" value="" />

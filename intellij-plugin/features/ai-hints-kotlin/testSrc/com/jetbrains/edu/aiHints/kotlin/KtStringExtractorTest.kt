@@ -20,7 +20,7 @@ class KtStringExtractorTest : EduTestCase() {
             "task.kt", """
             const val stringTemplate = "string"
 
-            fun greet(name: String) = "Hello, \${'$'}\{name\}!"
+            fun greet(name: String) = "Hello, $\{name\}!"
 
             fun main() {
                 val a = "AA"
@@ -46,7 +46,7 @@ class KtStringExtractorTest : EduTestCase() {
         "kotlin/String",
         null,
         null,
-      ) to listOf(""""Hello, \${'$'}\{name\}!""""),
+      ) to listOf(""""Hello, \$\{name\}!""""),
       FunctionSignature(
         "main",
         listOf(),

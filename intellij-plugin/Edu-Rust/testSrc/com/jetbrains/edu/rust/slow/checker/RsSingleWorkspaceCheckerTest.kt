@@ -119,7 +119,7 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomCheckOk" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
                 <option name="command" value="test --package edu_with_custom_run_configuration_ok --test tests test -- --exact" />
-                <option name="workingDirectory" value="file://${'$'}PROJECT_DIR${'$'}" />
+                <option name="workingDirectory" value="file://${'$'}PROJECT_DIR$" />
                 <option name="channel" value="DEFAULT" />
                 <option name="requiredFeatures" value="true" />
                 <option name="allFeatures" value="false" />
@@ -168,7 +168,7 @@ class RsSingleWorkspaceCheckerTest : RsCheckersTestBase() {
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomCheckErr" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
                 <option name="command" value="test --package edu_with_custom_run_configuration_err --test tests test -- --exact" />
-                <option name="workingDirectory" value="file://${'$'}PROJECT_DIR${'$'}" />
+                <option name="workingDirectory" value="file://${'$'}PROJECT_DIR$" />
                 <option name="channel" value="DEFAULT" />
                 <option name="requiredFeatures" value="true" />
                 <option name="allFeatures" value="false" />

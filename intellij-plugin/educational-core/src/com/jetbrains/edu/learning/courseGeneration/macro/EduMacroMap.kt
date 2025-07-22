@@ -11,8 +11,8 @@ class EduMacroMap(private val mode: SubstitutionMode, private val macros: List<E
     var result: CharSequence = text
     for (macro in macros) {
       result = when (mode) {
-        SubstitutionMode.COLLAPSE -> replace(result, macro.substitution, "\$${macro.name}\$", caseSensitive)
-        SubstitutionMode.EXPAND -> replace(result, "\$${macro.name}\$", macro.substitution, caseSensitive)
+        SubstitutionMode.COLLAPSE -> replace(result, macro.substitution, "$${macro.name}$", caseSensitive)
+        SubstitutionMode.EXPAND -> replace(result, "$${macro.name}$", macro.substitution, caseSensitive)
       }
     }
     return result.toString()
