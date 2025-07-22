@@ -89,13 +89,13 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
   // TODO TIME/TIMER RELATED tests (EDU-4845)
 
   companion object {
-    private val DATA_TASK_1: String = "Data Task 1"
-    private val DATA_TASK_2: String = "Data Task 2"
+    private const val DATA_TASK_1: String = "Data Task 1"
+    private const val DATA_TASK_2: String = "Data Task 2"
 
-    private val ATTEMPT_ID_OF_SUCCEED_SUBMISSION: Int = 101
-    private val ATTEMPT_ID_OF_FAILED_SUBMISSION: Int = 102
+    private const val ATTEMPT_ID_OF_SUCCEED_SUBMISSION: Int = 101
+    private const val ATTEMPT_ID_OF_FAILED_SUBMISSION: Int = 102
 
-    private val SUBMISSION_ID: Int = 100
+    private const val SUBMISSION_ID: Int = 100
 
     @Language("JSON")
     private val submissionWithEvaluationStatus = """

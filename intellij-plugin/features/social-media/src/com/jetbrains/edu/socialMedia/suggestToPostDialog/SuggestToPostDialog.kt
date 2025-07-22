@@ -66,12 +66,12 @@ class SuggestToPostDialog(
     initValidation()
     init()
 
-    myCheckBoxDoNotShowDialog.addItemListener {
-      if (it.getStateChange() == ItemEvent.DESELECTED) {
+    myCheckBoxDoNotShowDialog.addItemListener { e ->
+      if (e.getStateChange() == ItemEvent.DESELECTED) {
         checkBoxes.forEach { it.value.isEnabled = true }
         isOKActionEnabled = checkBoxes.values.any { it.isSelected }
       }
-      if (it.getStateChange() == ItemEvent.SELECTED) {
+      if (e.getStateChange() == ItemEvent.SELECTED) {
         checkBoxes.forEach { it.value.isEnabled = false }
         isOKActionEnabled = false
       }

@@ -69,6 +69,7 @@ abstract class TaskDescriptionLink<T, R : T?>(
       return null
     }
 
+    @Suppress("HttpUrlsUsage")
     private val LINK_MAP = mapOf(
       "http://" to ::HttpLink,
       "https://" to ::HttpLink,

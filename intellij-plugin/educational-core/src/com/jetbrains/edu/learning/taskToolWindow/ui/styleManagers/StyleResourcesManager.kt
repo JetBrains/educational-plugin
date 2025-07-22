@@ -120,7 +120,7 @@ object StyleResourcesManager {
     "tables_style" to StyleManager().tablesStylesheet(),
     "hints_style" to StyleManager().hintsStylesheet(),
     "content" to content,
-    "mathJax" to "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+    "mathJax" to "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
     resourcePair("hyperskill_task", HYPERSKILL_TASK_CSS),
     resourcePair("scrollbar_style_laf", scrollbarLafSpecific),
     resourcePair("scrollbar_style_base", SCROLL_BARS_BASE),
