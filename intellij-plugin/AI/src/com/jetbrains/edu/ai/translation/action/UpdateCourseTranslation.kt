@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
-@Suppress("ComponentNotRegistered")
 class UpdateCourseTranslation : AITranslationActionBase() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

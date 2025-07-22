@@ -29,7 +29,6 @@ class ScalaSbtEduTaskChecker(
     }
   }
 
-  @Suppress("UnstableApiUsage")
   private fun createConfiguration(testDirectory: PsiDirectory): RunnerAndConfigurationSettings {
     val settings = RunManager.getInstance(project).createConfiguration("Scala tests", ScalaTestConfigurationType().confFactory())
     val configuration = settings.configuration as ScalaTestRunConfiguration

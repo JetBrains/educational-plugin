@@ -54,7 +54,6 @@ class EducationalCoreIconsTest(
       .pluginDescriptor
       .pluginClassLoader
 
-    @Suppress("SSBasedInspection")
     val mappings = runBlocking { project.service<IconMapLoader>().doLoadIconMapping() }[pluginClassLoader]
                    ?: error("Unexpected amount of icon class loaders")
     return mappings

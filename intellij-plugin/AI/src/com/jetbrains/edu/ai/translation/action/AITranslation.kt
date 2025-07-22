@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 
-@Suppress("ComponentNotRegistered")
 class AITranslation : AITranslationActionBase() {
   private val tooltip: GotItTooltip = createTooltip()
 

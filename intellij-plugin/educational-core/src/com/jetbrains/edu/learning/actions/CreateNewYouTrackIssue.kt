@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.pluginVersion
 
-@Suppress("ComponentNotRegistered")
 class CreateNewYouTrackIssue : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {

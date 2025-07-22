@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.agreement.UserAgreementManager
 
-@Suppress("ComponentNotRegistered")
 class ShowUserAgreementDialog : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = e.project != null

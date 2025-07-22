@@ -16,7 +16,7 @@ import javax.swing.Action
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
+class CCNewCourseDialog(
   @DialogTitle title: String,
   @Button okButtonText: String,
   course: Course? = null,

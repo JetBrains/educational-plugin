@@ -30,7 +30,6 @@ class CCNewCourseAction(
 
   override fun getHelpRelativePath(): String = "education/educator-start-guide.html"
 
-  @Suppress("UnstableApiUsage")
   @NlsContexts.Tooltip
   override fun getTooltipText(): String {
     return EduCoreBundle.message("course.dialog.create.course.help.tooltip")

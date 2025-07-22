@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.educational.ml.hints.hint.TextHint
 
-@Suppress("ComponentNotRegistered")
 class ShowTextHintExample : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = e.project?.isEduProject() == true

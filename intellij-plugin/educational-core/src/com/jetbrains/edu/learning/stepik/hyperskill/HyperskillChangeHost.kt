@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
-@Suppress("ComponentNotRegistered")
 class HyperskillChangeHost : DumbAwareAction(EduCoreBundle.message("hyperskill.change.host.action.name")), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val initialValue = PropertiesComponent.getInstance().getValue(HYPERSKILL_URL_PROPERTY, HYPERSKILL_DEFAULT_URL)

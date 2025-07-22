@@ -180,6 +180,17 @@ tasks {
       }
     }
 
+    runIde.register("openCourse") {
+      task {
+        args("openCourse", "--marketplace", "16630", "--course-params", "{\"entry_point\": \"123\"}")
+        jvmArgs("-Dproject.python.interpreter=/Library/Frameworks/Python.framework/Versions/3.12/bin/python3")
+      }
+      plugins {
+        val type = baseVersion.toTypeWithVersion().type
+        plugins(idePlugins(type))
+      }
+    }
+
     runIde.register("runInSplitMode") {
       splitMode = true
 

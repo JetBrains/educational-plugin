@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 
 abstract class OpenInIdeRequestHandler<in T : OpenInIdeRequest> {
-  @Suppress("UnstableApiUsage")
   @get:DialogTitle
   abstract val courseLoadingProcessTitle: String
 

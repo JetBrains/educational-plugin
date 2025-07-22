@@ -65,6 +65,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     UPLOAD, UPDATE
   }
 
+  @Suppress("unused") // enum values are not mentioned explicitly
   enum class SynchronizeCoursePlace {
     WIDGET, PROJECT_GENERATION, PROJECT_REOPEN
   }

@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 
-@Suppress("ComponentNotRegistered")
 class ResetUserAgreementSettings : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     UserAgreementSettings.getInstance().resetUserAgreementSettings()

@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.updateEnvironmentSettings
 
-@Suppress("ComponentNotRegistered")  // educational-core.xml
 class CCCreateCoursePreview : ActionWithButtonCustomComponent(), DumbAware {
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT

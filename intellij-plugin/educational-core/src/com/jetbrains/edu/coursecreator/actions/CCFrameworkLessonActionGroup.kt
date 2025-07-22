@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.DumbAware
 import com.jetbrains.edu.coursecreator.CCUtils
 
-@Suppress("ComponentNotRegistered") // educational-core.xml
 class CCFrameworkLessonActionGroup : DefaultActionGroup(), DumbAware {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
