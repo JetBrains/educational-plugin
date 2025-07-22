@@ -62,7 +62,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       jdk = jdkComboBox.selectedItem?.jdk
       notifyListeners()
     }
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
+    return listOf(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
   }
 
   private fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {

@@ -89,7 +89,7 @@ class PhpLanguageSettings : LanguageSettings<PhpProjectSettings>() {
     course: Course,
     disposable: CheckedDisposable,
     context: UserDataHolder?
-  ): List<LabeledComponent<JComponent>> = listOf<LabeledComponent<JComponent>>(
+  ): List<LabeledComponent<JComponent>> = listOf(
     LabeledComponent.create(composerPhpInterpretersCombo, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST))
 
 

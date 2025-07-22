@@ -48,7 +48,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
       notifyListeners()
     }
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(langStandardComboBox, CPP_STANDARD_PREFIX, BorderLayout.WEST))
+    return listOf(LabeledComponent.create(langStandardComboBox, CPP_STANDARD_PREFIX, BorderLayout.WEST))
   }
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {

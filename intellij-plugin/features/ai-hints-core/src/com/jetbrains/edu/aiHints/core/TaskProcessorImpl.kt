@@ -279,7 +279,7 @@ private class TaskProcessorImpl(val task: Task) : TaskProcessor {
     ProgressManager.getInstance().executeProcessUnderProgress(
       {
         problems.addAll(
-          runReadAction<List<ProblemDescriptor>> {
+          runReadAction {
             inspection.processFile(this, inspectionManager)
           })
       },
