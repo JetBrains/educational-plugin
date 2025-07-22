@@ -2,13 +2,18 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 
 import com.intellij.ide.plugins.newui.ColorButton
-import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.asContextElement
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBColor
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -24,6 +29,10 @@ import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.awt.Color
 import java.awt.event.ActionListener
 
@@ -40,25 +49,23 @@ private val FocusedBackground: Color = JBColor.namedColor("SelectCourse.Button.f
 private val BorderColor: Color = JBColor.namedColor("SelectCourse.Button.border", GreenColor)
 
 class OpenCourseButton(private val openCourseMetadata: () -> Map<String, String>) : CourseButtonBase() {
-
   override fun actionListener(course: Course): ActionListener = ActionListener {
-    invokeLater {
+    val scope = service<CourseButtonScopeProviderService>().coroutineScope
+    scope.launch(Dispatchers.EDT + ModalityState.stateForComponent(this).asContextElement()) {
       val coursesStorage = CoursesStorage.getInstance()
-      val coursePath = coursesStorage.getCoursePath(course) ?: return@invokeLater
+      val coursePath = coursesStorage.getCoursePath(course) ?: return@launch
       if (!FileUtil.exists(coursePath)) {
         processMissingCourseOpening(course, coursePath)
-        return@invokeLater
+        return@launch
       }
-
       closeDialog()
       course.openCourse(openCourseMetadata())
     }
   }
 
-  private fun processMissingCourseOpening(course: Course, coursePath: String) {
-    val message = EduCoreBundle.message("course.dialog.course.not.found.reopen.button")
-
-    if (showNoCourseDialog(coursePath, message) == Messages.NO) {
+  @RequiresEdt
+  private suspend fun processMissingCourseOpening(course: Course, coursePath: String) {
+    if (showNoCourseDialog(coursePath, EduCoreBundle.message("course.dialog.course.not.found.reopen.button")) == Messages.NO) {
       CoursesStorage.getInstance().removeCourseByLocation(coursePath)
       when (course) {
         is HyperskillCourse -> {
@@ -73,12 +80,14 @@ class OpenCourseButton(private val openCourseMetadata: () -> Map<String, String>
         else -> {
           closeDialog()
           // if course is present both on stepik and marketplace we open marketplace-based one
-          val marketplaceId = MarketplaceListedCoursesIdsLoader.getMarketplaceIdByStepikId(course.id)
-          val courseToOpen = if (marketplaceId != null) {
-            MarketplaceConnector.getInstance().searchCourse(marketplaceId, course.isMarketplacePrivate) ?: course
-          }
-          else {
-            course
+          val courseToOpen = withContext(Dispatchers.Default) {
+            val marketplaceId = MarketplaceListedCoursesIdsLoader.getMarketplaceIdByStepikId(course.id)
+            if (marketplaceId != null) {
+              MarketplaceConnector.getInstance().searchCourse(marketplaceId, course.isMarketplacePrivate) ?: course
+            }
+            else {
+              course
+            }
           }
           JoinCourseDialog(courseToOpen).show()
         }
@@ -145,3 +154,6 @@ abstract class CourseButtonBase(fill: Boolean = false) : ColorButton() {
     }
   }
 }
+
+@Service(Service.Level.APP)
+private class CourseButtonScopeProviderService(val coroutineScope: CoroutineScope)
