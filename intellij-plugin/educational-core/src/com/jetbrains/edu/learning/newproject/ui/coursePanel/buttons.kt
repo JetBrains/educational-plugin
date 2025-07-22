@@ -107,11 +107,7 @@ class StartCourseButton(
   }
 
   override fun isVisible(course: Course): Boolean {
-    if (!course.isPreview && CoursesStorage.getInstance().hasCourse(course)) {
-      return false
-    }
-
-    return true
+    return course.isPreview && CoursesStorage.getInstance().hasCourse(course)
   }
 }
 

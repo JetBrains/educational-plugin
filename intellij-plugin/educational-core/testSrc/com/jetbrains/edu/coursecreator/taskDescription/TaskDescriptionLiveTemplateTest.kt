@@ -63,7 +63,7 @@ class TaskDescriptionLiveTemplateTest : EduTestCase() {
     courseWithFiles(courseMode = courseMode) {
       lesson("lesson") {
         eduTask("task", taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("taskFile.html",)
+          taskFile("taskFile.html")
         }
       }
     }

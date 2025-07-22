@@ -210,7 +210,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
         def srcList = []
         def testList = []
         rootProject.projectDir.eachDirRecurse {
-            if (!isTaskDir(it) || it.path.contains(".idea") || "util".equals(it.path)) {
+            if (!isTaskDir(it) || it.path.contains(".idea") || "util" == it.path) {
                 return
             }
             def srcDir = new File(it, "src")
