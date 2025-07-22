@@ -19,6 +19,9 @@ abstract class HyperskillActionTestBase : EduActionTestCase() {
     try {
       logOutFakeHyperskillUser()
     }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
     finally {
       super.tearDown()
     }

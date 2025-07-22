@@ -87,11 +87,12 @@ class CourseIgnoreAssociationsTest : CourseGenerationTestBase<EduProjectSettings
 
   override fun tearDown() {
     try {
-      // Make sure file associations are the same as they were before the tests
-      // It is enough to assign back only the ".courseignore" file, because we don't touch associations for other files
       runWriteAction {
         FileTypeManager.getInstance().associate(CourseIgnoreFileType, ExactFileNameMatcher(COURSE_IGNORE))
       }
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
     }
     finally {
       super.tearDown()
