@@ -36,7 +36,7 @@ class NavigationMapToolbar(private val defaultActionGroup: DefaultActionGroup = 
     border = JBEmptyBorder(8, -4, 20, 8)
     layoutStrategy = ToolbarLayoutStrategy.NOWRAP_STRATEGY
     setCustomButtonLook(MyActionButtonLook())
-    setMinimumButtonSize(Dimension(28, 28))
+    minimumButtonSize = Dimension(28, 28)
     setActionButtonBorder(4, 0)
     defaultActionGroup.isSearchable = false
   }
@@ -56,7 +56,7 @@ class NavigationMapToolbar(private val defaultActionGroup: DefaultActionGroup = 
       val action = (component as ActionButton).action
       if (action is NavigationMapAction) {
 
-        val rect = Rectangle(component.getSize())
+        val rect = Rectangle(component.size)
         JBInsets.removeFrom(rect, component.getInsets())
 
         val isSelected = action.isSelected

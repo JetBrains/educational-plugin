@@ -24,6 +24,7 @@ class AuthorsPanel : JBScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER,
     val allAuthors = course.authorFullNames.joinToString()
     isVisible = courseDisplaySettings.showInstructorField && allAuthors.isNotEmpty()
     if (authorsLabel.isVisible) {
+      @Suppress("UsePropertyAccessSyntax")
       authorsLabel.setBody(allAuthors)
     }
   }

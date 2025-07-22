@@ -33,7 +33,7 @@ class JsLanguageSettings : LanguageSettings<JsNewProjectSettings>() {
       jsSettings.selectedInterpreter = interpreter
       notifyListeners()
     }
-    interpreterField.setInterpreterRef(NodeJsInterpreterManager.getInstance(defaultProject).interpreterRef)
+    interpreterField.interpreterRef = NodeJsInterpreterManager.getInstance(defaultProject).interpreterRef
   }
 
   override fun getLanguageSettingsComponents(

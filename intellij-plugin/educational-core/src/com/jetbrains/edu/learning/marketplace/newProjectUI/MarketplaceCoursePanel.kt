@@ -64,6 +64,7 @@ class MarketplaceCoursePanel(
       }
       isVisible = true
       val text = EduCoreBundle.message("marketplace.course.selection.legal.note", authors, license, PLUGIN_MARKETPLACE_AGREEMENT)
+      @Suppress("UsePropertyAccessSyntax")
       textPanel.setBody(text)
     }
 

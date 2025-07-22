@@ -68,11 +68,11 @@ class EduDocumentListener private constructor(
       return
     }
 
-    val offset = e.getOffset()
-    val change = e.getNewLength() - e.getOldLength()
+    val offset = e.offset
+    val change = e.newLength - e.oldLength
 
-    val fragment = e.getNewFragment()
-    val oldFragment = e.getOldFragment()
+    val fragment = e.newFragment
+    val oldFragment = e.oldFragment
 
     for (placeholder in taskFile.answerPlaceholders) {
       var placeholderStart = placeholder.offset
