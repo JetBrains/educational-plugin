@@ -24,7 +24,7 @@ fun createKotlinCourse() = course(language = KotlinLanguage.INSTANCE) {
     eduTask {
       kotlinTaskFile(
         "src/main/kotlin/Main.kt", """
-          fun greet(name: String) = "Hello, \${'$'}\{name\}!"
+          fun greet(name: String) = "Hello, $\{name\}!"
           fun main() {
               println("Hello!")
           }
@@ -35,7 +35,7 @@ fun createKotlinCourse() = course(language = KotlinLanguage.INSTANCE) {
       kotlinTaskFile(
         "src/main/kotlin/Main.kt", """
           val stringTemplate = "string"
-          fun greet(name: String) = "Hello, \$\{name\}!"
+          fun greet(name: String) = "Hello, $\{name\}!"
           fun main() {
               val a = "AA"
               val b = stringTemplate

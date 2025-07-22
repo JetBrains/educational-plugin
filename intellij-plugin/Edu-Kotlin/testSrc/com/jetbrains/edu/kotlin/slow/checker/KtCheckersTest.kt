@@ -101,7 +101,7 @@ class KtCheckersTest : JdkCheckerTestBase() {
                     </map>
                   </option>                
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="" />
                   <option name="taskDescriptions">
@@ -109,7 +109,7 @@ class KtCheckersTest : JdkCheckerTestBase() {
                   </option>
                   <option name="taskNames">
                     <list>
-                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:test" />
+                      <option value=":${'$'}TASK_GRADLE_PROJECT$:test" />
                       <option value="--tests" />
                       <option value="&quot;Tests.test&quot;" />
                     </list>

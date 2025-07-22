@@ -42,13 +42,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR$/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />
@@ -82,13 +82,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory1!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR$/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />
@@ -120,13 +120,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory2!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR$/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />
