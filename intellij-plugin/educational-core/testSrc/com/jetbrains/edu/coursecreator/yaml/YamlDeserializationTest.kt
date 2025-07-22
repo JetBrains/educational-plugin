@@ -135,7 +135,7 @@ class YamlDeserializationTest : YamlTestCase() {
     val firstLesson = "the first lesson"
     val secondLesson = "the second lesson"
     val yamlContent = """
-      |type: ${HYPERSKILL_TYPE_YAML}
+      |type: $HYPERSKILL_TYPE_YAML
       |title: $name
       |language: $language
       |summary: |-

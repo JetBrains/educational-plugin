@@ -58,7 +58,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
         when (val path = request.pathWithoutPrams) {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithSucceedStatus
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }
@@ -73,7 +73,7 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
         when (val path = request.pathWithoutPrams) {
           "/api/submissions" -> submissionWithEvaluationStatus
           "/api/submissions/$SUBMISSION_ID" -> submissionWithFailedStatus
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }
@@ -107,8 +107,8 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
       },
       "submissions": [
         {
-          "attempt": "${ATTEMPT_ID_OF_SUCCEED_SUBMISSION}",
-          "id": "${SUBMISSION_ID}",
+          "attempt": "$ATTEMPT_ID_OF_SUCCEED_SUBMISSION",
+          "id": "$SUBMISSION_ID",
           "status": "evaluation",
           "step": 1,
           "time": "2020-04-29T11:44:20.422Z",
@@ -128,8 +128,8 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
       },
       "submissions": [
         {
-          "attempt": "${ATTEMPT_ID_OF_SUCCEED_SUBMISSION}",
-          "id": "${SUBMISSION_ID}",
+          "attempt": "$ATTEMPT_ID_OF_SUCCEED_SUBMISSION",
+          "id": "$SUBMISSION_ID",
           "status": "succeed",
           "step": 1,
           "time": "2020-04-29T11:44:20.422Z",
@@ -149,8 +149,8 @@ class HyperskillCheckDataTaskTest : HyperskillCheckActionTestBase() {
       },
       "submissions": [
         {
-          "attempt": "${ATTEMPT_ID_OF_FAILED_SUBMISSION}",
-          "id": "${SUBMISSION_ID}",
+          "attempt": "$ATTEMPT_ID_OF_FAILED_SUBMISSION",
+          "id": "$SUBMISSION_ID",
           "status": "wrong",
           "step": 2,
           "time": "2020-04-29T11:44:20.422Z",

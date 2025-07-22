@@ -56,7 +56,7 @@ class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
           "/api/submissions/11" -> submissionWithSucceedStatus
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }
@@ -73,7 +73,7 @@ class HyperskillCheckChoiceTaskTest : HyperskillCheckActionTestBase() {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
           "/api/submissions/11" -> submissionWithFailedStatus
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }

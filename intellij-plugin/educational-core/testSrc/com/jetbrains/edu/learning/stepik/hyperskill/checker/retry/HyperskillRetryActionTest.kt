@@ -53,7 +53,7 @@ class HyperskillRetryActionTest : HyperskillActionTestBase() {
       MockResponseFactory.fromString(
         when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> attempt
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }
@@ -80,7 +80,7 @@ class HyperskillRetryActionTest : HyperskillActionTestBase() {
       MockResponseFactory.fromString(
         when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> emptyDatasetAttempt
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }

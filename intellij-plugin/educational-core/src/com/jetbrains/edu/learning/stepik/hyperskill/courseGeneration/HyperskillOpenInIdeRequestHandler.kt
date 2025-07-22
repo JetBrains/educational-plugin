@@ -272,7 +272,7 @@ object HyperskillOpenInIdeRequestHandler : OpenInIdeRequestHandler<HyperskillOpe
       return Ok(Pair(theoryTitle, stepSources))
     }
 
-    LOG.warn("Can't get theory step title for ${id} step")
+    LOG.warn("Can't get theory step title for $id step")
     val problemTitle = title
     return Ok(Pair(problemTitle, stepSources))
   }

@@ -50,7 +50,7 @@ fun VirtualFile.getEditor(project: Project): Editor? {
 }
 
 val VirtualFile.document
-  get() : Document = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")
+  get() : Document = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: $name")
 
 fun VirtualFile.startLoading(project: Project) {
   val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
