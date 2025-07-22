@@ -28,7 +28,7 @@ class HyperskillCoursesPanel(
 ) : CoursesPanel(platformProvider, scope, disposable) {
 
   override fun tabDescription(): String {
-    val linkText = """<a href="${JBA_HELP}">${EduNames.JBA}</a>"""
+    val linkText = """<a href="$JBA_HELP">${EduNames.JBA}</a>"""
     return EduCoreBundle.message("hyperskill.courses.explanation", linkText)
   }
 

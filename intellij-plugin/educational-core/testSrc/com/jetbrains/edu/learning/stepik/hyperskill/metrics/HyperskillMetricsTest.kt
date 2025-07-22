@@ -142,7 +142,7 @@ class HyperskillMetricsTest : EduTestCase() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
         when (request.pathWithoutPrams) {
-          "/api/frontend-events" -> """{"${FRONTEND_EVENTS}":[]}"""
+          "/api/frontend-events" -> """{"$FRONTEND_EVENTS":[]}"""
           else -> return@withResponseHandler null
         }
       )
@@ -164,7 +164,7 @@ class HyperskillMetricsTest : EduTestCase() {
     mockConnector.withResponseHandler(testRootDisposable) { request, _ ->
       MockResponseFactory.fromString(
         when (request.pathWithoutPrams) {
-          "/api/time-spent-events" -> """{"${TIME_SPENT_EVENTS}":[]}"""
+          "/api/time-spent-events" -> """{"$TIME_SPENT_EVENTS":[]}"""
           else -> return@withResponseHandler null
         }
       )
@@ -216,7 +216,7 @@ class HyperskillMetricsTest : EduTestCase() {
         when (request.pathWithoutPrams) {
           "/api/frontend-events" -> {
             chunksCount++
-            """{"${FRONTEND_EVENTS}":[]}"""
+            """{"$FRONTEND_EVENTS":[]}"""
           }
           else -> return@withResponseHandler null
         }

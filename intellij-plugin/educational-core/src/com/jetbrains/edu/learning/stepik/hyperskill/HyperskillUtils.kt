@@ -253,7 +253,7 @@ private fun openStep(project: Project, task: Task?, nextActivityInfo: NextActivi
       val topicId = nextActivityInfo.topicId
       if (!HyperskillCourse.isStepSupported(nextStep.block?.name)) {
         EduBrowser.getInstance().browse(stepLink(nextStep.id))
-        LOG.warn("Step is not supported: next stepId ${nextStep.id}, current task: ${task?.id} topic: ${topicId} ")
+        LOG.warn("Step is not supported: next stepId ${nextStep.id}, current task: ${task?.id} topic: $topicId ")
       }
 
       val course = project.course ?: return
@@ -280,7 +280,7 @@ private fun getTopic(taskId: Int): Int? {
 private fun getNextStep(taskId: Int): NextActivityInfo {
   val topicId = getTopic(taskId)
   if (topicId == null) {
-    LOG.warn("Topic id is null for a step ${taskId}")
+    LOG.warn("Topic id is null for a step $taskId")
     return NextActivityInfo.NoTopic
   }
 

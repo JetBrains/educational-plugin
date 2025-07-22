@@ -47,7 +47,7 @@ class HyperskillCheckEduTaskTest : HyperskillCheckActionTestBase() {
         when (val path = request.pathWithoutPrams) {
           "/api/attempts" -> attempt
           "/api/submissions" -> submission
-          else -> error("Wrong path: ${path}")
+          else -> error("Wrong path: $path")
         }
       )
     }

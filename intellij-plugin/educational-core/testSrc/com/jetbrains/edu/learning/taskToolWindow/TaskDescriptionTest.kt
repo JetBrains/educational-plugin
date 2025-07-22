@@ -293,7 +293,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p><img class="image-fullsize" src="${expectedImage}" width="400"></p>
+        <p><img class="image-fullsize" src="$expectedImage" width="400"></p>
        </body>
       </html>
     """.trimIndent()
@@ -344,7 +344,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p style="text-align: center;"><img class="image-fullsize" src="${imageLight}" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="$imageLight" width="400"></p>
         <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
@@ -365,7 +365,7 @@ class TaskDescriptionTest : EduTestCase() {
       <html>
        <head></head>
        <body>
-        <p style="text-align: center;"><img class="image-fullsize" src="${expectedImage}" width="400"></p>
+        <p style="text-align: center;"><img class="image-fullsize" src="$expectedImage" width="400"></p>
         <p style="text-align: center;"><img class="image-fullsize" src="screenshot2.png" width="400"></p>
        </body>
       </html>
