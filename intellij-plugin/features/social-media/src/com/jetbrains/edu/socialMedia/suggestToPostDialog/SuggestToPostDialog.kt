@@ -41,7 +41,7 @@ class SuggestToPostDialog(
 
     setDoNotAskOption(SuggestDoNotAskToPostOption(checkBoxes))
     setOKButtonText(EduSocialMediaBundle.message("social.media.post.button.text"))
-    setResizable(false)
+    isResizable = false
     panel = SuggestToPostDialogPanel(message, imagePath, disposable)
 
     configurators.map { it.settings }.forEach { settings ->
