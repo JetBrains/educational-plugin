@@ -4,10 +4,15 @@ import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.ajalt.clikt.command.parse
 import com.github.ajalt.clikt.core.CliktError
+import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.core.context
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.multiple
+import com.github.ajalt.clikt.parameters.arguments.transformAll
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.validate
 import com.intellij.featureStatistics.fusCollectors.LifecycleUsageTriggerCollector
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.CliResult
@@ -32,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.collections.chunked
 
 /**
  * Adds `openCourse` command for IDE to open course dialog for given course
@@ -168,12 +174,41 @@ class EduOpenCourseAppStarter : IdeStarter() {
 
 class EduOpenCourseCommand : EduCommand("openCourse") {
 
-  val courseParams: Map<String, String> by option(
+  init {
+    configureContext {
+      // allow only the following sequence of arguments --option1 value1 --option2 value2 ... --optionN --valueN arg1 arg2 arg3 ... argM
+      allowInterspersedArgs = false
+    }
+  }
+
+  /**
+   * Up to Toolbox 2.7.0, all course parameters were passed as a --course-params option.
+   */
+  private val courseParamsLegacyOption: Map<String, String> by option(
     "--course-params",
-    help = "Additional parameters for a course project in JSON object format"
+    help = "Additional parameters for a course project in JSON object format. Deprecated, pass parameters in the form --param1 value1 --param2 value2 ..."
   )
     .convert { parseCourseParams(it) }
     .default(emptyMap())
+    .validate {
+      require(it.isEmpty() || arguments.isEmpty()) {
+        NOT_BOTH_WAYS_TO_PASS_COURSE_PARAMS
+      }
+    }
+
+  override val treatUnknownOptionsAsArgs = true
+
+  val arguments: Map<String, String> by argument(
+    name = "course params",
+    help = "Additional parameters for a course project in the form --param1 value1 --param2 value2 ..."
+  ).multiple().transformAll { paramsValuesList ->
+    collectCourseParamsFromArguments(paramsValuesList)
+  }
+
+  val courseParams: Map<String, String>
+    get() = arguments.ifEmpty {
+      courseParamsLegacyOption
+    }
 
   private fun parseCourseParams(value: String): Map<String, String> {
     return try {
@@ -184,9 +219,24 @@ class EduOpenCourseCommand : EduCommand("openCourse") {
     }
   }
 
+  private fun collectCourseParamsFromArguments(arguments: List<String>): Map<String, String> {
+    if (arguments.size % 2 != 0) throw UsageError("expected even number of arguments in the form `--param1 value1 --param2 value2 ...` but got `${arguments.size}` instead")
+    return arguments.chunked(2).associate { (key, value) ->
+      if (!key.startsWith("--")) {
+        throw UsageError("expected key in the form `--param` but got `$key` instead")
+      }
+      if (key == "--course-params") {
+        throw UsageError(NOT_BOTH_WAYS_TO_PASS_COURSE_PARAMS)
+      }
+      key.removePrefix("--") to value
+    }
+  }
+
   override suspend fun run() {}
 
   companion object {
     private val MAPPER = jsonMapper()
+    private const val NOT_BOTH_WAYS_TO_PASS_COURSE_PARAMS =
+      "path additional parameters for course project either in the form --param value, or with a --course-params option (deprecated), but not both"
   }
 }
