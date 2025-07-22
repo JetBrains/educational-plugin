@@ -2,14 +2,20 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 abstract class StartCourseAction(
   private val platformName: String
@@ -22,19 +28,29 @@ abstract class StartCourseAction(
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    doImport()
+    currentThreadCoroutineScope().launch {
+      doImport()
+    }
   }
 
-  private fun doImport() {
+  @RequiresBackgroundThread
+  private suspend fun doImport() {
     val course = importCourse() ?: return
-    JoinCourseDialog(course).show()
+    withContext(Dispatchers.IO) {
+      JoinCourseDialog(course).show()
+    }
   }
 
-  private fun importCourse(): EduCourse? {
-    val courseLink = showDialogAndGetCourseLink() ?: return null
+  @RequiresBackgroundThread
+  private suspend fun importCourse(): EduCourse? {
+    val courseLink = withContext(Dispatchers.EDT) {
+      showDialogAndGetCourseLink()
+    } ?: return null
     val course = courseConnector().getCourseInfoByLink(courseLink)
     if (course == null) {
-      showFailedToAddCourseNotification(courseLink)
+      withContext(Dispatchers.EDT) {
+        showFailedToAddCourseNotification(courseLink)
+      }
       return null
     }
     return course

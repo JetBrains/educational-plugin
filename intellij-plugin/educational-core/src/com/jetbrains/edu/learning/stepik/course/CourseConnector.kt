@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 
+// TODO(make methods suspend)
 interface CourseConnector {
   fun getCourseIdFromLink(link: String): Int
 
