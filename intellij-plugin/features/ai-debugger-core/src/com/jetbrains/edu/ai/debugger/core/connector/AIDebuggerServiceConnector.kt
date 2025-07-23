@@ -16,6 +16,7 @@ import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.educational.ml.debugger.dto.*
 import com.jetbrains.educational.ml.debugger.request.TaskDescriptionBase
@@ -58,8 +59,8 @@ class AIDebuggerServiceConnector {
     authorSolution: FileContentMap,
     courseId: Int,
     programmingLanguage: ProgrammingLanguage,
+    task: Task,
     taskDescription: TaskDescriptionBase,
-    taskId: Int,
     testInfo: TestInfo,
     updateVersion: Int?,
     userSolution: FileContentMap
@@ -67,9 +68,11 @@ class AIDebuggerServiceConnector {
     val request = DebuggerHintRequest(
       authorSolution = authorSolution,
       courseId = courseId,
+      lessonName = task.lesson.name,
+      taskName = task.name,
       programmingLanguage = programmingLanguage,
       taskDescription = taskDescription,
-      taskId = taskId,
+      taskId = task.id,
       testInfo = testInfo,
       updateVersion = updateVersion,
       userSolution = userSolution
