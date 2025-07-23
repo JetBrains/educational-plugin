@@ -54,7 +54,9 @@ class AIDebuggerValidationAction : AnAction() {
     taskId = task.id,
     testInfo = testInfo,
     updateVersion = project.course?.marketplaceCourseVersion,
-    userSolution = userSolution
+    userSolution = userSolution,
+    lessonName = task.lesson.name,
+    taskName = task.name
   )
 
   private fun <K> parseCsvFile(recordConverter: (CSVRecord) -> K): List<K>? =
