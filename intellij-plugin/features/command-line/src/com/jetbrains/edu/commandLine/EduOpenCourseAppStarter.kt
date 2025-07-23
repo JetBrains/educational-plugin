@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.blockingContext
 import com.intellij.platform.diagnostic.telemetry.impl.span
+import com.intellij.ui.WinFocusStealer
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.map
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
@@ -96,7 +97,10 @@ class EduOpenCourseAppStarter : IdeStarter() {
     return try {
       command.parse(args.drop(1))
 
-      val openCourseFound = command.focusOpenProject()
+      // disables the focus stealing prevention mechanism in Windows
+      WinFocusStealer.setFocusStealingEnabled(true)
+
+      val openCourseFound = command.focusOpenProjectAndApplyProcessors()
       if (openCourseFound) return CliResult.OK
 
       val dialogResult = showOpenCourseDialog(command)
@@ -116,7 +120,7 @@ class EduOpenCourseAppStarter : IdeStarter() {
    *
    * Returns `true` if opened course was found and `false` otherwise
    */
-  private fun EduOpenCourseCommand.focusOpenProject(): Boolean {
+  private fun EduOpenCourseCommand.focusOpenProjectAndApplyProcessors(): Boolean {
     val (project, course) = EduBuiltInServerUtils.focusOpenProject { course ->
       source.isCourseFromSource(course) && course.id.toString() == courseId
     } ?: return false
