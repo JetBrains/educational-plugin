@@ -1083,5 +1083,25 @@ class YamlDeserializationTest : YamlTestCase() {
     assertContains(course.disabledFeatures, "ai-hints")
   }
 
+  @Test
+  fun `empty additional files do not lead to NPE`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |additional_files:
+      |  - name: file.txt
+      |  - 
+      |""".trimMargin()
+    val course = deserializeNotNull(yamlContent)
+
+    for (additionalFile in course.additionalFiles) {
+      // Although the Kotlin type system suggests that additionalFile cannot be null,
+      // it actually used to be null because of Jackson type casts.
+      assertNotNull(additionalFile)
+    }
+  }
+
   private fun deserializeNotNull(yamlContent: String): Course = basicMapper().deserializeCourse(yamlContent)
 }
