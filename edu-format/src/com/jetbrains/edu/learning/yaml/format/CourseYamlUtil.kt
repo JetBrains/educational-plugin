@@ -248,7 +248,7 @@ open class CourseBuilder(
   @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
   @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
   @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
-  @JsonProperty(ADDITIONAL_FILES) val yamlAdditionalFiles: List<EduFile> = emptyList(),
+  @JsonProperty(ADDITIONAL_FILES) val yamlAdditionalFiles: List<EduFile?> = emptyList(),
   @JsonProperty(CUSTOM_CONTENT_PATH) val pathToContent: String = "",
   @JsonProperty(DISABLED_FEATURES) val yamlDisabledFeatures: List<String> = emptyList()
 ) {
@@ -266,7 +266,7 @@ open class CourseBuilder(
       solutionsHidden = areSolutionsHidden ?: false
       contentTags = yamlContentTags
       environmentSettings = yamlEnvironmentSettings
-      additionalFiles = yamlAdditionalFiles
+      additionalFiles = yamlAdditionalFiles.filterNotNull()
       disabledFeatures = yamlDisabledFeatures
 
       languageId = Language.findLanguageByName(displayProgrammingLanguageName)
