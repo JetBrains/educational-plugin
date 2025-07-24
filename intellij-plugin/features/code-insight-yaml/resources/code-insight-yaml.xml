@@ -51,5 +51,8 @@
                      implementationClass="com.jetbrains.edu.yaml.inspections.StudyItemNotFoundInspection"
                      key="inspection.study.item.not.found.display.name"
                      bundle="messages.EduYAMLBundle"/>
+
+    <enterHandlerDelegate implementation="com.jetbrains.edu.yaml.AdditionalFileListEnterHandler"
+                          order="first"/>
   </extensions>
 </idea-plugin>
