@@ -120,7 +120,10 @@ fun String.toTypeWithVersion(): TypeWithVersion {
 
 fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   val (type, version) = versionWithCode.toTypeWithVersion()
-  create(type, version, useInstaller = false)
+  create(type, version) {
+    useInstaller.set(false)
+    useCustomCache.set(true)
+  }
   // JetBrains runtime is necessary not only for running IDE but for tests as well
   jetbrainsRuntime()
 }
