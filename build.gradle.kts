@@ -13,6 +13,7 @@ idea {
   }
   module {
     excludeDirs.add(file("dependencies"))
+    excludeDirs.add(file(".intellijPlatform"))
   }
 }
 
