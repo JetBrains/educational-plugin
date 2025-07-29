@@ -25,7 +25,7 @@ class PromotionCheckListener : CheckListener {
         ).addAction(object : AnAction(EduCoreBundle.message("promotion.student.pack.notification.action")) {
           override fun actionPerformed(e: AnActionEvent) {
             EduBrowser.getInstance().browse(STUDENT_PACK_LINK)
-            e.getData(Notification.KEY)?.expire()
+            e.getData(Notification.KEY)?.hideBalloon()
           }
         }).notify(project)
       }
