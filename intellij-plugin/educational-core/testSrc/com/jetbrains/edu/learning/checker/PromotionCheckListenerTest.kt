@@ -53,7 +53,7 @@ class PromotionCheckListenerTest : EduTestCase() {
     val notification = mockk<Notification> {
       every { addAction(capture(notificationAction)) } returns this
       justRun { notify(any()) }
-      justRun { expire() }
+      justRun { hideBalloon() }
     }
     every { EduNotificationManager.create(any(), any(), any()) } returns notification
 
@@ -70,7 +70,7 @@ class PromotionCheckListenerTest : EduTestCase() {
     // then
     verify { EduNotificationManager.create(any(), any(), any()) }
     verify { notification.notify(any()) }
-    verify { notification.expire() }
+    verify { notification.hideBalloon() }
     assertEquals(STUDENT_PACK_LINK, EduBrowser.getInstance().asSafely<MockEduBrowser>()?.lastVisitedUrl)
   }
 
