@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.common.ThreadLeakTracker
+import com.intellij.util.net.ProxyConfiguration
+import com.intellij.util.net.ProxyConfiguration.ProxyProtocol
 import com.jetbrains.edu.learning.network.USER_AGENT
 import com.jetbrains.edu.learning.network.eduToolsUserAgent
 import okhttp3.mockwebserver.Dispatcher
@@ -50,6 +52,13 @@ class MockWebServerHelper(parentDisposable: Disposable) {
   // DownloadUtil.downloadAtomically(), used in com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector.loadCourseStructure(),
   // sets product name as user agent, so such requests are not expected to contain eduToolsUserAgent
   private fun expectEduToolsUserAgent(request: RecordedRequest): Boolean = !request.pathWithoutPrams.contains("plugin")
+
+  /**
+   * Return proxy configuration to use running mock web server as a proxy
+   */
+  fun proxyConfiguration(): ProxyConfiguration.StaticProxyConfiguration {
+    return ProxyConfiguration.proxy(ProxyProtocol.HTTP, mockWebServer.hostName, mockWebServer.port)
+  }
 }
 
 fun RecordedRequest.hasParams(vararg params: Pair<String, String>): Boolean {
