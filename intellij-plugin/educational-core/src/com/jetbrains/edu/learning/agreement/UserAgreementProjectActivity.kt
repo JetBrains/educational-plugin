@@ -13,12 +13,16 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+private const val DISABLE_USER_AGREEMENT = "edu.disable.user.agreement"
+
 class UserAgreementProjectActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
     if (!project.isEduProject()) {
       return changeProjectView(project)
     }
-    if (UserAgreementSettings.getInstance().isNotShown && !isHeadlessEnvironment) {
+    if (UserAgreementSettings.getInstance().isNotShown &&
+        !isHeadlessEnvironment &&
+        System.getProperty(DISABLE_USER_AGREEMENT)?.toBoolean() != true) {
       UserAgreementManager.getInstance().showUserAgreement(project)
     }
   }
