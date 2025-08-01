@@ -1,0 +1,8 @@
+<!--suppress PluginXmlValidity -->
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.course.storage" percentOfUsers="100" internalFeature="true">
+      <description>Enables support for courses from course storage</description>
+    </experimentalFeature>
+  </extensions>
+</idea-plugin>
