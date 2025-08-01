@@ -4,9 +4,14 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.JBAccountInfoService
+import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
@@ -14,8 +19,10 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider.Companion.MARKETPLACE_GROUP_ID
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
@@ -135,8 +142,20 @@ fun Project.isMarketplaceStudentCourse(): Boolean = isMarketplaceCourse() && isS
 
 fun SolutionSharingPreference?.toBoolean(): Boolean = this == SolutionSharingPreference.ALWAYS
 
+private const val COURSE_STORAGE_ID_LOWER_BOUND = 200_000
+
+// TODO(use {PREFIX-id} ID as id for course storage courses)
+fun EduCourse.isFromCourseStorage(): Boolean = id >= COURSE_STORAGE_ID_LOWER_BOUND
+
 val EduCourse.courseConnector: EduCourseConnector
   get() = when {
-    //isFromCourseStorage() && isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE) -> CourseStorageConnector.getInstance()
+    isFromCourseStorage() && isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE) -> CourseStorageConnector.getInstance()
     else -> MarketplaceConnector.getInstance()
   }
+
+fun downloadEduCourseFromLink(link: String, filePrefix: String, courseId: Int): EduCourse {
+  val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
+  logger<EduCourseConnector>().debug("Downloading $courseId course via $link")
+  DownloadUtil.downloadAtomically(null, link, tempFile)
+  return EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse ?: error(EduCoreBundle.message("dialog.title.failed.to.unpack.course"))
+}

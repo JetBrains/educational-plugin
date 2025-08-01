@@ -1,6 +1,9 @@
 <!--suppress PluginXmlValidity -->
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector"
+                        serviceImplementation="com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.marketplace.courseStorage.MockCourseStorageConnector"/>
     <experimentalFeature id="edu.course.storage" percentOfUsers="100" internalFeature="true">
       <description>Enables support for courses from course storage</description>
     </experimentalFeature>

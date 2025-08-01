@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.util.asSafely
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
@@ -33,6 +32,7 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE_PLUGIN_URL
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showFailedToFindMarketplaceCourseOnRemoteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.api.GraphqlQuery.LOADING_STEP
+import com.jetbrains.edu.learning.marketplace.downloadEduCourseFromLink
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
@@ -176,13 +176,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
 
     val link = "$repositoryUrl/plugin/download?updateId=${updateInfo.updateId}&uuid=$uuid&build=$buildNumber&source=$downloadContext"
     val filePrefix = FileUtil.sanitizeFileName("marketplace-${courseId}")
-    val tempFile = FileUtil.createTempFile(filePrefix, ".zip", true)
-
-    LOG.debug("Downloading $courseId course via $link")
-    DownloadUtil.downloadAtomically(null, link, tempFile)
-
-    return EduUtilsKt.getLocalCourse(tempFile.path) as? EduCourse
-                         ?: error(message("dialog.title.failed.to.unpack.course"))
+    return downloadEduCourseFromLink(link, filePrefix, courseId)
   }
 
   private fun uploadUnderProgress(message: String, uploadAction: () -> Unit) =
