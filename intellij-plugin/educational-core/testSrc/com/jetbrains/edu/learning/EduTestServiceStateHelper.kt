@@ -10,6 +10,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import io.github.classgraph.AnnotationEnumValue
 import io.github.classgraph.ClassGraph
+import org.intellij.lang.annotations.Language
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
@@ -205,6 +206,7 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
   private fun classForNameOrNull(className: String): Class<*>? = runCatching { Class.forName(className) }.getOrNull()
 
   companion object {
+    @Language("jvm-class-name")
     private val applicationServices = listOf(
       "com.jetbrains.edu.learning.EduBrowser",
       "com.jetbrains.edu.learning.agreement.UserAgreementSettings",
@@ -213,6 +215,7 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
       "com.jetbrains.edu.socialMedia.x.XSettings",
     )
 
+    @Language("jvm-class-name")
     private val projectServices = listOf(
       "com.jetbrains.edu.aiHints.core.HintStateManager",
       "com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder",
