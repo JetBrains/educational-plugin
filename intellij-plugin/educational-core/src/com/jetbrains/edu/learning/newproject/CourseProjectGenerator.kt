@@ -54,7 +54,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.unpackAddition
 import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.courseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -317,7 +317,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   }
 
   private fun checkIfAvailableOnRemote(course: EduCourse) {
-    val remoteCourse = MarketplaceConnector.getInstance().searchCourse(course.id, course.isMarketplacePrivate)
+    val remoteCourse = course.courseConnector.searchCourse(course.id, course.isMarketplacePrivate)
     if (remoteCourse == null) {
       LOG.warn("Failed to get $MARKETPLACE course for imported from zip course with id: ${course.id}")
       LOG.info("Converting course to local. Course id: ${course.id}")

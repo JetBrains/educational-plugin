@@ -41,7 +41,6 @@ import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.network.toPlainTextRequestBody
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
-import com.jetbrains.edu.learning.stepik.course.CourseConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -55,7 +54,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
-abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnector {
+abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConnector {
   /**
    * It is recommended to use the static methods of the [com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount] class
    * instead of relying on the 'account' property. However, there are still certain things, such as the actual name of the JBA user,
@@ -111,7 +110,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return courses
   }
 
-  fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse? {
+  override fun searchCourse(courseId: Int, searchPrivate: Boolean): EduCourse? {
     val course = loadCourses(QueryData(GraphqlQuery.searchById(courseId, searchPrivate)))?.courses?.firstOrNull() ?: return null
     course.id = courseId
     return course
@@ -155,14 +154,14 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), CourseConnecto
     return response?.body()?.data?.updates?.updateInfoList
   }
 
-  fun loadCourseStructure(course: EduCourse, downloadContext: DownloadCourseContext) {
+  override fun loadCourseStructure(course: EduCourse, downloadContext: DownloadCourseContext) {
     val unpackedCourse = loadCourse(course.id, downloadContext)
     course.items = unpackedCourse.items
     course.additionalFiles = unpackedCourse.additionalFiles
     course.marketplaceCourseVersion = unpackedCourse.marketplaceCourseVersion
   }
 
-  fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {
+  override fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {
     val buildNumber = ApplicationInfoImpl.getShadowInstanceImpl().pluginCompatibleBuild
     val uuid = PluginDownloader.getMarketplaceDownloadsUUID()
     val updateInfo = getLatestCourseUpdateInfo(courseId) ?: error("Update info for course $courseId is null")

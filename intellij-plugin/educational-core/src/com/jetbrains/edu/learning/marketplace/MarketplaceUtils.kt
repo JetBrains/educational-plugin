@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
+import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.showUpdateNotification
@@ -44,7 +45,7 @@ fun getJBAUserInfo(): JBAccountUserInfo? {
 
 private fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
 
-fun Course.setRemoteMarketplaceCourseVersion() {
+fun EduCourse.setRemoteMarketplaceCourseVersion() {
   val updateInfo = MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(id)
   if (updateInfo != null) {
     incrementMarketplaceCourseVersion(updateInfo.version)
@@ -65,7 +66,7 @@ fun Course.addVendor(): Boolean {
 fun Course.loadMarketplaceCourseStructure(downloadCourseContext: DownloadCourseContext = IDE_UI) {
   if (this is EduCourse && isMarketplace && items.isEmpty()) {
     computeUnderProgress(title = EduCoreBundle.message("progress.loading.course")) {
-      MarketplaceConnector.getInstance().loadCourseStructure(this, downloadCourseContext)
+      courseConnector.loadCourseStructure(this, downloadCourseContext)
     }
   }
 }
@@ -133,3 +134,9 @@ fun Project.isMarketplaceCourse(): Boolean = course?.isMarketplace == true
 fun Project.isMarketplaceStudentCourse(): Boolean = isMarketplaceCourse() && isStudentProject()
 
 fun SolutionSharingPreference?.toBoolean(): Boolean = this == SolutionSharingPreference.ALWAYS
+
+val EduCourse.courseConnector: EduCourseConnector
+  get() = when {
+    //isFromCourseStorage() && isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE) -> CourseStorageConnector.getInstance()
+    else -> MarketplaceConnector.getInstance()
+  }

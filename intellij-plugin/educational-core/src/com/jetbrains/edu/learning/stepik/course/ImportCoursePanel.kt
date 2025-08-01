@@ -2,13 +2,14 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import org.apache.commons.lang3.math.NumberUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
 
-abstract class ImportCoursePanel(private val courseConnector: CourseConnector, val helpLabelText: String) {
+abstract class ImportCoursePanel(private val courseConnector: EduCourseConnector, helpLabelText: String) {
   protected val courseLinkTextField = JTextField()
   val panel: JPanel
   private val helpLabel = JLabel(helpLabelText)

@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.courseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.UPDATE
 import com.jetbrains.edu.learning.update.UpdateUtils
@@ -82,9 +82,9 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
   }
 
   override fun courseFromServer(currentCourse: EduCourse): EduCourse? {
-    val courseFromServer = MarketplaceConnector.getInstance().searchCourse(course.id, currentCourse.isMarketplacePrivate)
+    val courseFromServer = course.courseConnector.searchCourse(course.id, currentCourse.isMarketplacePrivate)
     if (courseFromServer != null) {
-      MarketplaceConnector.getInstance().loadCourseStructure(courseFromServer, UPDATE)
+      course.courseConnector.loadCourseStructure(courseFromServer, UPDATE)
     }
     return courseFromServer
   }

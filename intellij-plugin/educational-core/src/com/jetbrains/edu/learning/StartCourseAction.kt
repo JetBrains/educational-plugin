@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.stepik.course.CourseConnector
+import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
 
 abstract class StartCourseAction(
@@ -59,5 +59,5 @@ abstract class StartCourseAction(
    * Returns instance of [ImportCourseDialog] to show text field and get a course link typed by user
    */
   protected abstract fun createImportCourseDialog(): ImportCourseDialog
-  protected abstract fun courseConnector(): CourseConnector
+  protected abstract fun courseConnector(): EduCourseConnector
 }

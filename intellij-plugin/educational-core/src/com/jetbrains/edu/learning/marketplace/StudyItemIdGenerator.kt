@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.visitItems
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadRemoteInfoRecursively
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -126,7 +125,7 @@ class StudyItemIdGenerator(private val project: Project) {
 
     return withContext(Dispatchers.IO) {
       try {
-        MarketplaceConnector.getInstance().loadCourse(course.id, DownloadCourseContext.OTHER)
+        course.courseConnector.loadCourse(course.id, DownloadCourseContext.OTHER)
       }
       catch (e: Exception) {
         LOG.warn(e)
