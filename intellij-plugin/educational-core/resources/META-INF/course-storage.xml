@@ -5,4 +5,9 @@
       <description>Enables support for courses from course storage</description>
     </experimentalFeature>
   </extensions>
+  <actions>
+    <action id="Educational.Student.CourseStorageChangeHost"
+            class="com.jetbrains.edu.learning.marketplace.courseStorage.changeHost.CourseStorageChangeHost"
+            internal="true"/>
+  </actions>
 </idea-plugin>
