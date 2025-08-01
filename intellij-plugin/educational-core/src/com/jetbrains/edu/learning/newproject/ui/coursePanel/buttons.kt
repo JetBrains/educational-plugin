@@ -15,8 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
-import com.jetbrains.edu.learning.marketplace.MarketplaceListedCoursesIdsLoader
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
@@ -72,15 +70,7 @@ class OpenCourseButton(private val openCourseMetadata: () -> Map<String, String>
         }
         else -> {
           closeDialog()
-          // if course is present both on stepik and marketplace we open marketplace-based one
-          val marketplaceId = MarketplaceListedCoursesIdsLoader.getMarketplaceIdByStepikId(course.id)
-          val courseToOpen = if (marketplaceId != null) {
-            MarketplaceConnector.getInstance().searchCourse(marketplaceId, course.isMarketplacePrivate) ?: course
-          }
-          else {
-            course
-          }
-          JoinCourseDialog(courseToOpen).show()
+          JoinCourseDialog(course).show()
         }
       }
     }
