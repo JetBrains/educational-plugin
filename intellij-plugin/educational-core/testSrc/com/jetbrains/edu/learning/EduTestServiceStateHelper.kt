@@ -223,9 +223,9 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
       "com.jetbrains.edu.learning.featureManagement.EduFeatureManager",
       "com.jetbrains.edu.learning.framework.FrameworkLessonManager",
       "com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker",
-      "com.jetbrains.edu.learning.statistics.metadata.CourseMetadataManager",
       // BACKCOMPAT: 2025.1. Drop `CoursePageExperimentManager` line together with the corresponding service
       "com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager",
+      "com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager",
       // BACKCOMPAT: 2025.1. Drop `EntryPointManager` line together with the corresponding service
       "com.jetbrains.edu.learning.statistics.metadata.EntryPointManager",
       "com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker",
