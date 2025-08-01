@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.api
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 
 // TODO(make methods suspend)
@@ -9,7 +10,7 @@ interface EduCourseConnector {
 
   fun getCourseInfoByLink(link: String): EduCourse?
 
-  //fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo?
+  fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo?
 
   fun searchCourse(courseId: Int, searchPrivate: Boolean = false): EduCourse?
 

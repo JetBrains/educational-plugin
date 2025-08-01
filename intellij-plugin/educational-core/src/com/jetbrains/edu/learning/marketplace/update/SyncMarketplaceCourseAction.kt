@@ -26,9 +26,9 @@ class SyncMarketplaceCourseAction : SyncCourseAction(
     val course = project.course as EduCourse
     runInBackground(title = message("progress.loading.course")) {
       val updateInfo = course.getUpdateInfo() ?: return@runInBackground
-      val remoteCourseVersion = updateInfo.version
+      val remoteCourseVersion = updateInfo.courseVersion
       if (remoteCourseVersion > course.marketplaceCourseVersion) {
-        if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.compatibility.gte)) return@runInBackground
+        if (!isRemoteUpdateFormatVersionCompatible(project, updateInfo.formatVersion)) return@runInBackground
         MarketplaceCourseUpdater(project, course, remoteCourseVersion).updateCourse()
       }
       else {

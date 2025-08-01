@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning.marketplace.update
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
-import com.jetbrains.edu.learning.marketplace.api.UpdateInfo
+import com.jetbrains.edu.learning.marketplace.courseConnector
 
+data class CourseUpdateInfo(
+  val courseVersion: Int,
+  val formatVersion: Int,
+)
 
-fun EduCourse.getUpdateInfo(): UpdateInfo? {
+fun EduCourse.getUpdateInfo(): CourseUpdateInfo? {
   if (id == 0 || !course.isMarketplace) return null
-  return MarketplaceConnector.getInstance().getLatestCourseUpdateInfo(id)
+  return courseConnector.getLatestCourseUpdateInfo(id)
 }
