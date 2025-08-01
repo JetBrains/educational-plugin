@@ -9,6 +9,7 @@
     </experimentalFeature>
   </extensions>
   <actions>
+    <action id="Educational.ImportCourseFromStorageAction" class="com.jetbrains.edu.learning.marketplace.courseStorage.course.ImportCourseFromStorageAction" internal="true"/>
     <action id="Educational.Student.CourseStorageChangeHost"
             class="com.jetbrains.edu.learning.marketplace.courseStorage.changeHost.CourseStorageChangeHost"
             internal="true"/>
