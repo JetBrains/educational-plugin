@@ -20,4 +20,5 @@ dependencies {
   compileOnly(libs.kotlinx.serialization) {
     excludeKotlinDeps()
   }
+  testImplementationWithoutKotlin(libs.kotlinx.coroutine.test)
 }

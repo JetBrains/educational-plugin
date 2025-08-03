@@ -14,114 +14,115 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Service
-class UserAgreementManager(private val scope: CoroutineScope) {
+class UserAgreementManager @JvmOverloads constructor(
+  private val scope: CoroutineScope,
+  private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
   init {
     val userAgreementSettings = UserAgreementSettings.getInstance()
     scope.launch {
-      launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }
-          .runningFold<_, StateEvent<UserAgreementState>>(StateEvent.Uninitialized) { acc, new ->
-            when (acc) {
-              is StateEvent.Uninitialized -> StateEvent.FirstState(new.pluginAgreement)
-              is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new.pluginAgreement)
-              is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new.pluginAgreement)
-            }
-          }.collectLatest {
-            if (it !is StateEvent.TransitionState) return@collectLatest
+      userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement }
+        .runningFold<_, StateEvent<UserAgreementState>>(StateEvent.Uninitialized) { acc, new ->
+          when (acc) {
+            is StateEvent.Uninitialized -> StateEvent.FirstState(new.pluginAgreement)
+            is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new.pluginAgreement)
+            is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new.pluginAgreement)
+          }
+        }.collectLatest {
+          if (it !is StateEvent.TransitionState) return@collectLatest
+          /**
+           * Let's avoid reloading Edu projects if the previous agreement state is [UserAgreementState.NOT_SHOWN]
+           * and the new one is [UserAgreementState.ACCEPTED], which means a new user's just accepted it.
+           */
+          if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) return@collectLatest
+          reloadEduProjects()
+        }
+    }
+    scope.launch {
+      /**
+       * When either [UserAgreementSettings.UserAgreementProperties.pluginAgreement]
+       * or [UserAgreementSettings.UserAgreementProperties.aiServiceAgreement] changes by user, send it to remote
+       */
+      userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement to it.aiServiceAgreement }
+        .runningFold<_, StateEvent<UserAgreementSettings.UserAgreementProperties>>(StateEvent.Uninitialized) { acc, new ->
+          when (acc) {
+            is StateEvent.Uninitialized -> StateEvent.FirstState(new)
+            is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new)
+            is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new)
+          }
+        }.collectLatest {
+          val currentState = when (it) {
+            is StateEvent.Uninitialized -> return@collectLatest
+            is StateEvent.FirstState -> it.current
+            is StateEvent.TransitionState -> it.current
+          }
+          if (!currentState.isChangedByUser) return@collectLatest
+          submitAgreements(currentState.pluginAgreement, currentState.aiServiceAgreement)
+
+          val previousState = when (it) {
+            is StateEvent.TransitionState -> it.previous
+            else -> return@collectLatest
+          }
+
+          if (currentState.pluginAgreement != UserAgreementState.ACCEPTED) return@collectLatest
+          when (previousState.pluginAgreement) {
             /**
-             * Let's avoid reloading Edu projects if the previous agreement state is [UserAgreementState.NOT_SHOWN]
-             * and the new one is [UserAgreementState.ACCEPTED], which means a new user's just accepted it.
+             * When User Agreement is accepted for the very first time, i.e.
+             * when previously it was either not shown at all, or declined.
              */
-            if (it.previous == UserAgreementState.NOT_SHOWN && it.current == UserAgreementState.ACCEPTED) return@collectLatest
-            reloadEduProjects()
+            UserAgreementState.NOT_SHOWN, UserAgreementState.DECLINED -> {
+              submitAgreementAcceptanceAnonymously()
+            }
+            else -> return@collectLatest
           }
-      }
-      launch {
-        /**
-         * When either [UserAgreementSettings.UserAgreementProperties.pluginAgreement]
-         * or [UserAgreementSettings.UserAgreementProperties.aiServiceAgreement] changes by user, send it to remote
-         */
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.pluginAgreement to it.aiServiceAgreement }
-          .runningFold<_, StateEvent<UserAgreementSettings.UserAgreementProperties>>(StateEvent.Uninitialized) { acc, new ->
-            when (acc) {
-              is StateEvent.Uninitialized -> StateEvent.FirstState(new)
-              is StateEvent.FirstState -> StateEvent.TransitionState(acc.current, new)
-              is StateEvent.TransitionState -> StateEvent.TransitionState(acc.current, new)
-            }
-          }.collectLatest {
-            val currentState = when (it) {
-              is StateEvent.Uninitialized -> return@collectLatest
-              is StateEvent.FirstState -> it.current
-              is StateEvent.TransitionState -> it.current
-            }
-            if (!currentState.isChangedByUser) return@collectLatest
-            submitAgreements(currentState.pluginAgreement, currentState.aiServiceAgreement)
-
-            val previousState = when (it) {
-              is StateEvent.TransitionState -> it.previous
-              else -> return@collectLatest
-            }
-
-            if (currentState.pluginAgreement != UserAgreementState.ACCEPTED) return@collectLatest
-            when (previousState.pluginAgreement) {
-              /**
-               * When User Agreement is accepted for the very first time, i.e.
-               * when previously it was either not shown at all, or declined.
-               */
-              UserAgreementState.NOT_SHOWN, UserAgreementState.DECLINED -> {
-                submitAgreementAcceptanceAnonymously()
-              }
-              else -> return@collectLatest
-            }
-          }
-      }
-      launch {
-        userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharingPreference }.collectLatest {
+        }
+    }
+    scope.launch {
+      userAgreementSettings.userAgreementProperties.distinctUntilChangedBy { it.solutionSharingPreference }.collectLatest {
           if (it.isChangedByUser) {
             val isSolutionSharingEnabled = it.solutionSharingPreference == SolutionSharingPreference.ALWAYS
             EduCounterUsageCollector.solutionSharingState(isSolutionSharingEnabled)
             submitSharingPreference(isSolutionSharingEnabled)
           }
         }
-      }
     }
   }
 
-  private fun submitAgreementAcceptanceAnonymously() {
-    scope.launch(Dispatchers.IO) {
+  private suspend fun submitAgreementAcceptanceAnonymously() {
+    withContext(ioDispatcher) {
       MarketplaceSubmissionsConnector.getInstance().submitAgreementAcceptanceAnonymously(isJBALoggedIn())
     }
   }
 
   fun submitCurrentAgreements() {
     val userAgreementProperties = UserAgreementSettings.getInstance().userAgreementProperties.value
-    submitAgreements(userAgreementProperties.pluginAgreement, userAgreementProperties.aiServiceAgreement)
+    scope.launch { submitAgreements(userAgreementProperties.pluginAgreement, userAgreementProperties.aiServiceAgreement) }
   }
 
-  private fun submitAgreements(pluginAgreement: UserAgreementState, aiAgreement: UserAgreementState) {
+  private suspend fun submitAgreements(pluginAgreement: UserAgreementState, aiAgreement: UserAgreementState) {
     if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
+    withContext(ioDispatcher) {
       MarketplaceSubmissionsConnector.getInstance().updateUserAgreements(pluginAgreement, aiAgreement).onError {
         LOG.error("Failed to submit user agreements to remote: $it")
-        return@launch
       }
     }
   }
 
-  private fun submitSharingPreference(state: Boolean) {
+  private suspend fun submitSharingPreference(state: Boolean) {
     if (!isJBALoggedIn()) return
-    scope.launch(Dispatchers.IO) {
+    withContext(ioDispatcher) {
       MarketplaceSubmissionsConnector.getInstance().changeSharingPreference(state).onError {
         LOG.error("Failed to submit Sharing Preference state $state to remote: $it")
-        return@launch
       }
     }
   }
