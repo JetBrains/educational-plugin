@@ -12,11 +12,10 @@ import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.submissions.UserAgreementState.ACCEPTED
 import com.jetbrains.edu.learning.submissions.UserAgreementState.DECLINED
 import io.mockk.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import retrofit2.Response
@@ -170,24 +169,19 @@ class UserAgreementManagerTest : EduTestCase() {
     coVerify(exactly = 1) { submissionsConnector.submitAgreementAcceptanceAnonymously(isLoggedIn = false) }
   }
 
-  private suspend fun TestScope.initUserAgreementManager() {
-    UserAgreementManager(backgroundScope, StandardTestDispatcher(testScheduler))
-    // Needed here to run all necessary tasks in service constructor
-    delayAndAdvanceUntilIdle()
+  private fun initUserAgreementManager() {
+    val testDispatcher = UnconfinedTestDispatcher()
+    val scope = CoroutineScope(testDispatcher)
+    UserAgreementManager(scope, testDispatcher)
+
+    // clean-up between tests
+    Disposer.register(testRootDisposable) {
+      scope.cancel()
+    }
   }
 
-  private suspend fun TestScope.setAgreementState(agreementState: AgreementStateResponse) {
+  private fun setAgreementState(agreementState: AgreementStateResponse) {
     UserAgreementSettings.getInstance().setAgreementState(agreementState)
-    delayAndAdvanceUntilIdle()
-  }
-
-  /**
-   * Waits some with [delay] to propagate tasks in [TestScope.backgroundScope]
-   * and advances the [TestScope.testScheduler] to the point where there are no tasks remaining using [advanceUntilIdle].
-   */
-  private suspend fun TestScope.delayAndAdvanceUntilIdle() {
-    delay(50)
-    advanceUntilIdle()
   }
 
   /**
