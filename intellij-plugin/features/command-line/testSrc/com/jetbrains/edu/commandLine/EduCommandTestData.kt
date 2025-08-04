@@ -46,7 +46,7 @@ data class EduCommandTestData<T : EduCommand>(
           """
             Usage: $commandName [<options>] <path to course project directory>
   
-            Error: must provide one of --archive, --marketplace, --hyperskill
+            Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill
           """
         ),
         EduCommandTestData(
@@ -65,7 +65,7 @@ data class EduCommandTestData<T : EduCommand>(
             Usage: $commandName [<options>] <path to course project directory>
   
             Error: got unexpected extra argument (/path/to/project2)
-            Error: must provide one of --archive, --marketplace, --hyperskill
+            Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill
           """
         ),
         EduCommandTestData(
@@ -83,7 +83,7 @@ data class EduCommandTestData<T : EduCommand>(
           """
             Usage: $commandName [<options>] <path to course project directory>
   
-            Error: option --archive cannot be used with --marketplace or --hyperskill
+            Error: option --archive cannot be used with --marketplace or --courseStorage or --hyperskill
           """
         ),
         EduCommandTestData(
@@ -93,7 +93,7 @@ data class EduCommandTestData<T : EduCommand>(
             Usage: $commandName [<options>] <path to course project directory>
   
             Error: no such option --foo
-            Error: must provide one of --archive, --marketplace, --hyperskill
+            Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill
           """
         ),
       )

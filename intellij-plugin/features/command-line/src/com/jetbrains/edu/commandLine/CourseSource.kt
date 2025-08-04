@@ -5,6 +5,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
+import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
@@ -32,7 +34,21 @@ enum class CourseSource(val option: String, val description: String) {
       return if (course != null) Ok(course) else Err("Failed to load Marketplace course `$location`")
     }
 
-    override fun isCourseFromSource(course: Course): Boolean = course is EduCourse && course.isMarketplaceRemote
+    override fun isCourseFromSource(course: Course): Boolean =
+      course is EduCourse && course.isMarketplaceRemote && !course.isFromCourseStorage()
+  },
+
+  COURSE_STORAGE("courseStorage", "Course id from course storage") {
+    override suspend fun loadCourse(location: String): Result<Course, String> {
+      val courseId = location.toIntOrNull() ?: return Err("Course id from storage should be an integer. Got `$location`")
+
+      val connector = CourseStorageConnector.getInstance()
+      val course = connector.searchCourse(courseId, searchPrivate = false) ?: connector.searchCourse(courseId, searchPrivate = true)
+
+      return if (course != null) Ok(course) else Err("Failed to load course from the course storage `$location`")
+    }
+
+    override fun isCourseFromSource(course: Course): Boolean = course is EduCourse && course.isFromCourseStorage()
   },
 
   HYPERSKILL("hyperskill", "Hyperskill project id") {

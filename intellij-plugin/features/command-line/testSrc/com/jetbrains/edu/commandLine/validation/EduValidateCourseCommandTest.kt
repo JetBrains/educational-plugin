@@ -30,6 +30,7 @@ class EduValidateCourseCommandTest(
             Options:
               --archive=<value>                                 Path to course archive file
               --marketplace=<value>                             Marketplace course id
+              --courseStorage=<value>                           Course id from course storage
               --hyperskill=<value>                              Hyperskill project id
               --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
               --tests=true|false                                Enables/disables test validation (default: false)

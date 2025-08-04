@@ -12,4 +12,5 @@ dependencies {
   implementationWithoutKotlin(libs.clikt.core)
 
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
+  testImplementationWithoutKotlin(libs.kotlinx.coroutine.test)
 }
