@@ -140,9 +140,9 @@ fun <T> Response<T>.checkStatusCode(): Response<T>? {
   return null
 }
 
-fun File.toMultipartBody(): MultipartBody.Part {
+fun File.toMultipartBody(name: String = "file"): MultipartBody.Part {
   val body = asRequestBody("application/octet-stream".toMediaTypeOrNull())
-  return MultipartBody.Part.createFormData("file", this.name, body)
+  return MultipartBody.Part.createFormData(name, this.name, body)
 }
 
 fun String.toPlainTextRequestBody(): RequestBody = toRequestBody("text/plain".toMediaTypeOrNull())
