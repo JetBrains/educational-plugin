@@ -11,9 +11,9 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBAccountInfoService
-import com.jetbrains.edu.coursecreator.CCNotificationUtils
 import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
+import com.jetbrains.edu.coursecreator.CCUtils.prepareForUpload
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.archive.showNotification
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.File
@@ -133,42 +132,6 @@ class MarketplacePushCourse(
     CommonBundle.getCancelButtonText(),
     null
   )
-
-  private fun EduCourse.prepareForUpload(project: Project) {
-    if (isMarketplaceRemote) {
-      setRemoteMarketplaceCourseVersion()
-    }
-
-    if (isStepikRemote) {
-      // if the course is Stepik remote, that means that the course was opened
-      // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
-      id = 0
-      CCNotificationUtils.showInfoNotification(
-        project,
-        message("marketplace.course.converted"),
-        message("marketplace.not.possible.to.post.updates.to.stepik")
-      )
-    }
-
-    if (marketplaceCourseVersion == 0) marketplaceCourseVersion = 1
-
-    if (vendor == null) {
-      if (!addVendor()) {
-        EduNotificationManager.showErrorNotification(
-          project,
-          message("error.failed.to.create.course.archive.notification.title"),
-          message("marketplace.vendor.empty")
-        )
-        return
-      }
-    }
-
-    if (!isMarketplaceRemote && generatedEduId == null) {
-      generatedEduId = generateEduId()
-    }
-
-    YamlFormatSynchronizer.saveItem(course)
-  }
 
   companion object {
     private val LOG = logger<MarketplacePushCourse>()
