@@ -216,7 +216,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
 
     showInfoNotification(
       project,
-      message("marketplace.push.course.successfully.uploaded"),
+      message("push.course.successfully.uploaded"),
       message("marketplace.push.course.successfully.uploaded.message", courseBean.name),
       openOnMarketplaceAction(course.getMarketplaceUrl())
     )
@@ -306,7 +306,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
       YamlFormatSynchronizer.saveRemoteInfo(course)
       val pushAction = ActionManager.getInstance().getAction(MarketplacePushCourse.ACTION_ID)
       pushAction.templatePresentation.text = updateActionTitle
-      showInfoNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), action = pushAction)
+      showInfoNotification(project, message("notification.course.creator.inserted.course.version", insertedCourseVersion), action = pushAction)
     }
   }
 

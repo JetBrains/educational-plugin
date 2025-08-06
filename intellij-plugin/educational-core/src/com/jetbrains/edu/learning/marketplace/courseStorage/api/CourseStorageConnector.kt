@@ -129,7 +129,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
 
       showInfoNotification(
         project,
-        message("marketplace.push.course.successfully.uploaded"),
+        message("push.course.successfully.uploaded"),
         message("course.storage.course.successfully.uploaded.message", course.name, course.id),
         NotificationAction.createSimpleExpiring(message("course.storage.course.browse.text")) {
           //TODO(change it to courses pages url after they will be ready)
@@ -154,11 +154,11 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
       }
 
       if (remoteCourseInfo.courseVersion >= course.marketplaceCourseVersion) {
-        val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, message("action.Educational.Educator.CourseStoragePushCourse.text")) ?: return@runWithModalProgressBlocking
+        val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, message("action.push.course.storage.update.text")) ?: return@runWithModalProgressBlocking
         course.marketplaceCourseVersion = insertedCourseVersion
         YamlFormatSynchronizer.saveRemoteInfo(course)
         val pushAction = ActionManager.getInstance().getAction(CourseStoragePushCourse.ACTION_ID)
-        showInfoNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), action = pushAction)
+        showInfoNotification(project, message("notification.course.creator.inserted.course.version", insertedCourseVersion), action = pushAction)
         return@runWithModalProgressBlocking
       }
 

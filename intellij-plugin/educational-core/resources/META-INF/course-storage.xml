@@ -13,5 +13,10 @@
     <action id="Educational.Student.CourseStorageChangeHost"
             class="com.jetbrains.edu.learning.marketplace.courseStorage.changeHost.CourseStorageChangeHost"
             internal="true"/>
+    <action id="Educational.Educator.CourseStoragePushCourse"
+            class="com.jetbrains.edu.coursecreator.actions.marketplace.courseStorage.CourseStoragePushCourse"
+            internal="true">
+      <add-to-group group-id="Educational.Educator.CourseCreator.Menu" relative-to-action="Educational.Educator.MarketplacePushCourse" anchor="after"/>
+    </action>
   </actions>
 </idea-plugin>
