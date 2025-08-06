@@ -14,13 +14,13 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.asSafely
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
+import com.jetbrains.edu.coursecreator.CCUtils.createAndShowCourseVersionDialog
 import com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
@@ -392,23 +392,6 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
     }
     catch (e: NumberFormatException) {
       -1
-    }
-  }
-
-
-  @Suppress("DialogTitleCapitalization")
-  private fun createAndShowCourseVersionDialog(project: Project, course: EduCourse, failedActionTitle: String): Int? {
-    val currentCourseVersion = course.marketplaceCourseVersion
-    val suggestedCourseVersion = currentCourseVersion + 1
-
-    return invokeAndWaitIfNeeded {
-      Messages.showInputDialog(project,
-                               message("marketplace.insert.course.version.dialog", currentCourseVersion, course.name, failedActionTitle),
-                               message("marketplace.insert.course.version.dialog.title"),
-                               null,
-                               suggestedCourseVersion.toString(),
-                               NumericInputValidator(message("marketplace.insert.course.version.validation.empty"),
-                                                     message("marketplace.insert.course.version.validation.not.numeric")))?.toIntOrNull()
     }
   }
 

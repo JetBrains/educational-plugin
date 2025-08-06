@@ -38,7 +38,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
+import com.jetbrains.edu.learning.marketplace.addVendor
+import com.jetbrains.edu.learning.marketplace.generateEduId
+import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
@@ -335,5 +339,61 @@ object CCUtils {
    */
   fun addGluingSlash(updateText: @NlsActions.ActionText String, uploadText: @NlsActions.ActionText String): String {
     return "${updateText}/${uploadText}"
+  }
+
+  fun EduCourse.prepareForUpload(project: Project) {
+    if (isMarketplaceRemote) {
+      setRemoteMarketplaceCourseVersion()
+    }
+
+    if (isStepikRemote) {
+      // if the course is Stepik remote, that means that the course was opened
+      // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
+      id = 0
+      CCNotificationUtils.showInfoNotification(
+        project,
+        EduCoreBundle.message("marketplace.course.converted"),
+        EduCoreBundle.message("marketplace.not.possible.to.post.updates.to.stepik")
+      )
+    }
+
+    if (marketplaceCourseVersion == 0) {
+      marketplaceCourseVersion = 1
+    }
+
+    if (vendor == null) {
+      if (!addVendor()) {
+        EduNotificationManager.showErrorNotification(
+          project,
+          EduCoreBundle.message("error.failed.to.create.course.archive.notification.title"),
+          EduCoreBundle.message("marketplace.vendor.empty")
+        )
+        return
+      }
+    }
+
+    if (!isMarketplaceRemote && generatedEduId == null) {
+      generatedEduId = generateEduId()
+    }
+
+    YamlFormatSynchronizer.saveItem(course)
+  }
+
+  @Suppress("DialogTitleCapitalization")
+  fun createAndShowCourseVersionDialog(project: Project, course: EduCourse, failedActionTitle: String): Int? {
+    val currentCourseVersion = course.marketplaceCourseVersion
+    val suggestedCourseVersion = currentCourseVersion + 1
+
+    return invokeAndWaitIfNeeded {
+      Messages.showInputDialog(project,
+        EduCoreBundle.message("marketplace.insert.course.version.dialog", currentCourseVersion, course.name, failedActionTitle),
+        EduCoreBundle.message("marketplace.insert.course.version.dialog.title"),
+        null,
+        suggestedCourseVersion.toString(),
+        NumericInputValidator(
+          EduCoreBundle.message("marketplace.insert.course.version.validation.empty"),
+          EduCoreBundle.message("marketplace.insert.course.version.validation.not.numeric")
+        ))?.toIntOrNull()
+    }
   }
 }
