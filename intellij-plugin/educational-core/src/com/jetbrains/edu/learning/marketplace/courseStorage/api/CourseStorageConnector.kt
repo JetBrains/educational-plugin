@@ -3,8 +3,21 @@ package com.jetbrains.edu.learning.marketplace.courseStorage.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.intellij.notification.NotificationAction
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showErrorNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
+import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
+import com.jetbrains.edu.coursecreator.CCUtils.createAndShowCourseVersionDialog
+import com.jetbrains.edu.coursecreator.actions.marketplace.courseStorage.CourseStoragePushCourse
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
@@ -18,6 +31,13 @@ import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
+import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.network.executeParsingErrors
+import com.jetbrains.edu.learning.network.toMultipartBody
+import com.jetbrains.edu.learning.onError
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import java.io.File
 
 abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseConnector {
   override var account: MarketplaceAccount?
@@ -94,6 +114,86 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
     val courseId = getCourseIdFromLink(link)
     if (courseId == -1) return null
     return searchCourse(courseId)
+  }
+
+  fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
+    runWithModalProgressBlocking(project, message("action.push.course")) {
+      val remoteCourse = uploadCourse(file).onError {
+        LOG.error("Failed to upload course ${course.name}: $it")
+        showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
+        return@runWithModalProgressBlocking
+      }
+
+      onSuccessfulCourseUpload(course, remoteCourse)
+
+      showInfoNotification(project, message("marketplace.push.course.successfully.uploaded"))
+      LOG.info("Course ${course.name} has been uploaded to course storage with id = ${course.id}")
+      EduCounterUsageCollector.uploadCourse()
+    }
+  }
+
+  fun uploadCourseUpdate(project: Project, course: EduCourse, file: File) {
+    runWithModalProgressBlocking(project, message("push.course.updating.progress.title")) {
+      val remoteCourseInfo = getLatestCourseUpdateInfo(course.id)
+
+      if (remoteCourseInfo == null) {
+        val convertToLocalAction = NotificationAction.createSimpleExpiring(message("notification.course.creator.access.denied.action")) {
+          course.convertToLocal()
+          uploadNewCourse(project, course, file)
+        }
+        showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), message("course.storage.failed.to.update.no.course"), convertToLocalAction)
+        return@runWithModalProgressBlocking
+      }
+
+      if (remoteCourseInfo.courseVersion >= course.marketplaceCourseVersion) {
+        val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, message("action.Educational.Educator.CourseStoragePushCourse.text")) ?: return@runWithModalProgressBlocking
+        course.marketplaceCourseVersion = insertedCourseVersion
+        YamlFormatSynchronizer.saveRemoteInfo(course)
+        val pushAction = ActionManager.getInstance().getAction(CourseStoragePushCourse.ACTION_ID)
+        showInfoNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), action = pushAction)
+        return@runWithModalProgressBlocking
+      }
+
+      val remoteCourse = uploadCourse(file).onError {
+        LOG.error("Failed to upload course ${course.name}: $it")
+        showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
+        return@runWithModalProgressBlocking
+      }
+
+      onSuccessfulCourseUpload(course, remoteCourse)
+
+      EduCounterUsageCollector.updateCourse()
+      showInfoNotification(
+        project,
+        message("marketplace.push.course.successfully.updated.title"),
+        message("marketplace.push.course.successfully.updated.message", course.name, course.marketplaceCourseVersion),
+      )
+      LOG.info("Course ${course.name} (id ${course.id}) has been successfully uploaded to course storage with version ${course.marketplaceCourseVersion}")
+    }
+  }
+
+  private fun onSuccessfulCourseUpload(course: EduCourse, remoteCourse: EduCourse) {
+    course.apply {
+      id = remoteCourse.id
+      marketplaceCourseVersion = remoteCourse.marketplaceCourseVersion
+    }
+    YamlFormatSynchronizer.saveRemoteInfo(course)
+    YamlFormatSynchronizer.saveItem(course)
+  }
+
+  private fun uploadCourse(file: File): Result<EduCourse, String> {
+    LOG.info("Uploading course from ${file.absolutePath}")
+    val course = getRepositoryEndpoints()
+      .uploadCourse(file.toMultipartBody("courseArchive"))
+      .executeParsingErrors()
+      .onError {
+        return Err(it)
+      }
+      .body()
+    if (course == null) {
+      return Err("Course not found")
+    }
+    return Ok(course)
   }
 
   companion object {
