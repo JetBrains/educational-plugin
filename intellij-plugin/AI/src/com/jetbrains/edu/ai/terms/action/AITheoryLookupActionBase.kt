@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 
 abstract class AITheoryLookupActionBase : DumbAwareAction() {
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
@@ -15,6 +16,7 @@ abstract class AITheoryLookupActionBase : DumbAwareAction() {
       project.isDisposed -> true
       !project.isStudentProject() -> true
       !course.isMarketplaceRemote -> true
+      course.isFromCourseStorage() -> true
       !TheoryLookupSettings.getInstance().isTheoryLookupEnabled -> true
       else -> false
     }

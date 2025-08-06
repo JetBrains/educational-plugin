@@ -9,6 +9,7 @@ import com.jetbrains.edu.ai.terms.ui.TermsGotItTooltipService
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,6 +20,7 @@ class AIStartupActivity(private val scope: CoroutineScope) : ProjectActivity {
 
     val course = project.course as? EduCourse ?: return
     if (!course.isMarketplaceRemote) return
+    if (course.isFromCourseStorage()) return
     project.launchUpdateChecker(course)
 
     scope.observeAndLoadCourseTerms(project)
