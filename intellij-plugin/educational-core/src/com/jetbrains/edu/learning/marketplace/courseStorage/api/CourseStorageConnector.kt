@@ -80,7 +80,8 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   override fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo? {
     val courseDto = searchCourse(courseId)
     if (courseDto == null) {
-      error("Course $courseId not found on course storage")
+      LOG.error("Course $courseId not found on course storage")
+      return null
     }
     return CourseUpdateInfo(courseDto.marketplaceCourseVersion, courseDto.formatVersion)
   }
@@ -96,6 +97,8 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   }
 
   companion object {
+    private val LOG = logger<CourseStorageConnector>()
+
     fun getInstance(): CourseStorageConnector = service()
   }
 }
