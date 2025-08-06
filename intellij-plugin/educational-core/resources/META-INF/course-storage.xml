@@ -13,5 +13,8 @@
     <action id="Educational.Student.CourseStorageChangeHost"
             class="com.jetbrains.edu.learning.marketplace.courseStorage.changeHost.CourseStorageChangeHost"
             internal="true"/>
+    <action id="Educational.Educator.CourseStoragePushCourse"
+            class="com.jetbrains.edu.coursecreator.actions.marketplace.courseStorage.CourseStoragePushCourse"
+            internal="true"/>
   </actions>
 </idea-plugin>
