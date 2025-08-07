@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
@@ -38,6 +39,7 @@ import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import kotlinx.coroutines.withContext
 import java.io.File
 
 abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseConnector {
@@ -173,10 +175,12 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
     }
   }
 
-  private fun updateCourseData(course: EduCourse, remoteCourse: EduCourse) {
-    course.apply {
-      id = remoteCourse.id
-      marketplaceCourseVersion = remoteCourse.marketplaceCourseVersion
+  private suspend fun updateCourseData(course: EduCourse, remoteCourse: EduCourse) {
+    writeAction {
+      course.apply {
+        id = remoteCourse.id
+        marketplaceCourseVersion = remoteCourse.marketplaceCourseVersion
+      }
     }
     YamlFormatSynchronizer.saveRemoteInfo(course)
     YamlFormatSynchronizer.saveItem(course)
