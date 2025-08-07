@@ -17,9 +17,11 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import org.jsoup.nodes.Document
@@ -200,6 +202,12 @@ fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargi
   if (course is HyperskillCourse) {
     linkPanel.add(
       createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin)
+    )
+  }
+
+  else if (course is EduCourse && course.isFromCourseStorage()) {
+    linkPanel.add(
+      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.AWS), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin)
     )
   }
 }
