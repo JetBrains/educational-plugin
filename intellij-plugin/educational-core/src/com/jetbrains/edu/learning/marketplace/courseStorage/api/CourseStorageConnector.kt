@@ -101,7 +101,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   override fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo? {
     val courseDto = searchCourse(courseId)
     if (courseDto == null) {
-      LOG.error("Course $courseId not found on course storage")
+      LOG.warn("Course $courseId not found on course storage")
       return null
     }
     return CourseUpdateInfo(courseDto.marketplaceCourseVersion, courseDto.formatVersion)
@@ -120,12 +120,12 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
     runWithModalProgressBlocking(project, message("action.push.course")) {
       val remoteCourse = uploadCourse(file).onError {
-        LOG.error("Failed to upload course ${course.name}: $it")
+        LOG.warn("Failed to upload course ${course.name}: $it")
         showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
         return@runWithModalProgressBlocking
       }
 
-      onSuccessfulCourseUpload(course, remoteCourse)
+      updateCourseData(course, remoteCourse)
 
       showInfoNotification(project, message("marketplace.push.course.successfully.uploaded"))
       LOG.info("Course ${course.name} has been uploaded to course storage with id = ${course.id}")
@@ -156,12 +156,12 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
       }
 
       val remoteCourse = uploadCourse(file).onError {
-        LOG.error("Failed to upload course ${course.name}: $it")
+        LOG.warn("Failed to upload course ${course.name}: $it")
         showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
         return@runWithModalProgressBlocking
       }
 
-      onSuccessfulCourseUpload(course, remoteCourse)
+      updateCourseData(course, remoteCourse)
 
       EduCounterUsageCollector.updateCourse()
       showInfoNotification(
@@ -173,7 +173,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
     }
   }
 
-  private fun onSuccessfulCourseUpload(course: EduCourse, remoteCourse: EduCourse) {
+  private fun updateCourseData(course: EduCourse, remoteCourse: EduCourse) {
     course.apply {
       id = remoteCourse.id
       marketplaceCourseVersion = remoteCourse.marketplaceCourseVersion
