@@ -169,6 +169,8 @@ tasks {
   intellijPlatformTesting {
     // Generates event scheme for JetBrains Academy plugin FUS events to `build/eventScheme.json`
     runIde.register("buildEventsScheme") {
+      useInstaller = false
+
       task {
         args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
         // Force headless mode to be able to run command on CI
@@ -181,6 +183,7 @@ tasks {
     }
 
     runIde.register("runInSplitMode") {
+      useInstaller = false
       splitMode = true
 
       // Specify custom sandbox directory to have a stable path to log file
