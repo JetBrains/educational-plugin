@@ -162,7 +162,7 @@ pluginManagement {
   repositories {
     mavenCentral()
     gradlePluginPortal()
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://central.sonatype.com/repository/maven-snapshots/")
     if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
       maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
       maven("https://packages.jetbrains.team/maven/p/teamcity-rest-client/teamcity-rest-client")
