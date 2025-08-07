@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.CCUtils.prepareForUpload
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.archive.showNotification
 import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
@@ -26,7 +26,7 @@ class CourseStoragePushCourse : DumbAwareAction() {
     presentation.isEnabledAndVisible = false
 
     val project = e.project ?: return
-    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
+    val course = project.course as? EduCourse ?: return
 
     if (!isActionVisible(project, course)) return
 
@@ -37,7 +37,7 @@ class CourseStoragePushCourse : DumbAwareAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
+    val course = project.course as? EduCourse ?: return
     if (!isActionVisible(project, course)) return
 
     course.prepareForUpload(project)
