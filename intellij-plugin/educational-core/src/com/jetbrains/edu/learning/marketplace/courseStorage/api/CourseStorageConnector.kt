@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
+import com.jetbrains.edu.learning.flatMap
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceAuthConnector
 import com.jetbrains.edu.learning.marketplace.courseStorage.COURSE_STORAGE
@@ -183,17 +184,13 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
 
   private fun uploadCourse(file: File): Result<EduCourse, String> {
     LOG.info("Uploading course from ${file.absolutePath}")
-    val course = getRepositoryEndpoints()
+    return getRepositoryEndpoints()
       .uploadCourse(file.toMultipartBody("courseArchive"))
       .executeParsingErrors()
-      .onError {
-        return Err(it)
+      .flatMap { 
+        val course = it.body() ?: return@flatMap Err("Course not found")
+        Ok(course)
       }
-      .body()
-    if (course == null) {
-      return Err("Course not found")
-    }
-    return Ok(course)
   }
 
   companion object {
