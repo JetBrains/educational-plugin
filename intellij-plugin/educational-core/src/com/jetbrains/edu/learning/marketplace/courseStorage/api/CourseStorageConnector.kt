@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.CCNotificationUtils.showInfoNotification
 import com.jetbrains.edu.coursecreator.CCNotificationUtils.showLogAction
 import com.jetbrains.edu.coursecreator.CCUtils.createAndShowCourseVersionDialog
 import com.jetbrains.edu.coursecreator.actions.marketplace.courseStorage.CourseStoragePushCourse
+import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
@@ -39,7 +40,6 @@ import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import kotlinx.coroutines.withContext
 import java.io.File
 
 abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseConnector {
@@ -122,14 +122,21 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
     runWithModalProgressBlocking(project, message("action.push.course")) {
       val remoteCourse = uploadCourse(file).onError {
-        LOG.warn("Failed to upload course ${course.name}: $it")
-        showErrorNotification(project, message("notification.course.creator.failed.to.upload.course.title"), action = showLogAction)
+        showFailedToLoadNotification(project, course, it)
         return@runWithModalProgressBlocking
       }
 
       updateCourseData(course, remoteCourse)
 
-      showInfoNotification(project, message("marketplace.push.course.successfully.uploaded"))
+      showInfoNotification(
+        project,
+        message("marketplace.push.course.successfully.uploaded"),
+        message("course.storage.course.successfully.uploaded.message", course.name, course.id),
+        NotificationAction.createSimpleExpiring(message("course.storage.course.browse.text")) {
+          //TODO(change it to courses pages url after they will be ready)
+          EduBrowser.getInstance().browse(repositoryUrl)
+        }
+      )
       LOG.info("Course ${course.name} has been uploaded to course storage with id = ${course.id}")
       EduCounterUsageCollector.uploadCourse()
     }
@@ -158,21 +165,28 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
       }
 
       val remoteCourse = uploadCourse(file).onError {
-        LOG.warn("Failed to upload course ${course.name}: $it")
-        showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
+        showFailedToLoadNotification(project, course, it)
         return@runWithModalProgressBlocking
       }
 
       updateCourseData(course, remoteCourse)
 
-      EduCounterUsageCollector.updateCourse()
       showInfoNotification(
         project,
         message("marketplace.push.course.successfully.updated.title"),
-        message("marketplace.push.course.successfully.updated.message", course.name, course.marketplaceCourseVersion),
+        message("course.storage.course.successfully.updated.message", course.name, course.id, course.marketplaceCourseVersion),
+        NotificationAction.createSimpleExpiring(message("course.storage.course.browse.text")) {
+          //TODO(change it to courses pages url after they will be ready)
+          EduBrowser.getInstance().browse(repositoryUrl)
+        }
       )
       LOG.info("Course ${course.name} (id ${course.id}) has been successfully uploaded to course storage with version ${course.marketplaceCourseVersion}")
     }
+  }
+
+  private fun showFailedToLoadNotification(project: Project, course: EduCourse, message: String) {
+    LOG.warn("Failed to upload course ${course.name}: $message")
+    showErrorNotification(project, message("notification.course.creator.failed.to.update.course.title"), action = showLogAction)
   }
 
   private suspend fun updateCourseData(course: EduCourse, remoteCourse: EduCourse) {
