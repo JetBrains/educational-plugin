@@ -18,7 +18,7 @@ const val CODE = "code"
 const val UNIT_RETURN_VALUE = "Unit"
 
 fun PromptToCodeContent.toGeneratedCode() =
-  distinctBy { it.codeLineNumber }.joinToString(System.lineSeparator()) { it.generatedCodeLine }
+  distinctBy { it.codeLineNumber }.joinToString("\n") { it.generatedCodeLine }
 
 fun PromptToCodeContent.toPrompt() =
-  distinctBy { it.promptLineNumber }.joinToString(System.lineSeparator()) { it.promptLine }.prependIndent()
+  distinctBy { it.promptLineNumber }.joinToString("\n") { it.promptLine }.prependIndent()

@@ -89,13 +89,13 @@ class CodeGenerator(
     val promptLines = promptExpression.prompt.lines().filter { it.isNotBlank() }
     val codeLines = promptExpression.code.lines().filter { it.isNotBlank() }
 
-    return promptLines.enumerate(0) + System.lineSeparator() +
+    return promptLines.enumerate(0) + "\n" +
            codeLines.enumerate(promptLines.size)
   }
 
   private fun List<String>.enumerate(startIndex: Int): String {
     return mapIndexed { index, line -> "${index + startIndex}: $line" }
-      .joinToString(System.lineSeparator())
+      .joinToString("\n")
   }
 
   fun isCodeChanged() =
@@ -103,5 +103,5 @@ class CodeGenerator(
     && previousPromptToCode.toGeneratedCode() != codeExpression.code.trimStartLines()
     && previousPromptToCode.toPrompt().trim() == promptExpression.prompt.trim()
 
-  private fun String.trimStartLines() = this.lines().joinToString(System.lineSeparator()) { it.trimStart() }
+  private fun String.trimStartLines() = this.lines().joinToString("\n") { it.trimStart() }
 }
