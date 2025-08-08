@@ -38,7 +38,6 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import java.io.File
 
@@ -138,7 +137,6 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
         }
       )
       LOG.info("Course ${course.name} has been uploaded to course storage with id = ${course.id}")
-      EduCounterUsageCollector.uploadCourse()
     }
   }
 
