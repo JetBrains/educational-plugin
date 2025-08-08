@@ -154,10 +154,12 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
       }
 
       if (remoteCourseInfo.courseVersion >= course.marketplaceCourseVersion) {
-        val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, message("action.Educational.Educator.CourseStoragePushCourse.text")) ?: return@runWithModalProgressBlocking
+        val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, message("action.push.course.storage.update.text")) ?: return@runWithModalProgressBlocking
         course.marketplaceCourseVersion = insertedCourseVersion
         YamlFormatSynchronizer.saveRemoteInfo(course)
-        val pushAction = ActionManager.getInstance().getAction(CourseStoragePushCourse.ACTION_ID)
+        val pushAction = ActionManager.getInstance().getAction(CourseStoragePushCourse.ACTION_ID).apply {
+          templatePresentation.text = message("action.push.course.storage.update.text")
+        }
         showInfoNotification(project, message("marketplace.inserted.course.version.notification", insertedCourseVersion), action = pushAction)
         return@runWithModalProgressBlocking
       }

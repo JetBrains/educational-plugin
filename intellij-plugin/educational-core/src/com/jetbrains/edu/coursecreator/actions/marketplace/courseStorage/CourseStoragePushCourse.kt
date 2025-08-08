@@ -4,7 +4,9 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.edu.coursecreator.CCUtils.addGluingSlash
 import com.jetbrains.edu.coursecreator.CCUtils.isCourseCreator
 import com.jetbrains.edu.coursecreator.CCUtils.prepareForUpload
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
@@ -13,14 +15,18 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.isFeatureEnabled
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseStorage.COURSE_STORAGE
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 
-class CourseStoragePushCourse : DumbAwareAction() {
+private val uploadCourseActionText: @NlsActions.ActionText String
+  get() = message("action.push.course.storage.upload.text")
+private val updateCourseActionText: @NlsActions.ActionText String
+  get() = message("action.push.course.storage.update.text")
+
+class CourseStoragePushCourse : DumbAwareAction(addGluingSlash(uploadCourseActionText, updateCourseActionText)) {
   override fun update(e: AnActionEvent) {
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false
@@ -29,6 +35,15 @@ class CourseStoragePushCourse : DumbAwareAction() {
     val course = project.course as? EduCourse ?: return
 
     if (!isActionVisible(project, course)) return
+
+    presentation.setText {
+      if (course.isMarketplaceRemote) {
+        updateCourseActionText
+      }
+      else {
+        uploadCourseActionText
+      }
+    }
 
     presentation.isEnabledAndVisible = true
   }
@@ -63,20 +78,14 @@ class CourseStoragePushCourse : DumbAwareAction() {
   private fun isActionVisible(project: Project, course: EduCourse): Boolean {
     return isCourseCreator(project) &&
            isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE) &&
-           isUnderJBEmail(project) &&
+           isUnderJBEmail() &&
            course.isMarketplace &&
            (course.id == 0 || course.isFromCourseStorage())
   }
 
-  private fun isUnderJBEmail(project: Project): Boolean {
+  private fun isUnderJBEmail(): Boolean {
     val authConnector = MarketplaceConnector.getInstance()
-    val account = authConnector.account
-    if (account == null) {
-      showLoginNeededNotification(project, message("action.Educational.Educator.CourseStoragePushCourse.text")) {
-        authConnector.doAuthorize()
-      }
-      return false
-    }
+    val account = authConnector.account ?: return false
     return account.userInfo.email.endsWith(JB_EMAIL_SUFFIX)
   }
 
