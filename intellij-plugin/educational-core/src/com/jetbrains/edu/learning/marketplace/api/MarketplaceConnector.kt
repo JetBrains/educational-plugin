@@ -80,7 +80,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
   protected abstract val repositoryUrl: String
 
   private fun getRepositoryEndpoints(hubToken: String? = null): MarketplaceRepositoryEndpoints {
-    return getEndpoints(baseUrl = repositoryUrl, accessToken = hubToken)
+    return getEndpoints(account = null, baseUrl = repositoryUrl, accessToken = hubToken)
   }
 
   // Get requests:
