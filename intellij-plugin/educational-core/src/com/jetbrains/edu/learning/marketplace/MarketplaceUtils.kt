@@ -9,11 +9,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.ui.EditorNotifications
-import com.intellij.ui.JBAccountInfoService
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
@@ -35,22 +33,6 @@ import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.showUpdateNotification
-import java.util.*
-
-private const val DELIMITER = "."
-
-fun getJBAUserInfo(): JBAccountUserInfo? {
-  val jbaIdToken = getJBAIdToken() ?: return null
-
-  val parts: List<String> = jbaIdToken.split(DELIMITER)
-  if (parts.size < 2) {
-    error("JB Account id token data part is malformed")
-  }
-  val payload = String(Base64.getUrlDecoder().decode(parts[1]))
-  return ConnectorUtils.createMapper().readValue(payload, JBAccountUserInfo::class.java)
-}
-
-private fun getJBAIdToken(): String? = JBAccountInfoService.getInstance()?.idToken
 
 fun EduCourse.setRemoteMarketplaceCourseVersion() {
   val updateInfo = courseConnector.getLatestCourseUpdateInfo(id)
