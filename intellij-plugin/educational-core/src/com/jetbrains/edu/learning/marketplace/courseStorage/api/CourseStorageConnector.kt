@@ -43,7 +43,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   }
 
   private fun getRepositoryEndpoints(hubToken: String? = null): CourseStorageRepositoryEndpoints {
-    return getEndpoints(baseUrl = repositoryUrl, accessToken = hubToken)
+    return getEndpoints(account = null, baseUrl = repositoryUrl, accessToken = hubToken)
   }
 
   override fun searchCourse(courseId: Int, searchPrivate: Boolean): EduCourse? {
