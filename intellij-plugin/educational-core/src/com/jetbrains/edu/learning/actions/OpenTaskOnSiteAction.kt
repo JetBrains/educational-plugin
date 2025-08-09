@@ -7,10 +7,8 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.marketplace.courseStorage.CourseStorageLinkSettings
-import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -22,15 +20,7 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = TaskToolWindowView.getInstance(project).currentTask ?: return
-    val course = task.course
-    val link = when {
-      course is HyperskillCourse -> hyperskillTaskLink(task)
-      course is EduCourse && course.isFromCourseStorage() -> CourseStorageLinkSettings.getInstance(project).link
-      else -> return
-    }
-    if (link.isNullOrEmpty()) {
-      return
-    }
+    val link = CourseStorageLinkSettings.getInstance(project).link ?: hyperskillTaskLink(task)
     EduBrowser.getInstance().browse(link)
   }
 
@@ -42,7 +32,8 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
     val task = project.getCurrentTask() ?: return
     val course = task.course
 
-    e.presentation.isEnabledAndVisible = course is HyperskillCourse
+    val courseStorageLinkSettings = CourseStorageLinkSettings.getInstance(project)
+    e.presentation.isEnabledAndVisible = course is HyperskillCourse || courseStorageLinkSettings.link != null
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT

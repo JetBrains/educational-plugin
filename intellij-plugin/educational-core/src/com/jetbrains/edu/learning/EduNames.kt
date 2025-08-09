@@ -6,7 +6,6 @@ object EduNames {
   const val PLUGIN_ID = "com.jetbrains.edu"
   const val JBA = "Hyperskill"
   const val HINTS = "hints"
-  const val AWS = "AWS"
 
   const val FRAMEWORK_LESSON = "guided project"
   const val COURSE = "course"

@@ -14,14 +14,14 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.actions.EduOpenOnSiteUtils
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
+import com.jetbrains.edu.learning.marketplace.courseStorage.CourseStorageLinkSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import org.jsoup.nodes.Document
@@ -199,15 +199,17 @@ fun getDashedUnderlineElement(document: Document, text: String): Element =
   }
 
 fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
-  if (course is HyperskillCourse) {
+  val project = course?.project ?: return
+  if (EduOpenOnSiteUtils.isOpenOnSiteActionEnabled(project)) {
+    // if `CourseStorageLinkSettings` are empty, then it is a Hyperskill course
+    val platformName = CourseStorageLinkSettings.getInstance(project).platformName ?: EduNames.JBA
     linkPanel.add(
-      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin)
-    )
-  }
-
-  else if (course is EduCourse && course.isFromCourseStorage()) {
-    linkPanel.add(
-      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.AWS), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin)
+      createActionLink(
+        EduCoreBundle.message("action.open.on.text", platformName),
+        OpenTaskOnSiteAction.ACTION_ID,
+        topMargin,
+        leftMargin
+      )
     )
   }
 }
