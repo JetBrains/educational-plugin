@@ -13,17 +13,17 @@ import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings.Companion.TRUSTED_OPEN_ON_SITE_HOSTS
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.net.URI
 import javax.swing.JPanel
 
 private const val SHORTCUT = "shortcut"
@@ -196,12 +196,19 @@ fun getDashedUnderlineElement(document: Document, text: String): Element =
     appendText(text)
   }
 
-fun addActionLinks(course: Course?, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
-  if (course is HyperskillCourse) {
-    linkPanel.add(
-      createActionLink(EduCoreBundle.message("action.open.on.text", EduNames.JBA), OpenTaskOnSiteAction.ACTION_ID, topMargin, leftMargin)
+fun addActionLinks(project: Project, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
+  // TODO move to toolbar (EDU-7584)
+  val link = EduActionUtils.getOpenOnSiteActionInfo(project) ?: return
+  val host = URI(link).host
+  val platformName = TRUSTED_OPEN_ON_SITE_HOSTS[host] ?: return
+  linkPanel.add(
+    createActionLink(
+      EduCoreBundle.message("action.open.on.text", platformName),
+      OpenTaskOnSiteAction.ACTION_ID,
+      topMargin,
+      leftMargin
     )
-  }
+  )
 }
 
 fun createActionLink(

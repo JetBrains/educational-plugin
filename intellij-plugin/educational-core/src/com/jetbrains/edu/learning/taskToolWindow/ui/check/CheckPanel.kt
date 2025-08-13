@@ -71,7 +71,7 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
   }
 
   fun readyToCheck() {
-    addActionLinks(course, linkPanel, 10, 3)
+    addActionLinks(project, linkPanel, 10, 3)
     checkFinishedPanel.removeAll()
     checkDetailsPlaceholder.removeAll()
     checkTimeAlarm.cancelAllRequests()
@@ -181,9 +181,12 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
         val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isEnabled = isRunning, isDefault = isRunning)
         checkButtonWrapper.add(checkComponent, BorderLayout.CENTER)
       }
-      CheckStatus.Failed, CheckStatus.Solved  -> {
-        val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
-                                                       isDefault = true)
+
+      CheckStatus.Failed, CheckStatus.Solved -> {
+        val retryComponent = CheckPanelButtonComponent(
+          EduActionUtils.getAction(RetryDataTaskAction.ACTION_ID) as RetryDataTaskAction,
+          isDefault = true
+        )
         checkButtonWrapper.add(retryComponent, BorderLayout.WEST)
       }
     }
@@ -193,7 +196,8 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!(task.status == CheckStatus.Solved
           || task is TheoryTask
           || task.course is HyperskillCourse
-          || task.course.courseMode == CourseMode.EDUCATOR)) {
+          || task.course.courseMode == CourseMode.EDUCATOR)
+    ) {
       return
     }
 
@@ -213,8 +217,10 @@ class CheckPanel(private val project: Project, private val parentDisposable: Dis
     if (!task.isChangedOnFailed) return
 
     if (task.status == CheckStatus.Failed) {
-      val retryComponent = CheckPanelButtonComponent(EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
-        isDefault = true, isEnabled = true)
+      val retryComponent = CheckPanelButtonComponent(
+        EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
+        isDefault = true, isEnabled = true
+      )
       add(retryComponent, BorderLayout.WEST)
     }
   }

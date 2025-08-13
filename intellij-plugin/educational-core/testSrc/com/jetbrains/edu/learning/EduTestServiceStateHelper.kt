@@ -225,6 +225,7 @@ private class HardcodedServiceCollector : TestAwareServiceCollector {
       "com.jetbrains.edu.learning.ai.terms.TermsProjectSettings",
       "com.jetbrains.edu.learning.featureManagement.EduFeatureManager",
       "com.jetbrains.edu.learning.framework.FrameworkLessonManager",
+      "com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings",
       "com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker",
       // BACKCOMPAT: 2025.1. Drop `CoursePageExperimentManager` line together with the corresponding service
       "com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager",

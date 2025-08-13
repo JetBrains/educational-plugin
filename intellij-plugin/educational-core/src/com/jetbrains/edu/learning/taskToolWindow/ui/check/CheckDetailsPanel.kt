@@ -79,7 +79,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
     val course = task.course
 
-    addActionLinks(course, linksPanel, 16, 0)
+    addActionLinks(project, linksPanel, 16, 0)
 
     if (course is HyperskillCourse) {
       if (course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
