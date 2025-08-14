@@ -26,9 +26,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   val aiServiceAgreement: Boolean
     get() = _userAgreementProperties.value.aiServiceAgreement == UserAgreementState.ACCEPTED
 
-  val isNotShown: Boolean
-    get() = _userAgreementProperties.value.pluginAgreement == UserAgreementState.NOT_SHOWN
-
   val solutionSharing: Boolean
     get() = _userAgreementProperties.value.solutionSharingPreference == SolutionSharingPreference.ALWAYS
 

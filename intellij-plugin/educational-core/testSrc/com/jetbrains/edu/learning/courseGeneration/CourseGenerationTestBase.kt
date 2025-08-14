@@ -11,6 +11,7 @@ import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.EduHeavyTestCase
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.FileTree
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.assertContentsEqual
@@ -53,7 +54,10 @@ abstract class CourseGenerationTestBase<Settings : EduProjectSettings> : EduHeav
       waitForCourseConfiguration(project)
       IndexingTestUtil.waitUntilIndexesAreReady(project)
     }
-    TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
+    // Important condition if you are checking workflow when a user declined user agreement
+    if (project.isEduProject()) {
+      TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
+    }
     runInEdtAndWait {
       myProject = project
     }
