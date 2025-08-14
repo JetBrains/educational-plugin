@@ -8,6 +8,8 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(scalaPlugin)
+
+    testIntellijPlugins(intelliLangPlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))
