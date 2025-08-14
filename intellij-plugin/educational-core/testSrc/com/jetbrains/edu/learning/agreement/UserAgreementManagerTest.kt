@@ -232,6 +232,38 @@ class UserAgreementManagerTest : EduTestCase() {
     verify(exactly = 1) { projectManager.reloadProject(project) }
   }
 
+  @Test
+  fun `test apply accepted remote plugin agreement`() = runTest {
+    // given
+    mockJBAccount(testRootDisposable)
+    initUserAgreementManager()
+
+    // when
+    updatePluginAgreementState(UserAgreementProperties(ACCEPTED, DECLINED, isChangedByUser = false))
+
+    // then
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
+    coVerify(exactly = 0) { submissionsConnector.changeSharingPreference(any()) }
+    coVerify(exactly = 0) { submissionsConnector.submitAgreementAcceptanceAnonymously(true) }
+    verify(exactly = 0) { projectManager.reloadProject(project) }
+  }
+
+  @Test
+  fun `test apply declined remote plugin agreement`() = runTest {
+    // given
+    mockJBAccount(testRootDisposable)
+    initUserAgreementManager()
+
+    // when
+    updatePluginAgreementState(UserAgreementProperties(DECLINED, DECLINED, isChangedByUser = false))
+
+    // then
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
+    coVerify(exactly = 0) { submissionsConnector.changeSharingPreference(any()) }
+    coVerify(exactly = 0) { submissionsConnector.submitAgreementAcceptanceAnonymously(true) }
+    verify(exactly = 1) { projectManager.reloadProject(project) }
+  }
+
   @OptIn(DelicateCoroutinesApi::class)
   private fun TestScope.initUserAgreementManager() {
     val serviceScope = GlobalScope.childScope("UserAgreementManager-scope", Dispatchers.Unconfined)

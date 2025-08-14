@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.marketplace.api
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.submissions.UserAgreementState
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -72,6 +74,9 @@ interface SubmissionsService {
     @Query("pluginAgreement") pluginAgreement: String,
     @Query("aiAgreement") aiAgreement: String
   ): Response<Unit>
+
+  @GET("/api/v2/agreement")
+  suspend fun getUserAgreement(): Response<UserAgreement>
 }
 
 /**
@@ -81,3 +86,8 @@ interface RemoteStatisticsService {
   @POST("/api/v2/agreement/save-anonymously")
   suspend fun saveAgreementAcceptanceAnonymously(@Query(value = "isLoggedIn") isLoggedIn: Boolean): Response<Unit>
 }
+
+data class UserAgreement(
+  @JsonProperty("pluginAgreement") val pluginAgreement: UserAgreementState,
+  @JsonProperty("aiTermsOfService") val aiTermsOfService: UserAgreementState
+)

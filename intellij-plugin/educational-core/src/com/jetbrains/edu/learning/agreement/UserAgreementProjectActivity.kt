@@ -12,7 +12,11 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.asSafely
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.isHeadlessEnvironment
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.marketplace.api.UserAgreement
+import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.TestOnly
@@ -32,13 +36,39 @@ class UserAgreementProjectActivity : ProjectActivity {
   }
 
   private suspend fun executeImpl(project: Project) {
+    // If it's not JetBrains Academy project, switch from Course View to Project view.
+    // It's necessary if a user declined user agreement and the plugin reloaded the project to open it as a common one
     if (!project.isEduProject()) {
       changeProjectView(project)
       return
     }
-    if (UserAgreementSettings.getInstance().isNotShown && System.getProperty(DISABLE_USER_AGREEMENT)?.toBoolean() != true) {
-      UserAgreementManager.getInstance().showUserAgreement(project)
+    val currentLocalAgreementState = UserAgreementSettings.getInstance().userAgreementProperties.value
+    // If user agreement was shown before or suppressed by system properties, do nothing
+    if (currentLocalAgreementState.pluginAgreement != UserAgreementState.NOT_SHOWN ||
+        System.getProperty(DISABLE_USER_AGREEMENT)?.toBoolean() == true) return
+
+    // Load the remote agreement state only if the current state is not caused by direct user action.
+    // Important for `Reset User Agreement` action
+    if (!currentLocalAgreementState.isChangedByUser) {
+      val remoteAgreementState = withContext(Dispatchers.IO) {
+        MarketplaceSubmissionsConnector.getInstance().getUserAgreement().onError {
+          UserAgreement(UserAgreementState.NOT_SHOWN, UserAgreementState.NOT_SHOWN)
+        }
+      }
+
+      if (remoteAgreementState.pluginAgreement != UserAgreementState.NOT_SHOWN) {
+        val newLocalAgreementState = UserAgreementSettings.UserAgreementProperties(
+          remoteAgreementState.pluginAgreement,
+          remoteAgreementState.aiTermsOfService,
+          isChangedByUser = false
+        )
+        // Apply remote agreement state for local settings and don't show the agreement dialog
+        UserAgreementSettings.getInstance().updatePluginAgreementState(newLocalAgreementState)
+        return
+      }
     }
+
+    UserAgreementManager.getInstance().showUserAgreement(project)
   }
 
   private suspend fun changeProjectView(project: Project) {

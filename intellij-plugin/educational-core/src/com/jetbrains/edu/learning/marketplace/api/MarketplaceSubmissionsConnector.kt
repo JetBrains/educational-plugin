@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.marketplace.api
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showF
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showNoSubmissionsToDeleteNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showSubmissionsDeletedSuccessfullyNotification
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
+import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings.Companion.isJBALoggedIn
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
 import com.jetbrains.edu.learning.network.executeCall
@@ -49,7 +50,7 @@ class MarketplaceSubmissionsConnector {
   private val connectionPool: ConnectionPool = ConnectionPool()
   private val converterFactory: JacksonConverterFactory
   val objectMapper: ObjectMapper by lazy {
-    val objectMapper = ConnectorUtils.createRegisteredMapper(SimpleModule())
+    val objectMapper = ConnectorUtils.createRegisteredMapper(kotlinModule())
     objectMapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderWithAnswerMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
     objectMapper.addMixIn(EduTestInfo::class.java, EduTestInfoMixin::class.java)
@@ -427,6 +428,38 @@ class MarketplaceSubmissionsConnector {
     }
     catch (e: Exception) {
       LOG.error("Error occurred while changing plugin agreement to $pluginAgreement and ai agreement to $aiAgreement for user $loginName", e)
+      Err(e.message ?: "Unknown error")
+    }
+  }
+
+  /**
+   * Returns user agreement for current logged-in user from remote wrapped into [Ok]
+   * including `UserAgreement(NOT_SHOWN, NOT_SHOWN)` if there isn't any record about current user on remote.
+   * Otherwise, returns [Err] with an error message
+   */
+  suspend fun getUserAgreement(): Result<UserAgreement, String> {
+    if (!isJBALoggedIn()) {
+      return Err("User is not logged in")
+    }
+
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    LOG.info("Fetching user $loginName plugin agreement")
+
+    return try {
+      val response = submissionsService.getUserAgreement()
+      val userAgreement = response.body()
+      if (response.isSuccessful && userAgreement != null) {
+        LOG.info("Successfully fetched user $loginName plugin agreement: $userAgreement")
+        Ok(userAgreement)
+      }
+      else {
+        val message = "Failed to fetch User Agreement state: ${response.errorBody()}. Response code: ${response.code()}"
+        LOG.warn(message)
+        Err(message)
+      }
+    }
+    catch (e: Exception) {
+      LOG.warn("Error occurred while fetching plugin agreement for user $loginName", e)
       Err(e.message ?: "Unknown error")
     }
   }
