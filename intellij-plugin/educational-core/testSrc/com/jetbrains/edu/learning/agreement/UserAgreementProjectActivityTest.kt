@@ -2,13 +2,11 @@ package com.jetbrains.edu.learning.agreement
 
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.application
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings.AgreementStateResponse
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings.UserAgreementProperties
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.submissions.UserAgreementState.ACCEPTED
-import com.jetbrains.edu.learning.submissions.UserAgreementState.DECLINED
 import io.mockk.justRun
 import io.mockk.verify
 import org.junit.Test
@@ -48,7 +46,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
     // given
     val course = course {}
 
-    UserAgreementSettings.getInstance().setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = ACCEPTED))
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties.fullyAccepted())
     val userAgreementManager = mockService<UserAgreementManager>(application)
     justRun { userAgreementManager.showUserAgreement(any()) }
 
@@ -65,7 +63,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
     // given
     val course = course {}
 
-    UserAgreementSettings.getInstance().setAgreementState(AgreementStateResponse(DECLINED, DECLINED))
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties.declined())
     val userAgreementManager = mockService<UserAgreementManager>(application)
     justRun { userAgreementManager.showUserAgreement(any()) }
 

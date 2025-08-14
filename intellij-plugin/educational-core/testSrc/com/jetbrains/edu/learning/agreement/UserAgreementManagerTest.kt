@@ -5,7 +5,7 @@ import com.intellij.platform.util.coroutines.childScope
 import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.agreement.UserAgreementSettings.AgreementStateResponse
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings.UserAgreementProperties
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
@@ -41,7 +41,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.pluginAgreementAccepted())
 
     // then
     coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(ACCEPTED, DECLINED) }
@@ -56,7 +56,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = ACCEPTED))
+    updatePluginAgreementState(UserAgreementProperties.fullyAccepted())
 
     // then
     coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(ACCEPTED, ACCEPTED) }
@@ -71,7 +71,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = DECLINED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.declined())
 
     // then
     coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(DECLINED, DECLINED) }
@@ -86,7 +86,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.pluginAgreementAccepted())
 
     // then
     coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
@@ -101,7 +101,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = ACCEPTED))
+    updatePluginAgreementState(UserAgreementProperties.fullyAccepted())
 
     // then
     coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
@@ -116,7 +116,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = DECLINED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.declined())
 
     // then
     coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
@@ -131,7 +131,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = DECLINED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.declined())
 
     // then
     coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(DECLINED, DECLINED) }
@@ -139,7 +139,7 @@ class UserAgreementManagerTest : EduTestCase() {
     coVerify(exactly = 0) { submissionsConnector.submitAgreementAcceptanceAnonymously(any()) }
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.pluginAgreementAccepted())
 
     // then
     coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(ACCEPTED, DECLINED) }
@@ -154,7 +154,7 @@ class UserAgreementManagerTest : EduTestCase() {
     initUserAgreementManager()
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = DECLINED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.declined())
 
     // then
     coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
@@ -162,7 +162,7 @@ class UserAgreementManagerTest : EduTestCase() {
     coVerify(exactly = 0) { submissionsConnector.submitAgreementAcceptanceAnonymously(any()) }
 
     // when
-    setAgreementState(AgreementStateResponse(pluginAgreement = ACCEPTED, aiAgreement = DECLINED))
+    updatePluginAgreementState(UserAgreementProperties.pluginAgreementAccepted())
 
     // then
     coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
@@ -180,8 +180,8 @@ class UserAgreementManagerTest : EduTestCase() {
     }
   }
 
-  private fun TestScope.setAgreementState(agreementState: AgreementStateResponse) {
-    UserAgreementSettings.getInstance().setAgreementState(agreementState)
+  private fun TestScope.updatePluginAgreementState(newState: UserAgreementProperties) {
+    UserAgreementSettings.getInstance().updatePluginAgreementState(newState)
     advanceUntilIdle()
   }
 

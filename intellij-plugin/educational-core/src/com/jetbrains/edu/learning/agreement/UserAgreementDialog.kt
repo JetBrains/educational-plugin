@@ -13,7 +13,8 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.UserAgreementState
+import com.jetbrains.edu.learning.submissions.UserAgreementState.ACCEPTED
+import com.jetbrains.edu.learning.submissions.UserAgreementState.DECLINED
 import javax.swing.JComponent
 
 class UserAgreementDialog(project: Project) : DialogWrapper(project) {
@@ -64,18 +65,16 @@ class UserAgreementDialog(project: Project) : DialogWrapper(project) {
     }
   }
 
-  fun showWithResult(): UserAgreementSettings.AgreementStateResponse {
+  fun showWithResult(): UserAgreementSettings.UserAgreementProperties {
     val result = showAndGet()
     if (!result) {
-      return UserAgreementSettings.AgreementStateResponse(
-        pluginAgreement = if (UserAgreementSettings.getInstance().pluginAgreement) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED,
-        aiAgreement = if (UserAgreementSettings.getInstance().aiServiceAgreement) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
+      return UserAgreementSettings.UserAgreementProperties(
+        pluginAgreement = if (UserAgreementSettings.getInstance().pluginAgreement) ACCEPTED else DECLINED,
+        aiServiceAgreement = if (UserAgreementSettings.getInstance().aiServiceAgreement) ACCEPTED else DECLINED
       )
     }
-    val pluginAgreementState =
-      if (pluginAgreementAccepted.get()) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
-    val aiAgreementState =
-      if (aiAgreementCheckBox.get()) UserAgreementState.ACCEPTED else UserAgreementState.DECLINED
-    return UserAgreementSettings.AgreementStateResponse(pluginAgreement = pluginAgreementState, aiAgreement = aiAgreementState)
+    val pluginAgreementState = if (pluginAgreementAccepted.get()) ACCEPTED else DECLINED
+    val aiAgreementState = if (aiAgreementCheckBox.get()) ACCEPTED else DECLINED
+    return UserAgreementSettings.UserAgreementProperties(pluginAgreement = pluginAgreementState, aiServiceAgreement = aiAgreementState)
   }
 }

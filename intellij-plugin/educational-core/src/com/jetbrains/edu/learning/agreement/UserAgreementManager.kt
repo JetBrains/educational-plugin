@@ -130,7 +130,7 @@ class UserAgreementManager @JvmOverloads constructor(
   fun showUserAgreement(project: Project) {
     runInEdt {
       val result = UserAgreementDialog(project).showWithResult()
-      UserAgreementSettings.getInstance().setAgreementState(result)
+      UserAgreementSettings.getInstance().updatePluginAgreementState(result)
     }
   }
 

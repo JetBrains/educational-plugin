@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.agreement
 
 import com.jetbrains.edu.learning.NotificationsTestBase
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings.UserAgreementProperties
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.setEditorNotificationIgnored
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.UserAgreementState
 import org.junit.Test
 
 class UserAgreementEditorNotificationsProviderTest : NotificationsTestBase() {
@@ -26,11 +26,7 @@ class UserAgreementEditorNotificationsProviderTest : NotificationsTestBase() {
   @Test
   fun `test editor notification is not shown when agreement is accepted`() {
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED
-      )
-    )
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties.pluginAgreementAccepted())
 
     checkNoEditorNotification<UserAgreementEditorNotificationsProvider>(findFile("lesson/task/task.txt"))
   }
@@ -38,11 +34,7 @@ class UserAgreementEditorNotificationsProviderTest : NotificationsTestBase() {
   @Test
   fun `test editor notification is shown when agreement is declined`() {
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.DECLINED
-      )
-    )
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties.declined())
 
     checkEditorNotification<UserAgreementEditorNotificationsProvider>(
       findFile("lesson/task/task.txt"),
@@ -53,11 +45,7 @@ class UserAgreementEditorNotificationsProviderTest : NotificationsTestBase() {
   @Test
   fun `test editor notification is not shown when user ignored it`() { // "Don't show again" is clicked
     // when
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.DECLINED
-      )
-    )
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties.declined())
     // and
     project.setEditorNotificationIgnored(ignored = true)
 

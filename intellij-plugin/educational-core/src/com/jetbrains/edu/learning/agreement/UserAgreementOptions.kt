@@ -9,6 +9,7 @@ import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.UnscaledGaps
 import com.intellij.ui.dsl.gridLayout.UnscaledGapsY
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings.UserAgreementProperties
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBoxText
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -79,9 +80,7 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
       SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
 
     userAgreementSettings.updatePluginAgreementState(
-      pluginAgreementState,
-      aiServiceAgreementState,
-      solutionSharingPreference
+      UserAgreementProperties(pluginAgreementState, aiServiceAgreementState, solutionSharingPreference)
     )
   }
 }

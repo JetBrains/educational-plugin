@@ -8,11 +8,11 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils
 import com.jetbrains.edu.learning.actions.EduAIHintsUtils.GET_HINT_ACTION_ID
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.agreement.UserAgreementSettings.UserAgreementProperties
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
@@ -125,12 +125,7 @@ class GetHintTest : EduActionTestCase() {
   }
 
   private fun acceptAgreement() {
-    UserAgreementSettings.getInstance().setAgreementState(
-      UserAgreementSettings.AgreementStateResponse(
-        UserAgreementState.ACCEPTED,
-        UserAgreementState.ACCEPTED
-      )
-    )
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties.fullyAccepted())
   }
 
   private fun selectCurrentEduTask(course: Course) {

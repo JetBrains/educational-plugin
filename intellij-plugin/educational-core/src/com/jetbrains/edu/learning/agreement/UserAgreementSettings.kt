@@ -11,7 +11,7 @@ import org.jetbrains.annotations.TestOnly
 
 @State(name = "UserAgreementSettings", storages = [Storage("edu.agreement.xml", roamingType = RoamingType.DEFAULT)])
 class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.State>, EduTestAware {
-  private val _userAgreementProperties = MutableStateFlow(UserAgreementProperties())
+  private val _userAgreementProperties = MutableStateFlow(UserAgreementProperties(isChangedByUser = false))
   val userAgreementProperties: StateFlow<UserAgreementProperties> = _userAgreementProperties.asStateFlow()
 
   val isPluginAllowed: Boolean
@@ -33,42 +33,37 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = solutionSharingPreference)
   }
 
-  fun setAgreementState(agreementState: AgreementStateResponse) {
-    _userAgreementProperties.value = UserAgreementProperties(
-      pluginAgreement = agreementState.pluginAgreement,
-      aiServiceAgreement = agreementState.aiAgreement,
-      isChangedByUser = true
-    )
-  }
-
-  data class AgreementStateResponse(
-    val pluginAgreement: UserAgreementState = UserAgreementState.DECLINED,
-    val aiAgreement: UserAgreementState = UserAgreementState.DECLINED
-  )
-
-  fun updatePluginAgreementState(
-    pluginAgreement: UserAgreementState,
-    aiServiceAgreement: UserAgreementState,
-    solutionSharingPreference: SolutionSharingPreference
-  ) {
-    _userAgreementProperties.value = UserAgreementProperties(
-      pluginAgreement = pluginAgreement,
-      aiServiceAgreement = aiServiceAgreement,
-      solutionSharingPreference = solutionSharingPreference,
-      isChangedByUser = true
-    )
+  fun updatePluginAgreementState(newState: UserAgreementProperties) {
+    _userAgreementProperties.value = newState
   }
 
   fun resetUserAgreementSettings() {
-    _userAgreementProperties.value = UserAgreementProperties(isChangedByUser = true)
+    _userAgreementProperties.value = UserAgreementProperties()
   }
 
   data class UserAgreementProperties(
     val pluginAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val aiServiceAgreement: UserAgreementState = UserAgreementState.NOT_SHOWN,
     val solutionSharingPreference: SolutionSharingPreference = SolutionSharingPreference.NEVER,
-    val isChangedByUser: Boolean = false
-  )
+    val isChangedByUser: Boolean = true
+  ) {
+    companion object {
+      fun fullyAccepted(): UserAgreementProperties = UserAgreementProperties(
+        pluginAgreement = UserAgreementState.ACCEPTED,
+        aiServiceAgreement = UserAgreementState.ACCEPTED,
+      )
+
+      fun pluginAgreementAccepted(): UserAgreementProperties = UserAgreementProperties(
+        pluginAgreement = UserAgreementState.ACCEPTED,
+        aiServiceAgreement = UserAgreementState.DECLINED,
+      )
+
+      fun declined(): UserAgreementProperties = UserAgreementProperties(
+        pluginAgreement = UserAgreementState.DECLINED,
+        aiServiceAgreement = UserAgreementState.DECLINED,
+      )
+    }
+  }
 
   class State : BaseState() {
     var pluginAgreement by enum<UserAgreementState>(UserAgreementState.NOT_SHOWN)
@@ -88,13 +83,14 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     _userAgreementProperties.value = UserAgreementProperties(
       state.pluginAgreement,
       state.aiServiceAgreement,
-      state.solutionSharingPreference
+      state.solutionSharingPreference,
+      isChangedByUser = false
     )
   }
 
   @TestOnly
   override fun restoreState() {
-    _userAgreementProperties.value = UserAgreementProperties()
+    _userAgreementProperties.value = UserAgreementProperties(isChangedByUser = false)
   }
 
   companion object {
