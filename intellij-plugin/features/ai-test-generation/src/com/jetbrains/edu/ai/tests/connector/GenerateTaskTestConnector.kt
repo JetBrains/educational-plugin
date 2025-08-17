@@ -16,7 +16,7 @@ import java.net.HttpURLConnection
 @Service(Service.Level.APP)
 class GenerateTaskTestConnector {
   private val url: String
-    get() = EduAIServiceHost.Companion.getSelectedUrl()
+    get() = EduAIServiceHost.selectedHost.url
 
   private val connectionPool = ConnectionPool()
 
