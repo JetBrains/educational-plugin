@@ -11,7 +11,7 @@
   <actions>
     <action id="Educational.ImportCourseFromStorageAction" class="com.jetbrains.edu.learning.marketplace.courseStorage.course.ImportCourseFromStorageAction" internal="true"/>
     <action id="Educational.Student.CourseStorageChangeHost"
-            class="com.jetbrains.edu.learning.marketplace.courseStorage.changeHost.CourseStorageChangeHost"
+            class="com.jetbrains.edu.learning.marketplace.courseStorage.changeHost.CourseStorageChangeHostAction"
             internal="true"/>
     <action id="Educational.Educator.CourseStoragePushCourse"
             class="com.jetbrains.edu.coursecreator.actions.marketplace.courseStorage.CourseStoragePushCourse"

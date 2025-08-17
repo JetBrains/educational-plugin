@@ -58,7 +58,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   }
 
   open val repositoryUrl: String
-    get() = CourseStorageServiceHost.getSelectedUrl()
+    get() = CourseStorageServiceHost.selectedHost.url
 
   override fun getCurrentUserInfo(): JBAccountUserInfo? {
     return account?.userInfo
