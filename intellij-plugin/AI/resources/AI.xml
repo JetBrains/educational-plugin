@@ -9,7 +9,7 @@
     </action>
 
     <action id="Educational.EduAIServiceChangeHost"
-            class="com.jetbrains.edu.ai.action.EduAIServiceChangeHost"
+            class="com.jetbrains.edu.ai.action.EduAIServiceChangeHostAction"
             internal="true"/>
 
     <action id="Educational.ResetCourseTranslation"

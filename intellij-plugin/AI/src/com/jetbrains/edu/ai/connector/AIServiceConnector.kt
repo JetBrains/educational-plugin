@@ -14,7 +14,7 @@ import java.io.IOException
 
 abstract class AIServiceConnector : Disposable {
   protected val aiServiceUrl: String
-    get() = EduAIServiceHost.getSelectedUrl()
+    get() = EduAIServiceHost.selectedHost.url
 
   protected val connectionPool = ConnectionPool()
 

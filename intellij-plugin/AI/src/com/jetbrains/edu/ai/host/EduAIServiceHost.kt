@@ -1,28 +1,27 @@
 package com.jetbrains.edu.ai.host
 
-import com.intellij.ide.util.PropertiesComponent
-import com.jetbrains.edu.ai.EDU_AI_SERVICE_HOST_PROPERTY
+import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.ai.EDU_AI_SERVICE_PRODUCTION_URL
 import com.jetbrains.edu.ai.EDU_AI_SERVICE_STAGING_URL
-import com.jetbrains.edu.ai.messages.EduAIBundle
-import org.jetbrains.annotations.Nls
-import java.util.function.Supplier
+import com.jetbrains.edu.learning.actions.changeHost.ServiceHostEnum
+import com.jetbrains.edu.learning.actions.changeHost.ServiceHostManager
+import com.jetbrains.edu.learning.messages.BUNDLE
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import org.jetbrains.annotations.PropertyKey
 
-enum class EduAIServiceHost(private val visibleName: Supplier<@Nls String>, val url: String) {
-  PRODUCTION(EduAIBundle.lazyMessage("ai.service.production.server"), EDU_AI_SERVICE_PRODUCTION_URL),
-  STAGING(EduAIBundle.lazyMessage("ai.service.staging.server"), EDU_AI_SERVICE_STAGING_URL),
-  OTHER(EduAIBundle.lazyMessage("ai.service.other"), "http://localhost:8080");
+@Suppress("unused") // All enum values ar used in UI
+enum class EduAIServiceHost(
+  override val url: String,
+  @param:PropertyKey(resourceBundle = BUNDLE) private val visibleNameKey: String
+) : ServiceHostEnum {
+  PRODUCTION(EDU_AI_SERVICE_PRODUCTION_URL, "change.service.host.production"),
+  STAGING(EDU_AI_SERVICE_STAGING_URL, "change.service.host.staging"),
+  OTHER("http://localhost:8080", "change.service.host.other");
 
-  override fun toString(): String = visibleName.get()
+  override fun visibleName(): @NlsContexts.ListItem String = EduCoreBundle.message(visibleNameKey)
 
-  companion object {
-    @JvmStatic
-    fun getSelectedHost(): EduAIServiceHost {
-      val selectedUrl = getSelectedUrl()
-      return EduAIServiceHost.values().firstOrNull { it.url == selectedUrl } ?: OTHER
-    }
-
-    @JvmStatic
-    fun getSelectedUrl(): String = PropertiesComponent.getInstance().getValue(EDU_AI_SERVICE_HOST_PROPERTY, PRODUCTION.url)
+  companion object : ServiceHostManager<EduAIServiceHost>("AI service", EduAIServiceHost::class.java) {
+    override val default: EduAIServiceHost = PRODUCTION
+    override val other: EduAIServiceHost = OTHER
   }
 }

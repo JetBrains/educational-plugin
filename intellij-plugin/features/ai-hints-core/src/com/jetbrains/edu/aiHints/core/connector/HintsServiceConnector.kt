@@ -25,7 +25,7 @@ import java.net.HttpURLConnection.*
 @Service(Service.Level.APP)
 class HintsServiceConnector {
   private val url: String
-    get() = EduAIServiceHost.getSelectedUrl()
+    get() = EduAIServiceHost.selectedHost.url
 
   private val connectionPool = ConnectionPool()
 
