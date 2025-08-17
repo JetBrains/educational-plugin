@@ -58,7 +58,7 @@ class MarketplaceSubmissionsConnector {
   }
 
   private val submissionsServiceUrl: String
-    get() = SubmissionsServiceHost.getSelectedUrl()
+    get() = SubmissionsServiceHost.selectedHost.url
 
   init {
     converterFactory = JacksonConverterFactory.create(objectMapper)

@@ -1,22 +1,46 @@
 package com.jetbrains.edu.learning.marketplace.changeHost
 
-import com.intellij.ide.util.PropertiesComponent
-import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_HOST_PROPERTY
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.util.NlsContexts
+import com.jetbrains.edu.learning.actions.changeHost.ServiceHostEnum
+import com.jetbrains.edu.learning.actions.changeHost.ServiceHostManager
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_PRODUCTION_URL
 import com.jetbrains.edu.learning.marketplace.SUBMISSIONS_SERVICE_STAGING_URL
+import com.jetbrains.edu.learning.messages.BUNDLE
+import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
+import org.jetbrains.annotations.PropertyKey
 
-enum class SubmissionsServiceHost(private val visibleName: String, val url: String) {
-  PRODUCTION("Production server", SUBMISSIONS_SERVICE_PRODUCTION_URL),
-  STAGING("Staging server", SUBMISSIONS_SERVICE_STAGING_URL),
-  OTHER("Other", "http://localhost:8080");
+@Suppress("unused") // All enum values ar used in UI
+enum class SubmissionsServiceHost(
+  override val url: String,
+  @param:PropertyKey(resourceBundle = BUNDLE) private val visibleNameKey: String
+) : ServiceHostEnum {
+  PRODUCTION(SUBMISSIONS_SERVICE_PRODUCTION_URL, "change.service.host.production"),
+  STAGING(SUBMISSIONS_SERVICE_STAGING_URL, "change.service.host.staging"),
+  OTHER("http://localhost:8080", "change.service.host.other");
 
-  override fun toString(): String = visibleName
+  override fun visibleName(): @NlsContexts.ListItem String = EduCoreBundle.message(visibleNameKey)
 
-  companion object {
-    @JvmStatic
-    fun getSelectedHost(): SubmissionsServiceHost = values().firstOrNull { it.url == getSelectedUrl() } ?: OTHER
+  companion object : ServiceHostManager<SubmissionsServiceHost>("Submissions service", SubmissionsServiceHost::class.java) {
 
-    @JvmStatic
-    fun getSelectedUrl(): String = PropertiesComponent.getInstance().getValue(SUBMISSIONS_SERVICE_HOST_PROPERTY, PRODUCTION.url)
+    override val default: SubmissionsServiceHost = PRODUCTION
+    override val other: SubmissionsServiceHost = OTHER
+
+    override fun onHostChanged() {
+      for (project in ProjectManager.getInstance().openProjects) {
+        val course = project.course ?: continue
+
+        val submissionsManager = SubmissionsManager.getInstance(project)
+        if (!course.isMarketplace || !submissionsManager.submissionsSupported()) return
+
+        SubmissionsManager.getInstance(project).deleteCourseSubmissionsLocally()
+        submissionsManager.prepareSubmissionsContentWhenLoggedIn {
+          MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+        }
+      }
+    }
   }
 }

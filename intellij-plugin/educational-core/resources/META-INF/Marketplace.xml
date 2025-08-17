@@ -39,7 +39,7 @@
       <add-to-group group-id="Educational.CourseView.SecondaryActions" relative-to-action="Educational.HideSolvedLessons" anchor="after"/>
     </action>
     <action id="Educational.Student.SubmissionsServiceChangeHost"
-            class="com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHost"
+            class="com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHostAction"
             internal="true"/>
     <action id="Educational.Student.ReportCommunitySolution"
             class="com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction"

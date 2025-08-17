@@ -25,7 +25,7 @@ enum class LTIOnlineService {
    *  - when a task is solved, the results only for successful attempts should be sent, not to failed attempts.
    */
   ALPHA_TEST_2024 {
-    override val serviceURL get() = SubmissionsServiceHost.getSelectedUrl()
+    override val serviceURL get() = SubmissionsServiceHost.selectedHost.url
   };
 
   abstract val serviceURL: String
