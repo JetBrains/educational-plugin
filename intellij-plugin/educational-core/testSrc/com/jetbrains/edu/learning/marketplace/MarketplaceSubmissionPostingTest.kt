@@ -5,6 +5,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.changeHost.ServiceHostManager.SelectedServiceHost
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -36,7 +37,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
     Disposer.register(testRootDisposable) {
       unmockkObject(SubmissionsServiceHost.Companion)
     }
-    every { SubmissionsServiceHost.getSelectedUrl() } returns helper.baseUrl
+    every { SubmissionsServiceHost.selectedHost } returns SelectedServiceHost(SubmissionsServiceHost.OTHER, helper.baseUrl)
     mockJBAccount(testRootDisposable)
   }
 
