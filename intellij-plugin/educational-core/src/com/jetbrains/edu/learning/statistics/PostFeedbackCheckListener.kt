@@ -15,7 +15,7 @@ class PostFeedbackCheckListener : CheckListener {
 
     val progress = ProgressUtil.countProgress(course)
     if (course.isMarketplace && progressPassed(progress)) {
-      showStudentPostFeedbackNotification(course.name, project)
+      showStudentPostFeedbackNotification(project)
     }
   }
 
