@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.submissions.TaskCommunitySubmissions
 import com.jetbrains.edu.learning.submissions.provider.CommunitySubmissionsProvider
 import com.jetbrains.edu.learning.submissions.provider.SubmissionsData
@@ -28,6 +29,6 @@ class MarketplaceCommunitySubmissionsProvider : CommunitySubmissionsProvider {
   }
 
   override fun isAvailable(course: Course): Boolean {
-    return course is EduCourse && course.isMarketplaceRemote && course.isStudy
+    return course is EduCourse && course.isMarketplaceRemote && course.isStudy && !course.isFromCourseStorage()
   }
 }
