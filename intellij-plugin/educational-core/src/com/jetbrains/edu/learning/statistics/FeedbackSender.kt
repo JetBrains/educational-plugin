@@ -21,33 +21,22 @@ fun showCCPostFeedbackNotification(course: Course, project: Project) {
   )
 }
 
-fun showStudentPostFeedbackNotification(project: Project) {
-  showPostFeedbackNotification(
-    project,
-    EduCoreBundle.message("feedback.template.student.title"),
-    EduCoreBundle.message("feedback.template.student")
-  )
-}
+fun showStudentPostFeedbackNotification(project: Project) = showPostFeedbackNotification(
+  project,
+  EduCoreBundle.message("feedback.template.student.title"),
+  EduCoreBundle.message("feedback.template.student")
+)
 
-private fun showPostFeedbackNotification(project: Project, notificationTitle: String, notificationText: String) {
-  PropertiesComponent.getInstance().setValue(LEAVE_FEEDBACK_NOTIFICATION_SHOWN, true)
-  showFeedbackNotification(
-    project,
-    notificationTitle,
-    notificationText,
-  )
-}
-
-@Suppress("DEPRECATION")
-private fun showFeedbackNotification(
+private fun showPostFeedbackNotification(
   project: Project,
   @NotificationTitle title: String,
   @NotificationContent content: String,
 ) {
-  EduNotificationManager.create(INFORMATION, title, content).apply {
-    addAction(ActionManager.getInstance().getAction(LeaveInIdeFeedbackAction.ACTION_ID))
-    isSuggestionType = true
-  }.notify(project)
+  PropertiesComponent.getInstance().setValue(LEAVE_FEEDBACK_NOTIFICATION_SHOWN, true)
+  EduNotificationManager.create(INFORMATION, title, content)
+    .addAction(ActionManager.getInstance().getAction(LeaveInIdeFeedbackAction.ACTION_ID))
+    .setSuggestionType(true)
+    .notify(project)
 }
 
 fun isLeaveFeedbackPrompted(): Boolean = PropertiesComponent.getInstance().getBoolean(LEAVE_FEEDBACK_NOTIFICATION_SHOWN)
