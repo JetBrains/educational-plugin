@@ -37,7 +37,6 @@ private val LOG: Logger = Logger.getInstance("com.jetbrains.edu.learning.newproj
 
 
 const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
-val courseCardComponentFont = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
 
 val Course.logo: Icon?
   get() {
@@ -143,7 +142,7 @@ fun createUsersNumberLabel(usersCount: Int): JBLabel {
 
 fun JBLabel.addCourseCardInfoStyle() {
   foreground = GRAY_COLOR
-  font = courseCardComponentFont
+  font = Font(TypographyManager().bodyFont, Font.PLAIN, CoursesDialogFontManager.smallCardFontSize)
   border = JBUI.Borders.emptyRight(COURSE_CARD_BOTTOM_LABEL_H_GAP)
 }
 
