@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.jetbrains.annotations.NonNls
 
 object SolutionSharingPromptCounter {
@@ -25,7 +26,10 @@ object SolutionSharingPromptCounter {
   private val DELAY: Long
     get() = Registry.intValue(REGISTRY_KEY).toLong()
 
-  fun shouldPrompt(): Boolean {
+  fun shouldPrompt(course: EduCourse): Boolean {
+    if (!course.areCommunitySolutionsSupported()) {
+      return false
+    }
     if (UserAgreementSettings.getInstance().solutionSharing) {
       return false
     }
@@ -52,3 +56,6 @@ object SolutionSharingPromptCounter {
     return current - timestamp > DELAY
   }
 }
+
+fun EduCourse.areCommunitySolutionsSupported() : Boolean = isMarketplaceRemote && isStudy && !isFromCourseStorage()
+

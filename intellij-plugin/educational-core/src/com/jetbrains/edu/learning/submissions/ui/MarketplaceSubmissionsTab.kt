@@ -9,9 +9,11 @@ import com.intellij.ui.dsl.builder.SegmentedButton
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.canShowCommunitySolutions
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.marketplace.areCommunitySolutionsSupported
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -51,6 +53,7 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
     val submissionsManager = SubmissionsManager.getInstance(project)
 
     val isAllowedToLoadCommunitySolutions = task.canShowCommunitySolutions()
+    val areCommunitySolutionsSupported = (task.course as? EduCourse)?.areCommunitySolutionsSupported() ?: false
 
     val (descriptionText, customLinkHandler) = prepareSubmissionsContent(submissionsManager, task, isLoggedIn)
     val (communityDescriptionText, communityLinkHandler) = prepareCommunityContent(
@@ -59,10 +62,18 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
       isAllowedToLoadCommunitySolutions
     )
 
+    val isCommunityButtonEnabled = isLoggedIn && isAllowedToLoadCommunitySolutions
+    val toolTipText = when {
+      !isLoggedIn -> EduCoreBundle.message("submissions.button.community.tooltip.text.login")
+      isCommunityButtonEnabled -> EduCoreBundle.message("submissions.button.community.tooltip.text.enabled")
+      !areCommunitySolutionsSupported -> EduCoreBundle.message("submissions.button.community.tooltip.text.not.supported")
+      else -> EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")
+    }
+
     project.invokeLater {
       segmentedButton.updateCommunityButton(
-        isLoggedIn = isLoggedIn,
-        isEnabled = isAllowedToLoadCommunitySolutions,
+        isEnabled = isCommunityButtonEnabled,
+        tooltipText = toolTipText,
       )
       updatePanel(panel, descriptionText, customLinkHandler)
       updatePanel(communityPanel, communityDescriptionText, communityLinkHandler)
@@ -92,16 +103,12 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
   }
 
   private fun SegmentedButton<SegmentedButtonItem>.updateCommunityButton(
-    isLoggedIn: Boolean,
-    isEnabled: Boolean
+    isEnabled: Boolean,
+    tooltipText: String,
   ) {
     val communityButton = items.first { it is CommunitySegmentedButtonItem }
-    communityButton.isEnabled = isLoggedIn && isEnabled
-    communityButton.toolTipText = when {
-      !isLoggedIn -> EduCoreBundle.message("submissions.button.community.tooltip.text.login")
-      isEnabled -> EduCoreBundle.message("submissions.button.community.tooltip.text.enabled")
-      else -> EduCoreBundle.message("submissions.button.community.tooltip.text.disabled")
-    }
+    communityButton.isEnabled = isEnabled
+    communityButton.toolTipText = tooltipText
 
     if (!isEnabled) {
       selectedItem = items.first()

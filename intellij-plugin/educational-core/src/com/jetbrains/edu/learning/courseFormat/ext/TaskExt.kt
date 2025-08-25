@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.marketplace.areCommunitySolutionsSupported
 import com.jetbrains.edu.learning.marketplace.peekSolution.GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
@@ -196,7 +197,7 @@ fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask &
 fun Task.canShowCommunitySolutions(): Boolean {
   val project = course.project ?: return false
   val eduCourse = course.asSafely<EduCourse>() ?: return false
-  if (!eduCourse.isMarketplaceRemote || !eduCourse.isStudy || !supportSubmissions) return false
+  if (!eduCourse.areCommunitySolutionsSupported() || !supportSubmissions) return false
   // If we can show solution for the task, let's also allow to explore community solutions
   if (canShowSolution()) return true
 
