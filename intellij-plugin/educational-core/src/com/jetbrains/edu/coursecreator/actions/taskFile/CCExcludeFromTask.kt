@@ -16,6 +16,10 @@ class CCExcludeFromTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessa
   override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean =
     file.belongsToTask(project)
 
+  override fun isAvailableForDirectory(project: Project, task: Task?, directory: VirtualFile): Boolean {
+    return task != null
+  }
+
   override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
     if (!file.belongsToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null
