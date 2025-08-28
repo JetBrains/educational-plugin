@@ -570,7 +570,7 @@
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.metadata.OpenOnSiteLinkMetadataProcessor"/>
   </extensions>
 
-  <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
+<!--  <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/LTI.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/course-storage.xml" xpointer="xpointer(/idea-plugin/*)"/>
