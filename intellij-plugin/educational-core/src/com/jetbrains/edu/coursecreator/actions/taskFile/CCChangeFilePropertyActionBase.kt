@@ -50,18 +50,24 @@ abstract class CCChangeFilePropertyActionBase(
     val affectedFiles = collectAffectedFiles(project, course, virtualFiles)
     val states = mutableListOf<State>()
     val tasks = mutableSetOf<Task>()
+    var outsideTasks = false
     for (file in affectedFiles) {
-      val task = file.getContainingTask(project) ?: continue
+      val task = file.getContainingTask(project)
+      if (task == null) {
+        outsideTasks = true
+      }
+      else {
+        tasks += task
+      }
       states += createStateForFile(project, task, file) ?: continue
-      tasks += task
     }
 
-    val action = ChangeFilesPropertyUndoableAction(project, states, tasks, affectedFiles)
+    val action = ChangeFilesPropertyUndoableAction(project, course, states, tasks, outsideTasks, affectedFiles)
     runUndoableAction(project, name.get(), action)
   }
 
-  protected open fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {
-    val task = file.getContainingTask(project) ?: return false
+  private fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {
+    val task = file.getContainingTask(project)
     return if (file.isDirectory) {
       isAvailableForDirectory(project, task, file)
     }
@@ -72,16 +78,17 @@ abstract class CCChangeFilePropertyActionBase(
 
   // Recursive check is too expensive for `update` method,
   // so we allow this action for directories by default
-  protected open fun isAvailableForDirectory(project: Project, task: Task, directory: VirtualFile): Boolean = true
+  protected open fun isAvailableForDirectory(project: Project, task: Task?, directory: VirtualFile): Boolean = true
 
-  protected abstract fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean
-  protected abstract fun createStateForFile(project: Project, task: Task, file: VirtualFile): State?
+  protected abstract fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean
+
+  protected abstract fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State?
 
   protected open fun collectAffectedFiles(project: Project, course: Course, files: List<VirtualFile>): List<VirtualFile> {
     val affectedFiles = mutableListOf<VirtualFile>()
     val configurator = course.configurator ?: return emptyList()
     for (file in files) {
-      if (configurator.excludeFromArchive(project, file) || file.getContainingTask(project) == null) continue
+      if (configurator.excludeFromArchive(project, file)) continue
       if (file.isDirectory) {
         affectedFiles += collectAffectedFiles(project, course, VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
       }
@@ -95,8 +102,10 @@ abstract class CCChangeFilePropertyActionBase(
 
 private class ChangeFilesPropertyUndoableAction(
   private val project: Project,
+  private val course: Course,
   private val states: List<State>,
   private val affectedTasks: Collection<Task>,
+  private val outsideTasks: Boolean,
   files: List<VirtualFile>
 ) : BasicUndoableAction(*files.toTypedArray()) {
 
@@ -107,6 +116,9 @@ private class ChangeFilesPropertyUndoableAction(
     states.forEach(changeState)
     ProjectView.getInstance(project).refresh()
     affectedTasks.forEach { saveItem(it) }
+    if (outsideTasks) {
+      saveItem(course)
+    }
   }
 
   override fun isGlobal(): Boolean = true

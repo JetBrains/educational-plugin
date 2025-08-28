@@ -26,7 +26,7 @@ class CCAllowFileSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazyMes
     return ActionUpdateThread.BGT
   }
 
-  override fun isAvailableForDirectory(project: Project, task: Task, directory: VirtualFile): Boolean = false
+  override fun isAvailableForDirectory(project: Project, task: Task?, directory: VirtualFile): Boolean = false
 
   companion object {
     @NonNls
@@ -49,8 +49,8 @@ class CCIgnoreFileInSyncChanges : CCChangeFilePropagationFlag(EduCoreBundle.lazy
     }
   }
 
-  override fun isAvailableForDirectory(project: Project, task: Task, directory: VirtualFile): Boolean {
-    return task.isFrameworkTask
+  override fun isAvailableForDirectory(project: Project, task: Task?, directory: VirtualFile): Boolean {
+    return task?.isFrameworkTask == true
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
@@ -77,7 +77,8 @@ abstract class CCChangeFilePropagationFlag(
   val name: Supplier<@NlsActions.ActionText String>,
   private val requiredPropagationFlag: Boolean
 ) : CCChangeFilePropertyActionBase(name) {
-  override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+    if (task == null) return null
     val taskRelativePath = file.pathRelativeToTask(project)
     val taskFile = task.getTaskFile(taskRelativePath)
     if (taskFile != null) {
@@ -86,7 +87,8 @@ abstract class CCChangeFilePropagationFlag(
     return null
   }
 
-  override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean {
+  override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean {
+    if (task == null) return false
     if (task.parent !is FrameworkLesson) return false
     val path = file.pathRelativeToTask(project)
     val propagatableFile = task.getTaskFile(path)

@@ -13,10 +13,10 @@ import org.jetbrains.annotations.NonNls
 
 class CCExcludeFromTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.exclude.from.task.title")) {
 
-  override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
+  override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean =
     file.belongsToTask(project)
 
-  override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
     if (!file.belongsToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null
     return RemoveFileFromTask(info)
