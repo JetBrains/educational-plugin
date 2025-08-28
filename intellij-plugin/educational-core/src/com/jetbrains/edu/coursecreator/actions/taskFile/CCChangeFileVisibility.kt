@@ -3,8 +3,12 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -35,23 +39,39 @@ abstract class CCChangeFileVisibility(
   constructor(@ActionText name: String, requiredVisibility: Boolean)
     : this(Supplier { name }, requiredVisibility)
 
-  override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
-    val taskRelativePath = file.pathRelativeToTask(project)
-    val taskFile = task.getTaskFile(taskRelativePath)
-    if (taskFile != null) {
-      return FileState(taskFile, file, requiredVisibility)
+  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+    if (task != null) {
+      val taskRelativePath = file.pathRelativeToTask(project)
+      val taskFile = task.getTaskFile(taskRelativePath)
+      if (taskFile != null) {
+        return TaskFileState(taskFile, file, requiredVisibility)
+      }
+      return null
     }
-    return null
+    else {
+      val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
+      val course = project.course ?: return null
+      val additionalFile = course.additionalFiles.find { it.name == path } ?: return null
+      return AdditionalFileState(additionalFile, requiredVisibility)
+    }
   }
 
-  override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean {
-    val path = file.pathRelativeToTask(project)
-    val visibleFile = task.getTaskFile(path)
-    return visibleFile?.isVisible == !requiredVisibility
+  override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean {
+    if (task != null) {
+      val path = file.pathRelativeToTask(project)
+      val visibleFile = task.getTaskFile(path)
+      return visibleFile?.isVisible == !requiredVisibility
+    }
+    else {
+      val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return false
+      val course = project.course ?: return false
+      val additionalFile = course.additionalFiles.find { it.name == path } ?: return false
+      return additionalFile.isVisible == !requiredVisibility
+    }
   }
 }
 
-private class FileState(
+private class TaskFileState(
   val taskFile: TaskFile,
   val file: VirtualFile,
   val visibility: Boolean
@@ -82,3 +102,20 @@ private class FileState(
     }
   }
 }
+
+private class AdditionalFileState(
+  val additionalFile: EduFile,
+  val visibility: Boolean
+) : State {
+
+  val initialVisibility: Boolean = additionalFile.isVisible
+
+  override fun changeState(project: Project) {
+    additionalFile.isVisible = visibility
+  }
+
+  override fun restoreState(project: Project) {
+    additionalFile.isVisible = initialVisibility
+  }
+}
+
