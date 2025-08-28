@@ -33,7 +33,7 @@
 
   </extensions>
 
-  <xi:include href="/META-INF/Hyperskill-Cpp.xml" xpointer="xpointer(/idea-plugin/*)"/>
+<!--  <xi:include href="/META-INF/Hyperskill-Cpp.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
 
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlCapitalization -->
