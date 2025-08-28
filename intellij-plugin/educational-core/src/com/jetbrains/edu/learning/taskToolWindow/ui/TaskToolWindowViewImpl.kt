@@ -112,7 +112,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       updateNavigationPanel(value)
       updateHeaders(value)
       updateTabs(value)
-      HyperskillMetricsService.getInstance().viewEvent(value)
+//      HyperskillMetricsService.getInstance().viewEvent(value)
       EduCounterUsageCollector.viewEvent(value)
       field = value
     }
