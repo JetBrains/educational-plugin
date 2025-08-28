@@ -99,9 +99,9 @@
     <extensionPoint qualifiedName="Educational.studyItemRefactoringHandler"
                     interface="com.jetbrains.edu.coursecreator.handlers.StudyItemRefactoringHandler"
                     dynamic="true"/>
-    <extensionPoint qualifiedName="Educational.hyperskillCourseCreator"
-                    interface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator"
-                    dynamic="true"/>
+<!--    <extensionPoint qualifiedName="Educational.hyperskillCourseCreator"-->
+<!--                    interface="com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseCreator"-->
+<!--                    dynamic="true"/>-->
     <extensionPoint qualifiedName="Educational.courseMetadataProcessor"
                     interface="com.jetbrains.edu.learning.newproject.CourseMetadataProcessor"
                     dynamic="true"/>
@@ -503,8 +503,8 @@
   <extensions defaultExtensionNs="Educational">
     <!-- Only for development purposes -->
     <configurator language="TEXT" implementationClass="com.jetbrains.edu.learning.configuration.PlainTextConfigurator"/>
-    <configurator language="TEXT" courseType="Hyperskill"
-                  implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator"/>
+<!--    <configurator language="TEXT" courseType="Hyperskill"-->
+<!--                  implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigurator"/>-->
 
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
@@ -514,9 +514,9 @@
 
     <coursesPlatformProviderFactory id="Marketplace" order="first"
                                     implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
-    <coursesPlatformProviderFactory id="JetBrainsAcademy" order="after Marketplace"
-                                    implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProviderFactory"/>
-    <coursesPlatformProviderFactory id="Coursera" order="after JetBrainsAcademy"
+<!--    <coursesPlatformProviderFactory id="JetBrainsAcademy" order="after Marketplace"-->
+<!--                                    implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProviderFactory"/>-->
+    <coursesPlatformProviderFactory id="Coursera" order="after Marketplace"
                                     implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
 
 
@@ -531,8 +531,8 @@
                            environment="Gradle"
                            implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
     <!--need to register without environment to work with Hyperskill courses-->
-    <compatibilityProvider language="Scala"
-                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>
+<!--    <compatibilityProvider language="Scala"-->
+<!--                           implementationClass="com.jetbrains.edu.learning.compatibility.ScalaGradleCourseCompatibilityProvider"/>-->
     <compatibilityProvider language="Scala"
                            environment="sbt"
                            implementationClass="com.jetbrains.edu.learning.compatibility.ScalaSbtCourseCompatibilityProvider"/>
