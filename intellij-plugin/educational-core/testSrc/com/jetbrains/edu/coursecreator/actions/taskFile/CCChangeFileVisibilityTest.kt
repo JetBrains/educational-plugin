@@ -33,8 +33,6 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = CourseMode.STUDENT)
   @Test
   fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile1.kt", "TaskFile2.kt", pathPrefix = "lesson1/task1")
-  @Test
-  fun `test file outside of task`() = doUnavailableTest("lesson1")
 
   private fun doAvailableTest(
     shouldOppositeActionBeEnabled: Boolean,

@@ -11,10 +11,16 @@ import org.jetbrains.annotations.NonNls
 
 class CCIncludeIntoTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.include.into.task.title")) {
 
-  override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean =
-    file.canBeAddedToTask(project)
+  override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean =
+    if (task == null) {
+      false
+    }
+    else {
+      file.canBeAddedToTask(project)
+    }
 
-  override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+    if (task == null) return null
     if (!file.canBeAddedToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null
     return IncludeFileIntoTask(info)
