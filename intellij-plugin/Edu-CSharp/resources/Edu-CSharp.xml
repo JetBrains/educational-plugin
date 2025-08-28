@@ -53,6 +53,8 @@
       <reference ref="Educational.Educator.CCRemoveSection"/>
       <reference ref="Educational.Educator.IncludeIntoTask"/>
       <reference ref="Educational.Educator.ExcludeFromTask"/>
+      <reference ref="Educational.Educator.IncludeIntoArchive"/>
+      <reference ref="Educational.Educator.ExcludeFromArchive"/>
       <separator/>
       <reference ref="Educational.Educator.CreateCoursePreview"/>
       <reference ref="Educational.Educator.ChangeCourseInfo"/>

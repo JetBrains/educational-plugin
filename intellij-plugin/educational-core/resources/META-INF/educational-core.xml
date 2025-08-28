@@ -224,6 +224,8 @@
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.studyItem.CCRemoveSection"/>
       <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
       <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
+      <action id="Educational.Educator.IncludeIntoArchive" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoArchive"/>
+      <action id="Educational.Educator.ExcludeFromArchive" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromArchive"/>
       <separator/>
       <reference ref="Educational.Educator.CreateCoursePreview"/>
       <reference ref="Educational.Educator.ChangeCourseInfo"/>

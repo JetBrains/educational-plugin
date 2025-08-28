@@ -19,6 +19,10 @@ class CCIncludeIntoTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessa
       file.canBeAddedToTask(project)
     }
 
+  override fun isAvailableForDirectory(project: Project, task: Task?, directory: VirtualFile): Boolean {
+    return task != null
+  }
+
   override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
     if (task == null) return null
     if (!file.canBeAddedToTask(project)) return null
