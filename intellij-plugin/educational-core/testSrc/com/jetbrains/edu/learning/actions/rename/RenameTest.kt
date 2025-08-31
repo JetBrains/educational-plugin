@@ -4,6 +4,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
@@ -157,9 +158,9 @@ class RenameTest : RenameTestBase() {
     }
     doRenameAction(course, "additionalFile1.txt", "additionalFile2.txt", shouldBeInvoked = false)
     assertNull(LightPlatformTestCase.getSourceRoot().findFileByRelativePath("additionalFile2.txt"))
-    assertNull(course.additionalFiles.find { it.name == "additionalFile2.txt" })
+    assertNull(course.getAdditionalFile("additionalFile2.txt"))
     assertNotNull(LightPlatformTestCase.getSourceRoot().findFileByRelativePath("additionalFile1.txt"))
-    assertNotNull(course.additionalFiles.find { it.name == "additionalFile1.txt" })
+    assertNotNull(course.getAdditionalFile("additionalFile1.txt"))
   }
 
   @Test

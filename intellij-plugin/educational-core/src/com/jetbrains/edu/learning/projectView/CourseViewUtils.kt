@@ -244,7 +244,7 @@ object CourseViewUtils {
 
     val nodePath = getRelativePath(nodeFile, project.courseDir)
 
-    val additionalFile = course.additionalFiles.find { it.name == nodePath }
+    val additionalFile = course.getAdditionalFile(nodePath)
 
     if (additionalFile?.isVisible == true || additionalFile?.isVisible != false && showUserCreatedFiles) {
       return this

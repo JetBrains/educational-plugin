@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFromInternalTemplateOrFromDisk
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -41,8 +42,8 @@ object EduGradleUtils {
   }
 
   fun hasCourseHaveGradleKtsFiles(course: Course): Boolean =
-    course.additionalFiles.find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME } != null &&
-      course.additionalFiles.find { it.name == GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME } != null
+    course.getAdditionalFile(GradleConstants.KOTLIN_DSL_SCRIPT_NAME) != null &&
+      course.getAdditionalFile(GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) != null
 
   @Throws(IOException::class)
   fun createProjectGradleFiles(

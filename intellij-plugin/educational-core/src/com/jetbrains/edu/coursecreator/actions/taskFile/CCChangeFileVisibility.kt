@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathRelativeToTask
@@ -51,7 +52,7 @@ abstract class CCChangeFileVisibility(
     else {
       val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
       val course = project.course ?: return null
-      val additionalFile = course.additionalFiles.find { it.name == path } ?: return null
+      val additionalFile = course.getAdditionalFile(path) ?: return null
       return AdditionalFileState(additionalFile, requiredVisibility)
     }
   }
@@ -65,7 +66,7 @@ abstract class CCChangeFileVisibility(
     else {
       val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return false
       val course = project.course ?: return false
-      val additionalFile = course.additionalFiles.find { it.name == path } ?: return false
+      val additionalFile = course.getAdditionalFile(path) ?: return false
       return additionalFile.isVisible == !requiredVisibility
     }
   }
