@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 sealed interface FileCheck {
@@ -45,7 +46,7 @@ data class AdditionalFileCheck(
 ) : FileCheck {
   override fun invert(): AdditionalFileCheck = copy(shouldContain = !shouldContain)
   override fun check() {
-    val additionalFile = course.additionalFiles.find { it.name == path }
+    val additionalFile = course.getAdditionalFile(path)
     if (shouldContain) {
       check(additionalFile != null) {
         "`$path` should be in `${course.name}` course"

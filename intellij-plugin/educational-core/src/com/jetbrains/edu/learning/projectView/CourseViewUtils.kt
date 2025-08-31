@@ -242,9 +242,9 @@ object CourseViewUtils {
     val nodePsiElement = value ?: return null
     val nodeFile = nodePsiElement.virtualFile ?: return null
 
-    val nodePath = getRelativePath(nodeFile, project.courseDir)
+    val nodePath = getRelativePath(nodeFile, project.courseDir) ?: return null
 
-    val additionalFile = course.additionalFiles.find { it.name == nodePath }
+    val additionalFile = course.getAdditionalFile(nodePath)
 
     if (additionalFile?.isVisible == true || additionalFile?.isVisible != false && showUserCreatedFiles) {
       return this

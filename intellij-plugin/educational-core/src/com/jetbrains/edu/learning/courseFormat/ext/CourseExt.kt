@@ -219,3 +219,5 @@ fun Course.visitItems(action: (StudyItem) -> Unit) {
 }
 
 val Course?.customContentPath: String get() = this?.customContentPath ?: ""
+
+fun Course.getAdditionalFile(name: String): EduFile? = additionalFiles.find { it.name == name }

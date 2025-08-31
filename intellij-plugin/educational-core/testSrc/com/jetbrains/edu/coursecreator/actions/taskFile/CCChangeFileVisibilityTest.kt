@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import org.junit.Test
 import kotlin.test.assertContentEquals
@@ -92,7 +93,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
       }
       else {
         val coursePath = VfsUtil.getRelativePath(this, project.courseDir)!!
-        course.additionalFiles.find { it.name == coursePath }
+        course.getAdditionalFile(coursePath)
       }
     }
 
