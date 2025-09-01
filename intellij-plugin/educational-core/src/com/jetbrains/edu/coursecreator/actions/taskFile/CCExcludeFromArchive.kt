@@ -1,13 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.belongsToTask
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.NonNls
@@ -23,7 +22,7 @@ class CCExcludeFromArchive : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMe
 
   override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
     if (file.belongsToTask(project)) return null
-    val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
+    val path = file.pathInCourse(project) ?: return null
     val course = project.course ?: return null
     return RemoveFileFromArchive(course, path)
   }

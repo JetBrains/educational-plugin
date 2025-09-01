@@ -16,7 +16,10 @@ import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
+import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.framework.impl.calculateChanges
@@ -310,7 +313,7 @@ class CCFrameworkLessonManager(
   fun migrateRecords(studyItem: StudyItem, newParent: VirtualFile) {
     val oldPath = studyItem.pathInCourse
 
-    val newParentPath = VfsUtilCore.getRelativePath(newParent, project.courseDir) ?: ""
+    val newParentPath = newParent.pathInCourse(project) ?: ""
     val newPath = concatNonEmptyPaths(newParentPath, studyItem.name)
     migrateRecords(studyItem, oldPath, newPath)
   }

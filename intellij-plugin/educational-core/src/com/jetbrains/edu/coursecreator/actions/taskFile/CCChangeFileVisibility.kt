@@ -3,14 +3,13 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.pathRelativeToTask
@@ -50,7 +49,7 @@ abstract class CCChangeFileVisibility(
       return null
     }
     else {
-      val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
+      val path = file.pathInCourse(project) ?: return null
       val course = project.course ?: return null
       val additionalFile = course.getAdditionalFile(path) ?: return null
       return AdditionalFileState(additionalFile, requiredVisibility)
@@ -64,7 +63,7 @@ abstract class CCChangeFileVisibility(
       return visibleFile?.isVisible == !requiredVisibility
     }
     else {
-      val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return false
+      val path = file.pathInCourse(project) ?: return false
       val course = project.course ?: return false
       val additionalFile = course.getAdditionalFile(path) ?: return false
       return additionalFile.isVisible == !requiredVisibility

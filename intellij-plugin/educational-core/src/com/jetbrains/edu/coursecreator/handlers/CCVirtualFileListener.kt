@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.yaml.*
@@ -137,7 +138,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
   }
 
   private fun additionalFileCreated(course: Course, file: VirtualFile) {
-    val name = VfsUtil.getRelativePath(file, project.courseDir) ?: return
+    val name = file.pathInCourse(project) ?: return
     if (course.additionalFiles.any { it.name == name }) return
     course.additionalFiles += EduFile(name, if (file.isToEncodeContent) {
       BinaryContents.EMPTY
