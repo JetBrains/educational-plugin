@@ -10,7 +10,6 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import io.github.classgraph.AnnotationEnumValue
 import io.github.classgraph.ClassGraph
-import org.intellij.lang.annotations.Language
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.system.measureTimeMillis
 
@@ -21,7 +20,7 @@ private const val BASE_PACKAGE = "com.jetbrains.edu"
  */
 object EduTestServiceStateHelper {
 
-  private val cache: MutableMap<IdeaPluginDescriptorImpl, ServiceClasses> = ConcurrentHashMap()
+  private val cache: MutableMap<PluginMainDescriptor, ServiceClasses> = ConcurrentHashMap()
 
   fun restoreState(project: Project?) {
     performForAllServices(project, EduTestAware::restoreState)
@@ -60,7 +59,7 @@ object EduTestServiceStateHelper {
     // As a result, we can reuse calculated values from the previous test with the same descriptor
     val pluginDescriptor = PluginManagerCore.plugins.find {
       it.isEnabled && it.pluginId.idString.startsWith(BASE_PACKAGE)
-    } as? IdeaPluginDescriptorImpl ?: error("Failed to find any plugin descriptor related to the plugin")
+    } as? PluginMainDescriptor ?: error("Failed to find any plugin descriptor related to the plugin")
 
     return cache.getOrPut(pluginDescriptor) {
       val collectedClasses: ServiceClasses
@@ -87,18 +86,18 @@ private data class ServiceClasses(
  * Collects all services marked with [EduTestAware] in the plugin
  */
 private interface TestAwareServiceCollector {
-  fun collect(pluginDescriptor: IdeaPluginDescriptorImpl): ServiceClasses
+  fun collect(pluginDescriptor: PluginMainDescriptor): ServiceClasses
 }
 
 @Suppress("TestFunctionName")
-private fun ServiceCollector(): TestAwareServiceCollector = HardcodedServiceCollector()
+private fun ServiceCollector(): TestAwareServiceCollector = ClasspathServiceCollector()
 
 /**
  * Introspects classpath to collect test-aware services using `classgraph` library
  */
 @Suppress("unused")
 private class ClasspathServiceCollector : TestAwareServiceCollector {
-  override fun collect(pluginDescriptor: IdeaPluginDescriptorImpl): ServiceClasses {
+  override fun collect(pluginDescriptor: PluginMainDescriptor): ServiceClasses {
     val appServiceClassesHolder = ServiceClassesHolder.create(pluginDescriptor) { appContainerDescriptor }
     val projectServiceClassesHolder = ServiceClassesHolder.create(pluginDescriptor) { projectContainerDescriptor }
     val scanResult = ClassGraph()
@@ -156,11 +155,16 @@ private class ClasspathServiceCollector : TestAwareServiceCollector {
 
     companion object {
       fun create(
-        pluginDescriptor: IdeaPluginDescriptorImpl,
+        pluginDescriptor: PluginMainDescriptor,
         containerDescriptor: IdeaPluginDescriptorImpl.() -> ContainerDescriptor
       ): ServiceClassesHolder {
         val services = mutableMapOf<String, String>()
-        collectServicesFromPluginManifest(pluginDescriptor, containerDescriptor, services)
+
+        val descriptors = listOf(pluginDescriptor) + pluginDescriptor.contentModules
+        for (descriptor in descriptors) {
+          collectServicesFromPluginManifest(descriptor, containerDescriptor, services)
+        }
+
         return ServiceClassesHolder(services)
       }
 
@@ -182,61 +186,7 @@ private class ClasspathServiceCollector : TestAwareServiceCollector {
             serviceMap[serviceClass] = baseServiceClass
           }
         }
-
-        collectFromModules(pluginDescriptor) { moduleDescriptor ->
-          collectServicesFromPluginManifest(moduleDescriptor, containerDescriptor, serviceMap)
-        }
       }
     }
-  }
-}
-
-/**
- * Temporary workaround for classpath introspection on Windows where [ClasspathServiceCollector] doesn't work correctly
- * because of [com.intellij.platform.core.nio.fs.MultiRoutingFileSystem] filesystem instead of default one
- */
-private class HardcodedServiceCollector : TestAwareServiceCollector {
-  override fun collect(pluginDescriptor: IdeaPluginDescriptorImpl): ServiceClasses {
-    val appServiceClasses = applicationServices.mapNotNull(::classForNameOrNull)
-    val projectServiceClasses = projectServices.mapNotNull(::classForNameOrNull)
-
-    return ServiceClasses(appServiceClasses, projectServiceClasses)
-  }
-
-  private fun classForNameOrNull(className: String): Class<*>? = runCatching { Class.forName(className) }.getOrNull()
-
-  companion object {
-    @Language("jvm-class-name")
-    private val applicationServices = listOf(
-      "com.jetbrains.edu.learning.EduBrowser",
-      "com.jetbrains.edu.learning.agreement.UserAgreementSettings",
-      "com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage",
-      "com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService",
-      "com.jetbrains.edu.socialMedia.x.XSettings",
-    )
-
-    @Language("jvm-class-name")
-    private val projectServices = listOf(
-      "com.jetbrains.edu.aiHints.core.HintStateManager",
-      "com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder",
-      "com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager",
-      "com.jetbrains.edu.learning.StudyTaskManager",
-      "com.jetbrains.edu.learning.ai.TranslationProjectSettings",
-      "com.jetbrains.edu.learning.ai.terms.TermsProjectSettings",
-      "com.jetbrains.edu.learning.featureManagement.EduFeatureManager",
-      "com.jetbrains.edu.learning.framework.FrameworkLessonManager",
-      "com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings",
-      "com.jetbrains.edu.learning.marketplace.update.MarketplaceUpdateChecker",
-      // BACKCOMPAT: 2025.1. Drop `CoursePageExperimentManager` line together with the corresponding service
-      "com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentManager",
-      "com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager",
-      // BACKCOMPAT: 2025.1. Drop `EntryPointManager` line together with the corresponding service
-      "com.jetbrains.edu.learning.statistics.metadata.EntryPointManager",
-      "com.jetbrains.edu.learning.stepik.hyperskill.update.HyperskillCourseUpdateChecker",
-      "com.jetbrains.edu.learning.storage.LearningObjectsStorageManager",
-      "com.jetbrains.edu.learning.submissions.SubmissionsManager",
-      "com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView",
-      "com.jetbrains.edu.learning.yaml.YamlLoadingErrorManager",
-    )
   }
 }
