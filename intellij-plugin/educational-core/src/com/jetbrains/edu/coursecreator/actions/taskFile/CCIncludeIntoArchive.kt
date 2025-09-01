@@ -1,18 +1,17 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -22,7 +21,7 @@ class CCIncludeIntoArchive : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMe
 
   override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean {
     if (task != null) return false
-    val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return false
+    val path = file.pathInCourse(project) ?: return false
     val course = project.course ?: return false
     val configurator = course.configurator ?: return false
     val courseFileAttributes = configurator.courseFileAttributes(project, file)
@@ -39,7 +38,7 @@ class CCIncludeIntoArchive : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMe
   override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
     if (task != null) return null
     val course = project.course ?: return null
-    val path = VfsUtilCore.getRelativePath(file, project.courseDir) ?: return null
+    val path = file.pathInCourse(project) ?: return null
     if (course.getAdditionalFile(path) != null) return null
     return IncludeFileIntoArchive(course, file, path)
   }

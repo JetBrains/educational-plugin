@@ -1,12 +1,12 @@
 package com.jetbrains.edu.rust
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
@@ -42,7 +42,7 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
     val members = mutableListOf<String>()
     holder.course.visitLessons { lesson ->
       val lessonDir = lesson.getDir(holder.courseDir) ?: return@visitLessons
-      val lessonDirPath = VfsUtil.getRelativePath(lessonDir, holder.courseDir) ?: return@visitLessons
+      val lessonDirPath = lessonDir.pathInCourse(holder) ?: return@visitLessons
       members += "    \"${lessonDirPath}/*/\""
     }
 

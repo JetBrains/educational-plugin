@@ -3,7 +3,6 @@ package com.jetbrains.edu.rust
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
@@ -21,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
+import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -284,14 +284,14 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
   private fun Lesson.courseRelativePath(project: Project): String? {
     val lessonDir = getDir(project.courseDir) ?: return null
-    return VfsUtil.getRelativePath(lessonDir, project.courseDir)
+    return lessonDir.pathInCourse(project)
   }
 
   private fun findAnchor(project: Project, membersArray: TomlArray, lesson: Lesson): PsiElement? {
     val nextLessonPath = run {
       val nextLesson = NavigationUtils.nextLesson(lesson) ?: return@run null
       val nextLessonDir = nextLesson.getDir(project.courseDir) ?: return@run null
-      VfsUtil.getRelativePath(nextLessonDir, project.courseDir)
+      nextLessonDir.pathInCourse(project)
     }
 
     var anchor: PsiElement? = null

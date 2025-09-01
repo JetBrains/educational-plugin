@@ -7,7 +7,6 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VfsUtilCore.getRelativePath
 import com.intellij.psi.*
 import com.intellij.ui.LayeredIcon
 import com.jetbrains.edu.EducationalCoreIcons.CourseView
@@ -206,7 +205,7 @@ object CourseViewUtils {
   }
 
   private fun PsiDirectory.isPartOfCustomContentPath(project: Project): Boolean {
-    val relativePath = getRelativePath(virtualFile, project.courseDir) ?: return false
+    val relativePath = virtualFile.pathInCourse(project) ?: return false
     return project.course.customContentPath.contains(relativePath)
   }
 
@@ -242,7 +241,7 @@ object CourseViewUtils {
     val nodePsiElement = value ?: return null
     val nodeFile = nodePsiElement.virtualFile ?: return null
 
-    val nodePath = getRelativePath(nodeFile, project.courseDir) ?: return null
+    val nodePath = nodeFile.pathInCourse(project) ?: return null
 
     val additionalFile = course.getAdditionalFile(nodePath)
 
@@ -260,7 +259,7 @@ object CourseViewUtils {
     //TODO remove in EDU-8288
     if (course.configurator?.shouldFileBeVisibleToStudent(nodeDirectory) == true) return this
 
-    val nodePath = getRelativePath(nodeDirectory, project.courseDir) ?: return null
+    val nodePath = nodeDirectory.pathInCourse(project) ?: return null
 
     return if (course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null) {
       DirectoryNode(project, nodePsiElement, settings, null)
