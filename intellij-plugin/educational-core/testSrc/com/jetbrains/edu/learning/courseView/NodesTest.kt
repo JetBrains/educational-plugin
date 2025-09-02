@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
+import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -836,6 +837,59 @@ class NodesTest : CourseViewTestBase() {
         |  -DirectoryNode non-lesson-dir
         |   visible2.txt
         |  visible1.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `test visible and invisible additional files colouring for educator`() {
+    fun CourseBuilder.visibleInvisible(path: String? = null) {
+      val pathPrefix = if (path == null) "" else "$path/"
+      additionalFile("${pathPrefix}visible.txt") {
+        withVisibility(true)
+      }
+      additionalFile("${pathPrefix}invisible.txt")
+    }
+
+    courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      section("section1") {
+        lesson("lesson1") {
+          eduTask {
+            taskFile("task.txt")
+          }
+        }
+      }
+      visibleInvisible()
+      visibleInvisible("dir")
+      visibleInvisible("section1")
+      visibleInvisible("section1/dir")
+      visibleInvisible("section1/lesson1")
+      visibleInvisible("section1/lesson1/dir")
+    }
+
+    assertCourseView("""
+        |-Project
+        | -CCCourseNode Test Course (Course Creation)
+        |  -CCSectionNode section1
+        |   -CCLessonNode lesson1
+        |    -CCTaskNode task1
+        |     CCStudentInvisibleFileNode task.md
+        |     task.txt
+        |    -CCNode dir
+        |     CCStudentInvisibleFileNode invisible.txt
+        |     visible.txt
+        |    CCStudentInvisibleFileNode invisible.txt
+        |    visible.txt
+        |   -CCNode dir
+        |    CCStudentInvisibleFileNode invisible.txt
+        |    visible.txt
+        |   CCStudentInvisibleFileNode invisible.txt
+        |   visible.txt
+        |  -CCNode dir
+        |   CCStudentInvisibleFileNode invisible.txt
+        |   visible.txt
+        |  CCStudentInvisibleFileNode invisible.txt
+        |  visible.txt
       """.trimMargin()
     )
   }
