@@ -7,7 +7,7 @@ import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.createNodeFromPsiDirectory
-import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectoryForLearner
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectory
 
 open class CourseNode(
   project: Project,
@@ -17,7 +17,7 @@ open class CourseNode(
 ) : ContentHolderNode, EduNode<Course>(project, value, settings, course) {
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
-    return getStudyItemOrIntermediateDirectoryNode(childNode) ?: childNode.modifyAdditionalFileOrDirectoryForLearner(project, item, showUserCreatedFiles = false)
+    return getStudyItemOrIntermediateDirectoryNode(childNode) ?: childNode.modifyAdditionalFileOrDirectory(project, item, showUserCreatedFiles = false)
   }
 
   private fun getStudyItemOrIntermediateDirectoryNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {

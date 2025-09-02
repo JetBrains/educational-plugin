@@ -7,7 +7,7 @@ import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectoryForLearner
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectory
 import com.jetbrains.edu.learning.projectView.FrameworkLessonNode.Companion.createFrameworkLessonNode
 
 open class SectionNode(
@@ -20,7 +20,7 @@ open class SectionNode(
   override val item: Section get() = super.item!!
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
-    return getLessonNode(childNode) ?: childNode.modifyAdditionalFileOrDirectoryForLearner(project, item.course, showUserCreatedFiles = false)
+    return getLessonNode(childNode) ?: childNode.modifyAdditionalFileOrDirectory(project, item.course, showUserCreatedFiles = false)
   }
 
   private fun getLessonNode(childNode: AbstractTreeNode<*>): LessonNode? {

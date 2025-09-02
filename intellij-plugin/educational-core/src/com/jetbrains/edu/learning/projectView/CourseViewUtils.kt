@@ -38,7 +38,7 @@ object CourseViewUtils {
   ): AbstractTreeNode<*>? {
     if (task == null) {
       val course = project.course ?: return null
-      return childNode.modifyAdditionalFileOrDirectoryForLearner(project, course, showUserCreatedFiles = true)
+      return childNode.modifyAdditionalFileOrDirectory(project, course, showUserCreatedFiles = true)
     }
 
     val value = childNode.value
@@ -223,7 +223,7 @@ object CourseViewUtils {
    * In that case the directory node itself is returned to make the entire directory visible.
    * This check will be refactored in EDU-8288.
    */
-  fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectoryForLearner(
+  fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectory(
     project: Project,
     course: Course,
     showUserCreatedFiles: Boolean
