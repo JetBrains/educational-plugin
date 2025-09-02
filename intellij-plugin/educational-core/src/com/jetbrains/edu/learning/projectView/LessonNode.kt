@@ -7,7 +7,7 @@ import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.findTaskDirectory
-import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectoryForLearner
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectory
 
 open class LessonNode(
   project: Project,
@@ -19,7 +19,7 @@ open class LessonNode(
   override fun getWeight(): Int = item.index
 
   override fun modifyChildNode(childNode: AbstractTreeNode<*>): AbstractTreeNode<*>? {
-    return getTaskNode(childNode) ?: childNode.modifyAdditionalFileOrDirectoryForLearner(project, item.course, showUserCreatedFiles = false)
+    return getTaskNode(childNode) ?: childNode.modifyAdditionalFileOrDirectory(project, item.course, showUserCreatedFiles = false)
   }
 
   private fun getTaskNode(childNode: AbstractTreeNode<*>): TaskNode? {
