@@ -14,6 +14,7 @@ import com.jetbrains.edu.EducationalCoreIcons.CourseView.*
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
+import com.jetbrains.edu.coursecreator.projectView.CCNode
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
@@ -227,17 +228,39 @@ object CourseViewUtils {
     project: Project,
     course: Course,
     showUserCreatedFiles: Boolean
-  ): AbstractTreeNode<*>? {
-    if (!course.isStudy) return null
+  ): AbstractTreeNode<*>? = if (course.isStudy) {
+    modifyAdditionalFileOrDirectoryForLearner(project, course, showUserCreatedFiles)
+  }
+  else {
+    modifyAdditionalFileOrDirectoryForTeacher(project, course)
+  }
 
+  private fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectoryForLearner(
+    project: Project,
+    course: Course,
+    showUserCreatedFiles: Boolean
+  ): AbstractTreeNode<*>? {
     return when (this) {
-      is PsiFileNode -> modifyAdditionalFileForLearner(project, course, showUserCreatedFiles)
-      is PsiDirectoryNode -> modifyAdditionalDirectoryForLearner(project, course)
+      is PsiFileNode -> modifyAdditionalFile(project, course, showUserCreatedFiles)
+      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course) {
+        DirectoryNode(project, it, settings, null)
+      }
       else -> null
     }
   }
 
-  private fun PsiFileNode.modifyAdditionalFileForLearner(project: Project, course: Course, showUserCreatedFiles: Boolean): AbstractTreeNode<*>? {
+  private fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectoryForTeacher(project: Project, course: Course): AbstractTreeNode<*>? {
+    return when (this) {
+      is PsiFileNode -> modifyAdditionalFile(project, course, showUserCreatedFiles = false)
+      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course) {
+        CCNode(project, it, settings, null)
+      }
+      else -> null
+    }
+  }
+
+
+  private fun PsiFileNode.modifyAdditionalFile(project: Project, course: Course, showUserCreatedFiles: Boolean): AbstractTreeNode<*>? {
     val nodePsiElement = value ?: return null
     val nodeFile = nodePsiElement.virtualFile ?: return null
 
@@ -253,7 +276,11 @@ object CourseViewUtils {
     }
   }
 
-  private fun PsiDirectoryNode.modifyAdditionalDirectoryForLearner(project: Project, course: Course): AbstractTreeNode<*>? {
+  private fun PsiDirectoryNode.modifyAdditionalDirectory(
+    project: Project,
+    course: Course,
+    directoryNodeBuilder: (PsiDirectory) -> DirectoryNode
+  ): AbstractTreeNode<*>? {
     val nodePsiElement = value ?: return null
     val nodeDirectory = nodePsiElement.virtualFile
     //TODO remove in EDU-8288
@@ -262,7 +289,7 @@ object CourseViewUtils {
     val nodePath = nodeDirectory.pathInCourse(project) ?: return null
 
     return if (course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null) {
-      DirectoryNode(project, nodePsiElement, settings, null)
+      directoryNodeBuilder(nodePsiElement)
     }
     else {
       null
