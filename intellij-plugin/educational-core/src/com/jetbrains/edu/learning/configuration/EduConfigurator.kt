@@ -60,6 +60,7 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
   extension("iml") {
     excludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+    courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 
   file(taskDescriptionRegex) {
@@ -75,6 +76,7 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
   dirAndChildren(CCUtils.GENERATED_FILES_FOLDER, direct = true) {
     excludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+    courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 
   file(EduNames.COURSE_IGNORE, EduFormatNames.COURSE_ICON_FILE) {
@@ -89,6 +91,11 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
 
   dirAndChildren(EduNames.VCS_GIT) {
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+    courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
+  }
+
+  dir(EduNames.BUILD, EduNames.OUT) {
+    courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 }
 
