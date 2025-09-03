@@ -64,5 +64,8 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
 
     const val BIN_DIRECTORY = "bin"
     const val OBJ_DIRECTORY = "obj"
+    const val PACKAGES_DIRECTORY = "Packages"
+    const val PROJECT_SETTINGS_DIRECTORY = "ProjectSettings"
+    const val ASSETS_DIRECTORY = "Assets"
   }
 }

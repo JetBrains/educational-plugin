@@ -3,10 +3,11 @@ package com.jetbrains.edu.csharp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
+import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.ASSETS_DIRECTORY
+import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.PACKAGES_DIRECTORY
+import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.PROJECT_SETTINGS_DIRECTORY
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -38,12 +39,12 @@ fun Task.toProjectModelEntity(project: Project): ProjectModelEntity? = Workspace
 
 fun Project.getSolutionEntity(): ProjectModelEntity? = WorkspaceModel.getInstance(this).getSolutionEntity()
 
-fun includeTopLevelDirsInCourseView(project: Project, course: Course) {
-  val filesToIndex = project.courseDir.children.filter { it.isTopLevelDirectory(project, course) }.mapNotNull { it.toIOFile() }
+fun includeTopLevelDirsInCourseView(project: Project) {
+  val filesToIndex = project.courseDir.children.filter { it.isTopLevelDirectory(project) }.mapNotNull { it.toIOFile() }
   CSharpBackendService.getInstance(project).includeFilesToCourseView(filesToIndex)
 }
 
-fun VirtualFile.isTopLevelDirectory(project: Project, course: Course): Boolean {
+private fun VirtualFile.isTopLevelDirectory(project: Project): Boolean {
   return getSection(project) != null || getLesson(project) != null
-         || course.configurator?.shouldFileBeVisibleToStudent(this) == true
+         || name == PACKAGES_DIRECTORY || name == PROJECT_SETTINGS_DIRECTORY || path.contains("/$ASSETS_DIRECTORY/")
 }

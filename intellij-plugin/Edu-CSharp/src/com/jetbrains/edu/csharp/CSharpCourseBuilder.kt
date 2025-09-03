@@ -92,7 +92,7 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     val course = project.course ?: error("No course associated with project")
 
     if (cause == RefreshCause.PROJECT_CREATED) {
-      includeTopLevelDirsInCourseView(project, course)
+      includeTopLevelDirsInCourseView(project)
     }
     val projectModelEntities = WorkspaceModel.getInstance(project).findProjects().associateByTo(HashMap()) { it.name }
     val tasksToAdd = mutableListOf<Task>()

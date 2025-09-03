@@ -19,10 +19,9 @@ class CSharpHyperskillCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
    */
   override fun refreshProject(project: Project, cause: RefreshCause) {
     super.refreshProject(project, cause)
-    val course = project.course ?: error("No course associated with project")
 
     if (cause == RefreshCause.STRUCTURE_MODIFIED) {
-      includeTopLevelDirsInCourseView(project, course)
+      includeTopLevelDirsInCourseView(project)
     }
   }
 }

@@ -1,10 +1,13 @@
 package com.jetbrains.edu.csharp.hyperskill
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.csharp.CSharpConfigurator
+import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.ASSETS_DIRECTORY
+import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.PACKAGES_DIRECTORY
+import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.PROJECT_SETTINGS_DIRECTORY
 import com.jetbrains.edu.csharp.CSharpProjectSettings
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 
@@ -17,11 +20,11 @@ class CSharpHyperskillConfigurator : HyperskillConfigurator<CSharpProjectSetting
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     extension("meta") {
-      excludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
-  }
 
-  override fun shouldFileBeVisibleToStudent(virtualFile: VirtualFile): Boolean =
-    virtualFile.name == "Packages" || virtualFile.name == "ProjectSettings" || virtualFile.path.contains("/Assets/")
+    dirAndChildren(PACKAGES_DIRECTORY, PROJECT_SETTINGS_DIRECTORY, ASSETS_DIRECTORY) {
+      courseViewVisibility(CourseViewVisibility.VISIBLE_FOR_STUDENT)
+    }
+  }
 }
