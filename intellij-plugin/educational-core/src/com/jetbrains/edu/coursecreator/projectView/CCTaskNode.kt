@@ -9,12 +9,13 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isTestsFile
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.courseViewVisibilityAttribute
 import com.jetbrains.edu.learning.projectView.TaskNode
 
 class CCTaskNode(
@@ -30,16 +31,18 @@ class CCTaskNode(
       return node
     }
     val value = childNode.value
+
+    val course = project?.course ?: return null
+    val configurator = course.configurator ?: return null
+    val visibility = childNode.courseViewVisibilityAttribute(project, course)
+    if (visibility == CourseViewVisibility.INVISIBLE_FOR_ALL) return null
+
     if (value is PsiDirectory) {
-      val name = value.name
-      if (EduNames.BUILD == name || EduNames.OUT == name) return null
       return createChildDirectoryNode(value)
     }
     else if (value is PsiElement) {
       val psiFile = value.containingFile
       val virtualFile = psiFile.virtualFile ?: return null
-      val course = StudyTaskManager.getInstance(myProject).course ?: return null
-      val configurator = course.configurator ?: return CCStudentInvisibleFileNode(myProject, psiFile, settings)
       return if (!virtualFile.isTestsFile(myProject)) {
         CCStudentInvisibleFileNode(myProject, psiFile, settings)
       }

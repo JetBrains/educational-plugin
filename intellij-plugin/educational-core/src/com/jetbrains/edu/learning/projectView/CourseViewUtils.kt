@@ -15,7 +15,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesTaskFileState
 import com.jetbrains.edu.coursecreator.projectView.CCNode
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
@@ -37,16 +38,16 @@ object CourseViewUtils {
     fileNodeFactory: (AbstractTreeNode<*>, PsiFile) -> AbstractTreeNode<*>,
     directoryNodeFactory: (PsiDirectory) -> AbstractTreeNode<*>,
   ): AbstractTreeNode<*>? {
+    val course = project.course ?: return null
+    val visibility = childNode.courseViewVisibilityAttribute(project, course)
+    if (visibility == CourseViewVisibility.INVISIBLE_FOR_ALL) return null
+
     if (task == null) {
-      val course = project.course ?: return null
       return childNode.modifyAdditionalFileOrDirectory(project, course, showUserCreatedFiles = true)
     }
 
-    val value = childNode.value
-    return when (value) {
+    return when (val value = childNode.value) {
       is PsiDirectory -> {
-        val dirName = value.name
-        if (dirName == EduNames.BUILD || dirName == EduNames.OUT) return null
         if (isShowDirInView(project, task, value)) directoryNodeFactory(value) else null
       }
 
@@ -219,10 +220,6 @@ object CourseViewUtils {
    *
    * If [this] corresponds to a directory, check that there exist a visible additional file inside.
    * Return [DirectoryNode] in that case, and return `null` otherwise.
-   *
-   * For directories, the [com.jetbrains.edu.learning.configuration.EduConfigurator.shouldFileBeVisibleToStudent] check is also performed.
-   * In that case the directory node itself is returned to make the entire directory visible.
-   * This check will be refactored in EDU-8288.
    */
   fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectory(
     project: Project,
@@ -283,8 +280,8 @@ object CourseViewUtils {
   ): AbstractTreeNode<*>? {
     val nodePsiElement = value ?: return null
     val nodeDirectory = nodePsiElement.virtualFile
-    //TODO remove in EDU-8288
-    if (course.configurator?.shouldFileBeVisibleToStudent(nodeDirectory) == true) return this
+
+    if (courseViewVisibilityAttribute(project, course) == CourseViewVisibility.VISIBLE_FOR_STUDENT) return this
 
     val nodePath = nodeDirectory.pathInCourse(project) ?: return null
 
@@ -294,5 +291,12 @@ object CourseViewUtils {
     else {
       null
     }
+  }
+
+  fun AbstractTreeNode<*>.courseViewVisibilityAttribute(project: Project, course: Course): CourseViewVisibility {
+    if (this !is PsiDirectoryNode && this !is PsiFileNode) return CourseViewVisibility.INVISIBLE_FOR_ALL
+    val virtualFile = this.virtualFile ?: return CourseViewVisibility.INVISIBLE_FOR_ALL
+    val configurator = course.configurator ?: return CourseViewVisibility.INVISIBLE_FOR_ALL
+    return configurator.courseFileAttributes(project, virtualFile).visibility
   }
 }

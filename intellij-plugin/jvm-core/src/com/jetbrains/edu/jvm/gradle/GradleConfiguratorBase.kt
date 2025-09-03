@@ -7,6 +7,7 @@ import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
@@ -30,11 +31,13 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
     dirAndChildren(*FOLDERS_TO_EXCLUDE) {
       excludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+      courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
     }
 
     file(*NAMES_TO_EXCLUDE) {
       excludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+      courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
     }
   }
 
