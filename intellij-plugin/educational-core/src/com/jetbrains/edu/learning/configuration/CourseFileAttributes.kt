@@ -30,6 +30,34 @@ enum class ArchiveInclusionPolicy {
   INCLUDED_BY_DEFAULT
 }
 
+/**
+ * Specifies the visibility of the file in the course view.
+ *
+ * The visibility of most files in the Course View is determined by the author, they
+ * specify visibility for files manually.
+ * But some files must be forcibly hidden or must be forcibly shown for any course.
+ * For example, the build output should never be visible.
+ * The rules forcing the visibility of files are stated with this enum.
+ */
+enum class CourseViewVisibility {
+  /**
+   * Invisible for both learners and authors
+   */
+  INVISIBLE_FOR_ALL,
+
+  /**
+   * No special visibility rules for the file.
+   * Its visibility is determined by an author.
+   */
+  AUTHOR_DECISION,
+
+  /**
+   * Forcibly visible for students.
+   * For directories: visible with all their contents.
+   */
+  VISIBLE_FOR_STUDENT
+}
+
 data class CourseFileAttributes(
   /**
    * Whether a file should be excluded from a course archive automatically.
@@ -43,5 +71,10 @@ data class CourseFileAttributes(
   /**
    * See [ArchiveInclusionPolicy]. The default value is [ArchiveInclusionPolicy.AUTHOR_DECISION]
    */
-  val archiveInclusionPolicy: ArchiveInclusionPolicy
+  val archiveInclusionPolicy: ArchiveInclusionPolicy,
+
+  /**
+   * See [CourseViewVisibility]. The default value is [CourseViewVisibility.AUTHOR_DECISION]
+   */
+  val visibility: CourseViewVisibility
 )

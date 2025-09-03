@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.configuration.CourseFileAttributes
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.courseFormat.Course
 
 /**
@@ -21,6 +22,9 @@ class AttributesBuilderContext private constructor(
   internal var rules: MutableList<Rule> = mutableListOf()
   private val setupAttributes: MutableList<AttributesMutator> = mutableListOf()
 
+  /**
+   * Do not use this method in the new code, see [CourseFileAttributes.excludedFromArchive]
+   */
   fun excludeFromArchive() {
     setupAttributes += { it.excludedFromArchive = true }
   }
@@ -31,6 +35,10 @@ class AttributesBuilderContext private constructor(
 
   fun archiveInclusionPolicy(policy: ArchiveInclusionPolicy) {
     setupAttributes += { it.inclusionPolicy = policy }
+  }
+
+  fun courseViewVisibility(visibility: CourseViewVisibility) {
+    setupAttributes += { it.visibility = visibility }
   }
 
   private fun addRule(
