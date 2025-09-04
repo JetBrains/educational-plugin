@@ -15,7 +15,7 @@ class PromptActionManager {
 
   private val actions: MutableSet<PromptAction> = mutableSetOf()
 
-  fun addAction(elementId: String, taskId: Int) {
+  fun addAction(elementId: String, taskId: Int?) {
     getAction(elementId)?.apply {
       this.taskId = taskId
     } ?: actions.add(PromptAction(elementId, taskId, PromptCodeState.PromptWritten, null))
@@ -30,7 +30,7 @@ class PromptActionManager {
 
   fun getAction(elementId: String) = actions.find { it.elementId == elementId }
 
-  fun generatedSuccessfully(taskId: Int) = actions.filter { it.taskId == taskId }.none {
+  fun generatedSuccessfully(taskId: Int?) = actions.filter { it.taskId == taskId }.none {
     it.state == PromptCodeState.CodeFailed
   }
 
@@ -41,7 +41,7 @@ class PromptActionManager {
 
 data class PromptAction(
   val elementId: String,
-  var taskId: Int,
+  var taskId: Int?,
   var state: PromptCodeState,
   var promptToCode: PromptToCodeContent? = null
 ) {

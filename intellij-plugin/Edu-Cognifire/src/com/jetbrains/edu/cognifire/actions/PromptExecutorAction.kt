@@ -49,7 +49,7 @@ import java.util.concurrent.CancellationException
  * @param prodeId A unique identifier for the Prompt-to-Code.
  * @param task The educational task within which this action is being executed.
  */
-class PromptExecutorAction(private val element: PsiElement, private val prodeId: String, private val task: Task) : AnAction() {
+class PromptExecutorAction(private val element: PsiElement, private val prodeId: String, private val task: Task?) : AnAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: error("Project was not found")
     val document = getDocument() ?: return
@@ -153,7 +153,7 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
       }
 
       Logger.cognifireLogger.info(
-        """Lesson id: ${task.lesson.id}    Task id: ${task.id}    Action id: $prodeId
+        """Lesson id: ${task?.lesson?.id}    Task id: ${task?.id}    Action id: $prodeId
            | Text prompt: ${newPromptExpression.prompt}
            | Code prompt: ${newPromptExpression.code}
            | Generated code: $generatedCode
@@ -162,9 +162,9 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
       )
       val currentFile = FileEditorManager.getInstance(project).selectedEditor?.file?.name ?: ""
       val logEntry = CognifireStudyLogEntry(
-        courseId = task.course.id,
-        lessonId = task.lesson.id,
-        taskId = task.id,
+        courseId = task?.course?.id,
+        lessonId = task?.lesson?.id,
+        taskId = task?.id,
         actionType = "code generation",
         actionId = prodeId,
         fileName = currentFile,
@@ -182,7 +182,7 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
       Logger.cognifireStudyLogger.info(logEntry)
       promptActionManager.updateAction(prodeId, state, codeGenerator.finalPromptToCodeTranslation)
       project.getCurrentTask()?.let {
-        it.isPromptActionsGeneratedSuccessfully = promptActionManager.generatedSuccessfully(task.id)
+        it.isPromptActionsGeneratedSuccessfully = promptActionManager.generatedSuccessfully(task?.id)
         TaskToolWindowView.getInstance(project).updateCheckPanel(it)
       }
     }
@@ -218,7 +218,7 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
     ).notify(this).also {
       promptExpression?.let {
         Logger.cognifireLogger.info(
-          """Lesson id: ${task.lesson.id}    Task id: ${task.id}    Action id: $prodeId
+          """Lesson id: ${task?.lesson?.id}    Task id: ${task?.id}    Action id: $prodeId
            | Error: $title
            | ErrorMessage: $content
            | Text prompt: ${it.prompt}
@@ -227,7 +227,7 @@ class PromptExecutorAction(private val element: PsiElement, private val prodeId:
         )
       } ?: run {
         Logger.cognifireLogger.info(
-          """Lesson id: ${task.lesson.id}    Task id: ${task.id}    Action id: $prodeId
+          """Lesson id: ${task?.lesson?.id}    Task id: ${task?.id}    Action id: $prodeId
            | Error: $title
            | ErrorMessage: $content
         """.trimMargin()

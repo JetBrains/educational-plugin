@@ -19,22 +19,24 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 class PromptRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(element: PsiElement): Info? {
     val project = element.project
-    val task = project.getCurrentTask() ?: return null
+    val task = project.getCurrentTask()
     val targetElement = element.parent.parent
     if (element is LeafPsiElement && targetElement is KtCallExpression && element.text == PROMPT && targetElement.isPromptBlock()) {
       val function = PsiTreeUtil.getParentOfType(targetElement, KtNamedFunction::class.java) ?: return null
-      val uniqueId = "${function.fqName}:${function.valueParameters.size}"
+      val uniqueId = "${function.fqName}:${function.valueParameters.size}" // one prompt per function
       val action = PromptExecutorAction(targetElement, uniqueId, task)
       var tooltipText = EduKotlinBundle.message("action.run.generate.code.text")
       val promptActionManager = PromptActionManager.getInstance(project)
       val promptAction = promptActionManager.getAction(uniqueId)
-      if (promptAction != null && promptAction.state != PromptCodeState.PromptWritten) {
+      if (promptAction == null) {
+        promptActionManager.addAction(uniqueId, task?.id)
+      } else if (promptAction.state != PromptCodeState.PromptWritten) {
         tooltipText = EduKotlinBundle.message("action.run.sync.prompt.with.code.text")
-      } else {
-        promptActionManager.addAction(uniqueId, task.id)
       }
-      task.isPromptActionsGeneratedSuccessfully = promptActionManager.generatedSuccessfully(task.id)
-      TaskToolWindowView.getInstance(project).updateCheckPanel(task)
+      task?.let {
+        it.isPromptActionsGeneratedSuccessfully = promptActionManager.generatedSuccessfully(it.id)
+        TaskToolWindowView.getInstance(project).updateCheckPanel(it)
+      }
       return Info(
         CognifireIcons.Sync,
         arrayOf(action),
