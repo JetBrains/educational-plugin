@@ -4,8 +4,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions.ActionText
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
@@ -39,7 +41,7 @@ abstract class CCChangeFileVisibility(
   constructor(@ActionText name: String, requiredVisibility: Boolean)
     : this(Supplier { name }, requiredVisibility)
 
-  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, course: Course, configurator: EduConfigurator<*>, task: Task?, file: VirtualFile): State? {
     if (task != null) {
       val taskRelativePath = file.pathRelativeToTask(project)
       val taskFile = task.getTaskFile(taskRelativePath)
@@ -50,7 +52,6 @@ abstract class CCChangeFileVisibility(
     }
     else {
       val path = file.pathInCourse(project) ?: return null
-      val course = project.course ?: return null
       val additionalFile = course.getAdditionalFile(path) ?: return null
       return AdditionalFileState(additionalFile, requiredVisibility)
     }

@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.canBeAddedToTask
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -23,7 +25,7 @@ class CCIncludeIntoTask : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessa
     return task != null
   }
 
-  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, course: Course, configurator: EduConfigurator<*>, task: Task?, file: VirtualFile): State? {
     if (task == null) return null
     if (!file.canBeAddedToTask(project)) return null
     val info = file.fileInfo(project) as? FileInfo.FileInTask ?: return null

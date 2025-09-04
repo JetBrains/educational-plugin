@@ -10,6 +10,7 @@ import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -77,7 +78,7 @@ abstract class CCChangeFilePropagationFlag(
   val name: Supplier<@NlsActions.ActionText String>,
   private val requiredPropagationFlag: Boolean
 ) : CCChangeFilePropertyActionBase(name) {
-  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, course: Course, configurator: EduConfigurator<*>, task: Task?, file: VirtualFile): State? {
     if (task == null) return null
     val taskRelativePath = file.pathRelativeToTask(project)
     val taskFile = task.getTaskFile(taskRelativePath)
