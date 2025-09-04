@@ -74,7 +74,11 @@ data class CourseFileAttributes(
    * This value preserves the old behavior of the plugin, when additional files were not explicitly listed in the `course-info.yaml`.
    * That time all files from the disk were put to archive, except the files, for which `EduConfigurator.excludeFromArchive()` was `true`.
    * The value is used when the course is migrated from a version without an implicit list of additional files (YAML before v2).
-   * Other usages of this field are considered legacy and should be eliminated with time.
+   * 
+   * This attribute should not be used in the new code, and one should not change which files have this attribute. It means that tests
+   * for this attribute should not be changed.
+   * 
+   * After some reasonable period of time, this attribute can be removed.
    */
   val excludedFromArchive : Boolean,
 
