@@ -32,7 +32,8 @@ import com.intellij.util.io.ReadOnlyAttributeUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -169,7 +170,7 @@ fun VirtualFile.canBeAddedToTask(project: Project): Boolean {
   if (isDirectory) return false
   val course = getContainingTask(project)?.course ?: return false
   val configurator = course.configurator ?: return false
-  return if (configurator.excludeFromArchive(project, this)) false else !belongsToTask(project)
+  return if (configurator.courseFileAttributes(project, this).archiveInclusionPolicy == ArchiveInclusionPolicy.MUST_EXCLUDE) false else !belongsToTask(project)
 }
 
 /**
