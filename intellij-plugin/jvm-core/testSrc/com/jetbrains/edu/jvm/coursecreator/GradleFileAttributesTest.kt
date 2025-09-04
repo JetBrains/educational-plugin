@@ -58,6 +58,9 @@ abstract class GradleFileAttributesTest(
         arrayOf("out/", outsideArchive),
         arrayOf("dir/build/", outsideArchive),
         arrayOf("dir/out/", outsideArchive),
+
+        arrayOf(".gradle/", outsideArchive),
+        arrayOf(".gradle/file", outsideArchive),
       )
     }
   }
