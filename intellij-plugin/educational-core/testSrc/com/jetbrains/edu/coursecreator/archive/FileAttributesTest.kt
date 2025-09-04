@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.archive
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseFileAttributes
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import junit.framework.TestCase.assertEquals
@@ -13,7 +14,8 @@ import org.junit.runners.Parameterized.Parameters
 
 data class ExpectedCourseFileAttributes(
   val excludedFromArchive: Boolean? = null,
-  val archiveInclusionPolicy: ArchiveInclusionPolicy? = null
+  val archiveInclusionPolicy: ArchiveInclusionPolicy? = null,
+  val visibility: CourseViewVisibility? = null
 ) {
   fun assertAttributes(actual: CourseFileAttributes) {
     if (excludedFromArchive != null) {
@@ -21,6 +23,9 @@ data class ExpectedCourseFileAttributes(
     }
     if (archiveInclusionPolicy != null) {
       assertEquals("Archive inclusion policy attribute mismatch", archiveInclusionPolicy, actual.archiveInclusionPolicy)
+    }
+    if (visibility != null) {
+      assertEquals("Course view visibility attribute mismatch", visibility, actual.visibility)
     }
   }
 }
@@ -40,10 +45,12 @@ open class FileAttributesTest(
   companion object {
     fun expected(
       excludedFromArchive: Boolean? = null,
-      archiveInclusionPolicy: ArchiveInclusionPolicy? = null
+      archiveInclusionPolicy: ArchiveInclusionPolicy? = null,
+      visibility: CourseViewVisibility? = null
     ): ExpectedCourseFileAttributes = ExpectedCourseFileAttributes(
       excludedFromArchive=excludedFromArchive,
-      archiveInclusionPolicy=archiveInclusionPolicy
+      archiveInclusionPolicy=archiveInclusionPolicy,
+      visibility=visibility
     )
 
     fun doTest(configurator: EduConfigurator<*>, filePath: String, expectedAttributes: ExpectedCourseFileAttributes) {
@@ -56,21 +63,33 @@ open class FileAttributesTest(
       expectedAttributes.assertAttributes(actualAttributes)
     }
 
+    /**
+     * Concatenates two collections of the form `[array(file1, ...), array(file2, ...)]` in such a way, that
+     * if the second collection contains `fileN` from the first collection, only the corresponding array from the second collection is taken.
+     */
+    fun Collection<Array<Any>>.extend(vararg elements: Array<Any>): Collection<Array<Any>> =
+      this.filter { thisElement -> elements.find { thisElement[0] == it[0] } == null } + elements
+
     @JvmStatic
     @Parameters(name = "{0}")
     fun data(): Collection<Array<Any>> {
       val excluded = expected(
         excludedFromArchive = true,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE
+        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE,
+        visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val excludedButCanBeInside = expected(
         excludedFromArchive = true,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION,
+        visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val normal = expected(
         excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION,
+        visibility = CourseViewVisibility.AUTHOR_DECISION
       )
+      val excludedAndInvisible = excluded.copy(visibility = CourseViewVisibility.INVISIBLE_FOR_ALL)
+      val normalAndInvisible = normal.copy(visibility = CourseViewVisibility.INVISIBLE_FOR_ALL)
 
       return listOf(
         arrayOf("regular-file", normal),
@@ -97,8 +116,8 @@ open class FileAttributesTest(
         arrayOf(".idea/scopes/.excluded_with_dot", excludedButCanBeInside),
 
         // iml files
-        arrayOf("project.iml", excluded),
-        arrayOf("subfolder/project.iml", excluded),
+        arrayOf("project.iml", excludedAndInvisible),
+        arrayOf("subfolder/project.iml", excludedAndInvisible),
 
         // task descriptions
         arrayOf("lesson/task/task.md", excluded),
@@ -123,17 +142,22 @@ open class FileAttributesTest(
         arrayOf("section/lesson/task/task-remote-info.yaml", excluded),
 
         //.coursecreator
-        arrayOf(".coursecreator/archive.zip", excluded),
+        arrayOf(".coursecreator/archive.zip", excludedAndInvisible),
 
         //vcs
-        arrayOf(".git/objects/ha/hahaha42e136b17b7adfe79921a7a17def1185", excluded),
-        arrayOf(".git/config", excluded),
+        arrayOf(".git/objects/ha/hahaha42e136b17b7adfe79921a7a17def1185", excludedAndInvisible),
+        arrayOf(".git/config", excludedAndInvisible),
 
         // other
         arrayOf("hints", excludedButCanBeInside),
         arrayOf("stepik_ids.json", excludedButCanBeInside),
         arrayOf(".courseignore", excluded),
         arrayOf("courseIcon.svg", excluded),
+
+        arrayOf("build/", normalAndInvisible),
+        arrayOf("out/", normalAndInvisible),
+        arrayOf("dir/build/", normalAndInvisible),
+        arrayOf("dir/out/", normalAndInvisible),
       )
     }
   }

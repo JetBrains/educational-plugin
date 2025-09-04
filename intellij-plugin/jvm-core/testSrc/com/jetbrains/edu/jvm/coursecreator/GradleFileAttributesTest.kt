@@ -3,6 +3,7 @@ package com.jetbrains.edu.jvm.coursecreator
 import com.jetbrains.edu.coursecreator.archive.ExpectedCourseFileAttributes
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 
 abstract class GradleFileAttributesTest(
   filePath: String,
@@ -13,14 +14,16 @@ abstract class GradleFileAttributesTest(
     fun data(): Collection<Array<Any>> {
       val inArchive = expected(
         excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
+        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT,
+        visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val outsideArchive = expected(
         excludedFromArchive = true,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE
+        archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE,
+        visibility = CourseViewVisibility.INVISIBLE_FOR_ALL
       )
 
-      return FileAttributesTest.data() + listOf(
+      return FileAttributesTest.data().extend(
         arrayOf("settings.gradle", inArchive),
         arrayOf("subfolder/settings.gradle", inArchive),
 
@@ -49,6 +52,12 @@ abstract class GradleFileAttributesTest(
         arrayOf("subfolder/local.properties", outsideArchive),
         arrayOf("subfolder/gradle-wrapper.jar", outsideArchive),
         arrayOf("subfolder/gradle-wrapper.properties", outsideArchive),
+
+        // override 'build' and 'out' directories from the FileAttributesTest.data()
+        arrayOf("build/", outsideArchive),
+        arrayOf("out/", outsideArchive),
+        arrayOf("dir/build/", outsideArchive),
+        arrayOf("dir/out/", outsideArchive),
       )
     }
   }
