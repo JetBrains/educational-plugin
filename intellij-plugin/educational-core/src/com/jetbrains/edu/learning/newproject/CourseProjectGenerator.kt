@@ -352,7 +352,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
    * @throws IOException
    */
   @Throws(IOException::class)
-  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+  fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
     val configurator = holder.course.configurator ?: return
 
     for (file in autoCreatedAdditionalFiles(holder)) {
