@@ -39,7 +39,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCUtils.isLocalCourse
 import com.jetbrains.edu.coursecreator.ui.CCOpenEducatorHelp
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.*
@@ -337,22 +336,15 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   }
 
   /**
-   * Creates additional files that are not in course object
-   * The files are created on FS.
-   * Some files that are intended to go into the course archive are also added to the [Course.additionalFiles].
+   * Creates additional files that are not present in course object on the FS.
    *
-   * The default implementation takes the list of files from [autoCreatedAdditionalFiles], writes them to the FS and augments the list
-   * [Course.additionalFiles] with those files that are not excluded by the [EduConfigurator].
-   *
-   * Consider overriding [autoCreatedAdditionalFiles] instead of this method, and generate the necessary additional files there.
-   * Override this method only if it is impossible to generate additional files in-memory, and one needs to write them directly to FS.
-   *
-   * @param holder contains info about course project like root directory
+   * The list of files to create is taken from the [autoCreatedAdditionalFiles].
+   * If a file does not have the attribute [ArchiveInclusionPolicy.MUST_EXCLUDE], it is also added to the [Course.additionalFiles].
    *
    * @throws IOException
    */
   @Throws(IOException::class)
-  open fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
+  fun createAdditionalFiles(holder: CourseInfoHolder<Course>) {
     val configurator = holder.course.configurator ?: return
 
     for (file in autoCreatedAdditionalFiles(holder)) {
