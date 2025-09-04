@@ -59,6 +59,14 @@ class CCIncludeIntoCourseTest : CCChangeFileOwnerTestBase(CCIncludeIntoArchive.A
   }
 
   @Test
+  fun `include folder with files that must be excluded`() = doAvailableTest("dir") { course ->
+    Pair(
+      listOf("dir/must_not_include.iml" notIn course, "dir/x-included.txt" `in` course),
+      listOf("dir/y-excluded.txt" `in` course)
+    )
+  }
+
+  @Test
   fun `test do not include file inside task`() = doUnavailableTest("lesson1/task1/taskFile1.txt")
   @Test
   fun `test do not include file inside and outside task`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "b-excluded.txt")
@@ -86,6 +94,7 @@ class CCIncludeIntoCourseTest : CCChangeFileOwnerTestBase(CCIncludeIntoArchive.A
       file("b-excluded.txt")
       dir("dir") {
         file("y-excluded.txt")
+        file("must_not_include.iml")
       }
     }.create(LightPlatformTestCase.getSourceRoot())
   }

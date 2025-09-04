@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.runUndoableAction
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -46,6 +46,7 @@ abstract class CCChangeFilePropertyActionBase(
     val project = e.project ?: return
     val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)?.toList() ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
+    val configurator = course.configurator ?: return
 
     val affectedFiles = collectAffectedFiles(project, course, virtualFiles)
     val states = mutableListOf<State>()
@@ -59,7 +60,7 @@ abstract class CCChangeFilePropertyActionBase(
       else {
         tasks += task
       }
-      states += createStateForFile(project, task, file) ?: continue
+      states += createStateForFile(project, course, configurator, task, file) ?: continue
     }
 
     val action = ChangeFilesPropertyUndoableAction(project, course, states, tasks, outsideTasks, affectedFiles)
@@ -82,13 +83,17 @@ abstract class CCChangeFilePropertyActionBase(
 
   protected abstract fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean
 
-  protected abstract fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State?
+  protected abstract fun createStateForFile(
+    project: Project,
+    course: Course,
+    configurator: EduConfigurator<*>,
+    task: Task?,
+    file: VirtualFile
+  ): State?
 
   protected open fun collectAffectedFiles(project: Project, course: Course, files: List<VirtualFile>): List<VirtualFile> {
     val affectedFiles = mutableListOf<VirtualFile>()
-    val configurator = course.configurator ?: return emptyList()
     for (file in files) {
-      if (configurator.excludeFromArchive(project, file)) continue
       if (file.isDirectory) {
         affectedFiles += collectAffectedFiles(project, course, VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
       }

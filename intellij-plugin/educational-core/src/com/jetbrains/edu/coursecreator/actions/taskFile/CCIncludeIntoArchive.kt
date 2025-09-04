@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
@@ -35,11 +36,12 @@ class CCIncludeIntoArchive : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMe
     return task == null
   }
 
-  override fun createStateForFile(project: Project, task: Task?, file: VirtualFile): State? {
+  override fun createStateForFile(project: Project, course: Course, configurator: EduConfigurator<*>, task: Task?, file: VirtualFile): State? {
     if (task != null) return null
-    val course = project.course ?: return null
     val path = file.pathInCourse(project) ?: return null
     if (course.getAdditionalFile(path) != null) return null
+    val courseFileAttributes = configurator.courseFileAttributes(project, file)
+    if (courseFileAttributes.archiveInclusionPolicy == ArchiveInclusionPolicy.MUST_EXCLUDE) return null
     return IncludeFileIntoArchive(course, file, path)
   }
 
