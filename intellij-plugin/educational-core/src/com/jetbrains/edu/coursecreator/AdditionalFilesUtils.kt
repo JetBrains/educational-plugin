@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.courseFileAttributes
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -82,7 +81,7 @@ object AdditionalFilesUtils {
     useLegacyExcludeFromArchive: Boolean = false
   ): Boolean {
     val excludedByConfigurator = if (useLegacyExcludeFromArchive) {
-      courseConfigurator.excludeFromArchive(project, file)
+      courseConfigurator.courseFileAttributes(project, file).excludedFromArchive
     }
     else {
       courseConfigurator.courseFileAttributes(project, file).archiveInclusionPolicy <= ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT

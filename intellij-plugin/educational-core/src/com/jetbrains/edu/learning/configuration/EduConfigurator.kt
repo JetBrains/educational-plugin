@@ -240,12 +240,6 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
 }
 
-fun EduConfigurator<*>.excludeFromArchive(project: Project, file: VirtualFile): Boolean =
-  courseFileAttributes(project, file).excludedFromArchive
-
-fun EduConfigurator<*>.excludeFromArchive(holder: CourseInfoHolder<out Course?>, file: VirtualFile): Boolean =
-  courseFileAttributes(holder, file).excludedFromArchive
-
 fun EduConfigurator<*>.courseFileAttributes(project: Project, file: VirtualFile): CourseFileAttributes =
   courseFileAttributes(project.toCourseInfoHolder(), file)
 

@@ -4,7 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.FileInfo.FileOutsideTasks
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -41,7 +42,7 @@ private fun shouldIgnore(file: VirtualFile, project: Project, task: Task): Boole
   val courseDir = project.courseDir
   if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
   val course = StudyTaskManager.getInstance(project).course ?: return true
-  if (course.configurator?.excludeFromArchive(project, file) == true) return true
+  if (course.configurator?.courseFileAttributes(project, file)?.archiveInclusionPolicy == ArchiveInclusionPolicy.MUST_EXCLUDE) return true
   return task.shouldBeEmpty(file.path)
 }
 
