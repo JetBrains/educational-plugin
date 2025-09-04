@@ -39,6 +39,11 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
       courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
     }
+
+    dirAndChildren(GradleConstants.GRADLE_CACHE_DIR_NAME) {
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+      courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
+    }
   }
 
   override val sourceDir: String
