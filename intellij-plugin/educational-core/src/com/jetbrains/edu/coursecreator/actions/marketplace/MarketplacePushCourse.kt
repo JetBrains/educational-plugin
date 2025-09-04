@@ -45,6 +45,8 @@ class MarketplacePushCourse(
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
+    if (course.isMarketplaceRemote && course.isFromCourseStorage()) return
+
     presentation.isEnabledAndVisible = true
 
     if (course.isMarketplaceRemote) {
