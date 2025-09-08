@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
+import com.intellij.util.io.isLocalHost
 import com.intellij.util.net.JdkProxyCustomizer
 import com.intellij.util.net.ProxyCredentialStore
 import com.intellij.util.net.ProxySettings
@@ -75,6 +76,7 @@ class RetrofitHelperImpl : RetrofitHelper {
     return builder
       .addProxy(baseUrl)
       .addEdtAssertions()
+      .addLocalhostAssertions()
   }
 
   private fun OkHttpClient.Builder.addProxy(baseUrl: String): OkHttpClient.Builder {
@@ -96,6 +98,20 @@ class RetrofitHelperImpl : RetrofitHelper {
       chain.proceed(request)
     }
   }
+
+  private fun OkHttpClient.Builder.addLocalhostAssertions(): OkHttpClient.Builder {
+    if (!isUnitTestMode) return this
+
+    return addInterceptor { chain ->
+      val request = chain.request()
+      val host = request.url.host
+      if (!isLocalHost(host)) {
+        error("Only requests to localhost are allowed in tests. Request to $host is denied.")
+      }
+      chain.proceed(request)
+    }
+  }
+
 
   @Suppress("UnstableApiUsage")
   override val eduToolsUserAgent: String
