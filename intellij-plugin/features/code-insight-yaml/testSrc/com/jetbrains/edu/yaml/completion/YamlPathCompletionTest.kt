@@ -1,6 +1,8 @@
 package com.jetbrains.edu.yaml.completion
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.vfs.findOrCreateFile
+import com.intellij.openapi.vfs.writeText
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -140,7 +142,7 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
     }
     val task = course.findTask("lesson1", "task1")
     val taskDir = task.getDir(project.courseDir)!!
-    GeneratorUtils.createTextChildFile(project, taskDir, ".hidden_dir/hidden_file", "")
+    GeneratorUtils.createTextChildFile(project, taskDir, "some_module.iml", "")
 
     checkNoCompletion(task, """
       |type: edu
@@ -307,5 +309,65 @@ class YamlPathCompletionTest : YamlCompletionTestBase() {
       |- task1
       |- task2
     """.trimMargin("|"), invocationCount = 2)
+  }
+
+  @Test
+  fun `complete additional file`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {}
+    nonAdditionalFile("a.txt")
+    nonAdditionalFile("b.txt")
+    nonAdditionalFile("dir/c.txt")
+    checkMultipleCompletion(
+      course, """
+      type: edu
+      additional_files:
+        - name: <caret>
+    """.trimIndent(),
+      "a.txt", "b.txt", "dir/", "lesson1/"
+    )
+  }
+
+  @Test
+  fun `complete additional file and do not suggest existing`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile("b.txt")
+    }
+    nonAdditionalFile("a.txt")
+    nonAdditionalFile("dir/c.txt")
+    checkMultipleCompletion(
+      course, """
+      type: edu
+      additional_files:
+        - name: b.txt
+        - name: <caret>
+    """.trimIndent(),
+      "a.txt", "dir/", "lesson1/"
+    )
+  }
+
+  @Test
+  fun `complete additional file and do not suggest MUST_EXCLUDE files`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile("b.txt")
+    }
+    nonAdditionalFile("a.txt")
+    nonAdditionalFile("module.iml")
+    nonAdditionalFile(".coursecreator/course.zip")
+    nonAdditionalFile("dir/course.zip")
+    checkMultipleCompletion(
+      course, """
+      type: edu
+      additional_files:
+        - name: b.txt
+        - name: <caret>
+    """.trimIndent(),
+      "a.txt", "lesson1/", "dir/"
+    )
+  }
+
+  private fun nonAdditionalFile(path: String, contents: String = "") {
+    runWriteAction {
+      project.courseDir.findOrCreateFile(path).writeText(contents)
+    }
   }
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.impl.BaseFixture
+import kotlin.test.assertEquals
 
 class EduCompletionTextFixture(
   private val fixture: CodeInsightTestFixture
@@ -50,6 +51,17 @@ class EduCompletionTextFixture(
     check(variant !in renderedLookups) {
       "Expected completion list doesn't contain `$variant` option. Shown options: $renderedLookups"
     }
+  }
+
+  fun checkMultipleCompletion(vararg expectedVariants: String) {
+    val actualVariants = withNoAutoCompletion {
+      fixture.completeBasic()
+    }
+    assertEquals(
+      expectedVariants.toSet(),
+      actualVariants.map { it.lookupString }.toSet(),
+      "The set of available completions is different",
+    )
   }
 
   private fun configureExistingFile(file: VirtualFile, before: String) {

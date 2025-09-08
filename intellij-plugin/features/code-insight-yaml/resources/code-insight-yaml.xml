@@ -38,6 +38,16 @@
                      groupPathKey="inspection.group.path.key"
                      enabledByDefault="true"
                      level="ERROR"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.AdditionalFileNotFoundInspection"
+                     key="inspection.additional.file.not.found.display.name"
+                     bundle="messages.EduYAMLBundle"/>
+
+    <localInspection language="yaml"
+                     groupBundle="messages.EduCoreBundle"
+                     groupKey="inspection.yaml.group.key"
+                     groupPathKey="inspection.group.path.key"
+                     enabledByDefault="true"
+                     level="ERROR"
                      implementationClass="com.jetbrains.edu.yaml.inspections.UnsupportedLanguageVersionInspection"
                      key="inspection.unsupported.programming.language.display.name"
                      bundle="messages.EduYAMLBundle"/>
