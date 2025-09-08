@@ -16,7 +16,7 @@ import javax.swing.Action
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
+class CCNewCourseDialog(
   @DialogTitle title: String,
   @Button okButtonText: String,
   course: Course? = null,
@@ -36,7 +36,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
 
   private val backAction = object : AbstractAction(EduCoreBundle.message("cc.new.course.button.back")) {
     override fun actionPerformed(e: ActionEvent?) {
-      prepareCreateCoursePanel()
+      prepareCreateCoursePanel(hasLessonSelectionStep = true)
     }
   }
 
@@ -44,7 +44,7 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
     setTitle(title)
     setOKButtonText(okButtonText)
     init()
-    prepareCreateCoursePanel()
+    prepareCreateCoursePanel(hasLessonSelectionStep = course == null)
     newCoursePanel.setValidationListener(object : CCNewCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         getButton(nextAction)?.isEnabled = isInputDataComplete
@@ -74,11 +74,16 @@ class CCNewCourseDialog @Suppress("UnstableApiUsage") constructor(
     return arrayOf(cancelAction)
   }
 
-  private fun prepareCreateCoursePanel() {
+  private fun prepareCreateCoursePanel(hasLessonSelectionStep: Boolean) {
     getButton(backAction)?.isVisible = false
-    getButton(okAction)?.isVisible = false
-    getButton(nextAction)?.isVisible = true
-    rootPane.defaultButton = getButton(nextAction)
+    getButton(okAction)?.isVisible = !hasLessonSelectionStep
+    getButton(nextAction)?.isVisible = hasLessonSelectionStep
+    rootPane.defaultButton = if (hasLessonSelectionStep) {
+      getButton(nextAction)
+    }
+    else {
+      getButton(okAction)
+    }
     panel.showCoursePanel()
   }
 
