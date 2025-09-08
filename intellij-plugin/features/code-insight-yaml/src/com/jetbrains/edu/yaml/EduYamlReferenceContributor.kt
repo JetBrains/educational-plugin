@@ -20,12 +20,14 @@ import com.jetbrains.edu.codeInsight.EduReferenceContributorBase
 import com.jetbrains.edu.codeInsight.inFileWithName
 import com.jetbrains.edu.codeInsight.psiElement
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.configuration.excludeFromArchive
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
@@ -35,22 +37,28 @@ import org.jetbrains.yaml.psi.YAMLSequenceItem
 
 class EduYamlReferenceContributor : EduReferenceContributorBase() {
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerEduReferenceProvider(EduYamlTaskFilePathReferenceProvider())
+    registrar.registerEduReferenceProvider(EduYamlEduFilePathReferenceProvider(insideTasks = true))
+    registrar.registerEduReferenceProvider(EduYamlEduFilePathReferenceProvider(insideTasks = false))
     registrar.registerEduReferenceProvider(ItemContainerContentReferenceProvider())
   }
 }
 
-class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
+class EduYamlEduFilePathReferenceProvider(insideTasks: Boolean) : EduPsiReferenceProvider() {
 
-  override val pattern: PsiElementPattern.Capture<YAMLScalar> = PSI_PATTERN
+  override val pattern: PsiElementPattern.Capture<YAMLScalar> = if (insideTasks) {
+    TASK_FILES_PSI_PATTERN
+  }
+  else {
+    ADDITIONAL_FILES_PSI_PATTERN
+  }
 
   override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<FileReference> {
     val scalar = element as? YAMLScalar ?: return emptyArray()
-    val taskDir = scalar.containingFile.originalFile.virtualFile?.parent ?: return emptyArray()
-    return TaskFileReferenceSet(taskDir, scalar).allReferences
+    val taskOrCourseDir = scalar.containingFile.originalFile.virtualFile?.parent ?: return emptyArray()
+    return EduFileReferenceSet(taskOrCourseDir, scalar).allReferences
   }
 
-  private class TaskFileReferenceSet(private val taskDir: VirtualFile, element: YAMLScalar) : FileReferenceSet(element) {
+  private class EduFileReferenceSet(private val taskOrCourseDir: VirtualFile, element: YAMLScalar) : FileReferenceSet(element) {
     override fun getReferenceCompletionFilter(): Condition<PsiFileSystemItem> {
       return Condition { item ->
         val virtualFile = item.virtualFile
@@ -58,7 +66,7 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
         if (excludeFromArchive(element.project, virtualFile)) return@Condition false
         if (item.isDirectory) return@Condition true
         val filePaths = (element as YAMLScalar).collectFilePaths()
-        val itemPath = VfsUtil.getRelativePath(virtualFile, taskDir) ?: return@Condition false
+        val itemPath = VfsUtil.getRelativePath(virtualFile, taskOrCourseDir) ?: return@Condition false
         itemPath !in filePaths
       }
     }
@@ -71,11 +79,11 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
     }
 
     override fun createFileReference(range: TextRange?, index: Int, text: String?): FileReference? {
-      return super.createFileReference(range, index, text)?.let(::TaskFileReference)
+      return super.createFileReference(range, index, text)?.let(::EduFileReference)
     }
   }
 
-  private class TaskFileReference(fileReference: FileReference) : FileReference(fileReference) {
+  private class EduFileReference(fileReference: FileReference) : FileReference(fileReference) {
     override fun createLookupItem(candidate: PsiElement): Any? {
       return if (candidate is PsiDirectory) {
         LookupElementBuilder.createWithSmartPointer("${candidate.name}/", candidate)
@@ -85,10 +93,16 @@ class EduYamlTaskFilePathReferenceProvider : EduPsiReferenceProvider() {
   }
 
   companion object {
-    val PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
+    val TASK_FILES_PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
       .inFileWithName(TASK_CONFIG)
       .withParent(
         keyValueWithName(NAME).inside(keyValueWithName(FILES))
+      )
+
+    val ADDITIONAL_FILES_PSI_PATTERN: PsiElementPattern.Capture<YAMLScalar> = psiElement<YAMLScalar>()
+      .inFileWithName(COURSE_CONFIG)
+      .withParent(
+        keyValueWithName(NAME).inside(keyValueWithName(ADDITIONAL_FILES))
       )
   }
 }
@@ -140,5 +154,5 @@ class ItemContainerContentReferenceProvider : EduPsiReferenceProvider() {
 private fun excludeFromArchive(project: Project, virtualFile: VirtualFile): Boolean {
   val course = StudyTaskManager.getInstance(project).course ?: return true
   val configurator = course.configurator ?: return true
-  return configurator.excludeFromArchive(project, virtualFile)
+  return configurator.courseFileAttributes(project, virtualFile).archiveInclusionPolicy == ArchiveInclusionPolicy.MUST_EXCLUDE
 }
