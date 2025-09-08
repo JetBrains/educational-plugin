@@ -35,4 +35,9 @@ abstract class YamlCompletionTestBase : YamlCodeInsightTest() {
     openConfigFileWithText(item, text)
     completionFixture.checkNoCompletion()
   }
+
+  protected fun checkMultipleCompletion(item: StudyItem, before: String, vararg completionVariants: String) {
+    openConfigFileWithText(item, before)
+    completionFixture.checkMultipleCompletion(*completionVariants)
+  }
 }

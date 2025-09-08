@@ -18,36 +18,52 @@ import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlLoader
-import com.jetbrains.edu.yaml.EduYamlTaskFilePathReferenceProvider
+import com.jetbrains.edu.yaml.EduYamlEduFilePathReferenceProvider
 import com.jetbrains.edu.yaml.messages.EduYAMLBundle
 import org.jetbrains.yaml.psi.YAMLScalar
 import java.io.IOException
 
-class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
-
-  override val pattern: PsiElementPattern.Capture<YAMLScalar> get() = EduYamlTaskFilePathReferenceProvider.PSI_PATTERN
+class TaskFileNotFoundInspection : EduFileNotFoundInspection() {
+  override val pattern: PsiElementPattern.Capture<YAMLScalar> get() = EduYamlEduFilePathReferenceProvider.TASK_FILES_PSI_PATTERN
   override val supportedConfigs: List<String> = listOf(YamlConfigSettings.TASK_CONFIG)
+  override val isInTask: Boolean = true
+}
+
+class AdditionalFileNotFoundInspection : EduFileNotFoundInspection() {
+  override val pattern: PsiElementPattern.Capture<YAMLScalar> get() = EduYamlEduFilePathReferenceProvider.ADDITIONAL_FILES_PSI_PATTERN
+  override val supportedConfigs: List<String> = listOf(YamlConfigSettings.COURSE_CONFIG)
+  override val isInTask: Boolean = false
+}
+
+abstract class EduFileNotFoundInspection : UnresolvedFileReferenceInspection() {
+
+  abstract val isInTask: Boolean
 
   override fun registerProblem(holder: ProblemsHolder, element: YAMLScalar) {
     val path = element.textValue
     if (isValidFilePath(path)) {
       holder.registerProblem(element, EduYAMLBundle.message("cannot.find.file", path),
-                             ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(CreateTaskFileFix(element)).toTypedArray())
+                             ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, *listOfNotNull(CreateTaskFileFix(element, isInTask)).toTypedArray())
     }
     else {
       holder.registerProblem(element, EduYAMLBundle.message("file.invalid.path", path), ProblemHighlightType.ERROR)
     }
   }
 
-  private class CreateTaskFileFix(element: YAMLScalar) : LocalQuickFixOnPsiElement(element) {
+  private class CreateTaskFileFix(element: YAMLScalar, private val isInTask: Boolean) : LocalQuickFixOnPsiElement(element) {
 
     override fun getFamilyName(): String = EduYAMLBundle.message("create.file.quick.fix.family.name")
     override fun getText(): String = EduYAMLBundle.message("create.file.quick.fix.family.name")
 
     override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
       val scalar = startElement as YAMLScalar
-      val task = file.virtualFile?.getContainingTask(project) ?: return
-      val taskDir = task.getDir(project.courseDir) ?: return
+      val rootDir = if (isInTask) {
+        val task = file.virtualFile?.getContainingTask(project) ?: return
+        task.getDir(project.courseDir) ?: return
+      }
+      else {
+        project.courseDir
+      }
 
       val path = scalar.textValue
       val configFile = file.originalFile.virtualFile
@@ -57,7 +73,7 @@ class TaskFileNotFoundInspection : UnresolvedFileReferenceInspection() {
         // They also rewrite YAML, but we want to avoid this.
         // We thus do it while YAML is prevented from modifications.
         configFile?.putUserData(YamlFormatSynchronizer.SAVE_TO_CONFIG, false)
-        GeneratorUtils.createTextChildFile(project, taskDir, path, "")
+        GeneratorUtils.createTextChildFile(project, rootDir, path, "")
 
         // After we re reload the config file, the Task object will be updated automatically.
         // So we are not going to add a newly created TaskFile to the Task here explicitly.
