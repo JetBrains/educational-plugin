@@ -16,6 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -27,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
@@ -342,6 +344,16 @@ object CCUtils {
   }
 
   fun EduCourse.prepareForUpload(project: Project) {
+    val course = this
+    runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
+      runBlockingCancellable {
+        doPrepareForUpload(project)
+        YamlFormatSynchronizer.saveRemoteInfo(course)
+      }
+    }
+  }
+
+  private fun EduCourse.doPrepareForUpload(project: Project) {
     if (isMarketplaceRemote) {
       setRemoteMarketplaceCourseVersion()
     }
