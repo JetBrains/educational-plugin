@@ -4,8 +4,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.belongsToTask
 import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -13,8 +15,12 @@ import org.jetbrains.annotations.NonNls
 
 class CCExcludeFromArchive : CCChangeFilePropertyActionBase(EduCoreBundle.lazyMessage("action.exclude.from.archive.title")) {
 
-  override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean =
-    !file.belongsToTask(project)
+  override fun isAvailableForSingleFile(project: Project, task: Task?, file: VirtualFile): Boolean {
+    if (file.belongsToTask(project)) return false
+    val path = file.pathInCourse(project) ?: return false
+    val course = project.course ?: return false
+    return course.getAdditionalFile(path) != null
+  }
 
   override fun isAvailableForDirectory(project: Project, task: Task?, directory: VirtualFile): Boolean {
     return task == null

@@ -64,6 +64,8 @@ class CCExcludeFromCourseTest : CCChangeFileOwnerTestBase(CCExcludeFromArchive.A
   fun `test do not exclude file inside and outside task`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "a-included.txt")
   @Test
   fun `test do not exclude file and a folder`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "dir")
+  @Test
+  fun `test do not exclude already excluded file`() = doUnavailableTest("b-excluded.txt")
 
   override fun createCourse() {
     courseWithFiles(
