@@ -342,6 +342,16 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
+  fun `test course archive creation with duplicate additional files`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      additionalFile("a.txt")
+      additionalFile("a.txt")
+    }
+    createConfigFiles(project)
+    createCourseArchiveWithError<DuplicateAdditionalFileError>(course)
+  }
+
+  @Test
   fun `test course additional files`() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson {
