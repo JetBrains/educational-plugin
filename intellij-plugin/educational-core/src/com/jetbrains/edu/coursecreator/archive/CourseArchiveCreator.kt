@@ -81,8 +81,11 @@ class CourseArchiveCreator(
       is Err -> {
         val error = result.error
         // TODO: separate error handling from course creation
-        if (error is ExceptionCourseArchiveError<*> && !isUnitTestMode) {
-          LOG.error(error.exception)
+        if (!isUnitTestMode) {
+          when (error) {
+            is OtherError -> LOG.error(error.exception)
+            is ExceptionCourseArchiveError<*> -> LOG.warn(error.exception)
+          }
         }
         error.immediateAction(project)
         error
