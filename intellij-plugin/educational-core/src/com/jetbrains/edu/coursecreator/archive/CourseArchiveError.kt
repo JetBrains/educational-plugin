@@ -68,6 +68,10 @@ class BrokenPlaceholderError(e: BrokenPlaceholderException) : ExceptionCourseArc
 //  `FileNotFoundException` is not related to additional files
 //  and in theory may occur in other cases as well
 class AdditionalFileNotFoundError(e: FileNotFoundException) : ExceptionCourseArchiveError<FileNotFoundException>(e)
+class DuplicateAdditionalFileError(e: DuplicateAdditionalFileException) : ExceptionCourseArchiveError<DuplicateAdditionalFileException>(e)
+class DuplicateAdditionalFileException(duplicatePath: String) : Exception(
+  EduCoreBundle.message("error.failed.to.create.course.archive.duplicate.additional.file", duplicatePath)
+)
 class OtherError(e: Throwable, private val errorMessage: @Nls String? = null) : ExceptionCourseArchiveError<Throwable>(e) {
   override val message: String
     get() = errorMessage ?: EduCoreBundle.message("error.failed.to.create.course.archive.notification.title")

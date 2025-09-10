@@ -123,6 +123,9 @@ class CourseArchiveCreator(
     catch (e: FileNotFoundException) {
       Err(AdditionalFileNotFoundError(e))
     }
+    catch (e: DuplicateAdditionalFileException) {
+      Err(DuplicateAdditionalFileError(e))
+    }
     catch (e: Throwable) {
       if (e is ProcessCanceledException) throw e
       Err(OtherError(e))
@@ -349,6 +352,8 @@ class CourseArchiveCreator(
       val courseInfoHolder = project.toCourseInfoHolder()
       val filteredAdditionalFiles = mutableListOf<EduFile>()
 
+      ensureNoDuplicateAdditionalFiles(course)
+
       for (additionalFile in course.additionalFiles) {
         val fsFile = courseDir.findFileByRelativePath(additionalFile.name)
         if (fsFile == null) {
@@ -419,6 +424,14 @@ class CourseArchiveCreator(
                      it.minVersion,
                      it.maxVersion)
         }
+    }
+
+    private fun ensureNoDuplicateAdditionalFiles(course: Course) {
+      val additionalFiles = course.additionalFiles.groupBy { it.name }
+      val duplicatePaths = additionalFiles.filterValues { it.size > 1 }.keys
+      if (duplicatePaths.isNotEmpty()) {
+        throw DuplicateAdditionalFileException(duplicatePaths.joinToString(", "))
+      }
     }
   }
 }
