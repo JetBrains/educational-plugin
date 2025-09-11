@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.update
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.testFramework.utils.vfs.deleteRecursively
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -539,6 +541,77 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     doTestRemoveLastTask()
   }
 
+
+  @Test
+  fun `test update invisible binary file`() {
+    clearPrepareCourse()
+    initLocalCourseWithBinaryFiles()
+
+    updateCourse {
+      task1.taskFiles["InvisibleBinaryFile.png"]!!.binaryContents = byteArrayOf(1, 1, 1, 1)
+      task2.taskFiles["InvisibleBinaryFile.png"]!!.binaryContents = byteArrayOf(1, 1, 1, 1)
+    }
+
+    val task1 = localCourse.taskList[0]
+    val task2 = localCourse.taskList[1]
+    val task3 = localCourse.taskList[2]
+
+    assertContentsEqual(task1, "InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1, 1)))
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("VisibleBinaryFile.png")
+      file("InvisibleBinaryFile.png", task1.taskFiles["InvisibleBinaryFile.png"]!!.contents.textualRepresentation)
+      file("Tests1.kt", "fun test1() {}")
+    }
+
+    next()
+
+    assertContentsEqual(task2, "InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1, 1)))
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("VisibleBinaryFile.png")
+      file("InvisibleBinaryFile.png", task2.taskFiles["InvisibleBinaryFile.png"]!!.contents.textualRepresentation)
+      file("Tests2.kt", "fun test2() {}")
+    }
+
+    next()
+
+    assertContentsEqual(task3, "InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 1, 0)))
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("VisibleBinaryFile.png")
+      file("InvisibleBinaryFile.png", task3.taskFiles["InvisibleBinaryFile.png"]!!.contents.textualRepresentation)
+      file("Tests3.kt", "fun test3() {}")
+    }
+  }
+
+  @Test
+  fun `test update current visible binary file`() {
+    clearPrepareCourse()
+
+    initLocalCourseWithBinaryFiles()
+
+    updateCourse {
+      task2.taskFiles["VisibleBinaryFile.png"]!!.binaryContents = byteArrayOf(1, 1, 1, 1)
+    }
+
+    next()
+
+    val task2 = localCourse.taskList[1]
+
+    assertContentsEqual(task2, "VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1, 1)))
+
+    assertTaskFolder {
+      file("Task.kt", "fun task() {}")
+      file("VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0, 1)).textualRepresentation)
+      file("InvisibleBinaryFile.png")
+      file("Tests2.kt", "fun test2() {}")
+    }
+  }
+
   private fun doTestRemoveLastTask() {
     updateCourse {
       lessons[0].removeTask(task3)
@@ -640,6 +713,39 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     }.assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 
+  private fun initLocalCourseWithBinaryFiles() {
+    @Suppress("UNCHECKED_CAST")
+    val eduCourse = courseWithFiles(
+      language = FakeGradleBasedLanguage,
+      courseProducer = { produceCourse() },
+      createYamlConfigs = true,
+      id = 1234 // to ensure that course-remote-info.yaml is created
+    ) {
+      frameworkLesson("lesson1", isTemplateBased = false, id = 4321) {
+        eduTask("task1", stepId = 1, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("Task.kt", "fun task() {}", visible = true, editable = true)
+          taskFile("VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0, 1)), visible = true, editable = true)
+          taskFile("InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 1, 0)), visible = false, editable = false)
+          taskFile("Tests1.kt", "fun test1() {}", visible = false, editable = false)
+        }
+        eduTask("task2", stepId = 2, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("Task.kt", "fun task() {solution2}", visible = true, editable = true)
+          taskFile("VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0, 1)), visible = true, editable = true)
+          taskFile("InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 1, 0)), visible = false, editable = false)
+          taskFile("Tests2.kt", "fun test2() {}", visible = false, editable = false)
+        }
+        eduTask("task3", stepId = 3, taskDescription = "Old Description", taskDescriptionFormat = DescriptionFormat.HTML) {
+          taskFile("Task.kt", "fun task() {solution3}", visible = true, editable = true)
+          taskFile("VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0, 1)), visible = true, editable = true)
+          taskFile("InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 1, 0)), visible = false, editable = false)
+          taskFile("Tests3.kt", "fun test3() {}", visible = false, editable = false)
+        }
+      }
+    } as T
+    setupLocalCourse(eduCourse)
+    localCourse = eduCourse
+  }
+
   protected fun assertTaskFolderWithoutCourseFolder(treeBuilder: FileTreeBuilder.() -> Unit) = runInEdtAndWait {
     fileTree(treeBuilder).assertEquals(LightPlatformTestCase.getSourceRoot().findFileByRelativePath("lesson1/task")!!, myFixture)
   }
@@ -671,6 +777,16 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     }
   }
 
+
+  protected fun clearPrepareCourse() {
+    // clear the course created in `before()`, because we need to create another course with two lessons
+    runInEdtAndWait {
+      runWriteAction {
+        project.courseDir.deleteRecursively("lesson1")
+      }
+    }
+  }
+
   fun updateCourse(isShouldBeUpdated: Boolean = true, courseChanger: T.() -> Unit) = withVirtualFileListener(localCourse) {
     updateCourse(toRemoteCourse {
       courseChanger()
@@ -693,5 +809,10 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     get() = (contents as TextualContents).text
     set(value) {
       contents = InMemoryTextualContents(value)
+    }
+  protected var TaskFile.binaryContents: ByteArray
+    get() = (contents as BinaryContents).bytes
+    set(value) {
+      contents = InMemoryBinaryContents(value)
     }
 }

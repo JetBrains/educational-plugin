@@ -892,6 +892,45 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
+  fun `test binary content is preserved after propagation`() {
+    val course = courseWithFiles {
+      frameworkLesson("lesson", isTemplateBased = false) {
+        eduTask("task1") {
+          taskFile("task.txt", "text")
+          taskFile("mem.jpeg", contents = InMemoryBinaryContents(byteArrayOf(1, 0, 1)), visible = true, editable = true)
+        }
+        eduTask("task2") {
+          taskFile("task.txt", "text")
+          taskFile("mem.jpeg", contents = InMemoryBinaryContents(byteArrayOf(1, 0, 1)), visible = true, editable = true)
+        }
+      }
+    }
+    val task1 = course.findTask("lesson", "task1")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("task.txt")
+      GeneratorUtils.createChildFile(project, rootDir, "lesson/task/mem.jpeg", InMemoryBinaryContents(byteArrayOf(0, 1, 0)))
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          file("task.txt", "text")
+          file("mem.jpeg", InMemoryBinaryContents(byteArrayOf(0, 1, 0)).textualRepresentation)
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
+  }
+
   private fun createRunConfigurationTemplate(taskName: String, sourceFileName: String) = """
     <component name="ProjectRunConfigurationManager">
       <configuration default="false" name="${sourceFileName}Kt" type="JetRunConfigurationType" nameIsGenerated="true">
