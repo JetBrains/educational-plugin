@@ -10,15 +10,16 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.DataInputOutputUtil
 import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.UndeterminedContents
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.macro.EduMacroUtils
 import com.jetbrains.edu.learning.doWithoutReadOnlyAttribute
-import com.jetbrains.edu.learning.isToEncodeContent
 import com.jetbrains.edu.learning.removeWithEmptyParents
 import com.jetbrains.edu.learning.toCourseInfoHolder
-import org.apache.commons.codec.binary.Base64
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.IOException
@@ -33,7 +34,7 @@ class UserChanges(val changes: List<Change>, val timestamp: Long = System.curren
     }
   }
 
-  fun apply(state: MutableMap<String, String>) {
+  fun apply(state: MutableMap<String, FileContents>) {
     for (change in changes) {
       change.apply(state)
     }
@@ -47,7 +48,6 @@ class UserChanges(val changes: List<Change>, val timestamp: Long = System.curren
   }
 
   companion object {
-
     private val EMPTY = UserChanges(emptyList(), -1)
 
     fun empty(): UserChanges = EMPTY
@@ -66,31 +66,28 @@ class UserChanges(val changes: List<Change>, val timestamp: Long = System.curren
 }
 
 sealed class Change {
-
   val path: String
-  val text: String
+  val contents: FileContents
 
-  constructor(path: String, text: String) {
+  constructor(path: String, contents: FileContents) {
     this.path = path
-    this.text = text
+    this.contents = contents
   }
 
   @Throws(IOException::class)
   constructor(input: DataInput) {
     this.path = input.readUTF()
-    this.text = input.readUTF()
+    this.contents = UserChangesContents.read(input)
   }
 
   @Throws(IOException::class)
   protected fun write(out: DataOutput) {
     out.writeUTF(path)
-    out.writeUTF(text)
+    UserChangesContents.write(contents, out)
   }
 
-
-
   abstract fun apply(project: Project, taskDir: VirtualFile, task: Task)
-  abstract fun apply(state: MutableMap<String, String>)
+  abstract fun apply(state: MutableMap<String, FileContents>)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -98,35 +95,34 @@ sealed class Change {
     if (javaClass != other.javaClass) return false
 
     if (path != other.path) return false
-    if (text != other.text) return false
+    if (contents.textualRepresentation != other.contents.textualRepresentation) return false
 
     return true
   }
 
   override fun hashCode(): Int {
     var result = path.hashCode()
-    result = 31 * result + text.hashCode()
+    result = 31 * result + contents.textualRepresentation.hashCode()
     return result
   }
 
   override fun toString(): String {
-    return "${javaClass.simpleName}(path='$path', text='$text')"
+    return "${javaClass.simpleName}(path='$path', contents='$contents')"
   }
 
   class AddFile : Change {
-
-    constructor(path: String, text: String): super(path, text)
+    constructor(path: String, contents: FileContents): super(path, contents)
     @Throws(IOException::class)
     constructor(input: DataInput): super(input)
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
       if (task.getTaskFile(path) == null) {
-        GeneratorUtils.createChildFile(project, taskDir, path, text)
+        GeneratorUtils.createChildFile(project, taskDir, path, contents)
       }
       else {
         try {
           EduDocumentListener.modifyWithoutListener(task, path) {
-            GeneratorUtils.createChildFile(project, taskDir, path, text)
+            GeneratorUtils.createChildFile(project, taskDir, path, contents)
           }
         }
         catch (e: IOException) {
@@ -135,14 +131,14 @@ sealed class Change {
       }
     }
 
-    override fun apply(state: MutableMap<String, String>) {
-      state[path] = text
+    override fun apply(state: MutableMap<String, FileContents>) {
+      state[path] = contents
     }
   }
 
   class RemoveFile : Change {
 
-    constructor(path: String) : super(path, "")
+    constructor(path: String) : super(path, UndeterminedContents.EMPTY)
 
     @Throws(IOException::class)
     constructor(input: DataInput) : super(input)
@@ -158,14 +154,14 @@ sealed class Change {
       }
     }
 
-    override fun apply(state: MutableMap<String, String>) {
+    override fun apply(state: MutableMap<String, FileContents>) {
       state -= path
     }
   }
 
   class ChangeFile : Change {
 
-    constructor(path: String, text: String): super(path, text)
+    constructor(path: String, contents: FileContents): super(path, contents)
     @Throws(IOException::class)
     constructor(input: DataInput): super(input)
 
@@ -176,54 +172,55 @@ sealed class Change {
         return
       }
 
-      if (file.isToEncodeContent) {
-        file.doWithoutReadOnlyAttribute {
-          runWriteAction {
-            file.setBinaryContent(Base64.decodeBase64(text))
-          }
-        }
-      }
-      else {
-        EduDocumentListener.modifyWithoutListener(task, path) {
-          val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
-          if (document != null) {
-            val expandedText = StringUtil.convertLineSeparators(EduMacroUtils.expandMacrosForFile(project.toCourseInfoHolder(), file, text))
-            file.doWithoutReadOnlyAttribute {
-              runUndoTransparentWriteAction { document.setText(expandedText) }
+      when (contents) {
+        is BinaryContents -> {
+          file.doWithoutReadOnlyAttribute {
+            runWriteAction {
+              file.setBinaryContent(contents.bytes)
             }
           }
-          else {
-            LOG.warn("Can't get document for `$file`")
+        }
+        else -> {
+          EduDocumentListener.modifyWithoutListener(task, path) {
+            val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
+            if (document != null) {
+              val expandedText = EduMacroUtils.expandMacrosForFile(project.toCourseInfoHolder(), file, contents.textualRepresentation)
+              val newText = StringUtil.convertLineSeparators(expandedText)
+              file.doWithoutReadOnlyAttribute {
+                runUndoTransparentWriteAction { document.setText(newText) }
+              }
+            }
+            else {
+              LOG.warn("Can't get document for `$file`")
+            }
           }
         }
       }
     }
 
-    override fun apply(state: MutableMap<String, String>) {
-      state[path] = text
+    override fun apply(state: MutableMap<String, FileContents>) {
+      state[path] = contents
     }
   }
 
   class PropagateLearnerCreatedTaskFile : Change {
-
-    constructor(path: String, text: String): super(path, text)
+    constructor(path: String, contents: FileContents): super(path, contents)
     @Throws(IOException::class)
     constructor(input: DataInput): super(input)
 
     override fun apply(project: Project, taskDir: VirtualFile, task: Task) {
-      val taskFile = TaskFile(path, text).apply { isLearnerCreated = true }
+      val taskFile = TaskFile(path, contents).apply { isLearnerCreated = true }
       task.addTaskFile(taskFile)
     }
 
 
-    override fun apply(state: MutableMap<String, String>) {
-      state[path] = text
+    override fun apply(state: MutableMap<String, FileContents>) {
+      state[path] = contents
     }
   }
 
   class RemoveTaskFile : Change {
-
-    constructor(path: String): super(path, "")
+    constructor(path: String): super(path, UndeterminedContents.EMPTY)
     @Throws(IOException::class)
     constructor(input: DataInput): super(input)
 
@@ -231,8 +228,8 @@ sealed class Change {
       task.removeTaskFile(path)
     }
 
-    override fun apply(state: MutableMap<String, String>) {
-      state[path] = text
+    override fun apply(state: MutableMap<String, FileContents>) {
+      state[path] = contents
     }
   }
 
