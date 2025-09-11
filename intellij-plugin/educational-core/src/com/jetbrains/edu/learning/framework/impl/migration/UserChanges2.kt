@@ -1,48 +1,49 @@
 package com.jetbrains.edu.learning.framework.impl.migration
 
 import com.intellij.util.io.DataInputOutputUtil
+import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.framework.impl.FrameworkStorageData
+import com.jetbrains.edu.learning.framework.impl.UserChangesContents
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.IOException
 
-data class UserChanges0(val changes: List<Change0>) : FrameworkStorageData {
+class UserChanges2(val changes: List<Change2>, val timestamp: Long) : FrameworkStorageData {
   @Throws(IOException::class)
   override fun write(out: DataOutput) {
     DataInputOutputUtil.writeINT(out, changes.size)
     changes.forEach { it.write(out) }
+    DataInputOutputUtil.writeLONG(out, timestamp)
   }
 
   companion object {
     @Throws(IOException::class)
-    fun read(input: DataInput): UserChanges0 {
+    fun read(input: DataInput): UserChanges2 {
       val size = DataInputOutputUtil.readINT(input)
-      val changes = ArrayList<Change0>(size)
+      val changes = ArrayList<Change2>(size)
       for (i in 0 until size) {
-        changes += Change0.read(input)
+        changes += Change2.read(input)
       }
-      return UserChanges0(changes)
+      val timestamp = DataInputOutputUtil.readLONG(input)
+      return UserChanges2(changes, timestamp)
     }
   }
 }
 
-data class Change0(val ordinal: Int, val path: String, val text: String) {
+data class Change2(val ordinal: Int, val path: String, val contents: FileContents) {
   fun write(out: DataOutput) {
     out.writeInt(ordinal)
     out.writeUTF(path)
-    out.writeUTF(text)
+    UserChangesContents.write(contents, out)
   }
 
   companion object {
-    fun read(input: DataInput): Change0 {
+    fun read(input: DataInput): Change2 {
       val ordinal = input.readInt()
       if (ordinal !in 0..4) error("Unexpected change type: $ordinal")
       val path = input.readUTF()
-      val text = input.readUTF()
-      return Change0(ordinal, path, text)
+      val contents = UserChangesContents.read(input)
+      return Change2(ordinal, path, contents)
     }
-
-    fun addFile(path: String, text: String) = Change0(0, path, text)
-    fun changeFile(path: String, text: String) = Change0(2, path, text)
   }
 }

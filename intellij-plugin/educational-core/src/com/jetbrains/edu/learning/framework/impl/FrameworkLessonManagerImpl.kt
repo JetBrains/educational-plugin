@@ -383,7 +383,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   companion object {
     private val LOG: Logger = Logger.getInstance(FrameworkLessonManagerImpl::class.java)
 
-    const val VERSION: Int = 1
+    const val VERSION: Int = 2
 
     @VisibleForTesting
     fun constructStoragePath(project: Project): Path =
