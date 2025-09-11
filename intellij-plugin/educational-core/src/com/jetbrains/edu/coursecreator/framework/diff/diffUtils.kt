@@ -11,9 +11,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.util.text.CharSequenceSubSequence
+import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 import java.nio.file.Path
@@ -42,11 +42,11 @@ fun applyChangesWithMergeDialog(
   currentTask: Task,
   targetTask: Task,
   conflictFiles: List<String>,
-  leftState: FLTaskState,
-  baseState: FLTaskState,
-  rightState: FLTaskState,
-  initialBaseState: FLTaskState = baseState
-): FLTaskState? {
+  leftState: FLTaskStateCC,
+  baseState: FLTaskStateCC,
+  rightState: FLTaskStateCC,
+  initialBaseState: FLTaskStateCC = baseState
+): FLTaskStateCC? {
   val mergeProvider = FLMergeProvider(leftState, baseState, rightState, initialBaseState)
   val mergeDialogCustomizer = FLMergeDialogCustomizer(currentTask.name, targetTask.name)
   val conflictLightVirtualFiles = conflictFiles.map { path ->
@@ -111,9 +111,9 @@ private fun showMultipleFileMergeDialog(
 
 fun resolveConflicts(
   project: Project,
-  currentState: FLTaskState,
-  baseState: FLTaskState,
-  targetState: FLTaskState
+  currentState: FLTaskStateCC,
+  baseState: FLTaskStateCC,
+  targetState: FLTaskStateCC
 ): FLConflictResolveStrategy.StateWithResolvedChanges {
   return with(DiffConflictResolveStrategy(project)) {
     try {

@@ -11,14 +11,14 @@ import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vcs.merge.MergeSessionEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.ColumnInfo
-import com.jetbrains.edu.learning.framework.impl.FLTaskState
+import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class FLMergeProvider(
-  private val leftState: FLTaskState,
-  private val baseState: FLTaskState,
-  private val rightState: FLTaskState,
-  private val initialBaseState: FLTaskState = baseState,
+  private val leftState: FLTaskStateCC,
+  private val baseState: FLTaskStateCC,
+  private val rightState: FLTaskStateCC,
+  private val initialBaseState: FLTaskStateCC = baseState,
 ) : MergeProvider2 {
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {

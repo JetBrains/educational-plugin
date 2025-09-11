@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
-import com.jetbrains.edu.learning.framework.impl.FLTaskState
+import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
 
 abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
   /**
@@ -10,9 +10,9 @@ abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
    * Otherwise, the strategy counts this file as conflict
    */
   protected fun resolveSimpleConflicts(
-    currentState: FLTaskState,
-    baseState: FLTaskState,
-    targetState: FLTaskState,
+    currentState: FLTaskStateCC,
+    baseState: FLTaskStateCC,
+    targetState: FLTaskStateCC,
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
     val allFiles = currentState.keys + baseState.keys + targetState.keys
 
@@ -66,9 +66,9 @@ abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
  */
 class SimpleConflictResolveStrategy : FLConflictResolveStrategyBase() {
   override fun resolveConflicts(
-    currentState: FLTaskState,
-    baseState: FLTaskState,
-    targetState: FLTaskState
+    currentState: FLTaskStateCC,
+    baseState: FLTaskStateCC,
+    targetState: FLTaskStateCC
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
     return resolveSimpleConflicts(currentState, baseState, targetState)
   }
