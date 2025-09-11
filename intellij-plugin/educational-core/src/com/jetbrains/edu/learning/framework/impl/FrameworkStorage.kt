@@ -4,6 +4,7 @@ import com.intellij.util.io.UnsyncByteArrayInputStream
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import com.jetbrains.edu.learning.framework.impl.migration.RecordConverter
 import com.jetbrains.edu.learning.framework.impl.migration.To1VersionRecordConverter
+import com.jetbrains.edu.learning.framework.impl.migration.To2VersionRecordConverter
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
@@ -44,8 +45,9 @@ class FrameworkStorage(storagePath: Path) : FrameworkStorageBase(storagePath) {
     var output = UnsyncByteArrayOutputStream()
 
     while (version < newVersion) {
-      val converter: RecordConverter? = when (currentVersion) {
+      val converter: RecordConverter? = when (version) {
         0 -> To1VersionRecordConverter()
+        1 -> To2VersionRecordConverter()
         else -> null
       }
 
