@@ -330,7 +330,7 @@ class HyperskillNavigationTest : NavigationTestBase() {
     val task2 = course.findTask("lesson1", "task2")
 
     // emulate solution with removed file
-    val externalState = task2.taskFiles.mapValues { it.value.text } - "src/Baz.kt"
+    val externalState = task2.taskFiles.mapValues { it.value.contents } - "src/Baz.kt"
     val frameworkLessonManager = FrameworkLessonManager.getInstance(project)
     frameworkLessonManager.saveExternalChanges(task2, externalState)
 

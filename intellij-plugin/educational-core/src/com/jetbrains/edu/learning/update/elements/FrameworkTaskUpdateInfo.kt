@@ -51,7 +51,7 @@ data class FrameworkTaskUpdateInfo(
     }
 
     remoteItem.record = localItem.record
-    flManager.updateUserChanges(localItem, remoteItem.taskFiles.mapValues { it.value.text })
+    flManager.updateUserChanges(localItem, remoteItem.taskFiles.mapValues { it.value.contents })
     localLesson.replaceItem(localItem, remoteItem)
     remoteItem.init(localLesson, false)
 

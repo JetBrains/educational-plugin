@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
@@ -43,7 +44,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     applyTargetTaskChanges(lesson, -1, taskDir, showDialogIfConflict)
   }
 
-  override fun saveExternalChanges(task: Task, externalState: Map<String, String>) {
+  override fun saveExternalChanges(task: Task, externalState: Map<String, FileContents>) {
     require(project.isStudentProject()) {
       "`saveExternalChanges` should be called only if course in study mode"
     }
@@ -70,7 +71,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     YamlFormatSynchronizer.saveItem(task)
   }
 
-  override fun updateUserChanges(task: Task, newInitialState: Map<String, String>) {
+  override fun updateUserChanges(task: Task, newInitialState: Map<String, FileContents>) {
     require(project.isStudentProject()) {
       "`updateUserChanges` should be called only if course in study mode"
     }
@@ -91,9 +92,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     val newChanges = changes.changes.mapNotNull {
       when (it) {
-        is Change.AddFile -> if (it.path in newInitialState) Change.ChangeFile(it.path, it.text) else it
+        is Change.AddFile -> if (it.path in newInitialState) Change.ChangeFile(it.path, it.contents) else it
         is Change.RemoveFile -> if (it.path !in newInitialState) null else it
-        is Change.ChangeFile -> if (it.path !in newInitialState) Change.AddFile(it.path, it.text) else it
+        is Change.ChangeFile -> if (it.path !in newInitialState) Change.AddFile(it.path, it.contents) else it
         is Change.PropagateLearnerCreatedTaskFile,
         is Change.RemoveTaskFile -> it
       }
@@ -118,14 +119,14 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     return storage.getUserChanges(task.record).timestamp
   }
 
-  override fun getTaskState(lesson: FrameworkLesson, task: Task): Map<String, String> {
+  override fun getTaskState(lesson: FrameworkLesson, task: Task): FLTaskState {
     require(task.lesson == lesson) {
       "The task is not a part of this lesson"
     }
     val initialFiles = task.allFiles
     val changes = if (lesson.currentTaskIndex + 1 == task.index) {
       val taskDir = task.getDir(project.courseDir) ?: return emptyMap()
-      getUserChangesFromFiles(initialFiles, taskDir)
+      getUserChangesFromFiles(task, taskDir)
     } else {
       getUserChangesFromStorage(task)
     }
@@ -168,7 +169,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     // 2. Calculate difference between initial state of current task and current state on local FS.
     // Update change list for current task in [storage] to have ability to restore state of current task in future
     val (newCurrentRecord, currentUserChanges) = try {
-      updateUserChanges(currentRecord, getUserChangesFromFiles(initialCurrentFiles, taskDir))
+      updateUserChanges(currentRecord, getUserChangesFromFiles(currentTask, taskDir))
     }
     catch (e: IOException) {
       LOG.error("Failed to save user changes for task `${currentTask.name}`", e)
@@ -192,7 +193,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     // If a user navigated back to current task, didn't make any change and wants to navigate to next task again
     // we shouldn't try to propagate current changes to next task
-    val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && previousCurrentState == currentState)
+    val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && areEqual(previousCurrentState, currentState))
 
     val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && lesson.propagateFilesOnNavigation) {
       calculatePropagationChanges(targetTask, currentTask, currentState, targetState, showDialogIfConflict)
@@ -215,8 +216,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   private fun calculatePropagationChanges(
     targetTask: Task,
     currentTask: Task,
-    currentState: Map<String, String>,
-    targetState: Map<String, String>,
+    currentState: FLTaskState,
+    targetState: FLTaskState,
     showDialogIfConflict: Boolean
   ): UserChanges {
     val (currentPropagatableFilesState, currentNonPropagatableFilesState) = currentState.split(currentTask)
@@ -284,7 +285,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     // if current and target states of propagatable files are the same
     // it needs to calculate only diff for non-propagatable files and for files that change the propagation flag from false to true
-    if (newCurrentPropagatableFilesState == newTargetPropagatableFilesState) {
+    if (areEqual(newCurrentPropagatableFilesState, newTargetPropagatableFilesState)) {
       return calculateChanges(
         currentNonPropagatableFilesState,
         targetNonPropagatableFilesState + fromNonPropagatableToPropagatableFilesState
@@ -315,8 +316,9 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
   }
 
-  private fun getUserChangesFromFiles(initialState: FLTaskState, taskDir: VirtualFile): UserChanges {
-    val currentState = getTaskStateFromFiles(initialState.keys, taskDir)
+  private fun getUserChangesFromFiles(task: Task, taskDir: VirtualFile): UserChanges {
+    val initialState = task.allFiles
+    val currentState = getTaskStateFromFiles(task.taskFiles.values, taskDir)
     return calculateChanges(initialState, currentState)
   }
 
@@ -348,15 +350,15 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
   }
 
   private val Task.allFiles: FLTaskState
-    get() = taskFiles.mapValues { it.value.text }
+    get() = taskFiles.mapValues { it.value.contents }
 
   private fun FLTaskState.splitByKey(predicate: (String) -> Boolean): Pair<FLTaskState, FLTaskState> {
-    val positive = HashMap<String, String>()
-    val negative = HashMap<String, String>()
+    val positive = HashMap<String, FileContents>()
+    val negative = HashMap<String, FileContents>()
 
-    for ((path, text) in this) {
+    for ((path, contents) in this) {
       val state = if (predicate(path)) positive else negative
-      state[path] = text
+      state[path] = contents
     }
 
     return positive to negative

@@ -3,12 +3,15 @@ package com.jetbrains.edu.learning.framework.impl
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
-import com.jetbrains.edu.learning.isToEncodeContent
-import com.jetbrains.edu.learning.loadEncodedContent
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 
-typealias FLTaskState = Map<String, String>
+typealias FLTaskState = Map<String, FileContents>
 
 /**
  * Returns [Change]s to convert [currentState] to [targetState]
@@ -23,7 +26,7 @@ fun calculateChanges(
     val currentText = current.remove(path)
     changes += when {
       currentText == null -> Change.AddFile(path, nextText)
-      currentText != nextText -> Change.ChangeFile(path, nextText)
+      currentText.textualRepresentation != nextText.textualRepresentation -> Change.ChangeFile(path, nextText)
       else -> continue@loop
     }
   }
@@ -32,24 +35,19 @@ fun calculateChanges(
   return UserChanges(changes)
 }
 
-fun getTaskStateFromFiles(initialFiles: Set<String>, taskDir: VirtualFile): FLTaskState {
-  val documentManager = FileDocumentManager.getInstance()
-  val currentState = HashMap<String, String>()
-  for (path in initialFiles) {
-    val file = taskDir.findFileByRelativePath(path) ?: continue
+fun getTaskStateFromFiles(initialFiles: Iterable<TaskFile>, taskDir: VirtualFile): FLTaskState {
+  val currentState = HashMap<String, FileContents>()
+  for (taskFile in initialFiles) {
+    val file = taskDir.findFileByRelativePath(taskFile.name) ?: continue
 
-    val text = if (file.isToEncodeContent) {
-      file.loadEncodedContent(isToEncodeContent = true)
+    val diskContents = when (taskFile.contents) {
+      is BinaryContents -> BinaryContentsFromDisk(file)
+      else -> {
+        val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: continue
+        InMemoryTextualContents(document.text)
+      }
     }
-    else {
-      runReadAction { documentManager.getDocument(file)?.text }
-    }
-
-    if (text == null) {
-      continue
-    }
-
-    currentState[path] = text
+    currentState[taskFile.name] = diskContents
   }
   return currentState
 }
@@ -59,5 +57,13 @@ fun LessonContainer.visitFrameworkLessons(visit : (FrameworkLesson) -> Unit) {
     if (it is FrameworkLesson) {
       visit(it)
     }
+  }
+}
+
+fun areEqual(state1: FLTaskState, state2: FLTaskState): Boolean {
+  if (state1.keys != state2.keys) return false
+  return state1.all { (path, contents1) ->
+    val contents2 = state2[path] ?: return false
+    contents1.textualRepresentation == contents2.textualRepresentation
   }
 }
