@@ -41,7 +41,7 @@ class FrameworkLessonTaskFileHistory private constructor(private val remoteHisto
 
   fun evaluateContents(index: Int): FileContents? {
     val step = remoteHistory.getOrNull(index) ?: return null
-    return step.actualContents?.let { InMemoryTextualContents(it) }
+    return step.actualContents
   }
 
   companion object {
@@ -54,15 +54,15 @@ class FrameworkLessonTaskFileHistory private constructor(private val remoteHisto
       propagateFilesOnNavigation: Boolean
     ): FrameworkLessonTaskFileHistory {
       // In the local history we detect user changes by comparing actual files with the unmodified file contents
-      val localHistory = evaluateHistory(localLesson, fileName, propagateFilesOnNavigation) { index, task, unmodifiedText ->
+      val localHistory = evaluateHistory(localLesson, fileName, propagateFilesOnNavigation) { index, task, unmodifiedContents ->
         val flManager = FrameworkLessonManager.getInstance(project)
-        val actualText = flManager.getTaskState(localLesson, task)[fileName]
+        val actualContents = flManager.getTaskState(localLesson, task)[fileName]
 
-        if (actualText == unmodifiedText) { null } else { actualText }
+        if (actualContents?.textualRepresentation == unmodifiedContents?.textualRepresentation) { null } else { actualContents }
       }
 
       // In the remote history we get user changes from the localHistory evaluated on the previous step
-      val remoteHistory = evaluateHistory(remoteLesson, fileName, propagateFilesOnNavigation) { index, task, unmodifiedText ->
+      val remoteHistory = evaluateHistory(remoteLesson, fileName, propagateFilesOnNavigation) { index, task, unmodifiedContents ->
         localHistory.getOrNull(index)?.userModification
       }
 
@@ -73,12 +73,12 @@ class FrameworkLessonTaskFileHistory private constructor(private val remoteHisto
       lesson: FrameworkLesson,
       fileName: String,
       propagateFilesOnNavigation: Boolean,
-      getUserChanges: (Int, Task, String?) -> String?
+      getUserChanges: (Int, Task, FileContents?) -> FileContents?
     ): List<TaskFileStep> {
       val changesHistory = mutableListOf<TaskFileStep>()
 
       // iterate the lesson steps, storing the text of the previous step
-      var previousText: String? = null
+      var previousContents: FileContents? = null
       var previousIsPropagatable: Boolean? = null
 
       for ((index, task) in lesson.taskList.withIndex()) {
@@ -87,17 +87,17 @@ class FrameworkLessonTaskFileHistory private constructor(private val remoteHisto
         // The initial text with which the step starts.
         // First, the user sees it and then either modifies or not
         // It could be a file.text for non-propagatable files, or the text propagated from the previous step.
-        val unmodifiedText = when {
-          !propagateFilesOnNavigation -> taskFile?.text
-          previousIsPropagatable == true -> previousText
-          else -> taskFile?.text
+        val unmodifiedContents = when {
+          !propagateFilesOnNavigation -> taskFile?.contents
+          previousIsPropagatable == true -> previousContents
+          else -> taskFile?.contents
         }
 
-        val userChanges = getUserChanges(index, task, unmodifiedText)
-        val taskFileStep = TaskFileStep(unmodifiedText, userChanges)
+        val userChanges = getUserChanges(index, task, unmodifiedContents)
+        val taskFileStep = TaskFileStep(unmodifiedContents, userChanges)
         changesHistory.add(taskFileStep)
 
-        previousText = taskFileStep.actualContents
+        previousContents = taskFileStep.actualContents
         previousIsPropagatable = taskFile?.shouldBePropagated()
         if (previousIsPropagatable == null && taskFileStep.actualContents != null) {
           // taskFile == null, but non-null contents means that the file is created by a user. Let's propagate it
@@ -114,14 +114,14 @@ private data class TaskFileStep(
   /**
    * Contents, if there are no modifications on this step
    */
-  val unmodifiedContents: String?,
+  val unmodifiedContents: FileContents?,
   /**
    * Contents by user, or `null` if there are no user changes
    */
-  val userModification: String?
+  val userModification: FileContents?
 ) {
   /**
    * The contents visible at this step
    */
-  val actualContents: String? get() = userModification ?: unmodifiedContents
+  val actualContents: FileContents? get() = userModification ?: unmodifiedContents
 }
