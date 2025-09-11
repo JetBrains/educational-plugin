@@ -80,7 +80,7 @@ open class FileAttributesTest(
       )
       val excludedButCanBeInside = expected(
         excludedFromArchive = true,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT,
         visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val normal = expected(
@@ -89,7 +89,6 @@ open class FileAttributesTest(
         visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val excludedAndInvisible = excluded.copy(visibility = CourseViewVisibility.INVISIBLE_FOR_ALL)
-      val normalAndInvisible = normal.copy(visibility = CourseViewVisibility.INVISIBLE_FOR_ALL)
 
       return listOf(
         arrayOf("regular-file", normal),
@@ -98,12 +97,16 @@ open class FileAttributesTest(
         arrayOf("regular-folder/inside-a-folder/", normal),
 
         //.idea contents
-        arrayOf(".idea/", normal),
-        arrayOf(".idea/subfile", excluded),
-        arrayOf(".idea/subfolder/", excluded),
-        arrayOf(".idea/inspectionProfiles/", normal),
-        arrayOf(".idea/scopes/", normal),
-        arrayOf(".idea/scopes/subfile", normal),
+        arrayOf(".idea/", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/subfile", excluded.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/subfolder/", excluded.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/inspectionProfiles/", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/scopes/", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/scopes/subfile", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/workspace.xml", excluded),
+        arrayOf(".idea/usage.statistics.xml", excluded),
+        arrayOf(".idea/shelf/", excluded),
+        arrayOf(".idea/shelf/a-file.txt", excluded),
 
         //.dot files and folders
         arrayOf(".folder/", excludedButCanBeInside),
@@ -149,8 +152,8 @@ open class FileAttributesTest(
         arrayOf(".git/config", excludedAndInvisible),
 
         // other
-        arrayOf("hints", excludedButCanBeInside),
-        arrayOf("stepik_ids.json", excludedButCanBeInside),
+        arrayOf("hints", normal.copy(excludedFromArchive = true)),
+        arrayOf("stepik_ids.json", normal.copy(excludedFromArchive = true)),
         arrayOf(".courseignore", excluded),
         arrayOf("courseIcon.svg", excluded),
       )
