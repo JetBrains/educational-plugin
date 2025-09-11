@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
+import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
@@ -23,7 +24,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   abstract override val courseBuilder: GradleCourseBuilderBase
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
-    file(SETTINGS_GRADLE, GRADLE_PROPERTIES, GradleConstants.KOTLIN_DSL_SCRIPT_NAME, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) {
+    file(BUILD_GRADLE, SETTINGS_GRADLE, GRADLE_PROPERTIES, GradleConstants.KOTLIN_DSL_SCRIPT_NAME, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) {
       includeIntoArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
     }

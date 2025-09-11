@@ -16,7 +16,16 @@ enum class ArchiveInclusionPolicy {
   MUST_EXCLUDE,
 
   /**
+   * The file is excluded from the course archive by default.
+   * It is not added to the archive if it is created on disk, but it can be included manually by a user.
+   * No warning is supposed if this file is either listed or not listed as additional.
+   */
+  EXCLUDED_BY_DEFAULT,
+
+  /**
    * The author decides whether the file is needed in the archive; no warnings and errors are supposed.
+   * Such files are automatically added to the archive when they are created on disk.
+   * No warning is supposed if this file is either listed or not listed as additional.
    */
   AUTHOR_DECISION,
 
@@ -26,6 +35,7 @@ enum class ArchiveInclusionPolicy {
    * always be regenerated on the learner side.
    * But it is better to anyway put them to the archive not to rely on the regeneration.
    * If the file with the [INCLUDED_BY_DEFAULT] value is not listed as additional, it will not be added to the archive.
+   * The warning is supposed if this file is not listed as additional, see EDU-8399.
    */
   INCLUDED_BY_DEFAULT
 }
