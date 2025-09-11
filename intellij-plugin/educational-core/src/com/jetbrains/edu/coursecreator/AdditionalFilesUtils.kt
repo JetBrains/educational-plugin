@@ -85,7 +85,7 @@ object AdditionalFilesUtils {
       courseConfigurator.excludeFromArchive(project, file)
     }
     else {
-      courseConfigurator.courseFileAttributes(project, file).archiveInclusionPolicy == ArchiveInclusionPolicy.MUST_EXCLUDE
+      courseConfigurator.courseFileAttributes(project, file).archiveInclusionPolicy <= ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT
     }
 
     return courseIgnoreRules.isIgnored(file) ||

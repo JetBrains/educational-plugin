@@ -99,11 +99,11 @@ open class FileAttributesTest(
 
         //.idea contents
         arrayOf(".idea/", normal),
-        arrayOf(".idea/subfile", excluded),
-        arrayOf(".idea/subfolder/", excluded),
-        arrayOf(".idea/inspectionProfiles/", normal),
-        arrayOf(".idea/scopes/", normal),
-        arrayOf(".idea/scopes/subfile", normal),
+        arrayOf(".idea/subfile", excluded.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/subfolder/", excluded.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/inspectionProfiles/", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/scopes/", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
+        arrayOf(".idea/scopes/subfile", normal.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
 
         //.dot files and folders
         arrayOf(".folder/", excludedButCanBeInside),
@@ -113,7 +113,7 @@ open class FileAttributesTest(
         arrayOf("folder/.subfile", excludedButCanBeInside),
         arrayOf("folder/.subfolder/", excludedButCanBeInside),
         arrayOf("folder/.subfolder/subfile", excludedButCanBeInside),
-        arrayOf(".idea/scopes/.excluded_with_dot", excludedButCanBeInside),
+        arrayOf(".idea/scopes/.excluded_with_dot", excludedButCanBeInside.copy(archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)),
 
         // iml files
         arrayOf("project.iml", excludedAndInvisible),

@@ -548,6 +548,12 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
     }
 
   @Test
+  fun `creating a file with EXCLUDED_BY_DEFAULT attribute does not add it to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf()) {
+      createFile(".idea/important-config.xml")
+    }
+
+  @Test
   fun `copy additional file to the same folder`() =
     doTestAdditionalFilesAfterFSActions(listOf("1.txt"), listOf("1.txt", "2.txt")) {
       copyFile("1.txt", ".", copyName = "2.txt")
