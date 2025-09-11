@@ -524,7 +524,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
   @Test
   fun `user created file is not added to additional files if it is excluded by configurator`() {
     val mustNotBeIncludedFile = "excluded.iml" // must be excluded because of the IML extension
-    doTestAdditionalFilesAfterFSActions(emptyList(), listOf(".dot-file")) {
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf()) {
       createFile(".dot-file") // dot file is tested because it used to be excluded in older versions
       createFile(mustNotBeIncludedFile)
       createFile("folder/subfolder/$mustNotBeIncludedFile")
@@ -545,6 +545,14 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
       finally {
         propertiesComponent.setValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION, oldValue)
       }
+    }
+
+  @Test
+  fun `creating a file with EXCLUDED_BY_DEFAULT attribute does not add it to additional files`() =
+    doTestAdditionalFilesAfterFSActions(emptyList(), listOf()) {
+      createFile(".idea/important-config.xml")
+      createDirectory(".gradle")
+      createFile(".gradle/config")
     }
 
   @Test
@@ -670,7 +678,7 @@ class CCVirtualFileListenerTest : VirtualFileListenerTestBase() {
 
     doTestAdditionalFilesAfterFSActions(
       emptyList(),
-      listOf("a.txt", "dir/b.txt", "dir/c.txt", fileStartingWithDot),
+      listOf("a.txt", "dir/b.txt", "dir/c.txt"),
       listOf(
         "lesson2/task1/a.txt",
         "lesson2/task1/dir/b.txt",
