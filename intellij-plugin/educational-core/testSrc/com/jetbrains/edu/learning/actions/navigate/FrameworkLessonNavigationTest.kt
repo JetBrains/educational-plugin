@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -646,6 +647,45 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       testAction(PreviousTaskAction.ACTION_ID)
       checkTask(task1)
     }
+  }
+
+  @Test
+  fun `test binary content is preserved after navigation`() {
+    val course = courseWithFiles {
+      frameworkLesson("lesson") {
+        eduTask("task1") {
+          taskFile("task.txt", "text")
+        }
+        eduTask("task2") {
+          taskFile("task.txt", "text")
+          taskFile("mem.jpeg", contents = InMemoryBinaryContents(byteArrayOf(1, 0, 1)), visible = true, editable = false)
+        }
+      }
+    }
+    val task1 = course.findTask("lesson", "task1")
+    val task2 = course.findTask("lesson", "task2")
+
+    withVirtualFileListener(course) {
+      task1.openTaskFileInEditor("task.txt")
+      testAction(NextTaskAction.ACTION_ID)
+    }
+
+    assertContentsEqual(task2, "mem.jpeg", InMemoryBinaryContents(byteArrayOf(1, 0, 1)))
+    val fileTree = fileTree {
+      dir("lesson") {
+        dir("task") {
+          file("task.txt", "text")
+          file("mem.jpeg", InMemoryBinaryContents(byteArrayOf(1, 0, 1)).textualRepresentation)
+        }
+        dir("task1") {
+          file("task.md")
+        }
+        dir("task2") {
+          file("task.md")
+        }
+      }
+    }
+    fileTree.assertEquals(rootDir, myFixture)
   }
 
   private inline fun doTest(actionId: String, expectedTask: Task, init: () -> Unit) {
