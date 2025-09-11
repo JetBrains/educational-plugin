@@ -1,6 +1,6 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
-import com.jetbrains.edu.learning.framework.impl.FLTaskState
+import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
 
 interface FLConflictResolveStrategy {
   /**
@@ -10,9 +10,9 @@ interface FLConflictResolveStrategy {
    * 3) apply them to [baseState]
    */
   fun resolveConflicts(
-    currentState: FLTaskState,
-    baseState: FLTaskState,
-    targetState: FLTaskState
+    currentState: FLTaskStateCC,
+    baseState: FLTaskStateCC,
+    targetState: FLTaskStateCC
   ): StateWithResolvedChanges
 
   /**
@@ -21,5 +21,5 @@ interface FLConflictResolveStrategy {
    * @property conflictFiles Files that could not be merged automatically.
    * @property state The state of the task after resolving conflicts.
    */
-  data class StateWithResolvedChanges(val conflictFiles: List<String>, val state: FLTaskState)
+  data class StateWithResolvedChanges(val conflictFiles: List<String>, val state: FLTaskStateCC)
 }

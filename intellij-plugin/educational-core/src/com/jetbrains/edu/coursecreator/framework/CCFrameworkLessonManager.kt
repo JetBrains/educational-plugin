@@ -21,9 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.framework.impl.FLTaskState
-import com.jetbrains.edu.learning.framework.impl.calculateChanges
-import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.TestOnly
@@ -110,7 +107,7 @@ class CCFrameworkLessonManager(
     return task.taskFiles.values.filter { isTaskFileChanged(it, state) }
   }
 
-  private fun isTaskFileChanged(taskFile: TaskFile, storedState: FLTaskState): Boolean {
+  private fun isTaskFileChanged(taskFile: TaskFile, storedState: FLTaskStateCC): Boolean {
     if (!taskFile.isPropagatable) return false
     val documentText = taskFile.getDocument(project)?.text
     val storedText = storedState[taskFile.name]
@@ -145,9 +142,9 @@ class CCFrameworkLessonManager(
   private fun applyChanges(
     currentTask: Task,
     targetTask: Task,
-    currentState: FLTaskState,
-    initialBaseState: FLTaskState,
-    targetState: FLTaskState,
+    currentState: FLTaskStateCC,
+    initialBaseState: FLTaskStateCC,
+    targetState: FLTaskStateCC,
     taskDir: VirtualFile
   ): Boolean {
     // Try to resolve some changes automatically and apply them to previousCurrentState
@@ -216,7 +213,7 @@ class CCFrameworkLessonManager(
     return updatedUserChanges
   }
 
-  fun getStateFromStorage(task: Task): FLTaskState {
+  fun getStateFromStorage(task: Task): FLTaskStateCC {
     return try {
       storage.getState(getRecord(task))
     }
@@ -227,7 +224,7 @@ class CCFrameworkLessonManager(
   }
 
   @Synchronized
-  private fun updateState(record: Int, state: FLTaskState): UpdatedState {
+  private fun updateState(record: Int, state: FLTaskStateCC): UpdatedState {
     return try {
       val newRecord = storage.updateState(record, state)
       storage.force()
@@ -388,5 +385,5 @@ class CCFrameworkLessonManager(
 
 private data class UpdatedState(
   val record: Int,
-  val state: FLTaskState,
+  val state: FLTaskStateCC,
 )
