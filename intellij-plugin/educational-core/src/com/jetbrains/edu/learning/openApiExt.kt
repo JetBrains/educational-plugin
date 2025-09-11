@@ -101,7 +101,7 @@ fun toEncodeFileContent(virtualFile: VirtualFile): Boolean {
     return true
   }
   // Files.probeContentType does not recognize mime font types on windows, so we check for font files separately
-  val contentType = mimeFileType(path) ?: return isGitObject(name) || isFontExtension(extension) || isSQLiteExtension(extension)
+  val contentType = mimeFileType(path) ?: return isGitObject(name) || isFontExtension(extension)
   return isBinary(contentType)
 }
 
