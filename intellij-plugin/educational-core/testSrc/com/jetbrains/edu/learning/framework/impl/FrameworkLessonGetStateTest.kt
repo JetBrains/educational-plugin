@@ -27,7 +27,7 @@ class FrameworkLessonGetTaskStateTest : EduTestCase() {
       testAction(NextTaskAction.ACTION_ID)
     }
 
-    val actualState = FrameworkLessonManager.getInstance(project).getTaskState(lesson, task1)
+    val actualState = FrameworkLessonManager.getInstance(project).getTaskState(lesson, task1).mapValues { it.value.textualRepresentation }
 
     val expectedState = mapOf(
       "src/Task.kt" to "0fun foo() {}",
@@ -55,7 +55,7 @@ class FrameworkLessonGetTaskStateTest : EduTestCase() {
       myFixture.type("1")
     }
 
-    val actualState = FrameworkLessonManager.getInstance(project).getTaskState(lesson, task2)
+    val actualState = FrameworkLessonManager.getInstance(project).getTaskState(lesson, task2).mapValues { it.value.textualRepresentation }
 
     val expectedState = mapOf(
       "src/Task.kt" to "0fun foo() {}",
