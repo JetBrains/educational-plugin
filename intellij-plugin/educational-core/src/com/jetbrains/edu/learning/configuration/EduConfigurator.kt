@@ -46,15 +46,22 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
 
     dirAndChildren(PROFILE_DIR, "scopes") {
       includeIntoArchive()
-      archiveInclusionPolicy(ArchiveInclusionPolicy.AUTHOR_DECISION)
-    }
-
-    // Don't allow putting files from the .idea folder to the archive. Will be changed after EDU-1335: Export ide settings action
-    any {
-      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     rulesForDotFilesAndFolders()
+
+    // do not automatically add .idea files to archive
+    any {
+      archiveInclusionPolicy(ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)
+    }
+
+    // https://intellij-support.jetbrains.com/hc/en-us/articles/206544839-How-to-manage-projects-under-Version-Control-Systems
+    file("workspace.xml", "usage.statistics.xml") {
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+    }
+    dirAndChildren("shelf") {
+      archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
+    }
   }
 
   extension("iml") {
