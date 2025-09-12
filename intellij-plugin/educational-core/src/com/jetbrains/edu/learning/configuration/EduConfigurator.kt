@@ -93,10 +93,6 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
-
-  dir(EduNames.BUILD, EduNames.OUT) {
-    courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
-  }
 }
 
 /**

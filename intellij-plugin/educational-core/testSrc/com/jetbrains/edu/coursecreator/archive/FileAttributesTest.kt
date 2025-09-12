@@ -153,11 +153,6 @@ open class FileAttributesTest(
         arrayOf("stepik_ids.json", excludedButCanBeInside),
         arrayOf(".courseignore", excluded),
         arrayOf("courseIcon.svg", excluded),
-
-        arrayOf("build/", normalAndInvisible),
-        arrayOf("out/", normalAndInvisible),
-        arrayOf("dir/build/", normalAndInvisible),
-        arrayOf("dir/out/", normalAndInvisible),
       )
     }
   }

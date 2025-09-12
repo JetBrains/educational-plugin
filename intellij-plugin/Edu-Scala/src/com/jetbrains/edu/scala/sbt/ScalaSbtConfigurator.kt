@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.isScalaPluginCompatible
@@ -54,6 +55,7 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     dirAndChildren("target") {
       excludeFromArchive()
+      courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
