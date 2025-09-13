@@ -118,6 +118,8 @@ class CCNewCoursePanel(
       border = JBUI.Borders.empty(4, 8, 0, 4)
     }
 
+    val openExistingCourse = course != null
+
     val courseData = collectCoursesData(course)
     val defaultCourseType = getDefaultCourseType(courseData)
 
@@ -148,11 +150,11 @@ class CCNewCoursePanel(
       }
       row(EduCoreBundle.message("cc.new.course.language")) {
         comboBox(courseData, CourseDataRenderer())
-          .enabled(course == null)
+          .enabled(!openExistingCourse)
           .align(AlignX.FILL)
           .applyToComponent {
             whenItemSelected {
-              onCourseDataSelected(it)
+              onCourseDataSelected(it, openExistingCourse)
             }
           }
           .bindItem({ defaultCourseType }, {})
@@ -186,12 +188,12 @@ class CCNewCoursePanel(
     add(bottomPanel, BorderLayout.SOUTH)
 
     if (defaultCourseType != null) {
-      onCourseDataSelected(defaultCourseType)
+      onCourseDataSelected(defaultCourseType, openExistingCourse)
     }
 
     setupValidation()
 
-    if (course != null) {
+    if (openExistingCourse) {
       descriptionTextArea.text = course.description
       titleField.setTextManually(course.name)
     }
@@ -279,16 +281,21 @@ class CCNewCoursePanel(
     return LabeledComponent.create(field, "${EduCoreBundle.message("cc.new.course.select.location.label")}:", BorderLayout.WEST)
   }
 
-  private fun onCourseDataSelected(courseData: CourseData) {
+  private fun onCourseDataSelected(courseData: CourseData, openExistingCourse: Boolean) {
     languageSettingsDisposable?.let(Disposer::dispose)
     val settingsDisposable = Disposer.newCheckedDisposable(parentDisposable, "languageSettingsDisposable")
     languageSettingsDisposable = settingsDisposable
 
-    val courseName = "${courseData.displayName.replaceFirstChar { it.titlecaseChar() }.replace(File.separatorChar, '_')} ${
-      EduCoreBundle.message("item.course.title")
-    }"
-    _course.name = courseName
-    val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
+    if (!openExistingCourse) {
+      val courseName = "${courseData.displayName.replaceFirstChar { it.titlecaseChar() }.replace(File.separatorChar, '_')} ${
+        EduCoreBundle.message("item.course.title")
+      }"
+      _course.name = courseName
+      _course.languageId = courseData.language.id
+      _course.environment = courseData.environment
+    }
+
+    val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), _course.name, "")
     if (!titleField.isChangedByUser) {
       titleField.setTextManually(file.name)
       if (!pathField.isChangedByUser) {
@@ -297,9 +304,8 @@ class CCNewCoursePanel(
     }
 
     val configurator = EduConfiguratorManager.findConfigurator(courseData.courseType, courseData.environment,
-                                                               courseData.language) ?: return
-    _course.languageId = courseData.language.id
-    _course.environment = courseData.environment
+      courseData.language) ?: return
+
     languageSettings = configurator.courseBuilder.getLanguageSettings()
     languageSettings.addSettingsChangeListener { doValidation() }
 
