@@ -313,7 +313,7 @@ class CCNewCoursePanel(
 
   private fun collectCoursesData(course: Course?): List<CourseData> {
     val courseData = if (course != null) {
-      listOfNotNull(obtainCourseData(course.languageId, course.environment, course.itemType, course.name))
+      listOfNotNull(obtainCourseData(course.languageId, course.environment, course.itemType))
     }
     else {
       EduConfiguratorManager.allExtensions()
@@ -323,21 +323,20 @@ class CCNewCoursePanel(
     return courseData.sortedBy { it.displayName }
   }
 
-  private fun obtainCourseData(languageId: String, environment: String, courseType: String, name: String): CourseData? {
+  private fun obtainCourseData(languageId: String, environment: String, courseType: String): CourseData? {
     val language = getLanguageById(languageId) ?: return null
     val extension = EduConfiguratorManager.findExtension(courseType, environment, language) ?: return null
-    return obtainCourseData(extension, language, name)
+    return obtainCourseData(extension, language)
   }
 
   private fun obtainCourseData(
     extension: EducationalExtensionPoint<EduConfigurator<*>>,
     language: Language? = getLanguageById(extension.language),
-    name: String? = null
   ): CourseData? {
     if (language == null) return null
     val environment = extension.environment
     val courseType = extension.courseType
-    val displayName = name ?: extension.displayName ?: run {
+    val displayName = extension.displayName ?: run {
       when (courseType) {
         EduFormatNames.PYCHARM -> if (environment == DEFAULT_ENVIRONMENT) language.displayName else "${language.displayName} ($environment)"
         else -> "$courseType ${language.displayName}"
