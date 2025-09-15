@@ -46,6 +46,11 @@ intellijPlatform {
       name = "JetBrains"
     }
   }
+  caching {
+    ides {
+      enabled = true
+    }
+  }
   instrumentCode = false
   buildSearchableOptions = prop("enableBuildSearchableOptions").toBoolean()
 }
@@ -94,18 +99,22 @@ dependencies {
   }
 }
 
+// Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
+// Actually, Python Community contains all necessary code that we need.
+// Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
+val ideaPlugins = listOfNotNull(
+  scalaPlugin,
+  rustPlugin,
+  pythonProPlugin,
+  pythonCommunityPlugin,
+  goPlugin,
+  phpPlugin
+)
+
 val ideToPlugins = mapOf(
-  // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
-  // Actually, Python Community contains all necessary code that we need.
-  // Python Pro plugin is added here on 2024.2 just to have the most common setup from user POV (i.e. Python Community + Python Pro)
-  IntellijIdeaUltimate to listOfNotNull(
-    scalaPlugin,
-    rustPlugin,
-    pythonProPlugin,
-    pythonCommunityPlugin,
-    goPlugin,
-    phpPlugin
-  ),
+  // BACKCOMPTA: 2025.2. Drop `IntellijIdeaUltimate` usage
+  IntellijIdeaUltimate to ideaPlugins,
+  IntellijIdea to ideaPlugins,
   CLion to listOf(rustPlugin),
   AndroidStudio to listOf(pythonCommunityPlugin),
   GoLand to listOf(pythonCommunityPlugin),
