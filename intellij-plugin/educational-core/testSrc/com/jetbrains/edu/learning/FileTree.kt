@@ -4,6 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.jetbrains.edu.learning.courseFormat.FileContents
 import org.intellij.lang.annotations.Language
 import org.junit.Assert
 
@@ -12,6 +13,7 @@ fun fileTree(block: FileTreeBuilder.() -> Unit): FileTree = FileTree(FileTreeBui
 interface FileTreeBuilder {
   fun dir(path: String, block: FileTreeBuilder.() -> Unit = {})
   fun file(name: String, code: String? = null)
+  fun file(name: String, contents: FileContents)
   fun java(name: String, @Language("JAVA") code: String) = file(name, code)
   fun kotlin(name: String, @Language("kotlin") code: String) = file(name, code)
   fun python(name: String, @Language("Python") code: String) = file(name, code)
@@ -122,6 +124,8 @@ private class FileTreeBuilderImpl(val directory: MutableMap<String, Entry> = mut
     }
     directory[name] = Entry.File(text)
   }
+
+  override fun file(name: String, contents: FileContents) = file(name, contents.textualRepresentation)
 
   fun intoDirectory() = Entry.Directory(directory)
 

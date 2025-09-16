@@ -675,7 +675,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson") {
         dir("task") {
           file("task.txt", "text")
-          file("mem.jpeg", InMemoryBinaryContents(byteArrayOf(1, 0, 1)).textualRepresentation)
+          file("mem.jpeg", InMemoryBinaryContents(byteArrayOf(1, 0, 1)))
         }
         dir("task1") {
           file("task.md")

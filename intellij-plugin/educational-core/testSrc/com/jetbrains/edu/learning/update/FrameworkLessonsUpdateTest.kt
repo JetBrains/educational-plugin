@@ -544,7 +544,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
 
   @Test
   fun `test update invisible binary file`() {
-    clearPrepareCourse()
+    clearPreparedCourse()
     initLocalCourseWithBinaryFiles()
 
     updateCourse {
@@ -561,7 +561,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     assertTaskFolder {
       file("Task.kt", "fun task() {}")
       file("VisibleBinaryFile.png")
-      file("InvisibleBinaryFile.png", task1.taskFiles["InvisibleBinaryFile.png"]!!.contents.textualRepresentation)
+      file("InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1, 1)))
       file("Tests1.kt", "fun test1() {}")
     }
 
@@ -572,7 +572,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     assertTaskFolder {
       file("Task.kt", "fun task() {}")
       file("VisibleBinaryFile.png")
-      file("InvisibleBinaryFile.png", task2.taskFiles["InvisibleBinaryFile.png"]!!.contents.textualRepresentation)
+      file("InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1, 1)))
       file("Tests2.kt", "fun test2() {}")
     }
 
@@ -583,14 +583,14 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
     assertTaskFolder {
       file("Task.kt", "fun task() {}")
       file("VisibleBinaryFile.png")
-      file("InvisibleBinaryFile.png", task3.taskFiles["InvisibleBinaryFile.png"]!!.contents.textualRepresentation)
+      file("InvisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 1, 0)))
       file("Tests3.kt", "fun test3() {}")
     }
   }
 
   @Test
   fun `test update current visible binary file`() {
-    clearPrepareCourse()
+    clearPreparedCourse()
 
     initLocalCourseWithBinaryFiles()
 
@@ -606,7 +606,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
 
     assertTaskFolder {
       file("Task.kt", "fun task() {}")
-      file("VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0, 1)).textualRepresentation)
+      file("VisibleBinaryFile.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0, 1)))
       file("InvisibleBinaryFile.png")
       file("Tests2.kt", "fun test2() {}")
     }
@@ -778,8 +778,8 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
   }
 
 
-  protected fun clearPrepareCourse() {
-    // clear the course created in `before()`, because we need to create another course with two lessons
+  protected fun clearPreparedCourse() {
+    // clear the course created in `before()`, because we need to create another course
     runInEdtAndWait {
       runWriteAction {
         project.courseDir.deleteRecursively("lesson1")

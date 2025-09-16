@@ -480,11 +480,11 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson1") {
         dir("task") {
           file(taskFileName)
-          file(gitObjectFiles[0].name, gitObjectFiles[0].contents.textualRepresentation)
+          file(gitObjectFiles[0].name, gitObjectFiles[0].contents)
           dir(tests) {
             // file text should be changed
-            file(gitObjectFiles[1].name, gitObjectFiles[0].contents.textualRepresentation)
-            file(gitObjectFiles[2].name, gitObjectFiles[2].contents.textualRepresentation)
+            file(gitObjectFiles[1].name, gitObjectFiles[0].contents)
+            file(gitObjectFiles[2].name, gitObjectFiles[2].contents)
           }
         }
         dir("task1") {
@@ -918,7 +918,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
       dir("lesson") {
         dir("task") {
           file("task.txt", "text")
-          file("mem.jpeg", InMemoryBinaryContents(byteArrayOf(0, 1, 0)).textualRepresentation)
+          file("mem.jpeg", InMemoryBinaryContents(byteArrayOf(0, 1, 0)))
         }
         dir("task1") {
           file("task.md")
