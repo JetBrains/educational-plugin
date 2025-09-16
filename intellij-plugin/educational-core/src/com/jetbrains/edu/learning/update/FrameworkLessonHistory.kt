@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.update
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBePropagated
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
+import com.jetbrains.edu.learning.framework.impl.textRepresentationEquals
 
 class FrameworkLessonHistory private constructor(val taskFileHistories: Map<String, FrameworkLessonTaskFileHistory>) {
 
@@ -58,7 +58,7 @@ class FrameworkLessonTaskFileHistory private constructor(private val remoteHisto
         val flManager = FrameworkLessonManager.getInstance(project)
         val actualContents = flManager.getTaskState(localLesson, task)[fileName]
 
-        if (actualContents?.textualRepresentation == unmodifiedContents?.textualRepresentation) { null } else { actualContents }
+        if (actualContents?.textRepresentationEquals(unmodifiedContents) == true) { null } else { actualContents }
       }
 
       // In the remote history we get user changes from the localHistory evaluated on the previous step

@@ -89,23 +89,6 @@ sealed class Change {
   abstract fun apply(project: Project, taskDir: VirtualFile, task: Task)
   abstract fun apply(state: MutableMap<String, FileContents>)
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (other !is Change) return false
-    if (javaClass != other.javaClass) return false
-
-    if (path != other.path) return false
-    if (contents.textualRepresentation != other.contents.textualRepresentation) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result = path.hashCode()
-    result = 31 * result + contents.textualRepresentation.hashCode()
-    return result
-  }
-
   override fun toString(): String {
     return "${javaClass.simpleName}(path='$path', contents='$contents')"
   }

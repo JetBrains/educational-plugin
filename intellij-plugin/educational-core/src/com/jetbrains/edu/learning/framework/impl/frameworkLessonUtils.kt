@@ -26,7 +26,7 @@ fun calculateChanges(
     val currentText = current.remove(path)
     changes += when {
       currentText == null -> Change.AddFile(path, nextText)
-      currentText.textualRepresentation != nextText.textualRepresentation -> Change.ChangeFile(path, nextText)
+      !currentText.textRepresentationEquals(nextText) -> Change.ChangeFile(path, nextText)
       else -> continue@loop
     }
   }
@@ -60,10 +60,20 @@ fun LessonContainer.visitFrameworkLessons(visit : (FrameworkLesson) -> Unit) {
   }
 }
 
-fun areEqual(state1: FLTaskState, state2: FLTaskState): Boolean {
-  if (state1.keys != state2.keys) return false
-  return state1.all { (path, contents1) ->
-    val contents2 = state2[path] ?: return false
-    contents1.textualRepresentation == contents2.textualRepresentation
+fun FLTaskState.stateEquals(other: FLTaskState): Boolean {
+  if (keys != other.keys) return false
+  return all { (path, contents1) ->
+    val contents2 = other[path] ?: return false
+    contents1.textRepresentationEquals(contents2)
   }
 }
+
+
+/**
+ * Simple equality check for [FileContents].
+ *
+ * TODO: Implement a proper equality check that uses [BinaryContents.bytes] for comparing binary contents
+ *
+ * @return true if [other] has the same [FileContents.textualRepresentation]
+ */
+fun FileContents.textRepresentationEquals(other: FileContents?): Boolean = textualRepresentation == other?.textualRepresentation

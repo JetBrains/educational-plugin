@@ -33,6 +33,23 @@ data class Change0(val ordinal: Int, val path: String, val text: String) {
     out.writeUTF(text)
   }
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Change0) return false
+    if (javaClass != other.javaClass) return false
+
+    if (path != other.path) return false
+    if (text != other.text) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = path.hashCode()
+    result = 31 * result + text.hashCode()
+    return result
+  }
+
   companion object {
     fun read(input: DataInput): Change0 {
       val ordinal = input.readInt()
