@@ -21,13 +21,20 @@ import kotlin.test.assertIs
 
 class RetrofitProxySettingsTest : EduTestCase() {
 
+  override fun setUp() {
+    super.setUp()
+    // Actually, we don't perform requests to EXTERNAL_HOST in these tests.
+    // proxyHelper is supposed to return an answer without an actual request to EXTERNAL_HOST
+    TestNetworkRequestManager.getInstance().allowHosts(testRootDisposable, EXTERNAL_HOST)
+  }
+
   @Test
   fun `test proxy settings`() {
     // given
     val message = "Hello from proxy!"
     val proxyHelper = MockWebServerHelper(testRootDisposable)
 
-    proxyHelper.addResponseHandler(testRootDisposable) { _, path ->
+    proxyHelper.addResponseHandler(testRootDisposable) { _, _ ->
       MockResponseFactory.fromString("""{"value": "$message"}""")
     }
     val proxyConfiguration = proxyHelper.proxyConfiguration()
@@ -50,7 +57,7 @@ class RetrofitProxySettingsTest : EduTestCase() {
     val user = "user"
     val password = "password"
 
-    proxyHelper.addResponseHandler(testRootDisposable) { request, path ->
+    proxyHelper.addResponseHandler(testRootDisposable) { request, _ ->
       val proxyAuthValue = request.headers["Proxy-Authorization"]
       if (proxyAuthValue == null) {
         MockResponse().setResponseCode(HTTP_PROXY_AUTH)
@@ -74,7 +81,7 @@ class RetrofitProxySettingsTest : EduTestCase() {
     assertEquals(Answer(okhttp3.Credentials.basic(user, password)), response.value.body())
   }
 
-  private fun createApi(): TestApi = createRetrofitBuilder("http://example.com", ConnectionPool())
+  private fun createApi(): TestApi = createRetrofitBuilder("http://$EXTERNAL_HOST", ConnectionPool())
     .addConverterFactory(JacksonConverterFactory.create())
     .build()
     .create(TestApi::class.java)
@@ -103,6 +110,10 @@ class RetrofitProxySettingsTest : EduTestCase() {
     finally {
       store.setCredentials(host, port, previousCreds, previousRemembered)
     }
+  }
+
+  companion object {
+    private const val EXTERNAL_HOST = "example.com"
   }
 }
 

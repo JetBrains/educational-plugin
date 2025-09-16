@@ -75,6 +75,7 @@ class RetrofitHelperImpl : RetrofitHelper {
     return builder
       .addProxy(baseUrl)
       .addEdtAssertions()
+      .addHostAssertions()
   }
 
   private fun OkHttpClient.Builder.addProxy(baseUrl: String): OkHttpClient.Builder {
@@ -93,6 +94,19 @@ class RetrofitHelperImpl : RetrofitHelper {
     return addInterceptor { chain ->
       NetworkRequestEDTAssertionPolicy.assertIsDispatchThread()
       val request = chain.request()
+      chain.proceed(request)
+    }
+  }
+
+  private fun OkHttpClient.Builder.addHostAssertions(): OkHttpClient.Builder {
+    if (!isUnitTestMode) return this
+
+    return addInterceptor { chain ->
+      val request = chain.request()
+      val host = request.url.host
+
+      TestNetworkRequestManager.getInstance().checkHostIsAllowed(host)
+
       chain.proceed(request)
     }
   }
