@@ -3,10 +3,10 @@ package com.jetbrains.edu.learning.framework.impl
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.FileContents
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.LessonContainer
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -41,7 +41,7 @@ fun getTaskStateFromFiles(initialFiles: Iterable<TaskFile>, taskDir: VirtualFile
     val file = taskDir.findFileByRelativePath(taskFile.name) ?: continue
 
     val diskContents = when (taskFile.contents) {
-      is BinaryContents -> BinaryContentsFromDisk(file)
+      is BinaryContents -> runReadAction { InMemoryBinaryContents(file.contentsToByteArray()) }
       else -> {
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: continue
         InMemoryTextualContents(document.text)
