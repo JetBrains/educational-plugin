@@ -95,14 +95,14 @@ sealed class Change {
     if (javaClass != other.javaClass) return false
 
     if (path != other.path) return false
-    if (contents.textualRepresentation != other.contents.textualRepresentation) return false
+    if (!contents.textContentEquals(other.contents)) return false
 
     return true
   }
 
   override fun hashCode(): Int {
     var result = path.hashCode()
-    result = 31 * result + contents.textualRepresentation.hashCode()
+    result = 31 * result + contents.textHashCode
     return result
   }
 

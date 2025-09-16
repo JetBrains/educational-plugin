@@ -193,7 +193,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     // If a user navigated back to current task, didn't make any change and wants to navigate to next task again
     // we shouldn't try to propagate current changes to next task
-    val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && areEqual(previousCurrentState, currentState))
+    val currentTaskHasNewUserChanges = !(currentRecord != -1 && targetRecord != -1 && currentState.stateEquals(previousCurrentState))
 
     val changes = if (currentTaskHasNewUserChanges && taskIndexDelta == 1 && lesson.propagateFilesOnNavigation) {
       calculatePropagationChanges(targetTask, currentTask, currentState, targetState, showDialogIfConflict)
@@ -285,7 +285,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     // if current and target states of propagatable files are the same
     // it needs to calculate only diff for non-propagatable files and for files that change the propagation flag from false to true
-    if (areEqual(newCurrentPropagatableFilesState, newTargetPropagatableFilesState)) {
+    if (newCurrentPropagatableFilesState.stateEquals(newTargetPropagatableFilesState)) {
       return calculateChanges(
         currentNonPropagatableFilesState,
         targetNonPropagatableFilesState + fromNonPropagatableToPropagatableFilesState
