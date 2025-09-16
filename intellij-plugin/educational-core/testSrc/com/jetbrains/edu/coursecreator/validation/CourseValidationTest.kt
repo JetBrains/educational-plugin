@@ -8,7 +8,10 @@ import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.testFramework.IndexingTestUtil
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.MockResponseFactory
+import com.jetbrains.edu.learning.MockWebServerHelper
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
@@ -247,16 +250,43 @@ class CourseValidationTest : EduTestCase() {
 
   private fun doTest(course: Course, validateTests: Boolean, validateLinks: Boolean, expected: String) {
     IndexingTestUtil.waitUntilIndexesAreReady(project)
-    val testMessageConsumer = TestServiceMessageConsumer()
     val params = ValidationParams(validateTests = validateTests, validateLinks = validateLinks)
-    val validationHelper = CourseValidationHelper(params, testMessageConsumer)
+    val validationHelper = CourseValidationHelper(params)
 
-    runBlocking {
+    val root = runBlocking {
       validationHelper.validate(project, course)
     }
 
-    testMessageConsumer.assertTestTreeEquals(expected)
+    assertTestTreeEquals(root, expected)
   }
+
+  private fun assertTestTreeEquals(root: ValidationSuite, expected: String) {
+    val builder = StringBuilder()
+    root.children.print(0, builder)
+    assertEquals(expected.trimIndent().trimEnd(), builder.toString().trimEnd())
+  }
+
+  private fun List<ValidationResultNode>.print(level: Int, out: StringBuilder) {
+    for (node in this) {
+      out.append("  ".repeat(level))
+      when (node) {
+        is ValidationCase -> {
+          out.appendLine("- ${node.name}: ${node.status}")
+        }
+        is ValidationSuite -> {
+          out.appendLine("- ${node.name}:")
+          node.children.print(level + 1, out)
+        }
+      }
+    }
+  }
+
+  private val ValidationCase.status: String
+    get() = when (result) {
+      is ValidationCaseResult.Failed -> "failed"
+      is ValidationCaseResult.Ignored -> "ignored"
+      ValidationCaseResult.Success -> "success"
+    }
 }
 
 

@@ -6,6 +6,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresEdt
@@ -23,22 +24,20 @@ import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import java.util.concurrent.ConcurrentHashMap
 
-class CourseValidationHelper(
-  private val params: ValidationParams,
-  private val serviceMessageConsumer: ServiceMessageConsumer
-) {
+class CourseValidationHelper(private val params: ValidationParams) {
 
-  suspend fun validate(project: Project, course: Course): Boolean {
+  suspend fun validate(project: Project, course: Course): ValidationSuite {
     return withValidationEnabled(project) {
-      withTestSuiteBuilder(serviceMessageConsumer) {
+      withValidationTreeBuilder(ValidationResultNode.ROOT_NODE_NAME) {
         validate(project, course)
       }
     }
   }
 
-  private suspend fun TestSuiteBuilder.validate(project: Project, itemContainer: ItemContainer) {
-    testSuite(itemContainer.name) {
-      for (item in itemContainer.items) {
+  private suspend fun ValidationTreeBuilder.validate(project: Project, container: ItemContainer) {
+    LOG.info("Validating `${container.name}` course item")
+    return validationSuit(container.name) {
+      container.items.map { item ->
         when (item) {
           is ItemContainer -> {
             validate(project, item)
@@ -52,49 +51,57 @@ class CourseValidationHelper(
     }
   }
 
-  private suspend fun TestSuiteBuilder.validate(project: Project, task: Task) {
-    testSuite(task.presentableName) {
+  private suspend fun ValidationTreeBuilder.validate(project: Project, task: Task) {
+    LOG.info("Validating `${task.presentableName}` task")
+    validationSuit(task.presentableName) {
       withContext(Dispatchers.EDT) {
         task.prepareForChecking(project)
       }
 
-      if (params.validateTests) {
-        validateTaskTests(project, task)
+      try {
+        if (params.validateTests) {
+          validateTaskTests(project, task)
+        }
+        if (params.validateLinks) {
+          validateTaskDescriptionLinks(project, task)
+        }
       }
-      if (params.validateLinks) {
-        validateTaskDescriptionLinks(project, task)
-      }
-
-      withContext(Dispatchers.EDT) {
-        closeOpenFiles(project)
-      }
-    }
-  }
-
-  private suspend fun TestSuiteBuilder.validateTaskTests(project: Project, task: Task) {
-    testCase(TESTS_NODE) {
-      withContext(Dispatchers.EDT) {
-        val dataContext = SimpleDataContext.getProjectContext(project)
-        ActionUtil.invokeAction(CheckAction(), dataContext, "", null, null)
-      }
-
-      val result = ValidationCheckResultManager.getInstance(project).getResult(task)
-
-      when (result.status) {
-        CheckStatus.Unchecked -> testIgnored(result.message)
-        CheckStatus.Failed -> testFailed(result.message, result.details.orEmpty())
-        CheckStatus.Solved -> Unit
+      finally {
+        withContext(Dispatchers.EDT) {
+          closeOpenFiles(project)
+        }
       }
     }
   }
 
-  private suspend fun TestSuiteBuilder.validateTaskDescriptionLinks(project: Project, task: Task) {
+  private suspend fun ValidationTreeBuilder.validateTaskTests(project: Project, task: Task) {
+    LOG.info("Validating `${task.presentableName}` task's tests")
+    withContext(Dispatchers.EDT) {
+      val dataContext = SimpleDataContext.getProjectContext(project)
+      ActionUtil.invokeAction(CheckAction(), dataContext, "", null, null)
+    }
+
+    val result = ValidationCheckResultManager.getInstance(project).getResult(task)
+
+    val caseResult = when (result.status) {
+      CheckStatus.Solved -> ValidationCaseResult.Success
+      CheckStatus.Unchecked -> ValidationCaseResult.Ignored(result.message)
+      CheckStatus.Failed -> ValidationCaseResult.Failed(result.message, result.details, result.diff?.let { ValidationDiff(it.expected, it.actual) })
+    }
+
+    LOG.info("Validating `${task.presentableName}` task's tests: ${result.status}")
+    validationCase(TESTS_NODE, caseResult)
+  }
+
+  private suspend fun ValidationTreeBuilder.validateTaskDescriptionLinks(project: Project, task: Task) {
+    LOG.info("Validating `${task.presentableName}` task's links")
+
     val text = readAction { task.getFormattedTaskText(project) } ?: return
     val links = extractLinks(project, task, text)
     // Don't create empty node if no links in the task description
     if (links.isEmpty()) return
 
-    testSuite(TASK_DESCRIPTION_LINKS_NODE) {
+    validationSuit(TASK_DESCRIPTION_LINKS_NODE) {
       val results = withContext(Dispatchers.IO) {
         links.map {
           async { it to it.validate(project) }
@@ -103,11 +110,16 @@ class CourseValidationHelper(
 
       for ((link, error) in results) {
         val taskDescriptionLink = link.link
-        testCase(taskDescriptionLink) {
-          if (error != null) {
-            testFailed("Failed to resolve `$taskDescriptionLink`", error)
-          }
+
+        val result = if (error == null) {
+          ValidationCaseResult.Success
         }
+        else {
+          ValidationCaseResult.Failed("Failed to resolve `$taskDescriptionLink`", error)
+        }
+
+        LOG.info("Validation `$taskDescriptionLink`: ${if (error == null) "Success" else "Failed"}")
+        validationCase(taskDescriptionLink, result)
       }
     }
   }
@@ -149,6 +161,8 @@ class CourseValidationHelper(
   companion object {
     private const val TESTS_NODE = "Tests"
     private const val TASK_DESCRIPTION_LINKS_NODE = "Task description links"
+
+    private val LOG = logger<CourseValidationHelper>()
   }
 }
 

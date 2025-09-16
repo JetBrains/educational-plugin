@@ -39,9 +39,11 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
 
   override suspend fun performProjectAction(project: Project, course: Course): CommandResult {
     val params = ValidationParams(validateTests, validateLinks)
-    val result = CourseValidationHelper(params, StdoutServiceMessageConsumer).validate(project, course)
+    val result = CourseValidationHelper(params).validate(project, course)
 
-    return if (result) CommandResult.Ok else CommandResult.Error("Some tasks haven't finished successfully")
+    TeamCityValidationResultConsumer().consume(result)
+
+    return if (result.isFailed) CommandResult.Error("Some tasks haven't finished successfully") else CommandResult.Ok
   }
 
   companion object {
