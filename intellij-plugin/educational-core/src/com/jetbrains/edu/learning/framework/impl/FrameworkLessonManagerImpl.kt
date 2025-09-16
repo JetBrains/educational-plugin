@@ -44,7 +44,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     applyTargetTaskChanges(lesson, -1, taskDir, showDialogIfConflict)
   }
 
-  override fun saveExternalChanges(task: Task, externalState: Map<String, FileContents>) {
+  override fun saveExternalChanges(task: Task, externalState: FLTaskState) {
     require(project.isStudentProject()) {
       "`saveExternalChanges` should be called only if course in study mode"
     }
@@ -71,7 +71,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     YamlFormatSynchronizer.saveItem(task)
   }
 
-  override fun updateUserChanges(task: Task, newInitialState: Map<String, FileContents>) {
+  override fun updateUserChanges(task: Task, newInitialState: FLTaskState) {
     require(project.isStudentProject()) {
       "`updateUserChanges` should be called only if course in study mode"
     }
