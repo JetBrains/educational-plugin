@@ -91,7 +91,7 @@ class RetrofitHelperImpl : RetrofitHelper {
 
   private fun OkHttpClient.Builder.addEdtAssertions(): OkHttpClient.Builder {
     return addInterceptor { chain ->
-      NetworkRequestAssertionPolicy.assertIsDispatchThread()
+      NetworkRequestEDTAssertionPolicy.assertIsDispatchThread()
       val request = chain.request()
       chain.proceed(request)
     }

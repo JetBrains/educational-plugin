@@ -8,7 +8,10 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.isUnitTestMode
 
-enum class NetworkRequestAssertionPolicy {
+/**
+ * Allows choosing the policy how to handle network requests from EDT.
+ */
+enum class NetworkRequestEDTAssertionPolicy {
   OFF {
     override fun assert() {}
   },
@@ -31,7 +34,7 @@ enum class NetworkRequestAssertionPolicy {
 
     private const val ASSERT_MESSAGE = "Network requests from Event Dispatch Thread (EDT) are not allowed"
 
-    private val LOG = logger<NetworkRequestAssertionPolicy>()
+    private val LOG = logger<NetworkRequestEDTAssertionPolicy>()
 
     fun assertIsDispatchThread() {
       // Someday we will remove `!isUnitTestMode` condition and start catching such things in tests as well
