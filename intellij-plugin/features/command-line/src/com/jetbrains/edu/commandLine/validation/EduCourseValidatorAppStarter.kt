@@ -41,7 +41,8 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
     val params = ValidationParams(validateTests, validateLinks)
     val result = CourseValidationHelper(params).validate(project, course)
 
-    TeamCityValidationResultConsumer().consume(result)
+    val outputConsumer = StdoutValidationOutputConsumer()
+    TeamCityValidationResultConsumer(outputConsumer).consume(result)
 
     return if (result.isFailed) CommandResult.Error("Some tasks haven't finished successfully") else CommandResult.Ok
   }

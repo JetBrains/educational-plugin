@@ -5,7 +5,7 @@ import com.jetbrains.edu.coursecreator.validation.ValidationCase
 import com.jetbrains.edu.coursecreator.validation.ValidationCaseResult
 import com.jetbrains.edu.coursecreator.validation.ValidationSuite
 
-class TeamCityValidationResultConsumer : ValidationResultConsumer {
+class TeamCityValidationResultConsumer(outputConsumer: ValidationOutputConsumer) : ValidationResultConsumer(outputConsumer) {
 
   override fun consume(rootNode: ValidationSuite) {
     // Intentionally don't emit events for root node, only for its children,
@@ -46,7 +46,7 @@ class TeamCityValidationResultConsumer : ValidationResultConsumer {
   }
 
   private fun ServiceMessageBuilder.consumeEvent() {
-    println(this)
+    outputConsumer.consume(toString())
   }
 
   companion object {
