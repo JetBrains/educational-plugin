@@ -270,17 +270,23 @@ fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeC
 }
 
 @Throws(HugeBinaryFileException::class)
-fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
+fun VirtualFile.toStudentFile(project: Project, task: Task, originalTaskFile: TaskFile): TaskFile? {
   try {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
-    if (isToEncodeContent) {
+
+    if (originalTaskFile.isBinary != false) { // for binary and undetermined contents
+      if (originalTaskFile.isBinary == null) {
+        LOG.error("""Task file "${taskFile.name}" for task "${task.name}" has undetermined contents while converting to student file""")
+      }
+
       if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
         throw HugeBinaryFileException("${task.pathInCourse}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
       taskFile.contents = BinaryContentsFromDisk(this)
       return taskFile
     }
+
     FileDocumentManager.getInstance().saveDocument(document)
     val studentFile = LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.text)
     runWithListener(project, taskFile, studentFile) { studentDocument: Document ->

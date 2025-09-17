@@ -209,7 +209,7 @@ fun collectTaskFiles(project: Project, task: Task): MutableList<TaskFile> {
     invokeAndWaitIfNeeded {
       runWriteAction {
         val answerFile = value.findTaskFileInDir(taskDir) ?: return@runWriteAction
-        val studentTaskFile = answerFile.toStudentFile(project, task) ?: return@runWriteAction
+        val studentTaskFile = answerFile.toStudentFile(project, task, value) ?: return@runWriteAction
         files.add(studentTaskFile)
       }
     }

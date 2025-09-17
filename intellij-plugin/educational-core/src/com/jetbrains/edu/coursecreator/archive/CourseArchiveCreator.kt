@@ -400,12 +400,12 @@ class CourseArchiveCreator(
 
     private fun convertToStudentTaskFiles(project: Project, task: Task, taskDir: VirtualFile) {
       val studentTaskFiles = LinkedHashMap<String, TaskFile>()
-      for ((key, value) in task.taskFiles) {
-        val answerFile = value.findTaskFileInDir(taskDir) ?: continue
+      for ((taskFileName, taskFile) in task.taskFiles) {
+        val answerFile = taskFile.findTaskFileInDir(taskDir) ?: continue
 
-        val studentFile = answerFile.toStudentFile(project, task)
+        val studentFile = answerFile.toStudentFile(project, task, taskFile)
         if (studentFile != null) {
-          studentTaskFiles[key] = studentFile
+          studentTaskFiles[taskFileName] = studentFile
         }
       }
       task.taskFiles = studentTaskFiles

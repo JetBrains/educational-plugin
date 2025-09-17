@@ -73,7 +73,7 @@ class CCShowPreview : DumbAwareAction() {
 
     ApplicationManager.getApplication().runWriteAction {
       val studentTaskFile: TaskFile? = try {
-        virtualFile.toStudentFile(project, taskFile.task)
+        virtualFile.toStudentFile(project, taskFile.task, taskFile)
       }
       catch (exception: BrokenPlaceholderException) {
         LOG.info("Failed to Create Preview: " + exception.message)
