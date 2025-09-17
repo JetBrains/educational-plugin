@@ -271,11 +271,14 @@ fun VirtualFile.loadEncodedContent(isToEncodeContent: Boolean = this.isToEncodeC
 }
 
 @Throws(HugeBinaryFileException::class)
-fun VirtualFile.toStudentFile(project: Project, task: Task): TaskFile? {
+  /**
+   * @param isBinary is the binarity of the file contents, with `null` in case of the undetermined contents
+   */
+fun VirtualFile.toStudentFile(project: Project, task: Task, isBinary: Boolean?): TaskFile? {
   try {
     val taskCopy = task.copy()
     val taskFile = taskCopy.getTaskFile(pathRelativeToTask(project)) ?: return null
-    if (isToEncodeContent) {
+    if (isBinary != false) { // for binary and undetermined contents
       if (task.lesson is FrameworkLesson && length >= getBinaryFileLimit()) {
         throw HugeBinaryFileException("${task.pathInCourse}/${taskFile.name}", length, getBinaryFileLimit().toLong(), true)
       }
