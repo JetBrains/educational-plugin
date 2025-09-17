@@ -55,14 +55,14 @@ class StudentTaskFileBuilder(
   @JsonProperty(TEXT) val textFromConfig: String?,
   @Encrypt @JsonProperty(ENCRYPTED_TEXT) val encryptedTextFromConfig: String?,
   @JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,
-  @JsonProperty(IS_BINARY) val isBinary: Boolean? = false,
   name: String?,
+  isBinary: Boolean? = false,
   placeholders: List<AnswerPlaceholder> = mutableListOf(),
   visible: Boolean = true,
   editable: Boolean = true,
   propagatable: Boolean = true,
   @JsonProperty(HIGHLIGHT_LEVEL) errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
-) : TaskFileBuilder(name, placeholders, visible, editable, propagatable, errorHighlightLevel) {
+) : TaskFileBuilder(name, isBinary, placeholders, visible, editable, propagatable, errorHighlightLevel) {
   override fun setupTaskFile(taskFile: TaskFile) {
     super.setupTaskFile(taskFile)
 

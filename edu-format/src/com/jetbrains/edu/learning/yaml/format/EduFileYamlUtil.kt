@@ -27,6 +27,11 @@ import com.jetbrains.edu.learning.yaml.format.student.TakeFromStorageTextualCont
 abstract class EduFileYamlMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
+
+  private val isBinary: Boolean?
+    @JsonProperty(IS_BINARY)
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IsBinaryFilter::class)
+    get() = throw NotImplementedInMixin()
 }
 
 @JsonDeserialize(builder = AdditionalFileBuilder::class)
@@ -36,11 +41,6 @@ abstract class AdditionalFileYamlMixin : EduFileYamlMixin() {
   @JsonProperty(VISIBLE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var isVisible: Boolean = false
-
-  private val isBinary: Boolean?
-    @JsonProperty(IS_BINARY)
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = IsBinaryFilter::class)
-    get() = throw NotImplementedInMixin()
 }
 
 /**
@@ -75,19 +75,26 @@ abstract class TaskFileYamlMixin : EduFileYamlMixin() {
  * A base class for building task files and additional files
  */
 open class EduFileBuilder(
-  @JsonProperty(NAME) val name: String?
+  @JsonProperty(NAME) val name: String?,
+  @JsonProperty(IS_BINARY) val isBinary: Boolean? = false
 ) {
   protected open fun setupEduFile(eduFile: EduFile) {
     eduFile.name = name ?: formatError(message("yaml.editor.invalid.file.without.name"))
+    eduFile.contents = if (isBinary == true) {
+      TakeFromStorageBinaryContents
+    }
+    else {
+      TakeFromStorageTextualContents
+    }
   }
 }
 
 @JsonPOJOBuilder(buildMethodName = "buildAdditionalFile", withPrefix = "")
 class AdditionalFileBuilder(
-  @JsonProperty(IS_BINARY) val isBinary: Boolean? = false,
-  @JsonProperty(VISIBLE) val isVisible: Boolean = false,
-  name: String?
-) : EduFileBuilder(name) {
+  name: String?,
+  isBinary: Boolean? = false,
+  @JsonProperty(VISIBLE) val isVisible: Boolean = false
+) : EduFileBuilder(name, isBinary) {
 
   fun buildAdditionalFile(): EduFile {
     val additionalFile = EduFile()
@@ -98,24 +105,19 @@ class AdditionalFileBuilder(
 
   private fun setupAdditionalFile(eduFile: EduFile) {
     eduFile.isVisible = isVisible
-    eduFile.contents = if (isBinary == true) {
-      TakeFromStorageBinaryContents
-    }
-    else {
-      TakeFromStorageTextualContents
-    }
   }
 }
 
 @JsonPOJOBuilder(buildMethodName = "buildTaskFile", withPrefix = "")
 open class TaskFileBuilder(
   name: String?,
+  isBinary: Boolean? = false,
   @JsonSetter(contentNulls = Nulls.SKIP) @JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = mutableListOf(),
   @JsonProperty(VISIBLE) val visible: Boolean = true,
   @JsonProperty(EDITABLE) val editable: Boolean = true,
   @JsonProperty(PROPAGATABLE) val propagatable: Boolean = true,
   @JsonProperty(HIGHLIGHT_LEVEL) val errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
-) : EduFileBuilder(name) {
+) : EduFileBuilder(name, isBinary) {
 
   @Suppress("unused") //used for deserialization
   fun buildTaskFile(): TaskFile {

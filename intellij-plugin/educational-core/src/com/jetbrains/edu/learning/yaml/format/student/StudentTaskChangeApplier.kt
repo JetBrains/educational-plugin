@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -44,11 +43,6 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
         existingItem.record = deserializedItem.record
       }
     }
-  }
-
-  override fun applyTaskFileChanges(existingTaskFile: TaskFile, deserializedTaskFile: TaskFile) {
-    super.applyTaskFileChanges(existingTaskFile, deserializedTaskFile)
-    existingTaskFile.text = deserializedTaskFile.text
   }
 
   override fun changeType(project: Project, existingItem: StudyItem, deserializedItem: Task) {
