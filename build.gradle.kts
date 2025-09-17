@@ -28,3 +28,9 @@ if (prop("fleetIntegration").toBoolean()) {
     version = "$pluginVersion.0"
   }
 }
+
+tasks {
+  wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+  }
+}
