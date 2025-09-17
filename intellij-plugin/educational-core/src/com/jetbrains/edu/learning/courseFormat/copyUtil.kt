@@ -3,13 +3,11 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.annotation.JsonIncludeProperties
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.intellij.openapi.diagnostic.logger
@@ -29,21 +27,12 @@ private val MAPPER: ObjectMapper by lazy {
   val module = SimpleModule()
   module.addSerializer(StudyItem::class.java, StudyItemCopySerializer())
   module.addDeserializer(StudyItem::class.java, StudyItemDeserializer())
+  // For FileContents, serialize only whether it is binary or textual:
+  module.addSerializer(FileContents::class.java, FileContentsSerializer())
+  module.addDeserializer(FileContents::class.java, FileContentsDeserializer())
   mapper.registerModule(module)
-  //do not serialize or deserialize file contents, because we will restore their values after the deserialization
-  mapper.addMixIn(FileContents::class.java, FileContentsMixin::class.java)
+
   mapper
-}
-
-@Suppress("unused") // used for serialization
-@JsonDeserialize(builder = FileContentsBuilder::class)
-@JsonIncludeProperties
-private abstract class FileContentsMixin
-
-@JsonPOJOBuilder(withPrefix = "")
-private class FileContentsBuilder {
-  @Suppress("unused") // used by json serializer
-  private fun build(): FileContents = UndeterminedContents.EMPTY
 }
 
 fun <T : StudyItem> T.copy(): T {
@@ -105,5 +94,32 @@ class StudyItemCopySerializer : JsonSerializer<StudyItem>() {
         SerializationUtils.Json.ITEM_TYPE
       }
     jgen.writeObjectField(fieldName, value.itemType)
+  }
+}
+
+class FileContentsSerializer : JsonSerializer<FileContents>() {
+  override fun serialize(value: FileContents?, jgen: JsonGenerator, provider: SerializerProvider) {
+    val isBinary = when (value) {
+      is BinaryContents -> true
+      is TextualContents -> false
+      else -> null
+    }
+    jgen.writeStartObject()
+    if (isBinary != null) {
+      jgen.writeBooleanField("is_binary", isBinary)
+    }
+    jgen.writeEndObject()
+  }
+}
+
+class FileContentsDeserializer : JsonDeserializer<FileContents>() {
+  override fun deserialize(parser: JsonParser, context: DeserializationContext): FileContents {
+    val contentsObject = parser.codec.readTree<JsonNode>(parser)
+    val isBinary = contentsObject?.get("is_binary")?.asBoolean()
+    return when (isBinary) {
+      true -> BinaryContents.EMPTY
+      false -> TextualContents.EMPTY
+      else -> UndeterminedContents.EMPTY
+    }
   }
 }
