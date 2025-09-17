@@ -154,7 +154,6 @@ buildCache {
     isEnabled = !isTeamCity
     // By default, build cache is stored in gradle home directory
     directory = File(rootDir, "build/build-cache")
-    removeUnusedEntriesAfterDays = 30
   }
 }
 
