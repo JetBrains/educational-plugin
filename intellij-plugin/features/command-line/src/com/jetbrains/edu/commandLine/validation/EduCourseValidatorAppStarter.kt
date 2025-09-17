@@ -3,6 +3,7 @@ package com.jetbrains.edu.commandLine.validation
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.boolean
+import com.github.ajalt.clikt.parameters.types.choice
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.commandLine.CommandResult
 import com.jetbrains.edu.commandLine.EduAppStarterWrapper
@@ -34,6 +35,10 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
     .boolean()
     .default(VALIDATE_LINK_BY_DEFAULT)
 
+  val outputFormat: OutputFormat by option("--output-format", help = "Output format of validation report")
+    .choice(OutputFormat.values().associateBy { it.name.lowercase() })
+    .default(OutputFormat.TEAMCITY)
+
   override val courseMode: CourseMode
     get() = CourseMode.EDUCATOR
 
@@ -42,7 +47,11 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
     val result = CourseValidationHelper(params).validate(project, course)
 
     val outputConsumer = StdoutValidationOutputConsumer()
-    TeamCityValidationResultConsumer(outputConsumer).consume(result)
+    val resultConsumer = when (outputFormat) {
+      OutputFormat.JSON -> JsonValidationResultConsumer(outputConsumer)
+      OutputFormat.TEAMCITY -> TeamCityValidationResultConsumer(outputConsumer)
+    }
+    resultConsumer.consume(result)
 
     return if (result.isFailed) CommandResult.Error("Some tasks haven't finished successfully") else CommandResult.Ok
   }
@@ -53,5 +62,10 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
 
     const val VALIDATE_TEST_BY_DEFAULT = false
     const val VALIDATE_LINK_BY_DEFAULT = true
+  }
+
+  enum class OutputFormat {
+    JSON,
+    TEAMCITY
   }
 }
