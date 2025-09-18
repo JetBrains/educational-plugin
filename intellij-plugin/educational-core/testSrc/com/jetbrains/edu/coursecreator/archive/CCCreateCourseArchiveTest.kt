@@ -205,7 +205,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("test.mp3")
+          taskFile("test.mp3", BinaryContents.EMPTY)
         }
       }
     }
@@ -217,7 +217,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("test.mp4")
+          taskFile("test.mp4", BinaryContents.EMPTY)
         }
       }
     }
@@ -229,7 +229,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("123.png")
+          taskFile("123.png", BinaryContents.EMPTY)
         }
       }
     }
@@ -241,7 +241,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("123.pdf")
+          taskFile("123.pdf", BinaryContents.EMPTY)
         }
       }
     }
@@ -265,7 +265,7 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage) {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("8abe7b618ddf9c55adbea359ce891775794a61")
+          taskFile("8abe7b618ddf9c55adbea359ce891775794a61", BinaryContents.EMPTY)
         }
       }
     }

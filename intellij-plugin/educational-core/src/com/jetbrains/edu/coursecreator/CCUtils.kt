@@ -189,7 +189,7 @@ object CCUtils {
       EduCoreBundle.message("action.create.answer.document"),
       "Edu Actions"
     )
-    taskFile.text = document.text
+    taskFile.contents = InMemoryTextualContents(document.text)
   }
 
   fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {
