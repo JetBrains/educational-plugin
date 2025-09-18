@@ -8,8 +8,9 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(scalaPlugin)
-
-    testIntellijPlugins(intelliLangPlugin)
+    if (!isAtLeast253) {
+      testIntellijPlugins(intelliLangPlugin)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

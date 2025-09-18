@@ -6,10 +6,8 @@ import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.rd.ide.model.RdOpenSolution
 import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
-import com.jetbrains.rider.projectView.SolutionDescriptionFactory
 import com.jetbrains.rider.projectView.SolutionInitializer
 import java.nio.file.Path
-import kotlin.io.path.pathString
 
 class CSharpCourseProjectGenerator(
   builder: CSharpCourseBuilder,
@@ -30,9 +28,7 @@ class CSharpCourseProjectGenerator(
   )
 
   override fun beforeInitHandler(location: Path): BeforeInitHandler = BeforeInitHandler {
-    val description = SolutionDescriptionFactory.existing(
-      "${location.pathString}/$solutionFileName"
-    )
+    val description = getExistingSolution(location, solutionFileName)
     val strategy = RdOpenSolution(description, true)
     SolutionInitializer.initSolution(it, strategy)
   }

@@ -167,7 +167,7 @@ suspend fun DatabaseDriver.loadArtifacts(project: Project) {
   val artifactsToDownload = resolveArtifacts(project)
   LOG.info("Driver artifacts to download: $artifactsToDownload")
   for (artifact in artifactsToDownload) {
-    downloadArtifact(artifact)
+    downloadArtifact(project, artifact)
   }
 }
 
@@ -184,7 +184,6 @@ private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<Data
   DatabaseArtifactManager.getInstance().forceUpdate(project).await()
 
   val loader = DatabaseArtifactLoader.getInstance()
-
   val updated = mutableListOf<DatabaseDriver.ArtifactRef>()
   val toDownload = mutableListOf<DatabaseArtifactList.ArtifactVersion>()
   for (artifact in artifacts) {
@@ -194,7 +193,7 @@ private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<Data
       version.version == artifact.artifactVersion -> artifact
       else -> DatabaseDriverImpl.createArtifactRef(artifact.id, version.version, artifact.channel)!!
     }
-    if (version != null && !loader.isValid(version)) {
+    if (version != null && !loader.isValid(project, version, this)) {
       toDownload += version
     }
   }
@@ -202,14 +201,14 @@ private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<Data
   return toDownload
 }
 
-private suspend fun downloadArtifact(artifact: DatabaseArtifactList.ArtifactVersion) {
+private suspend fun DatabaseDriver.downloadArtifact(project: Project, artifact: DatabaseArtifactList.ArtifactVersion) {
   val loader = DatabaseArtifactLoader.getInstance()
   withContext(Dispatchers.IO) {
     withRawProgressReporter {
       coroutineToIndicator {
         val items = artifact.items.joinToString("\n") { "  ${it.name}: ${it.type}" }
         LOG.info("Downloading `$artifact` artifact:\n$items")
-        loader.downloadArtifact(artifact)
+        loader.downloadArtifact(project, artifact, this@downloadArtifact)
       }
     }
   }

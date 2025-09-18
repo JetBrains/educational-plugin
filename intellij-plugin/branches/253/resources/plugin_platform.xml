@@ -1,0 +1,3 @@
+<idea-plugin>
+  <!--  BACKCOMPAT: Temporarily exclude `features:remote-env` as it doesn't compile for clion on 2025.2 -->
+</idea-plugin>

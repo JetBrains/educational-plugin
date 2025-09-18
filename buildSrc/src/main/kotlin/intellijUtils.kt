@@ -9,6 +9,8 @@ const val VERIFY_CLASSES_TASK_NAME = "verifyClasses"
 val Project.environmentName: String by Properties
 // BACKCOMPAT: 2025.1
 val Project.isAtLeast252: Boolean get() = environmentName.toInt() >= 252
+// BACKCOMPAT: 2025.2
+val Project.isAtLeast253: Boolean get() = environmentName.toInt() >= 253
 
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"

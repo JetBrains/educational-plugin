@@ -66,7 +66,7 @@ object PlaceholderPainter {
 
       override fun needsRepaint() = !editor.isDisposed
 
-      override fun executePaint(component: Component?, g: Graphics2D) {
+      override fun executePaint(component: Component, g: Graphics2D) {
         if (isStudentProject && !placeholder.isCurrentlyVisible) return
         g.color = placeholder.getColor()
         g.stroke = if (placeholder.shouldBeVisible) {

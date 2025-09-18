@@ -9,8 +9,8 @@ class CCInIdeFeedbackDialog(
   private val courseFeedbackInfoData: CourseFeedbackInfoData
 ) : InIdeFeedbackDialog<JbAcademyCCFeedbackSystemInfoData>(false, null) {
 
-  override val mySystemInfoData: JbAcademyCCFeedbackSystemInfoData by lazy {
-    createJbAcademyFeedbackSystemInfoData(courseFeedbackInfoData)
+  override fun computeSystemInfoDataInternal(): JbAcademyCCFeedbackSystemInfoData {
+    return createJbAcademyFeedbackSystemInfoData(courseFeedbackInfoData)
   }
 
   init {

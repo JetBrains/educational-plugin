@@ -9,7 +9,7 @@ cd educational-plugin
 
 ## Configuring development environment
 
-1. Java 17 is required for development.
+1. Java 21 is required for development.
 For example, you can install [openJDK](https://openjdk.java.net/install/) or [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
 2. Open project directory in IntelliJ IDEA.
 You can get the latest IntelliJ IDEA Community Edition [here](https://www.jetbrains.com/idea/download/).

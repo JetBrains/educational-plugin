@@ -22,7 +22,8 @@ class CodeHintFeedbackDialog(
   defaultLikeness: FeedbackLikenessAnswer = FeedbackLikenessAnswer.NO_ANSWER
 ) : HintFeedbackDialog<CodeHintFeedbackSystemInfoData>(project, defaultLikeness) {
 
-  override val myShowFeedbackSystemInfoDialog: () -> Unit = {
+  override fun showFeedbackDialogInternal() {
+    val mySystemInfoData = computeSystemInfoDataInternal()
     showFeedbackSystemInfoDialog(project, mySystemInfoData.commonSystemInfo) {
       commonFeedbackData(mySystemInfoData.hintFeedbackInfo.hintFeedbackInfoData)
       row(EduAIHintsCoreBundle.message("hints.feedback.label.text.hint")) {
@@ -34,8 +35,8 @@ class CodeHintFeedbackDialog(
     }
   }
 
-  override val mySystemInfoData: CodeHintFeedbackSystemInfoData by lazy {
-    CodeHintFeedbackSystemInfoData(
+  override fun computeSystemInfoDataInternal(): CodeHintFeedbackSystemInfoData {
+    return CodeHintFeedbackSystemInfoData(
       CommonFeedbackSystemData.getCurrentData(),
       CodeHintFeedbackInfoData.create(course, task, studentSolution, textHint, codeHint)
     )

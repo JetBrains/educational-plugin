@@ -24,7 +24,8 @@ class ErrorHintFeedbackDialog(
       .setPlaceholder(EduCoreBundle.message("ui.feedback.dialog.textarea.optional.label"))
   )
 
-  override val myShowFeedbackSystemInfoDialog: () -> Unit = {
+  override fun showFeedbackDialogInternal() {
+    val mySystemInfoData = computeSystemInfoDataInternal()
     showFeedbackSystemInfoDialog(project, mySystemInfoData.commonSystemInfo) {
       commonFeedbackData(mySystemInfoData.hintFeedbackInfo.hintFeedbackInfoData)
       row(EduAIHintsCoreBundle.message("hints.feedback.label.error.message")) {
@@ -33,8 +34,8 @@ class ErrorHintFeedbackDialog(
     }
   }
 
-  override val mySystemInfoData: ErrorHintFeedbackSystemInfoData by lazy {
-    ErrorHintFeedbackSystemInfoData(
+  override fun computeSystemInfoDataInternal(): ErrorHintFeedbackSystemInfoData {
+   return ErrorHintFeedbackSystemInfoData(
       CommonFeedbackSystemData.getCurrentData(),
       ErrorHintFeedbackInfoData.create(course, task, studentSolution, errorMessage)
     )

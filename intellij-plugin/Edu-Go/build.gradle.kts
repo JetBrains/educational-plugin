@@ -6,7 +6,11 @@ dependencies {
   intellijPlatform {
     intellijIde(ideaVersion)
 
-    intellijPlugins(goPlugin, intelliLangPlugin)
+    intellijPlugins(goPlugin)
+    if (!isAtLeast253) {
+      intellijPlugins(intelliLangPlugin)
+    }
+
     // Temporary workaround to make test work as expected
     // For some reason, the corresponding module is not loaded automatically
     if (isAtLeast252) {
