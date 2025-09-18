@@ -11,14 +11,10 @@ dependencies {
   }
 
   api(project(":edu-format"))
-  api(libs.edu.ai.format) {
-    excludeKotlinDeps()
-  }
+  api(libs.edu.ai.format)
   // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
   // and fails Kotlin compilation.
   // Let's provide necessary dependency during compilation to make it work
-  compileOnly(libs.kotlinx.serialization) {
-    excludeKotlinDeps()
-  }
-  testImplementationWithoutKotlin(libs.kotlinx.coroutine.test)
+  compileOnly(libs.kotlinx.serialization)
+  testImplementation(libs.kotlinx.coroutine.test)
 }

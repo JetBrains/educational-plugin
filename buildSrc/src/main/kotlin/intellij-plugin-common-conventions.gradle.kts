@@ -32,6 +32,28 @@ kotlin {
   }
 }
 
+configurations {
+  val configurations = listOf(api, implementation, compileOnly, testApi, testImplementation)
+  for (configuration in configurations) {
+    // The corresponding libs are already included into platform libs (sometimes in some specific form),
+    // so adding them again may break the plugin in runtime or tests
+    configuration {
+      // Kotlin stdlib
+      exclude(module = "kotlin-runtime")
+      exclude(module = "kotlin-reflect")
+      exclude(module = "kotlin-stdlib")
+      exclude(module = "kotlin-stdlib-common")
+      exclude(module = "kotlin-stdlib-jdk8")
+      exclude(module = "kotlin-stdlib-jdk7")
+      // Kotlin coroutines
+      exclude(module = "kotlinx-coroutines-core")
+      exclude(module = "kotlinx-coroutines-core-jvm")
+      exclude(module = "kotlinx-coroutines-jdk8")
+      exclude(module = "kotlinx-coroutines-slf4j")
+    }
+  }
+}
+
 // It's not possible to use version catalogs in convenrion plugin as usual,
 // so we have to get the catalog itself and libraries manually
 // See https://docs.gradle.org/current/userguide/version_catalogs.html#sec:buildsrc-version-catalog
@@ -40,22 +62,22 @@ val libs = the<VersionCatalogsExtension>().named("libs")
 // TODO: move dependencies into particular module `build.gradle.kts`.
 //  Most modules don't need all (or even any) these dependencies
 dependencies {
-  implementationWithoutKotlin(libs.findLibrary("jsoup").get())
-  implementationWithoutKotlin(libs.findLibrary("jackson.dataformat.yaml").get())
-  implementationWithoutKotlin(libs.findLibrary("jackson.datatype.jsr310").get())
-  implementationWithoutKotlin(libs.findLibrary("jackson.module.kotlin").get())
-  implementationWithoutKotlin(libs.findLibrary("okhttp").get())
-  implementationWithoutKotlin(libs.findLibrary("logging.interceptor").get())
-  implementationWithoutKotlin(libs.findLibrary("retrofit").get())
-  implementationWithoutKotlin(libs.findLibrary("converter.jackson").get())
-  implementationWithoutKotlin(libs.findLibrary("kotlin.css.jvm").get())
-  
+  implementation(libs.findLibrary("jsoup").get())
+  implementation(libs.findLibrary("jackson.dataformat.yaml").get())
+  implementation(libs.findLibrary("jackson.datatype.jsr310").get())
+  implementation(libs.findLibrary("jackson.module.kotlin").get())
+  implementation(libs.findLibrary("okhttp").get())
+  implementation(libs.findLibrary("logging.interceptor").get())
+  implementation(libs.findLibrary("retrofit").get())
+  implementation(libs.findLibrary("converter.jackson").get())
+  implementation(libs.findLibrary("kotlin.css.jvm").get())
+
   testImplementation(libs.findLibrary("junit").get())
   testImplementation(libs.findLibrary("openTest4J").get())
   testImplementation(libs.findLibrary("classgraph").get())
-  testImplementationWithoutKotlin(libs.findLibrary("kotlin.test.junit").get())
-  testImplementationWithoutKotlin(libs.findLibrary("mockwebserver").get())
-  testImplementationWithoutKotlin(libs.findLibrary("mockk").get())
+  testImplementation(libs.findLibrary("kotlin.test.junit").get())
+  testImplementation(libs.findLibrary("mockwebserver").get())
+  testImplementation(libs.findLibrary("mockk").get())
 }
 
 tasks {

@@ -10,9 +10,7 @@ dependencies {
 
   implementation(project(":intellij-plugin:educational-core"))
 
-  compileOnly(libs.kotlinx.serialization) {
-    excludeKotlinDeps()
-  }
+  compileOnly(libs.kotlinx.serialization)
 
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 }

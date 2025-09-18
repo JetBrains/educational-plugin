@@ -9,8 +9,8 @@ dependencies {
   }
 
   implementation(project(":intellij-plugin:educational-core"))
-  implementationWithoutKotlin(libs.clikt.core)
+  implementation(libs.clikt.core)
 
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  testImplementationWithoutKotlin(libs.kotlinx.coroutine.test)
+  testImplementation(libs.kotlinx.coroutine.test)
 }

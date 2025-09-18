@@ -10,12 +10,12 @@ java {
 dependencies {
   compileOnly(libs.kotlin.stdlib)
   compileOnly(libs.annotations)
-  implementationWithoutKotlin(libs.jackson.module.kotlin)
-  implementationWithoutKotlin(libs.jackson.dataformat.yaml)
-  implementationWithoutKotlin(libs.jackson.datatype.jsr310)
-  implementationWithoutKotlin(libs.retrofit)
-  implementationWithoutKotlin(libs.converter.jackson)
-  implementationWithoutKotlin(libs.logging.interceptor)
+  implementation(libs.jackson.module.kotlin)
+  implementation(libs.jackson.dataformat.yaml)
+  implementation(libs.jackson.datatype.jsr310)
+  implementation(libs.retrofit)
+  implementation(libs.converter.jackson)
+  implementation(libs.logging.interceptor)
 }
 
 // Workaround to help java to find `module-info.java` file.

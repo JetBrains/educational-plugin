@@ -8,12 +8,10 @@ dependencies {
   }
 
   api(libs.educational.ml.library.core) {
-    excludeKotlinDeps()
     excludeKotlinSerializationDeps()
     exclude(group = "net.java.dev.jna")
   }
   api(libs.educational.ml.library.test.generation) {
-    excludeKotlinDeps()
     excludeKotlinSerializationDeps()
     exclude(group = "net.java.dev.jna")
   }
