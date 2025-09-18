@@ -46,6 +46,7 @@ configurations {
       exclude(module = "kotlin-stdlib-jdk8")
       exclude(module = "kotlin-stdlib-jdk7")
       // Kotlin coroutines
+      exclude(module = "kotlinx-coroutines-bom")
       exclude(module = "kotlinx-coroutines-core")
       exclude(module = "kotlinx-coroutines-core-jvm")
       exclude(module = "kotlinx-coroutines-jdk8")
