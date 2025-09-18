@@ -531,7 +531,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
    * it creates task file with `fun foo() = TODO()` text and placeholder with `TODO()` as placeholder text.
    */
   fun taskFile(
-    name: String, contents: FileContents = UndeterminedContents.EMPTY,
+    name: String, contents: FileContents = TextualContents.EMPTY,
     visible: Boolean? = null,
     editable: Boolean? = true,
     propagatable: Boolean? = null,

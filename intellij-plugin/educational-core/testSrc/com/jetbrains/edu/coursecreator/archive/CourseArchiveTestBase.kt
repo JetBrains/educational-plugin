@@ -47,7 +47,8 @@ abstract class CourseArchiveTestBase : EduActionTestCase() {
 
   protected fun createCourseArchiveAndCheck(course: Course, cipher: Cipher = NoOpCipher()): CourseArchiveContent {
     return createCourseArchive(course, cipher).onError { error ->
-      kotlin.test.fail("Course creation failed with error: (${error.javaClass}) ${error.message}")
+      val exception = (error as? ExceptionCourseArchiveError<*>)?.exception
+      kotlin.test.fail("Course creation failed with error: (${error.javaClass}) ${error.message}", exception)
     }
   }
 
