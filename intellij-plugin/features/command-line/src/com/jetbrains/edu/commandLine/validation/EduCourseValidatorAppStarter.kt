@@ -1,6 +1,11 @@
 package com.jetbrains.edu.commandLine.validation
 
+import com.github.ajalt.clikt.parameters.groups.default
+import com.github.ajalt.clikt.parameters.groups.mutuallyExclusiveOptions
+import com.github.ajalt.clikt.parameters.groups.single
+import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.boolean
 import com.github.ajalt.clikt.parameters.types.choice
@@ -12,6 +17,8 @@ import com.jetbrains.edu.coursecreator.validation.CourseValidationHelper
 import com.jetbrains.edu.coursecreator.validation.ValidationParams
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Adds `validateCourse` command for IDE to validate given course and report potential errors
@@ -39,6 +46,11 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
     .choice(OutputFormat.values().associateBy { it.name.lowercase() })
     .default(OutputFormat.TEAMCITY)
 
+  val outputType: OutputType by mutuallyExclusiveOptions(
+    option("--output", help = "Print output to a file").convert { OutputType.File(Paths.get(it)) },
+    option("--stdout", help = "Print output to stdout").flag().convert { if (it) OutputType.Stdout else null }
+  ).single().default(OutputType.Stdout)
+
   override val courseMode: CourseMode
     get() = CourseMode.EDUCATOR
 
@@ -46,12 +58,19 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
     val params = ValidationParams(validateTests, validateLinks)
     val result = CourseValidationHelper(params).validate(project, course)
 
-    val outputConsumer = StdoutValidationOutputConsumer()
+    val outputConsumer = when (val outputType = outputType) {
+      is OutputType.File -> FileValidationOutputConsumer(outputType.path)
+      OutputType.Stdout -> StdoutValidationOutputConsumer()
+    }
+
     val resultConsumer = when (outputFormat) {
       OutputFormat.JSON -> JsonValidationResultConsumer(outputConsumer)
       OutputFormat.TEAMCITY -> TeamCityValidationResultConsumer(outputConsumer)
     }
-    resultConsumer.consume(result)
+
+    outputConsumer.use {
+      resultConsumer.consume(result)
+    }
 
     return if (result.isFailed) CommandResult.Error("Some tasks haven't finished successfully") else CommandResult.Ok
   }
@@ -62,6 +81,11 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
 
     const val VALIDATE_TEST_BY_DEFAULT = false
     const val VALIDATE_LINK_BY_DEFAULT = true
+  }
+
+  sealed class OutputType {
+    data object Stdout : OutputType()
+    data class File(val path: Path) : OutputType()
   }
 
   enum class OutputFormat {

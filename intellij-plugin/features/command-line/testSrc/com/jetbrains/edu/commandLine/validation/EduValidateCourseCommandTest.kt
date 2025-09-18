@@ -36,6 +36,8 @@ class EduValidateCourseCommandTest(
               --tests=true|false                                Enables/disables test validation (default: false)
               --links=true|false                                Enables/disables task description link validation (default: true)
               --output-format=(json|teamcity)                   Output format of validation report (default: TEAMCITY)
+              --output=<value>                                  Print output to a file
+              --stdout                                          Print output to stdout
               -h, --help                                        Show this message and exit
           """
         ),

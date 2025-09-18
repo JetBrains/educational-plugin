@@ -9,4 +9,6 @@ class InMemoryValidationOutputConsumer : ValidationOutputConsumer {
   }
 
   fun output(): String = validationOutput.toString()
+
+  override fun close() {}
 }
