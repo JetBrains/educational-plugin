@@ -163,17 +163,17 @@ object PyFunctionDiffReducer : FunctionDiffReducer {
     val project = currentPyStatementPart.project
     if (currentPyStatementPart.compareNormalized(codeHintPyStatementPart)) return false
 
-    return when {
-      currentPyStatementPart is PyConditionalStatementPart && codeHintPyStatementPart is PyConditionalStatementPart -> {
+    return when (currentPyStatementPart) {
+      is PyConditionalStatementPart if codeHintPyStatementPart is PyConditionalStatementPart -> {
         currentPyStatementPart.condition.deleteOrSwapWith(project, codeHintPyStatementPart.condition)
         || unifyStatementLists(currentPyStatementPart, codeHintPyStatementPart)
       }
 
-      currentPyStatementPart is PyElsePart && codeHintPyStatementPart is PyElsePart -> {
+      is PyElsePart if codeHintPyStatementPart is PyElsePart -> {
         unifyStatementLists(currentPyStatementPart, codeHintPyStatementPart)
       }
 
-      currentPyStatementPart is PyForPart && codeHintPyStatementPart is PyForPart -> {
+      is PyForPart if codeHintPyStatementPart is PyForPart -> {
         currentPyStatementPart.target.deleteOrSwapWith(project, codeHintPyStatementPart.target)
         || currentPyStatementPart.source.deleteOrSwapWith(project, codeHintPyStatementPart.source)
         || unifyStatementLists(currentPyStatementPart, codeHintPyStatementPart)

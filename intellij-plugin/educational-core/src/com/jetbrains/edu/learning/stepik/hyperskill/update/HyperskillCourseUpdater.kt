@@ -147,21 +147,21 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
                  first.name != second.name
     if (result) return true
 
-    return when {
-      first is UnsupportedTask && second !is UnsupportedTask -> true
-      first is ChoiceTask && second is ChoiceTask -> {
+    return when (first) {
+      is UnsupportedTask if second !is UnsupportedTask -> true
+      is ChoiceTask if second is ChoiceTask -> {
         first.choiceOptions != second.choiceOptions
       }
-      first is SortingTask && second is SortingTask -> {
+      is SortingTask if second is SortingTask -> {
         first.options != second.options
       }
-      first is MatchingTask && second is MatchingTask -> {
+      is MatchingTask if second is MatchingTask -> {
         (first.options != second.options) || (first.captions != second.captions)
       }
-      first is TableTask && second is TableTask -> {
+      is TableTask if second is TableTask -> {
         (first.rows != second.rows) || (first.columns != second.columns) || (first.isMultipleChoice != second.isMultipleChoice)
       }
-      first is RemoteEduTask && second is RemoteEduTask -> {
+      is RemoteEduTask if second is RemoteEduTask -> {
         first.checkProfile != second.checkProfile
       }
       else -> false

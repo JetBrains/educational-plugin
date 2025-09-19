@@ -45,9 +45,9 @@ abstract class CourseUpdate<T : Course>(
   companion object {
     private val LOG: Logger = Logger.getInstance(CourseUpdate::class.java)
 
-    fun <T : Course> get(localCourse: T, remoteCourse: T): CourseUpdate<out Course> = when {
-      localCourse is EduCourse && remoteCourse is EduCourse -> MarketplaceCourseUpdate(localCourse, remoteCourse)
-      localCourse is HyperskillCourse && remoteCourse is HyperskillCourse -> HyperskillCourseUpdate(localCourse, remoteCourse)
+    fun <T : Course> get(localCourse: T, remoteCourse: T): CourseUpdate<out Course> = when (localCourse) {
+      is EduCourse if remoteCourse is EduCourse -> MarketplaceCourseUpdate(localCourse, remoteCourse)
+      is HyperskillCourse if remoteCourse is HyperskillCourse -> HyperskillCourseUpdate(localCourse, remoteCourse)
       else -> error("Unsupported course types: local=${localCourse::class.simpleName}, remote=${remoteCourse::class.simpleName}")
     }
   }

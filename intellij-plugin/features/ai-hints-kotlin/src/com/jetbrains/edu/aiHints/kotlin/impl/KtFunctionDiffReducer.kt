@@ -153,29 +153,29 @@ object KtFunctionDiffReducer : FunctionDiffReducer {
     val size = second.text?.lines()?.size ?: error("Cannot get the body size of $second")
     if (size > MAX_BODY_LINES_IN_SHORT_FUNCTION || downsize) {
       // Find which element of the expression in `second` has changed from `first` first from top to bottom and add this change to `first`
-      return when {
+      return when (first) {
         // Change the function parameters or body
-        first is KtNamedFunction && second is KtNamedFunction ->
+        is KtNamedFunction if second is KtNamedFunction ->
           swapSmallElements(first.valueParameterList, second.valueParameterList, project) ||
           swapSmallElements(first.typeReference, second.typeReference, project) ||
           resolveMultilineMismatch(first.bodyExpression, second.bodyExpression, project)
         // Change condition or body
-        first is KtWhileExpressionBase && second is KtWhileExpressionBase ->
+        is KtWhileExpressionBase if second is KtWhileExpressionBase ->
           swapSmallElements(first.condition, second.condition, project) ||
           resolveMultilineMismatch(first.body, second.body, project)
         // Change loopRange or loopParameter or body
-        first is KtForExpression && second is KtForExpression ->
+        is KtForExpression if second is KtForExpression ->
           swapSmallElements(first.loopRange, second.loopRange, project) ||
           swapSmallElements(first.loopParameter, second.loopParameter, project) ||
           resolveMultilineMismatch(first.body, second.body, project)
         // Change condition or then or else
-        first is KtIfExpression && second is KtIfExpression ->
+        is KtIfExpression if second is KtIfExpression ->
           swapSmallElements(first.condition, second.condition, project) ||
           resolveMultilineMismatch(first.then, second.then, project) ||
           swapSmallElements(first.`else`, second.`else`, project) ||
           addElseBlock(first.then, second.`else`, second.elseKeyword, project)
         // Change subjectExpression or entries
-        first is KtWhenExpression && second is KtWhenExpression ->
+        is KtWhenExpression if second is KtWhenExpression ->
           swapSmallElements(first.subjectExpression, second.subjectExpression, project) ||
           compareAndAmendChildren(
             first.entries.toTypedArray(),
@@ -185,30 +185,30 @@ object KtFunctionDiffReducer : FunctionDiffReducer {
             needLineBreak = false
           )
         // Move on to comparing the returned expressions
-        first is KtReturnExpression && second is KtReturnExpression ->
+        is KtReturnExpression if second is KtReturnExpression ->
           swapSmallElements(first.returnedExpression, second.returnedExpression, project)
         // Move on to comparing the body of lambda expression
-        first is KtLambdaArgument && second is KtLambdaArgument ->
+        is KtLambdaArgument if second is KtLambdaArgument ->
           compareAndAmendChildren(
             first.getLambdaExpression()?.bodyExpression?.children ?: emptyArray(),
             second.getLambdaExpression()?.bodyExpression?.children ?: emptyArray(),
             project,
             first.getLambdaExpression()?.let {
               it.functionLiteral.node.findChildByType(KtTokens.ARROW)?.psi ?: it.leftCurlyBrace.psi
-                                             },
+            },
             needLineBreak = false
           )
         // Move on to compare the children of the dot qualified expression
-        first is KtDotQualifiedExpression && second is KtDotQualifiedExpression ->
+        is KtDotQualifiedExpression if second is KtDotQualifiedExpression ->
           resolveMultilineMismatch(first, second, project)
         // Move on to compare the children of the call expression
-        first is KtCallExpression && second is KtCallExpression ->
+        is KtCallExpression if second is KtCallExpression ->
           resolveMultilineMismatch(first, second, project)
         // Change the name of the expression
-        first is KtNameReferenceExpression && second is KtNameReferenceExpression ->
+        is KtNameReferenceExpression if second is KtNameReferenceExpression ->
           swapSmallElements(first, second, project)
         // Change typeReference or initializer
-        first is KtProperty && second is KtProperty ->
+        is KtProperty if second is KtProperty ->
           swapSmallElements(first.typeReference, second.typeReference, project) ||
           swapSmallElements(first.initializer, second.initializer, project)
         else -> false

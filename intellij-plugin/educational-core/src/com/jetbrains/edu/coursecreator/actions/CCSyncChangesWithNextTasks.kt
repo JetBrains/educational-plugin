@@ -44,11 +44,11 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
     }
 
     val context = parseSelectedItems(project, e) ?: return
-    val (actionText, actionDescription) = when {
-      context is LessonContext -> {
+    val (actionText, actionDescription) = when (context) {
+      is LessonContext -> {
         EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.Lesson.description")
       }
-      context is TaskFilesContext && context.files.size == 1 -> {
+      is TaskFilesContext if context.files.size == 1 -> {
         EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.text") to EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.SingleFile.description")
       }
       else -> {
@@ -74,11 +74,9 @@ class CCSyncChangesWithNextTasks : DumbAwareAction() {
     return when {
       studyItems.isNotEmpty() && otherFiles.isNotEmpty() -> null
       studyItems.isNotEmpty() -> {
-        val studyItem = selectedItems.singleOrNull()?.getStudyItem(project)
-
-        when {
-          studyItem is FrameworkLesson -> LessonContext(studyItem)
-          studyItem is Task && studyItem.parent is FrameworkLesson -> TaskContext(studyItem)
+        when (val studyItem = selectedItems.singleOrNull()?.getStudyItem(project)) {
+          is FrameworkLesson -> LessonContext(studyItem)
+          is Task if studyItem.parent is FrameworkLesson -> TaskContext(studyItem)
           else -> null
         }
       }

@@ -176,9 +176,9 @@ class LearningObjectsStorageManager(private val project: Project) : DumbAware, D
   }
 
   private fun isSameContents(c1: FileContents, c2: FileContents): Boolean {
-    return when {
-      c1 is TextualContents && c2 is TextualContents -> c1.text == c2.text
-      c1 is BinaryContents && c2 is BinaryContents -> c1.bytes.contentEquals(c2.bytes)
+    return when (c1) {
+      is TextualContents if c2 is TextualContents -> c1.text == c2.text
+      is BinaryContents if c2 is BinaryContents -> c1.bytes.contentEquals(c2.bytes)
       else -> false
     }
   }

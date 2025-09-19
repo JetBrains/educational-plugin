@@ -27,19 +27,19 @@ object UpdateUtils {
     task.descriptionFormat = remoteTask.descriptionFormat
     task.feedbackLink = remoteTask.feedbackLink
 
-    when {
-      task is ChoiceTask && remoteTask is ChoiceTask -> {
+    when (task) {
+      is ChoiceTask if remoteTask is ChoiceTask -> {
         task.choiceOptions = remoteTask.choiceOptions
         task.isMultipleChoice = remoteTask.isMultipleChoice
       }
-      task is SortingTask && remoteTask is SortingTask -> {
+      is SortingTask if remoteTask is SortingTask -> {
         task.options = remoteTask.options
       }
-      task is MatchingTask && remoteTask is MatchingTask -> {
+      is MatchingTask if remoteTask is MatchingTask -> {
         task.captions = remoteTask.captions
         task.options = remoteTask.options
       }
-      task is TableTask && remoteTask is TableTask -> {
+      is TableTask if remoteTask is TableTask -> {
         task.createTable(remoteTask.rows, remoteTask.columns, remoteTask.isMultipleChoice)
       }
     }

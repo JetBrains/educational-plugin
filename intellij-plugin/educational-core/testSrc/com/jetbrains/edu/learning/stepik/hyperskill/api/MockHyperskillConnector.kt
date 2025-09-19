@@ -70,10 +70,10 @@ class MockHyperskillConnector : HyperskillConnector(), MockStepikBasedConnector 
     withResponseHandler(disposable) { request, _ ->
       val path = request.pathWithoutPrams
       MockResponseFactory.fromString(
-        when {
-          path == "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
-          path == "/api/stages" && request.hasParams("project" to projectId.toString()) -> getStagesList(course.stages)
-          path ==  "/api/steps" && request.hasParams("ids" to course.stages.map { it.stepId }.joinToString(separator = ","))-> stepSources(course.allTasks)
+        when (path) {
+          "/api/projects/$projectId" -> objectMapper.writeValueAsString(ProjectsList().also { it.projects = listOf(hyperskillProject) })
+          "/api/stages" if request.hasParams("project" to projectId.toString()) -> getStagesList(course.stages)
+          "/api/steps" if request.hasParams("ids" to course.stages.map { it.stepId }.joinToString(separator = ",")) -> stepSources(course.allTasks)
           else -> return@withResponseHandler null
         }
       )
