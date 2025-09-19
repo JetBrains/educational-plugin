@@ -23,21 +23,21 @@ enum class ArchiveInclusionPolicy {
   EXCLUDED_BY_DEFAULT,
 
   /**
-   * The author decides whether the file is needed in the archive; no warnings and errors are supposed.
-   * Such files are automatically added to the archive when they are created on disk.
+   * The file is included to the course archive by default.
+   * It is added to the archive if it is created on disk, but it can be excluded manually by a user.
    * No warning is supposed if this file is either listed or not listed as additional.
    */
-  AUTHOR_DECISION,
+  INCLUDED_BY_DEFAULT,
 
   /**
    * These files are included by default because they are most likely important for the course.
    * For example, files that describe the project (`package.json`, `build.sbt`, etc.) are important, and they will almost
    * always be regenerated on the learner side.
    * But it is better to anyway put them to the archive not to rely on the regeneration.
-   * If the file with the [INCLUDED_BY_DEFAULT] value is not listed as additional, it will not be added to the archive.
+   * If the file with the [SHOULD_BE_INCLUDED] value is not listed as additional, it will not be added to the archive.
    * The warning is supposed if this file is not listed as additional, see EDU-8399.
    */
-  INCLUDED_BY_DEFAULT
+  SHOULD_BE_INCLUDED
 }
 
 /**
@@ -79,7 +79,7 @@ data class CourseFileAttributes(
   val excludedFromArchive : Boolean,
 
   /**
-   * See [ArchiveInclusionPolicy]. The default value is [ArchiveInclusionPolicy.AUTHOR_DECISION]
+   * See [ArchiveInclusionPolicy]. The default value is [ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT]
    */
   val archiveInclusionPolicy: ArchiveInclusionPolicy,
 

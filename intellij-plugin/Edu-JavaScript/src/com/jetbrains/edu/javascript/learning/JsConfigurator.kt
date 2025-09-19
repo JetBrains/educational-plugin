@@ -41,7 +41,7 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     file(NodeModuleNamesUtil.PACKAGE_JSON) {
-      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+      archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
 
     dirAndChildren(NodeModuleNamesUtil.MODULES) {

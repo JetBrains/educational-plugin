@@ -48,7 +48,7 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
     }
 
     file(ComposerUtils.CONFIG_DEFAULT_FILENAME) {
-      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+      archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
 
     file(ComposerUtils.COMPOSER_PHAR_NAME) {

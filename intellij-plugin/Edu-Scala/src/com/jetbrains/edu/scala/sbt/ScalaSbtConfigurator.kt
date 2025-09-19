@@ -60,12 +60,12 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
     }
 
     file(BUILD_SBT) {
-      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+      archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
 
     dir(Sbt.ProjectDirectory()) {
       file(Sbt.PropertiesFile(), direct = true) {
-        archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+        archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
       }
     }
   }

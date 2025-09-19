@@ -26,7 +26,7 @@ class JsFileAttributesTest(
       )
       val expectedAttributesForPackageLock = expected(
         excludedFromArchive = true,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
       )
 
       return FileAttributesTest.data() + listOf(

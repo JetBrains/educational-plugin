@@ -14,7 +14,7 @@ abstract class GradleFileAttributesTest(
     fun data(): Collection<Array<Any>> {
       val inArchive = expected(
         excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.SHOULD_BE_INCLUDED,
         visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val outsideArchive = expected(

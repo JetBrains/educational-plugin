@@ -336,7 +336,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       val childFile = createChildFile(holder, holder.courseDir, file.name, file.contents) ?: continue
 
       val archiveInclusionPolicy = configurator.courseFileAttributes(holder, childFile).archiveInclusionPolicy
-      if (archiveInclusionPolicy >= ArchiveInclusionPolicy.AUTHOR_DECISION) {
+      if (archiveInclusionPolicy >= ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT) {
         addAdditionalFile(file)
       }
     }

@@ -9,6 +9,6 @@ internal class CourseFileAttributesMutable {
     CourseFileAttributes(excludedFromArchive, inclusionPolicy, visibility)
 
   var excludedFromArchive: Boolean = false
-  var inclusionPolicy: ArchiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION
+  var inclusionPolicy: ArchiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
   var visibility: CourseViewVisibility = CourseViewVisibility.AUTHOR_DECISION
 }

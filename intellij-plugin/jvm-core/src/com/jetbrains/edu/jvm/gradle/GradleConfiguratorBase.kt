@@ -26,7 +26,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     file(BUILD_GRADLE, SETTINGS_GRADLE, GRADLE_PROPERTIES, GradleConstants.KOTLIN_DSL_SCRIPT_NAME, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) {
       includeIntoArchive()
-      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+      archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
 
     dirAndChildren(*FOLDERS_TO_EXCLUDE) {
