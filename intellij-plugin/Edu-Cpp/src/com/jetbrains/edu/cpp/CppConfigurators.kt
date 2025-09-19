@@ -72,7 +72,7 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
     }
 
     file(CMakeListsFileType.FILE_NAME, direct = true) {
-      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+      archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
 
     dir(CMAKE_DIRECTORY, direct = true) {
@@ -83,7 +83,7 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
         CMAKE_CATCH,
         direct = true
       ) {
-        archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+        archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
       }
     }
   }

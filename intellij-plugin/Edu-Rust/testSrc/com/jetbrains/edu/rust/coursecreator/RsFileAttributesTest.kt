@@ -21,7 +21,7 @@ class RsFileAttributesTest(
     fun data(): Collection<Array<Any>> {
       val insideArchive = expected(
         excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
+        archiveInclusionPolicy = ArchiveInclusionPolicy.SHOULD_BE_INCLUDED
       )
 
       return FileAttributesTest.data() + listOf(
@@ -31,11 +31,11 @@ class RsFileAttributesTest(
 
         arrayOf(
           ".cargo/other-file",
-          expected(excludedFromArchive = true, archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+          expected(excludedFromArchive = true, archiveInclusionPolicy = ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
         ),
         arrayOf(
           "Cargo.toml",
-          expected(excludedFromArchive = false, archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+          expected(excludedFromArchive = false, archiveInclusionPolicy = ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
         ),
       )
     }

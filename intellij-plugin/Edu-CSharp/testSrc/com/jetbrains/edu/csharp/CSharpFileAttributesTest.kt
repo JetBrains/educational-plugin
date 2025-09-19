@@ -38,7 +38,7 @@ class CSharpFileAttributesTest(
       val notInArchiveAndExcluded = notInArchive.copy(excludedFromArchive = true)
       val visible = expected(
         excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT,
         visibility = CourseViewVisibility.VISIBLE_FOR_STUDENT
       )
 

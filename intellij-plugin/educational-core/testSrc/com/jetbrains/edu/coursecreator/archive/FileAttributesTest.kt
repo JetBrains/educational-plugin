@@ -85,7 +85,7 @@ open class FileAttributesTest(
       )
       val normal = expected(
         excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.AUTHOR_DECISION,
+        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT,
         visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val excludedAndInvisible = excluded.copy(visibility = CourseViewVisibility.INVISIBLE_FOR_ALL)

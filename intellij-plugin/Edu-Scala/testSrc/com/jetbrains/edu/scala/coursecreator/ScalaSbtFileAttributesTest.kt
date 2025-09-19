@@ -28,7 +28,7 @@ class ScalaSbtFileAttributesTest(
       val included = expected(
         excludedFromArchive = false,
         visibility = CourseViewVisibility.AUTHOR_DECISION,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
+        archiveInclusionPolicy = ArchiveInclusionPolicy.SHOULD_BE_INCLUDED
       )
 
       return FileAttributesTest.data() + listOf(

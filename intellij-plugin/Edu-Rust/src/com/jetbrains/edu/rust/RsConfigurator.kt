@@ -43,7 +43,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     dir(".cargo", direct = true) {
       name(CargoConstants.CONFIG_TOML_FILE, CargoConstants.CONFIG_FILE, direct = true) {
         includeIntoArchive()
-        archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+        archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
       }
       includeIntoArchive()
     }
@@ -58,7 +58,7 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
     }
 
     file("Cargo.toml") {
-      archiveInclusionPolicy(ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT)
+      archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
   }
 
