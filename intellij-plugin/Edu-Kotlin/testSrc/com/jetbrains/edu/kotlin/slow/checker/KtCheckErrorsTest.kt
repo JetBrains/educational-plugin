@@ -138,13 +138,13 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
         """)
       }
       eduTask("objectComparisonTestFail") {
-        kotlinTaskFile("src/Task.kt", """
+        kotlinTaskFile("src/Task.kt", $$"""
           data class Foo(val x: Int, val y: Int) {
-              override fun toString(): String = "(${'$'}x, ${'$'}y)"
+              override fun toString(): String = "($x, $y)"
           }
 
           data class Bar(val x: Int, val y: Int) {
-              override fun toString(): String = "(${'$'}x, ${'$'}y)"
+              override fun toString(): String = "($x, $y)"
           }
         """)
         kotlinTaskFile("test/Tests.kt", """
@@ -194,7 +194,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
           }
         """)
         dir("runConfigurations") {
-          xmlTaskFile("CustomGradleCheck.run.xml", """
+          xmlTaskFile("CustomGradleCheck.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomGradleCheck" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -204,7 +204,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
                     </map>
                   </option>                
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="" />
                   <option name="taskDescriptions">
@@ -212,7 +212,7 @@ class KtCheckErrorsTest : JdkCheckerTestBase() {
                   </option>
                   <option name="taskNames">
                     <list>
-                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:test" />
+                      <option value=":$TASK_GRADLE_PROJECT$:test" />
                       <option value="--tests" />
                       <option value="&quot;Tests.testSolution&quot;" />
                     </list>

@@ -473,7 +473,7 @@ object GeneratorUtils {
   }
 
   private val GRADLE_INVALID_SYMBOLS = "[ /\\\\:<>\"?*|()]".toRegex()
-  private val LEADING_AND_TRAILING_DOTS = "(^[.]+)|([.]+\$)".toRegex()
+  private val LEADING_AND_TRAILING_DOTS = "(^[.]+)|([.]+$)".toRegex()
 
   // Should be the same as `sanitizeName` in `resources/fileTemplates/internal/settings.gradle.ft`
   /**

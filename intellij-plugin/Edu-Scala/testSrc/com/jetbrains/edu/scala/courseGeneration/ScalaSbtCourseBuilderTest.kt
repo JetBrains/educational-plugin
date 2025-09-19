@@ -69,8 +69,8 @@ class ScalaSbtCourseBuilderTest : JvmCourseGenerationTestBase() {
   @Test
   fun `test study course additional files`() {
     val course = course(language = ScalaLanguage.INSTANCE, environment = "sbt") {
-      additionalFile("build.sbt", "template example: \$PROJECT_NAME")
-      additionalFile("project/build.properties", "template example: \$PROJECT_NAME")
+      additionalFile("build.sbt", $$"template example: $PROJECT_NAME")
+      additionalFile("project/build.properties", $$"template example: $PROJECT_NAME")
       additionalFile("extra.file", "not changed")
     }
     createCourseStructure(course)

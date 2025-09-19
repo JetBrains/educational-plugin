@@ -47,18 +47,18 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
             module theorywithcustomrunconfiguration
           """)
           dir("runConfigurations") {
-            xmlTaskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="GoApplicationRunConfiguration" factoryName="Go Application">
                   <module name="Go Course" />
-                  <working_directory value="${'$'}TASK_DIR${'$'}" />
+                  <working_directory value="$TASK_DIR$" />
                   <envs>
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
                   <kind value="PACKAGE" />
-                  <filePath value="${'$'}TASK_DIR${'$'}/main.go" />
+                  <filePath value="$TASK_DIR$/main.go" />
                   <package value="theorywithcustomrunconfiguration" />
-                  <directory value="${'$'}PROJECT_DIR${'$'}" />
+                  <directory value="$PROJECT_DIR$" />
                   <method v="2" />
                 </configuration>
               </component>              
@@ -84,18 +84,18 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
             module task
           """)
           dir("runConfigurations") {
-            xmlTaskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun1" type="GoApplicationRunConfiguration" factoryName="Go Application">
                   <module name="Go Course" />
-                  <working_directory value="${'$'}TASK_DIR${'$'}" />
+                  <working_directory value="$TASK_DIR$" />
                   <envs>
                     <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory1!" />
                   </envs>
                   <kind value="PACKAGE" />
                   <package value="task" />
-                  <directory value="${'$'}PROJECT_DIR${'$'}" />
-                  <filePath value="${'$'}TASK_DIR${'$'}/main.go" />
+                  <directory value="$PROJECT_DIR$" />
+                  <filePath value="$TASK_DIR$/main.go" />
                   <method v="2" />
                 </configuration>
               </component>             
@@ -119,18 +119,18 @@ class GoTheoryCheckerTest : GoCheckersTestBase() {
             module task
           """)
           dir("runConfigurations") {
-            xmlTaskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun2" type="GoApplicationRunConfiguration" factoryName="Go Application">
                   <module name="Go Course" />
-                  <working_directory value="${'$'}TASK_DIR${'$'}" />
+                  <working_directory value="$TASK_DIR$" />
                   <envs>
                     <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory2!" />
                   </envs>
                   <kind value="PACKAGE" />
                   <package value="task" />
-                  <directory value="${'$'}PROJECT_DIR${'$'}" />
-                  <filePath value="${'$'}TASK_DIR${'$'}/main.go" />
+                  <directory value="$PROJECT_DIR$" />
+                  <filePath value="$TASK_DIR$/main.go" />
                   <method v="2" />
                 </configuration>
               </component>             

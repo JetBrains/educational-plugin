@@ -29,7 +29,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
             }
           """)
           // Need to verify that the plugin doesn't touch non-related run configuration files
-          xmlTaskFile("CustomGradleRun.run.xml", """
+          xmlTaskFile("CustomGradleRun.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomCustomGradleRun" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -39,7 +39,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -60,7 +60,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
             </component>            
           """)
           dir("runConfigurations") {
-            xmlTaskFile("CustomGradleRun.run.xml", """
+            xmlTaskFile("CustomGradleRun.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomGradleRun" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -70,7 +70,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">

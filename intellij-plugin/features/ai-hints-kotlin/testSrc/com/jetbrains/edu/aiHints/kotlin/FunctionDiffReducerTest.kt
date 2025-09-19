@@ -52,12 +52,12 @@ class FunctionDiffReducerTest : EduTestCase() {
       $greetFunction
       $mainFunction
     """.trimIndent()
-    val codeHint = """
-      fun greet(name: String, age: String) = "Hello, \${'$'}\{name\}\${'$'}\{age\}!"
-      $mainFunction
+    val codeHint = $$"""
+      fun greet(name: String, age: String) = "Hello, ${name}${age}!"
+      $$mainFunction
     """.trimIndent()
-    val greetFunctionWithNewArgumentAndUnchangedBody = """
-      fun greet(name: String, age: String) = "Hello, \${'$'}\{name\}!"
+    val greetFunctionWithNewArgumentAndUnchangedBody = $$"""
+      fun greet(name: String, age: String) = "Hello, ${name}!"
     """.trimIndent()
     reduceChangesInCodeHint(codeStr, codeHint, greetFunctionWithNewArgumentAndUnchangedBody, GREET_FUNCTION_NAME)
   }
@@ -231,11 +231,11 @@ class FunctionDiffReducerTest : EduTestCase() {
       $greetFunction
       $mainFunctionWithWhileStatementWithOneLineBody
     """.trimIndent()
-    val mainFunctionWithWhileStatementWithTwoLinesBody = """
+    val mainFunctionWithWhileStatementWithTwoLinesBody = $$"""
       fun main() {
         var complete: Boolean
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
         } while (!complete)
       }
@@ -250,12 +250,12 @@ class FunctionDiffReducerTest : EduTestCase() {
    */
   @Test
   fun `test changing while condition in CodeHint`() {
-    val codeStr = """
-      $greetFunction
+    val codeStr = $$"""
+      $$greetFunction
       fun main() {
         var complete: Boolean
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
         } while (complete)
       }
     """.trimIndent()
@@ -269,13 +269,13 @@ class FunctionDiffReducerTest : EduTestCase() {
    */
   @Test
   fun `test if condition addition to while in CodeHint`() {
-    val codeStr = """
-      $greetFunction
+    val codeStr = $$"""
+      $$greetFunction
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
@@ -307,13 +307,13 @@ class FunctionDiffReducerTest : EduTestCase() {
    */
   @Test
   fun `test if condition change in while in CodeHint`() {
-    val codeStr = """
-      $greetFunction
+    val codeStr = $$"""
+      $$greetFunction
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
@@ -351,18 +351,18 @@ class FunctionDiffReducerTest : EduTestCase() {
       $greetFunction
       $mainFunctionWithIfStatementWithTwoLinesBody
     """.trimIndent()
-    val mainFunctionWithIfElseStatement = """
+    val mainFunctionWithIfElseStatement = $$"""
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
             attempts++
             if (isLost(complete, attempts, maxAttemptsCount)) {
-                println("Sorry, you lost! :( My word is \${'$'}secret")
+                println("Sorry, you lost! :( My word is $secret")
                 break
             }else if (isWon(complete, attempts, maxAttemptsCount)) {
                   }
@@ -599,12 +599,12 @@ class FunctionDiffReducerTest : EduTestCase() {
           val repos = service.getOrgRepos(req.org).bodyList()
       }
     """.trimIndent()
-    val codeHint = """
+    val codeHint = $$"""
       suspend fun loadContributorsConcurrent(service: GitHubService, req: RequestData): List<User> = coroutineScope {
           val repos = service.getOrgRepos(req.org).bodyList()
           val deferreds: List<Deferred<List<User>>> = repos.map { repo ->
               async {
-                  log("starting loading for ${'$'}{repo.name}")
+                  log("starting loading for ${repo.name}")
                   service.getRepoContributors(repo.owner, repo.name).bodyList()
               }
           }
@@ -635,8 +635,8 @@ class FunctionDiffReducerTest : EduTestCase() {
   }
 
   companion object {
-    private val greetFunction = """
-      fun greet(name: String) = "Hello, \${'$'}\{name\}!"
+    private val greetFunction = $$"""
+      fun greet(name: String) = "Hello, ${name}!"
     """.trimIndent()
 
     private val mainFunction = """
@@ -653,21 +653,21 @@ class FunctionDiffReducerTest : EduTestCase() {
       }
     """.trimIndent()
 
-    private val mainFunctionWithWhileStatementWithOneLineBody = """
+    private val mainFunctionWithWhileStatementWithOneLineBody = $$"""
       fun main() {
         var complete: Boolean
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
         } while (!complete)
       }
     """.trimIndent()
 
-    private val mainFunctionWithEmptyIfStatement = """
+    private val mainFunctionWithEmptyIfStatement = $$"""
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
@@ -678,35 +678,35 @@ class FunctionDiffReducerTest : EduTestCase() {
       }
     """.trimIndent()
 
-    private val mainFunctionWithIfStatementWithOneLineBody = """
+    private val mainFunctionWithIfStatementWithOneLineBody = $$"""
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
             attempts++
             if (isLost(complete, attempts, maxAttemptsCount)) {
-                println("Sorry, you lost! :( My word is \${'$'}secret")
+                println("Sorry, you lost! :( My word is $secret")
             }
         } while (!complete)
       }
     """.trimIndent()
 
-    private val mainFunctionWithIfStatementWithTwoLinesBody = """
+    private val mainFunctionWithIfStatementWithTwoLinesBody = $$"""
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
             attempts++
             if (isLost(complete, attempts, maxAttemptsCount)) {
-                println("Sorry, you lost! :( My word is \${'$'}secret")
+                println("Sorry, you lost! :( My word is $secret")
                 break
             }
         } while (!complete)
@@ -757,31 +757,31 @@ class FunctionDiffReducerTest : EduTestCase() {
       }
     """.trimIndent()
 
-    private val codeHintDoWhile = """
-      $greetFunction
+    private val codeHintDoWhile = $$"""
+      $$greetFunction
       fun main() {
         var complete: Boolean
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             complete = isComplete(secret, guess)
         } while (!complete)
       }
     """.trimIndent()
 
-    private val codeHintIf = """
-      $greetFunction
+    private val codeHintIf = $$"""
+      $$greetFunction
       fun main() {
         var complete: Boolean
         var attempts = 0
         do {
-            println("Please input your guess. It should be of length \${'$'}wordLength.")
+            println("Please input your guess. It should be of length $wordLength.")
             val guess = safeReadLine()
             printRoundResults(secret, guess)
             complete = isComplete(secret, guess)
             attempts++
             if (isLost(complete, attempts, maxAttemptsCount)) {
-                println("Sorry, you lost! :( My word is \${'$'}secret")
+                println("Sorry, you lost! :( My word is $secret")
                 break
             } else if (isWon(complete, attempts, maxAttemptsCount)) {
                 println("Congratulations! You guessed it!")

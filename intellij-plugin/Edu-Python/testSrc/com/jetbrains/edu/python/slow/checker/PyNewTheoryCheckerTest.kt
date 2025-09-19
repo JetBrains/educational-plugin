@@ -32,7 +32,7 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
           """)
           taskFile("__init__.py")
           dir("runConfigurations") {
-            xmlTaskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun" type="PythonConfigurationType" factoryName="Python">
                   <module name="Python Course7" />
@@ -42,13 +42,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="$PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="$TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="SCRIPT_NAME" value="$TASK_DIR$/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />
@@ -72,7 +72,7 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
           """)
           taskFile("__init__.py")
           dir("runConfigurations") {
-            xmlTaskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun1" type="PythonConfigurationType" factoryName="Python">
                   <module name="Python Course" />
@@ -82,13 +82,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory1!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="$PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="$TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="SCRIPT_NAME" value="$TASK_DIR$/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />
@@ -110,7 +110,7 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
           """)
           taskFile("__init__.py")
           dir("runConfigurations") {
-            xmlTaskFile("CustomRun.run.xml", """
+            xmlTaskFile("CustomRun.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration default="false" name="CustomRun2" type="PythonConfigurationType" factoryName="Python">
                   <module name="Python Course" />
@@ -120,13 +120,13 @@ class PyNewTheoryCheckerTest : PyCheckersTestBase() {
                     <env name="PYTHONUNBUFFERED" value="1" />
                     <env name="EXAMPLE_ENV" value="Hello from FrameworkTheory2!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="$PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="$TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
                   <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-                  <option name="SCRIPT_NAME" value="${'$'}TASK_DIR${'$'}/main.py" />
+                  <option name="SCRIPT_NAME" value="$TASK_DIR$/main.py" />
                   <option name="PARAMETERS" value="" />
                   <option name="SHOW_COMMAND_LINE" value="false" />
                   <option name="EMULATE_TERMINAL" value="false" />

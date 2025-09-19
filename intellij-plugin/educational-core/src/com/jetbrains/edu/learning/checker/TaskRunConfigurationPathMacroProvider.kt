@@ -14,7 +14,7 @@ class TaskRunConfigurationPathMacroProvider : EduMacroProvider {
   override fun provideMacro(holder: CourseInfoHolder<out Course?>, file: VirtualFile): EduMacro? {
     return if (file.isTaskRunConfigurationFile(holder)) {
       val taskRelativePath = taskRelativePath(holder, file)
-      EduMacro(TASK_DIR_MACRO_NAME, "\$${PathMacroUtil.PROJECT_DIR_MACRO_NAME}\$/$taskRelativePath")
+      EduMacro(TASK_DIR_MACRO_NAME, $$"$$${PathMacroUtil.PROJECT_DIR_MACRO_NAME}$/$$taskRelativePath")
     } else {
       null
     }

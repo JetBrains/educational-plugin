@@ -36,7 +36,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
           }
         """)
         dir("runConfigurations") {
-          taskFile("CustomGradleRun.run.xml", """
+          taskFile("CustomGradleRun.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomGradleRun" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -46,7 +46,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -79,7 +79,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
           }
         """)
         dir("runConfigurations") {
-          xmlTaskFile("CustomGradleRun.run.xml", """
+          xmlTaskFile("CustomGradleRun.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomGradleRun1" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -89,7 +89,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -97,7 +97,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
                   </option>
                   <option name="taskNames">
                     <list>
-                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:run" />
+                      <option value=":$TASK_GRADLE_PROJECT$:run" />
                     </list>
                   </option>
                   <option name="vmOptions" value="" />
@@ -120,7 +120,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
           }
         """)
         dir("runConfigurations") {
-          xmlTaskFile("CustomGradleRun.run.xml", """
+          xmlTaskFile("CustomGradleRun.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomGradleRun2" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -130,7 +130,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="-PmainClass=Main" />
                   <option name="taskDescriptions">
@@ -138,7 +138,7 @@ class ScalaGradleTheoryTaskCheckerTest : JdkCheckerTestBase() {
                   </option>
                   <option name="taskNames">
                     <list>
-                      <option value=":${'$'}TASK_GRADLE_PROJECT${'$'}:run" />
+                      <option value=":$TASK_GRADLE_PROJECT$:run" />
                     </list>
                   </option>
                   <option name="vmOptions" value="" />

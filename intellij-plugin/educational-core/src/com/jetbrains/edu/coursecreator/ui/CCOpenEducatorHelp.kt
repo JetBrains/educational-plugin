@@ -27,7 +27,7 @@ class CCOpenEducatorHelp : ActionWithButtonCustomComponent() {
 
   companion object {
     private const val HELP_URL = "/educatorsHelpPage/educatorsHelpPage.html"
-    private const val THEME_KEY = "\$__VISION_PAGE_SETTINGS_THEME__\$"
+    private const val THEME_KEY = $$"$__VISION_PAGE_SETTINGS_THEME__$"
     private const val DARK_THEME = "dark"
     private const val LIGHT_THEME = "light"
 

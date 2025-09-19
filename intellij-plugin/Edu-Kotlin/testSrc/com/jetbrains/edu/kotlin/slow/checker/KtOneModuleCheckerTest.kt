@@ -54,7 +54,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
           }
         """)
         dir("runConfigurations") {
-          xmlTaskFile("CustomGradleCheck.run.xml", """
+          xmlTaskFile("CustomGradleCheck.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomTests.test" type="GradleRunConfiguration" factoryName="Gradle">
                 <ExternalSystemSettings>
@@ -64,7 +64,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                     </map>
                   </option>
                   <option name="executionName" />
-                  <option name="externalProjectPath" value="${'$'}PROJECT_DIR${'$'}" />
+                  <option name="externalProjectPath" value="$PROJECT_DIR$" />
                   <option name="externalSystemIdString" value="GRADLE" />
                   <option name="scriptParameters" value="" />
                   <option name="taskDescriptions">
@@ -160,14 +160,14 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
 
     @Suppress("DifferentKotlinGradleVersion", "GroovyAssignabilityCheck", "GroovyUnusedAssignment")
     @Language("Groovy")
-    private const val ONE_MODULE_BUILD_GRADLE = """
+    private const val ONE_MODULE_BUILD_GRADLE = $$"""
         buildscript {
             ext.kotlin_version = '1.6.20'
             repositories {
                 mavenCentral()
             }
             dependencies {
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
             }
         }
 
@@ -186,7 +186,7 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
                 jcenter()
             }
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${'$'}kotlin_version"
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
                 // kotlin.test
                 implementation "org.jetbrains.kotlin:kotlin-test"
@@ -204,8 +204,8 @@ class KtOneModuleCheckerTest : JdkCheckerTestBase() {
         sourceCompatibility = 1.8
         dependencies {
             testImplementation group: 'junit', name: 'junit', version: '4.12'
-            testImplementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
-            testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${'$'}kotlin_version"
+            testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+            testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
         }
         def srcList = []
         def testList = []

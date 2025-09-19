@@ -148,21 +148,21 @@ class GoCheckErrorsTest : GoCheckersTestBase() {
               }
             }
           """)
-          xmlTaskFile("runConfigurations/CustomCheck.run.xml", """
+          xmlTaskFile("runConfigurations/CustomCheck.run.xml", $$"""
             <component name="ProjectRunConfigurationManager">
               <configuration default="false" name="CustomCheck" type="GoTestRunConfiguration" factoryName="Go Test">
                 <module name="Go Course3" />
-                <working_directory value="${'$'}TASK_DIR${'$'}/test" />
+                <working_directory value="$TASK_DIR$/test" />
                 <envs>
                   <env name="EXAMPLE_ENV" value="Hello!" />
                 </envs>
-                <root_directory value="${'$'}TASK_DIR${'$'}" />
+                <root_directory value="$TASK_DIR$" />
                 <kind value="PACKAGE" />
                 <package value="eduwithcustomrunconfigurationtestfailed/test" />
-                <directory value="${'$'}PROJECT_DIR${'$'}" />
-                <filePath value="${'$'}PROJECT_DIR${'$'}" />
+                <directory value="$PROJECT_DIR$" />
+                <filePath value="$PROJECT_DIR$" />
                 <framework value="gotest" />
-                <pattern value="^\QTestSum\E${'$'}/^\Qhello\E${'$'}" />
+                <pattern value="^\QTestSum\E$/^\Qhello\E$" />
                 <method v="2" />
               </configuration>
             </component>        

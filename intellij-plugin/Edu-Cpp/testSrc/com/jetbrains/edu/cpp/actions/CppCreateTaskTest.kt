@@ -105,16 +105,16 @@ class CppCreateTaskTest : EduActionTestCase() {
     """.trimMargin()
 
     val cMakeListsTextGenerator: (String) -> String = { projectName ->
-      """
+      $$"""
         |cmake_minimum_required(VERSION 3.13)
-        |project($projectName)
+        |project($$projectName)
         |
         |set(CMAKE_CXX_STANDARD 14)
         |
-        |add_executable(${'$'}{PROJECT_NAME}-run src/$TASK_CPP)
-        |add_executable(${'$'}{PROJECT_NAME}-test src/$TASK_CPP test/$TEST_CPP)
+        |add_executable(${PROJECT_NAME}-run src/$$TASK_CPP)
+        |add_executable(${PROJECT_NAME}-test src/$$TASK_CPP test/$$TEST_CPP)
         |
-        |configure_test_target(${'$'}{PROJECT_NAME}-test)
+        |configure_test_target(${PROJECT_NAME}-test)
       """.trimMargin()
     }
 

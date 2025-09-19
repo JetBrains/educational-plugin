@@ -108,7 +108,7 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
               """)
           }
           dir("runConfigurations") {
-            xmlTaskFile("CustomCheck.run.xml", """
+            xmlTaskFile("CustomCheck.run.xml", $$"""
               <component name="ProjectRunConfigurationManager">
                 <configuration name="CustomCheck" type="tests" factoryName="Unittests">
                   <module name="Python Course14" />
@@ -117,8 +117,8 @@ class PyNewCheckErrorsTest : PyCheckersTestBase() {
                   <envs>
                     <env name="EXAMPLE_ENV" value="Hello!" />
                   </envs>
-                  <option name="SDK_HOME" value="${'$'}PROJECT_DIR${'$'}/.idea/VirtualEnvironment/bin/python" />
-                  <option name="WORKING_DIRECTORY" value="${'$'}TASK_DIR${'$'}" />
+                  <option name="SDK_HOME" value="$PROJECT_DIR$/.idea/VirtualEnvironment/bin/python" />
+                  <option name="WORKING_DIRECTORY" value="$TASK_DIR$" />
                   <option name="IS_MODULE_SDK" value="true" />
                   <option name="ADD_CONTENT_ROOTS" value="true" />
                   <option name="ADD_SOURCE_ROOTS" value="true" />
