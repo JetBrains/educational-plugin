@@ -28,6 +28,21 @@
   ],
   "additional_files" : [
     {
+      "name" : ".idea/important_settings.xml",
+      "is_visible" : false,
+      "is_binary" : false
+    },
+    {
+      "name" : ".idea/subfolder/important_settings_in_subfolder.xml",
+      "is_visible" : false,
+      "is_binary" : false
+    },
+    {
+      "name" : ".idea/subfolder/.excluded_as_all_other_files_from_idea.xml",
+      "is_visible" : false,
+      "is_binary" : false
+    },
+    {
       "name" : ".idea/scopes/.include me.xml",
       "is_visible" : false,
       "is_binary" : false

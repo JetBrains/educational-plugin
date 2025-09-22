@@ -716,7 +716,33 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
   }
 
   @Test
-  fun `test only inspectionProfiles and scopes folders go into archive from the dot_idea folder`() {
+  fun `test files from dot_idea directory may be added to archive`() {
+    // .idea/inspectionProfiles/* and .idea/scopes/* used to be added automatically to course archive.
+    // Now user should explicitly add them to the archive
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+      }
+      additionalFile(".idea/important_settings.xml")
+      additionalFile(".idea/subfolder/important_settings_in_subfolder.xml")
+      additionalFile(".idea/subfolder/.excluded_as_all_other_files_from_idea.xml")
+      additionalFile(".idea/scopes/.include me.xml")
+      additionalFile(".idea/scopes/.include folder/x.xml")
+      additionalFile(".idea/scopes/level_up.xml")
+      additionalFile(".idea/inspectionProfiles/profiles_settings.xml")
+      additionalFile(".idea/inspectionProfiles/Project_Default.xml")
+      additionalFile(".idea/inspectionProfiles/One_more_inspections_profile.xml")
+    }
+    doTest(course)
+  }
+
+  @Test
+  fun `inspectionProfiles and scopes directories from dot_idea directory are not added automatically to archive`() {
+    // .idea/inspectionProfiles/* and .idea/scopes/* used to be added automatically to course archive.
+    // Now user should explicitly add them to the archive.
+    // See [test files from dot_idea folder may be added to archive]
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, description = "my summary") {
       lesson("lesson1") {
         eduTask {
