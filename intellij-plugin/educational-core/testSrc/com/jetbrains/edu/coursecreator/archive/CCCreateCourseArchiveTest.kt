@@ -1005,6 +1005,20 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
     doTest(course = course)
   }
 
+  @Test
+  fun `binary task files and additional files are added as binary`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
+      lesson {
+        eduTask {
+          taskFile("a.png", contents = InMemoryBinaryContents(byteArrayOf(1, 2, 3)))
+        }
+      }
+      additionalFile("b.png", contents = InMemoryBinaryContents(byteArrayOf(4, 5, 6, 7)))
+    }
+
+    doTest(course)
+  }
+
   /**
    * Emulates that a user created a file.
    * Use it instead of [CourseBuilder.additionalFile] if you are not sure

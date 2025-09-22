@@ -5,6 +5,7 @@ import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
@@ -28,6 +29,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAM
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertContains
+import kotlin.test.assertIs
 
 
 class YamlDeserializationTest : YamlTestCase() {
@@ -52,7 +54,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
@@ -75,7 +77,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     assertFalse(course.solutionsHidden)
     assertEmpty(course.items)
@@ -94,7 +96,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertEquals(environment, course.environment)
   }
 
@@ -117,7 +119,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent) as CourseraCourse
+    val course = basicMapper().deserializeCourse(yamlContent) as CourseraCourse
     assertEquals(name, course.name)
     assertEquals(language, course.humanLanguage)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
@@ -196,7 +198,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language: $programmingLanguage
       |programming_language_version: $programmingLanguageVersion
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertEquals(programmingLanguage, course.languageById!!.displayName)
     assertEquals(programmingLanguageVersion, course.languageVersion)
   }
@@ -216,7 +218,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language: $programmingLanguage
       |feedback_link: $link
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertEquals(link, course.feedbackLink)
   }
 
@@ -235,7 +237,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language: $programmingLanguage
       |tags: $contentTags
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertEquals(contentTags, course.contentTags)
   }
 
@@ -794,7 +796,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  email: academy@jetbrains.com
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     val vendor = course.vendor
     checkNotNull(vendor)
@@ -816,7 +818,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  url: jetbrains.com
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     val vendor = course.vendor
     checkNotNull(vendor)
@@ -836,7 +838,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     assertTrue(course.isMarketplace)
   }
@@ -854,7 +856,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |programming_language: Plain text
       |generated_edu_id: $generatedEduId
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     assertEquals(generatedEduId, (course as EduCourse).generatedEduId)
   }
@@ -870,7 +872,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |is_private: true
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     assertTrue(course.isMarketplacePrivate)
   }
@@ -885,7 +887,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     assertFalse(course.isMarketplacePrivate)
   }
@@ -901,7 +903,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertTrue(course is EduCourse)
     assertEquals(1, course.marketplaceCourseVersion)
   }
@@ -991,7 +993,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |- $firstLesson
       |- $secondLesson
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent) as CourseraCourse
+    val course = basicMapper().deserializeCourse(yamlContent) as CourseraCourse
     assertTrue(course.submitManually)
   }
 
@@ -1012,7 +1014,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
 
     assertNoException(InvalidDefinitionException::class.java, ThrowableRunnable {
-      deserializeNotNull(yamlContent)
+      basicMapper().deserializeCourse(yamlContent)
     })
     Locale.setDefault(defaultLocale)
   }
@@ -1065,7 +1067,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |environment_settings:
       |  foo: bar
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertEquals(mapOf("foo" to "bar"), course.environmentSettings)
   }
 
@@ -1079,7 +1081,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |disabled_features:
       |- ai-hints
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
     assertContains(course.disabledFeatures, "ai-hints")
   }
 
@@ -1094,7 +1096,7 @@ class YamlDeserializationTest : YamlTestCase() {
       |  - name: file.txt
       |  - 
       |""".trimMargin()
-    val course = deserializeNotNull(yamlContent)
+    val course = basicMapper().deserializeCourse(yamlContent)
 
     for (additionalFile in course.additionalFiles) {
       // Although the Kotlin type system suggests that additionalFile cannot be null,
@@ -1103,5 +1105,40 @@ class YamlDeserializationTest : YamlTestCase() {
     }
   }
 
-  private fun deserializeNotNull(yamlContent: String): Course = basicMapper().deserializeCourse(yamlContent)
+  @Test
+  fun `binary task files are deserialized correctly`() {
+    val yamlContent = """
+      |type: edu
+      |files:
+      |- name: a.png
+      |  visible: true
+      |  is_binary: true
+      |- name: a.txt
+      |  visible: true
+      |  is_binary: false
+      |""".trimMargin()
+
+    val task = basicMapper().deserializeTask(yamlContent)
+    assertIs<TextualContents>(task.taskFiles["a.txt"]!!.contents)
+    assertIs<BinaryContents>(task.taskFiles["a.png"]!!.contents)
+  }
+
+  @Test
+  fun `binary additional files are deserialized correctly`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |additional_files:
+      |  - name: a.txt
+      |    is_binary: false
+      |  - name: a.png
+      |    is_binary: true
+    """.trimMargin("|")
+
+    val course = basicMapper().deserializeCourse(yamlContent)
+    assertIs<TextualContents>(course.getAdditionalFile("a.txt")!!.contents)
+    assertIs<BinaryContents>(course.getAdditionalFile("a.png")!!.contents)
+  }
 }
