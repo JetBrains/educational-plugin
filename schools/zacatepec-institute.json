@@ -1,0 +1,28 @@
+schools/zacatepec-institute.json
+{
+  "name": "Instituto Tecnológico de Zacatepec",
+  "email": "zacatepec@tecnm.mx",
+  "website": "https://www.itzacatepec.tecnm.mx/",
+  "country": "Mexico",
+  "region": "Morelos",
+  "city": "Tequesquitengo",
+  "students": [
+    {
+      "full_name": "Dayan Ceballos Díaz",
+      "email": "L21090984@zacatepec.tecnm.mx",
+      "personal_email": "dayangears@gmail.com",
+      "birth_date": "2003-10-24",
+      "age": 21,
+      "program": "Ingeniería en Sistemas Computacionales",
+      "graduation_year": 2026
+    }
+  ],
+  "submissions": [
+    {
+      "date": "2025-09-22",
+      "purpose": "Proyecto para el programa educativo de JetBrains",
+      "tools": ["IntelliJ IDEA", "PyCharm", "WebStorm"]
+    }
+  ]
+}
+
