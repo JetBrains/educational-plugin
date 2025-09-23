@@ -12,6 +12,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.csharp.CSharpConfigurator
 import com.jetbrains.edu.csharp.getTestName
+import com.jetbrains.edu.csharp.testResultData
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.checker.CheckUtils.removeAttributes
@@ -174,7 +175,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
   ): Boolean {
     val result = CompletableDeferred<RdUnitTestResultData>()
     withContext(Dispatchers.EDT) {
-      rdSession.resultData.advise(project.lifetime) { resultData ->
+      rdSession.testResultData?.advise(project.lifetime) { resultData ->
         if (resultData != null && resultData.nodeId == firstFailedNode.id) {
           result.complete(resultData)
         }

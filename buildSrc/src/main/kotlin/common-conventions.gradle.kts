@@ -1,4 +1,4 @@
-import org.gradle.api.JavaVersion.VERSION_17
+import org.gradle.api.JavaVersion.VERSION_21
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -22,8 +22,8 @@ java {
     }
   }
 
-  sourceCompatibility = VERSION_17
-  targetCompatibility = VERSION_17
+  sourceCompatibility = VERSION_21
+  targetCompatibility = VERSION_21
 }
 
 kotlin {
@@ -53,10 +53,10 @@ tasks {
   }
   withType<KotlinCompile> {
     compilerOptions {
-      jvmTarget = JvmTarget.JVM_17
+      jvmTarget = JvmTarget.JVM_21
       languageVersion = KotlinVersion.DEFAULT
       // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-      apiVersion = KotlinVersion.KOTLIN_1_8
+      apiVersion = KotlinVersion.KOTLIN_2_1
       freeCompilerArgs = listOf("-Xjvm-default=all")
     }
   }

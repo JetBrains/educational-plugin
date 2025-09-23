@@ -20,17 +20,17 @@ class TextHintFeedbackDialog(
   defaultLikeness: FeedbackLikenessAnswer = FeedbackLikenessAnswer.NO_ANSWER
 ) : HintFeedbackDialog<TextHintFeedbackSystemInfoData>(project, defaultLikeness) {
 
-  override val myShowFeedbackSystemInfoDialog: () -> Unit = {
-    showFeedbackSystemInfoDialog(project, mySystemInfoData.commonSystemInfo) {
-      commonFeedbackData(mySystemInfoData.hintFeedbackInfo.hintFeedbackInfoData)
+  override fun showFeedbackDialogInternal(systemInfoData: TextHintFeedbackSystemInfoData) {
+    showFeedbackSystemInfoDialog(project, systemInfoData.commonSystemInfo) {
+      commonFeedbackData(systemInfoData.hintFeedbackInfo.hintFeedbackInfoData)
       row(EduAIHintsCoreBundle.message("hints.feedback.label.text.hint")) {
-        label(mySystemInfoData.hintFeedbackInfo.textHint.text)
+        label(systemInfoData.hintFeedbackInfo.textHint.text)
       }
     }
   }
 
-  override val mySystemInfoData: TextHintFeedbackSystemInfoData by lazy {
-    TextHintFeedbackSystemInfoData(
+  override fun computeSystemInfoDataInternal(): TextHintFeedbackSystemInfoData {
+    return TextHintFeedbackSystemInfoData(
       CommonFeedbackSystemData.getCurrentData(),
       TextHintFeedbackInfoData.create(course, task, studentSolution, textHint)
     )

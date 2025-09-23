@@ -45,7 +45,7 @@ include(
 )
 
 // BACKCOMPAT: Temporarily exclude for 2025.2 as it doesn't compile
-if (settings.providers.gradleProperty("environmentName").get() != "252") {
+if (settings.providers.gradleProperty("environmentName").get().toInt() < 252) {
   include("intellij-plugin:features:remote-env")
 }
 
