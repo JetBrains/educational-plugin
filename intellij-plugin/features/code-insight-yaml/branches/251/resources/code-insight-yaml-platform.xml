@@ -1,6 +1,0 @@
-<idea-plugin>
-  <dependencies>
-    <!--suppress PluginXmlValidity -->
-    <plugin id="com.intellij.modules.json"/>
-  </dependencies>
-</idea-plugin>

@@ -1,6 +1,0 @@
-<!-- BACKCOMPAT: 2025.1 -->
-<idea-plugin>
-  <extensions defaultExtensionNs="org.rust">
-    <learn.openCourseHandler implementation="com.jetbrains.edu.rust.learn.RsOpenCourseHandler"/>
-  </extensions>
-</idea-plugin>
