@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -12,12 +13,12 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
-import com.jetbrains.edu.python.learning.setAssociationToModule
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.*
@@ -87,6 +88,12 @@ open class PyCourseProjectGenerator(
     SdkConfigurationUtil.addSdk(sdk)
     val module = ModuleManager.getInstance(project).sortedModules.firstOrNull() ?: return
     setAssociationToModule(sdk, module)
+  }
+
+  private fun setAssociationToModule(sdk: Sdk, module: Module) {
+    runWithModalProgressBlocking(module.project, "") {
+      sdk.setAssociationToModule(module)
+    }
   }
 
   companion object {

@@ -11,32 +11,10 @@ import kotlinx.serialization.Serializable
  */
 @Service(Service.Level.PROJECT)
 @State(name = "CourseSubmissionMetadataManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
-class CourseSubmissionMetadataManager(
-  private val project: Project
-) : SerializablePersistentStateComponent<MetadataState>(MetadataState()), EduTestAware {
+class CourseSubmissionMetadataManager : SerializablePersistentStateComponent<MetadataState>(MetadataState()), EduTestAware {
 
   val metadata: Map<String, String>
     get() = state.metadata
-
-  // BACKCOMPAT: 2025.1. Drop this method together with deprecated services
-  @Suppress("DEPRECATION")
-  override fun noStateLoaded() {
-    super.noStateLoaded()
-
-    val experiment = CoursePageExperimentManager.getInstance(project).experiment
-    CoursePageExperimentManager.getInstance(project).experiment = null
-
-    val entryPoint = EntryPointManager.getInstance(project).entryPoint
-    EntryPointManager.getInstance(project).entryPoint = null
-
-    val migratedData = mutableMapOf<String, String>()
-    migratedData += experiment?.toMetadataMap().orEmpty()
-    if (entryPoint != null) {
-      migratedData += ENTRY_POINT to entryPoint
-    }
-
-    updateState { current -> MetadataState(current.metadata + migratedData) }
-  }
 
   fun addMetadata(metadata: Map<String, String>) {
     updateState { current -> MetadataState(current.metadata + metadata) }

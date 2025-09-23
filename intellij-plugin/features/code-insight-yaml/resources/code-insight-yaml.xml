@@ -1,12 +1,10 @@
-<idea-plugin package="com.jetbrains.edu.yaml" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin package="com.jetbrains.edu.yaml">
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="code-insight-core"/>
+    <module name="intellij.json.backend"/>
     <plugin id="org.jetbrains.plugins.yaml"/>
   </dependencies>
-
-  <!-- BACKCOMPAT: 2025.1. inline it -->
-  <xi:include href="/code-insight-yaml-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="JavaScript">
     <JsonSchema.ProviderFactory implementation="com.jetbrains.edu.yaml.EduYamlSchemaProviderFactory"/>

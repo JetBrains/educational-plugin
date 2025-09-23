@@ -1,6 +1,4 @@
 <idea-plugin package="com.jetbrains.edu.cpp" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!-- BACKCOMPAT: 2025.1. Inline it. -->
-  <xi:include href="/Edu-Cpp-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.clion"/>

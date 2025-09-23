@@ -5,7 +5,6 @@
   <vendor>JetBrains</vendor>
 
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/plugin_platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <!--update description in description.html file instead-->
   <description/>
