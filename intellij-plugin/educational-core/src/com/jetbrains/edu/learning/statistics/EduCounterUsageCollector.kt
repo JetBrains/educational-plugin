@@ -16,13 +16,13 @@ import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.myCourses.MyCoursesProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.AuthorizationEvent.*
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.CourseActionSource.values
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.PLATFORM_FIELD
 import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
+import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 /**
  * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
@@ -111,6 +111,21 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     MENU_OR_ACTION, TOOLTIP_RESTART_BUTTON
   }
 
+  enum class UserAgreementModificationPlace {
+    /**
+     * User agreement was changed from the corresponding dialog
+     */
+    DIALOG,
+    /**
+     * User agreement was changed from settings
+     */
+    SETTINGS,
+    /**
+     * User agreement was changed according to server side state for the same user
+     */
+    REMOTE
+  }
+
   companion object {
     private const val SOURCE = "source"
     private const val SUCCESS = "success"
@@ -120,11 +135,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val UI_ONBOARDING_STEP_INDEX = "index"
     private const val UI_ONBOARDING_STEP_KEY = "key"
     private const val UI_ONBOARDING_RELAUNCH_LOCATION = "location"
+    private const val USER_AGREEMENT_PLUGIN = "plugin_agreement"
+    private const val USER_AGREEMENT_AI = "ai_agreement"
 
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      23,
+      24,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -347,6 +364,14 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       enumField<UiOnboardingRelaunchLocation>(UI_ONBOARDING_RELAUNCH_LOCATION)
     )
 
+    private val USER_AGREEMENT_CHANGE_EVENT = GROUP.registerEvent(
+      "user.agreement.changed",
+      "The event is recorded when the state of the user agreement is changed.",
+      enumField<UserAgreementModificationPlace>(SOURCE),
+      enumField<UserAgreementState>(USER_AGREEMENT_PLUGIN),
+      enumField<UserAgreementState>(USER_AGREEMENT_AI),
+    )
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -453,5 +478,11 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun uiOnboardingFinished() = UI_ONBOARDING_FINISHED.log()
 
     fun uiOnboardingRelaunched(location: UiOnboardingRelaunchLocation) = UI_ONBOARDING_RELAUNCHED.log(location)
+
+    fun userAgreementChanged(
+      place: UserAgreementModificationPlace,
+      pluginAgreement: UserAgreementState,
+      aiServiceAgreement: UserAgreementState
+    ) = USER_AGREEMENT_CHANGE_EVENT.log(place, pluginAgreement, aiServiceAgreement)
   }
 }

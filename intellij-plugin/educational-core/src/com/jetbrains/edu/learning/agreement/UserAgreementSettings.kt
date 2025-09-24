@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.agreement
 
 import com.intellij.openapi.components.*
 import com.jetbrains.edu.learning.EduTestAware
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UserAgreementModificationPlace
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +35,14 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = solutionSharingPreference)
   }
 
-  fun updatePluginAgreementState(newState: UserAgreementProperties) {
+  /**
+   * Updates internal state of user agreement and sends FUS event about it if [place] is not `null`.
+   */
+  fun updatePluginAgreementState(newState: UserAgreementProperties, place: UserAgreementModificationPlace? = null) {
     _userAgreementProperties.value = newState
+    if (place != null) {
+      EduCounterUsageCollector.userAgreementChanged(place, newState.pluginAgreement, newState.aiServiceAgreement)
+    }
   }
 
   fun resetUserAgreementSettings() {

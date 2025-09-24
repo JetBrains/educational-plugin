@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings.Companion.isJBALoggedIn
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UserAgreementModificationPlace
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
@@ -130,7 +131,7 @@ class UserAgreementManager @JvmOverloads constructor(
   fun showUserAgreement(project: Project) {
     runInEdt {
       val result = UserAgreementDialog(project).showWithResult()
-      UserAgreementSettings.getInstance().updatePluginAgreementState(result)
+      UserAgreementSettings.getInstance().updatePluginAgreementState(result, UserAgreementModificationPlace.DIALOG)
     }
   }
 

@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.api.UserAgreement
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.projectView.CourseViewPane
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UserAgreementModificationPlace
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -63,7 +64,7 @@ class UserAgreementProjectActivity : ProjectActivity {
           isChangedByUser = false
         )
         // Apply remote agreement state for local settings and don't show the agreement dialog
-        UserAgreementSettings.getInstance().updatePluginAgreementState(newLocalAgreementState)
+        UserAgreementSettings.getInstance().updatePluginAgreementState(newLocalAgreementState, UserAgreementModificationPlace.REMOTE)
         return
       }
     }

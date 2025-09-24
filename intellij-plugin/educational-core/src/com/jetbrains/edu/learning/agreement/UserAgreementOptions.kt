@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.agreement.UserAgreementUtil.aiAgreementCheckBo
 import com.jetbrains.edu.learning.agreement.UserAgreementUtil.pluginAgreementCheckBoxText
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UserAgreementModificationPlace
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 
@@ -80,7 +81,8 @@ class UserAgreementOptions : BoundConfigurable(EduCoreBundle.message("user.agree
       SolutionSharingPreference.ALWAYS else SolutionSharingPreference.NEVER
 
     userAgreementSettings.updatePluginAgreementState(
-      UserAgreementProperties(pluginAgreementState, aiServiceAgreementState, solutionSharingPreference)
+      UserAgreementProperties(pluginAgreementState, aiServiceAgreementState, solutionSharingPreference),
+      UserAgreementModificationPlace.SETTINGS
     )
   }
 }
