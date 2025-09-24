@@ -44,7 +44,7 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
 
   val outputFormat: OutputFormat by option("--output-format", help = "Output format of validation report")
     .choice(OutputFormat.values().associateBy { it.name.lowercase() })
-    .default(OutputFormat.TEAMCITY)
+    .default(OutputFormat.TEAMCITY, OutputFormat.TEAMCITY.name.lowercase())
 
   val outputType: OutputType by mutuallyExclusiveOptions(
     option("--output", help = "Print output to a file").convert { OutputType.File(Paths.get(it)) },

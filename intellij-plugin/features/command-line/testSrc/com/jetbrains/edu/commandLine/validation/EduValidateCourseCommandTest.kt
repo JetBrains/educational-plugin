@@ -35,7 +35,7 @@ class EduValidateCourseCommandTest(
               --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
               --tests=true|false                                Enables/disables test validation (default: false)
               --links=true|false                                Enables/disables task description link validation (default: true)
-              --output-format=(json|teamcity)                   Output format of validation report (default: TEAMCITY)
+              --output-format=(json|teamcity)                   Output format of validation report (default: teamcity)
               --output=<value>                                  Print output to a file
               --stdout                                          Print output to stdout
               -h, --help                                        Show this message and exit
