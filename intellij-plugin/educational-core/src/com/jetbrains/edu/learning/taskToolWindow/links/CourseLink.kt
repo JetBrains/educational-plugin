@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.taskToolWindow.links
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -23,6 +25,10 @@ class CourseLink(link: String) : TaskDescriptionLink<ParsedInCourseLink<*>, Pars
           closeOpenedFiles = false,
           fileToActivate = parsedLink.file
         )
+        is ParsedInCourseLink.CourseAdditionalFile -> {
+          FileEditorManager.getInstance(project).openFile(parsedLink.file, true)
+          ProjectView.getInstance(project).select(null, parsedLink.file, true)
+        }
       }
     }
   }
