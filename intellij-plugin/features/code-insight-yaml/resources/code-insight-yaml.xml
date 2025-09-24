@@ -12,6 +12,7 @@
 
   <extensions defaultExtensionNs="Educational">
     <yamlActionsHelper implementation="com.jetbrains.edu.yaml.YamlActionsHelperImpl"/>
+    <navigateToConfigEntryForEduFile implementation="com.jetbrains.edu.yaml.NavigateToConfigEntryForEduFileInYAML"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
