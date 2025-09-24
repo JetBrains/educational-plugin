@@ -129,6 +129,9 @@ class CourseArchiveCreator(
     catch (e: DuplicateAdditionalFileException) {
       Err(DuplicateAdditionalFileError(e))
     }
+    catch (e: FailedToProcessEduFileAsTextualException) {
+      Err(FailedToProcessEduFileAsTextualError(e))
+    }
     catch (e: Throwable) {
       if (e is ProcessCanceledException) throw e
       Err(OtherError(e))
