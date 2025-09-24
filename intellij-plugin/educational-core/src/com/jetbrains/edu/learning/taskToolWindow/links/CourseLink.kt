@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.taskToolWindow.links
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -23,6 +25,13 @@ class CourseLink(link: String) : TaskDescriptionLink<ParsedInCourseLink<*>, Pars
           closeOpenedFiles = false,
           fileToActivate = parsedLink.file
         )
+        is ParsedInCourseLink.CourseAdditionalFile -> {
+          // open a file editor, and if failed (an unknown file type, for example), open it in the project view
+          val editors = FileEditorManager.getInstance(project).openFile(parsedLink.file, true)
+          if (editors.isEmpty()) {
+            ProjectView.getInstance(project).select(null, parsedLink.file, true)
+          }
+        }
       }
     }
   }
