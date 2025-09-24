@@ -82,6 +82,9 @@
     <extensionPoint qualifiedName="Educational.taskNavigationExtension"
                     interface="com.jetbrains.edu.learning.navigation.TaskNavigationExtension"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="Educational.navigateToEduFile"
+                    interface="com.jetbrains.edu.learning.navigation.NavigateToEduFileExtension"
+                    dynamic="true"/>
 
     <extensionPoint qualifiedName="Educational.revertTaskExtension"
                     interface="com.jetbrains.edu.learning.actions.RevertTaskAction$RevertTaskExtension"
