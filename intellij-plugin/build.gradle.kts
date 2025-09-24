@@ -112,7 +112,7 @@ val ideaPlugins = listOfNotNull(
 )
 
 val ideToPlugins = mapOf(
-  // BACKCOMPTA: 2025.2. Drop `IntellijIdeaUltimate` usage
+  // BACKCOMPAT: 2025.2. Drop `IntellijIdeaUltimate` usage
   IntellijIdeaUltimate to ideaPlugins,
   IntellijIdea to ideaPlugins,
   CLion to listOf(rustPlugin),
