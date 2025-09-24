@@ -56,4 +56,4 @@ fun PsiFile.findCMakeCommand(commandName: String): CMakeCommand? {
     .firstOrNull { it.name.equals(commandName, true) }
 }
 
-fun getLanguageVersions(): List<String> = CMakeRecognizedCPPLanguageStandard.values().map { it.standard }
+fun getLanguageVersions(): List<String> = CMakeRecognizedCPPLanguageStandard.entries.map { it.standard }

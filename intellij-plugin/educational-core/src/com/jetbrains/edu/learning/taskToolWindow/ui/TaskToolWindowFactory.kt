@@ -47,18 +47,18 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
   /**
    * Items from slider are mapped to FontSize in reversed order as they are used as dividers in TypographyManager
    */
-  private fun Int.toReverseIndex() = FontSize.values().size - 1 - this
+  private fun Int.toReverseIndex() = FontSize.entries.size - 1 - this
 
   private inner class AdjustFontSize(private val project: Project) : DumbAwareAction(EduCoreBundle.message("action.adjust.font.size.text")) {
     override fun actionPerformed(e: AnActionEvent) {
-      val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.values().size - 1, getInitialIndex())
+      val fontSizeSlider = JSlider(SwingConstants.HORIZONTAL, 0, FontSize.entries.size - 1, getInitialIndex())
       fontSizeSlider.minorTickSpacing = 1
       fontSizeSlider.paintTicks = true
       fontSizeSlider.paintTrack = true
       fontSizeSlider.snapToTicks = true
       UIUtil.setSliderIsFilled(fontSizeSlider, true)
       fontSizeSlider.addChangeListener {
-        val fontFactor = FontSize.values()[fontSizeSlider.value.toReverseIndex()]
+        val fontFactor = FontSize.entries[fontSizeSlider.value.toReverseIndex()]
         PropertiesComponent.getInstance().setValue(StyleManager.FONT_SIZE_PROPERTY, fontFactor.size, FontPreferences.DEFAULT_FONT_SIZE)
         TaskToolWindowView.getInstance(project).updateTaskDescription()
       }
@@ -70,12 +70,12 @@ class TaskToolWindowFactory : ToolWindowFactory, DumbAware {
 
     private fun getInitialIndex(): Int {
       val value = PropertiesComponent.getInstance().getInt(StyleManager.FONT_SIZE_PROPERTY, FontPreferences.DEFAULT_FONT_SIZE)
-      for ((i, fontSize) in FontSize.values().withIndex()) {
+      for ((i, fontSize) in FontSize.entries.withIndex()) {
         if (fontSize.size == value) {
           return i.toReverseIndex()
         }
       }
-      return FontSize.values().size / 2
+      return FontSize.entries.size / 2
     }
   }
 

@@ -253,7 +253,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       YES(0), NO(1), CANCEL(-1);
 
       companion object {
-        fun valueOf(value: Int): ReLoginDialogResult = values().find { it.result == value } ?: error("Unexpected value: $value")
+        fun valueOf(value: Int): ReLoginDialogResult = entries.find { it.result == value } ?: error("Unexpected value: $value")
       }
     }
   }

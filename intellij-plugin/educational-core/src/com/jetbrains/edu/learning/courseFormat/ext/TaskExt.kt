@@ -290,7 +290,7 @@ fun Task.updateDescriptionTextAndFormat(project: Project) = runReadAction {
 }
 
 private fun VirtualFile.toDescriptionFormat(): DescriptionFormat =
-  DescriptionFormat.values().firstOrNull { it.extension == extension }
+  DescriptionFormat.entries.firstOrNull { it.extension == extension }
   ?: loadingError(EduCoreBundle.message("yaml.editor.invalid.description"))
 
 @RequiresReadLock

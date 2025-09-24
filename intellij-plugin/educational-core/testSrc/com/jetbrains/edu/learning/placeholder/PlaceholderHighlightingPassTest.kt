@@ -74,7 +74,7 @@ class PlaceholderHighlightingPassTest : EduTestCase() {
     myFixture.openFileInEditor(file)
 
     val highlightingData = ExpectedHighlightingData(myFixture.editor.document)
-    for (info in PlaceholderHighlightingInfo.values()) {
+    for (info in PlaceholderHighlightingInfo.entries) {
       highlightingData.registerHighlightingType(info.severity.name, ExpectedHighlightingData.ExpectedHighlightingSet(info.severity, false, true))
       highlightingData.registerHighlightingType("eol_" + info.severity.name, ExpectedHighlightingData.ExpectedHighlightingSet(info.severity, true, true))
     }

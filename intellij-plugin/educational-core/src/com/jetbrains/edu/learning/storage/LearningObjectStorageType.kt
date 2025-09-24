@@ -8,7 +8,7 @@ enum class LearningObjectStorageType {
   companion object {
 
     fun safeValueOf(name: String?): LearningObjectStorageType? {
-      return values().find { it.name == name }
+      return entries.find { it.name == name }
     }
   }
 }

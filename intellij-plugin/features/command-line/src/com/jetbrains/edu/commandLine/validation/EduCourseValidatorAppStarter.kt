@@ -43,7 +43,7 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
     .default(VALIDATE_LINK_BY_DEFAULT)
 
   val outputFormat: OutputFormat by option("--output-format", help = "Output format of validation report")
-    .choice(OutputFormat.values().associateBy { it.name.lowercase() })
+    .choice(OutputFormat.entries.associateBy { it.name.lowercase() })
     .default(OutputFormat.TEAMCITY, OutputFormat.TEAMCITY.name.lowercase())
 
   val outputType: OutputType by mutuallyExclusiveOptions(

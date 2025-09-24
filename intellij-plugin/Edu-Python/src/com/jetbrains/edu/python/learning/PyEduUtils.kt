@@ -103,7 +103,7 @@ fun installRequiredPackages(project: Project, sdk: Sdk) {
 
 fun getSupportedVersions(): List<String> {
   val pythonVersions = mutableListOf(PyLanguageSettings.ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
-  pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
+  pythonVersions.addAll(LanguageLevel.entries.map { it.toString() }.reversed())
   return pythonVersions
 }
 

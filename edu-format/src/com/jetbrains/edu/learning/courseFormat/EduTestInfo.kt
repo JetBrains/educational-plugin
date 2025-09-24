@@ -55,7 +55,7 @@ data class EduTestInfo(
     companion object {
       private const val UNKNOWN: String = "Unknown"
 
-      fun get(status: Int): PresentableStatus? = PresentableStatus.values().find { it.value == status }
+      fun get(status: Int): PresentableStatus? = entries.find { it.value == status }
 
       fun getPresentableStatus(status: Int): String = get(status)?.toString() ?: UNKNOWN
     }

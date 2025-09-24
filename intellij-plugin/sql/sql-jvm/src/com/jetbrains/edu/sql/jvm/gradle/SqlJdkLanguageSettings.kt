@@ -86,7 +86,7 @@ class SqlJdkLanguageSettings : JdkLanguageSettings() {
   }
 
   private fun comboboxModel(): ComboBoxModel<SqlTestLanguage> {
-    val languages = SqlTestLanguage.values().filterTo(Vector()) { it.getLanguage() != null }
+    val languages = SqlTestLanguage.entries.filterTo(Vector()) { it.getLanguage() != null }
     return DefaultComboBoxModel(languages)
   }
 

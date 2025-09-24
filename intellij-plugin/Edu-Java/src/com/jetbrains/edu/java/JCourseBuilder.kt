@@ -12,7 +12,7 @@ open class JCourseBuilder : GradleCourseBuilderBase() {
   override fun mainTemplateName(course: Course): String = JConfigurator.MAIN_JAVA
   override fun testTemplateName(course: Course): String = JConfigurator.TEST_JAVA
 
-  override fun getSupportedLanguageVersions(): List<String> = JavaSdkVersion.values().filter {
+  override fun getSupportedLanguageVersions(): List<String> = JavaSdkVersion.entries.filter {
     it.isAtLeast(DEFAULT_JAVA)
   }.map { it.description }
 

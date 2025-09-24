@@ -40,7 +40,7 @@ enum class NetworkRequestEDTAssertionPolicy {
       // Someday we will remove `!isUnitTestMode` condition and start catching such things in tests as well
       if (ApplicationManager.getApplication().isDispatchThread && !isUnitTestMode) {
         val selectedOption = Registry.get("edu.network.request.assertion.policy").selectedOption
-        val currentAssertionPolicy = values().find { it.name == selectedOption } ?: LOG_ERROR
+        val currentAssertionPolicy = entries.find { it.name == selectedOption } ?: LOG_ERROR
         currentAssertionPolicy.assert()
       }
     }

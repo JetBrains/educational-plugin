@@ -76,7 +76,7 @@ class TabManager(private val project: Project) : Disposable {
     Disposer.dispose(tab)
   }
 
-  private fun removeAdditionalTabs() = TabType.values()
+  private fun removeAdditionalTabs() = TabType.entries
     .filter { it != DESCRIPTION_TAB }
     .forEach { removeTab(it) }
 

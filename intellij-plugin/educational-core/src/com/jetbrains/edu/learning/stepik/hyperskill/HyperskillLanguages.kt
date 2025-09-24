@@ -43,7 +43,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
 
   companion object {
     fun getLanguageIdAndVersion(hyperskillLanguage: String): Pair<String, String?>? {
-      val language = values().find { it.requestLanguage == hyperskillLanguage } ?: return null
+      val language = entries.find { it.requestLanguage == hyperskillLanguage } ?: return null
       return Pair(language.id, language.languageVersion)
     }
 
@@ -56,7 +56,7 @@ enum class HyperskillLanguages(private val id: String, private val languageName:
     }
 
     fun getHyperskillLanguage(languageId: String): HyperskillLanguages? {
-      return values().find { it.id == languageId }
+      return entries.find { it.id == languageId }
     }
   }
 }

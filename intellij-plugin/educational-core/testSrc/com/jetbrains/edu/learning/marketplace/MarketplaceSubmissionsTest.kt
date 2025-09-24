@@ -129,7 +129,7 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
   private fun generateMarketplaceSubmission(): MarketplaceSubmission = MarketplaceSubmission().apply {
     id = Random.nextInt()
     solutionFiles = listOf(SolutionFile("file${id}", "text${id}", true))
-    status = CheckStatus.values().random().toString()
+    status = CheckStatus.entries.random().toString()
   }
 
   @Test

@@ -11,7 +11,7 @@ const val SQL_TEST_LANGUAGE_KEY = "sql_test_language"
 var Course.sqlTestLanguage: SqlTestLanguage
   get() {
     val languageId = environmentSettings[SQL_TEST_LANGUAGE_KEY]
-    return SqlTestLanguage.values().find { it.languageId == languageId } ?: SqlTestLanguage.KOTLIN
+    return SqlTestLanguage.entries.find { it.languageId == languageId } ?: SqlTestLanguage.KOTLIN
   }
   set(value) {
     environmentSettings += SQL_TEST_LANGUAGE_KEY to value.languageId

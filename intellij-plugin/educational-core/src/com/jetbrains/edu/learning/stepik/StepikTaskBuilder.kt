@@ -59,7 +59,7 @@ open class StepikTaskBuilder(private val course: Course, stepSource: StepSource)
     THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
   )
 
-  private val stepikTaskBuilders: Map<String, (String) -> Task> = HyperskillTaskType.values().associateBy(
+  private val stepikTaskBuilders: Map<String, (String) -> Task> = HyperskillTaskType.entries.associateBy(
     { it.type },
     {
       when (it) {
@@ -80,7 +80,7 @@ open class StepikTaskBuilder(private val course: Course, stepSource: StepSource)
     })
 
   open fun createTask(type: String): Task {
-    val taskName = HyperskillTaskType.values().find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
+    val taskName = HyperskillTaskType.entries.find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
     return (stepikTaskBuilders[type] ?: this::unsupportedTask).invoke(taskName)
   }
 

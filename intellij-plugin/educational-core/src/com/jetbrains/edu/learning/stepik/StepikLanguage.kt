@@ -29,15 +29,15 @@ enum class StepikLanguage(val id: String?, val version: String = DEFAULT_VERSION
 
   companion object {
     private val NAME_MAP: Map<String?, StepikLanguage> by lazy {
-      values().associateBy { it.langName }
+      entries.associateBy { it.langName }
     }
 
     private val TITLE_MAP: Map<Pair<String?, String>, StepikLanguage> by lazy {
-      values().associateBy { it.id to it.version }
+      entries.associateBy { it.id to it.version }
     }
 
     private val DEFAULT_TITLE_MAP: Map<String?, StepikLanguage> by lazy {
-      values().filter { it.isDefault }.associateBy { it.id }
+      entries.filter { it.isDefault }.associateBy { it.id }
     }
 
     fun langOfName(lang: String): StepikLanguage = NAME_MAP.getOrElse(lang) { INVALID }

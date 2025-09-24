@@ -16,6 +16,6 @@ enum class StepikHost(val url: String, val clientId: String) {
   }
 
   companion object {
-    fun getSelectedHost(): StepikHost = values()[PropertiesComponent.getInstance().getInt(STEPIK_HOST_ORDINAL_PROPERTY, PRODUCTION.ordinal)]
+    fun getSelectedHost(): StepikHost = entries[PropertiesComponent.getInstance().getInt(STEPIK_HOST_ORDINAL_PROPERTY, PRODUCTION.ordinal)]
   }
 }

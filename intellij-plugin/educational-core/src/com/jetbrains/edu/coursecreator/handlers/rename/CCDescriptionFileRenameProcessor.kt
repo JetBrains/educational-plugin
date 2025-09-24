@@ -52,7 +52,7 @@ class CCDescriptionFileRenameProcessor : RenamePsiFileProcessor() {
         }
 
         override fun performRename(newName: String) {
-          val format = DescriptionFormat.values().find { it.fileName == newName } ?: error("Unexpected new name: `$newName`")
+          val format = DescriptionFormat.entries.find { it.fileName == newName } ?: error("Unexpected new name: `$newName`")
           task.descriptionFormat = format
           super.performRename(newName)
         }

@@ -23,9 +23,9 @@ abstract class EduCommand(name: String) : CoreSuspendingCliktCommand(name) {
 
   private val sourceWithCourseId by mutuallyExclusiveOptions(
     // Intentionally doesn't use concrete variants here to properly handle any change in `CourseSource` enum
-    CourseSource.values()[0].toOption(),
-    CourseSource.values()[1].toOption(),
-    *CourseSource.values().drop(2).map { it.toOption() }.toTypedArray()
+    CourseSource.entries[0].toOption(),
+    CourseSource.entries[1].toOption(),
+    *CourseSource.entries.drop(2).map { it.toOption() }.toTypedArray()
   ).single().required()
 
   private val logLevel: LogLevel? by option("--log-level", help = "Minimal IDE log level printing to stderr")

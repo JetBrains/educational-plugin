@@ -82,7 +82,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       fun fromActionPlace(actionPlace: String): CourseActionSource {
         // it is possible to have action place like "popup@WelcomScreen"
         val actionPlaceParsed = actionPlace.split("@").last()
-        return values().firstOrNull { it.actionPlace == actionPlaceParsed } ?: UNKNOWN
+        return entries.firstOrNull { it.actionPlace == actionPlaceParsed } ?: UNKNOWN
       }
     }
   }

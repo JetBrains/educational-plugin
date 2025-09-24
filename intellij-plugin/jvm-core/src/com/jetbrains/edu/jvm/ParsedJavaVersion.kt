@@ -31,7 +31,7 @@ sealed class ParsedJavaVersion {
     fun fromJavaSdkDescriptionString(javaSdkDescription: String?): ParsedJavaVersion {
       javaSdkDescription ?: return JavaVersionNotProvided
 
-      val javaSdkVersion = JavaSdkVersion.values().find { it.description == javaSdkDescription }
+      val javaSdkVersion = JavaSdkVersion.entries.find { it.description == javaSdkDescription }
 
       javaSdkVersion ?: return JavaVersionParseFailed(javaSdkDescription)
 
