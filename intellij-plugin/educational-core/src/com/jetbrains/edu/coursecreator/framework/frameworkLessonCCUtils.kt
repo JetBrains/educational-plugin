@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.loadEncodedContent
 typealias FLTaskStateCC = Map<String, String>
 
 /**
- * Returns [Change]s to convert [currentState] to [targetState]
+ * Returns [CCChange]s to convert [currentState] to [targetState]
  */
 fun calculateChanges(
   currentState: FLTaskStateCC,
