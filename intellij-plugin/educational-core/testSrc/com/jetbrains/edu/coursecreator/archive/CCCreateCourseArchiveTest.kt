@@ -347,8 +347,36 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("a.txt")
       additionalFile("a.txt")
     }
-    createConfigFiles(project)
     createCourseArchiveWithError<DuplicateAdditionalFileError>(course)
+  }
+
+  @Test
+  fun `test course archive creation with task file of wrong binarity`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          // JPEG is treated as binary by the platform, and it cannot create a document for it
+          taskFile("cat.jpg", InMemoryTextualContents("A cat image"))
+        }
+      }
+    }
+
+    val error = createCourseArchiveWithError<FailedToProcessEduFileAsTextualError>(course)
+    assertEquals("lesson1/task1/cat.jpg", error.exception.pathInCourse)
+  }
+
+  @Test
+  fun `test course archive is successfully created with a task file of the correct binarity`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          // JPEG is treated as binary by the platform, and it cannot create a document for it
+          taskFile("cat.jpg", InMemoryBinaryContents(byteArrayOf(1, 2)))
+        }
+      }
+    }
+
+    createCourseArchiveAndCheck(course)
   }
 
   @Test
