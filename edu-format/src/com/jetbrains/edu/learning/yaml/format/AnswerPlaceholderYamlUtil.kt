@@ -42,11 +42,11 @@ abstract class AnswerPlaceholderYamlMixin {
 
 @JsonPOJOBuilder(withPrefix = "")
 open class AnswerPlaceholderBuilder(
-  @JsonProperty(OFFSET) val offset: Int,
-  @JsonProperty(LENGTH) val length: Int,
-  @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
-  @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?,
-  @JsonProperty(IS_VISIBLE) val isVisible: Boolean = true
+  @param:JsonProperty(OFFSET) val offset: Int,
+  @param:JsonProperty(LENGTH) val length: Int,
+  @param:JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
+  @param:JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?,
+  @param:JsonProperty(IS_VISIBLE) val isVisible: Boolean = true
 ) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {

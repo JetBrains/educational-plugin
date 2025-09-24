@@ -3,7 +3,10 @@ package com.jetbrains.edu.learning.yaml.format.student
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.annotation.JsonSetter
+import com.fasterxml.jackson.annotation.Nulls
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
@@ -21,6 +24,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_BINARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LEARNER_CREATED
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PLACEHOLDERS
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROPAGATABLE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TEXT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VISIBLE
 
@@ -51,16 +55,17 @@ class IsBinaryFilter {
   override fun equals(other: Any?) = other == false || other == null
 }
 
+@JsonPOJOBuilder(buildMethodName = "buildTaskFile")
 class StudentTaskFileBuilder(
-  @JsonProperty(TEXT) val textFromConfig: String?,
-  @Encrypt @JsonProperty(ENCRYPTED_TEXT) val encryptedTextFromConfig: String?,
-  @JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,
-  name: String?,
-  isBinary: Boolean? = false,
-  placeholders: List<AnswerPlaceholder> = mutableListOf(),
-  visible: Boolean = true,
-  editable: Boolean = true,
-  propagatable: Boolean = true,
+  @param:JsonProperty(TEXT) val textFromConfig: String?,
+  @param:Encrypt @param:JsonProperty(ENCRYPTED_TEXT) val encryptedTextFromConfig: String?,
+  @param:JsonProperty(LEARNER_CREATED) val learnerCreated: Boolean = false,
+  @JsonProperty(NAME) name: String?,
+  @JsonProperty(IS_BINARY) isBinary: Boolean? = false,
+  @JsonSetter(contentNulls = Nulls.SKIP) @JsonProperty(PLACEHOLDERS) placeholders: List<AnswerPlaceholder> = mutableListOf(),
+  @JsonProperty(VISIBLE) visible: Boolean = true,
+  @JsonProperty(EDITABLE) editable: Boolean = true,
+  @JsonProperty(PROPAGATABLE) propagatable: Boolean = true,
   @JsonProperty(HIGHLIGHT_LEVEL) errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
 ) : TaskFileBuilder(name, isBinary, placeholders, visible, editable, propagatable, errorHighlightLevel) {
   override fun setupTaskFile(taskFile: TaskFile) {

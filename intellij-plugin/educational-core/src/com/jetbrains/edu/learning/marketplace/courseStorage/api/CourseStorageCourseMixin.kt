@@ -23,15 +23,15 @@ abstract class CourseStorageEduCourseMixin
 
 @JsonPOJOBuilder(withPrefix = "")
 private class CourseStorageCourseBuilder(
-  @JsonProperty(ID) val courseId: Int,
-  @JsonProperty(TITLE) val courseName: String,
-  @JsonProperty(SUMMARY) val courseDescription: String,
-  @JsonProperty(UPDATE_VERSION) val updateVersion: Int,
-  @JsonProperty(FORMAT_VERSION) val remoteFormatVersion: Int,
-  @JsonProperty(PROGRAMMING_LANGUAGE_ID) val programmingLanguageId: String,
-  @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
-  @JsonProperty(LANGUAGE) val language: String,
-  @JsonProperty(ENVIRONMENT) val env: String?,
+  @param:JsonProperty(ID) val courseId: Int,
+  @param:JsonProperty(TITLE) val courseName: String,
+  @param:JsonProperty(SUMMARY) val courseDescription: String,
+  @param:JsonProperty(UPDATE_VERSION) val updateVersion: Int,
+  @param:JsonProperty(FORMAT_VERSION) val remoteFormatVersion: Int,
+  @param:JsonProperty(PROGRAMMING_LANGUAGE_ID) val programmingLanguageId: String,
+  @param:JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
+  @param:JsonProperty(LANGUAGE) val language: String,
+  @param:JsonProperty(ENVIRONMENT) val env: String?,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {

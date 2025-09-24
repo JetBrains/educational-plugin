@@ -76,19 +76,19 @@ abstract class StepikEduCourseMixin
 
 @JsonPOJOBuilder(withPrefix = "")
 private class StepikCourseBuilder(
-  @JsonProperty(ID) val id: Int,
-  @JsonProperty(UPDATE_DATE) val updateDate: Date,
-  @JsonProperty(IS_IDEA_COMPATIBLE) val ideaCompatible: Boolean,
-  @JsonProperty(IS_ADAPTIVE) val isAdaptive: Boolean,
-  @JsonProperty(COURSE_FORMAT) val courseFormat: String,
-  @JsonProperty(SECTIONS) val sectionIds: List<Int>?,
-  @JsonProperty(INSTRUCTORS) val instructors: List<Int>?,
-  @JsonProperty(IS_PUBLIC) val isPublic: Boolean,
-  @JsonProperty(SUMMARY) val summary: String,
-  @JsonProperty(TITLE) val title: String,
-  @JsonProperty(LANGUAGE) val languageCode: String,
-  @JsonProperty(LEARNERS_COUNT) val learnersCount: Int = 0,
-  @JsonProperty(REVIEW_SUMMARY) val reviewSummary: Int = 0
+  @param:JsonProperty(ID) val id: Int,
+  @param:JsonProperty(UPDATE_DATE) val updateDate: Date,
+  @param:JsonProperty(IS_IDEA_COMPATIBLE) val ideaCompatible: Boolean,
+  @param:JsonProperty(IS_ADAPTIVE) val isAdaptive: Boolean,
+  @param:JsonProperty(COURSE_FORMAT) val courseFormat: String,
+  @param:JsonProperty(SECTIONS) val sectionIds: List<Int>?,
+  @param:JsonProperty(INSTRUCTORS) val instructors: List<Int>?,
+  @param:JsonProperty(IS_PUBLIC) val isPublic: Boolean,
+  @param:JsonProperty(SUMMARY) val summary: String,
+  @param:JsonProperty(TITLE) val title: String,
+  @param:JsonProperty(LANGUAGE) val languageCode: String,
+  @param:JsonProperty(LEARNERS_COUNT) val learnersCount: Int = 0,
+  @param:JsonProperty(REVIEW_SUMMARY) val reviewSummary: Int = 0
 ) {
   private fun build(): Course {
     val course = if (ideaCompatible) {

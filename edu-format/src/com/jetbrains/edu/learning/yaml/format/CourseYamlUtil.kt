@@ -232,25 +232,25 @@ private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>(
 
 @JsonPOJOBuilder(withPrefix = "")
 open class CourseBuilder(
-  @JsonProperty(TYPE) val courseType: String?,
-  @JsonProperty(TITLE) val title: String,
-  @JsonProperty(SUMMARY) val summary: String?,
-  @JsonProperty(VENDOR) val yamlVendor: Vendor?,
-  @JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
-  @JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
-  @JsonProperty(GENERATED_EDU_ID) val yamlGeneratedEduId: String?,
-  @JsonProperty(PROGRAMMING_LANGUAGE) val displayProgrammingLanguageName: String,
-  @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
-  @JsonProperty(LANGUAGE) val language: String,
-  @JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
-  @JsonProperty(CONTENT) val content: List<String?> = emptyList(),
-  @JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
-  @JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
-  @JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
-  @JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
-  @JsonProperty(ADDITIONAL_FILES) val yamlAdditionalFiles: List<EduFile?> = emptyList(),
-  @JsonProperty(CUSTOM_CONTENT_PATH) val pathToContent: String = "",
-  @JsonProperty(DISABLED_FEATURES) val yamlDisabledFeatures: List<String> = emptyList()
+  @param:JsonProperty(TYPE) val courseType: String?,
+  @param:JsonProperty(TITLE) val title: String,
+  @param:JsonProperty(SUMMARY) val summary: String?,
+  @param:JsonProperty(VENDOR) val yamlVendor: Vendor?,
+  @param:JsonProperty(IS_PRIVATE) val yamlIsPrivate: Boolean?,
+  @param:JsonProperty(FEEDBACK_LINK) val yamlFeedbackLink: String?,
+  @param:JsonProperty(GENERATED_EDU_ID) val yamlGeneratedEduId: String?,
+  @param:JsonProperty(PROGRAMMING_LANGUAGE) val displayProgrammingLanguageName: String,
+  @param:JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
+  @param:JsonProperty(LANGUAGE) val language: String,
+  @param:JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
+  @param:JsonProperty(CONTENT) val content: List<String?> = emptyList(),
+  @param:JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
+  @param:JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
+  @param:JsonProperty(TAGS) val yamlContentTags: List<String> = emptyList(),
+  @param:JsonProperty(ENVIRONMENT_SETTINGS) val yamlEnvironmentSettings: Map<String, String> = emptyMap(),
+  @param:JsonProperty(ADDITIONAL_FILES) val yamlAdditionalFiles: List<EduFile?> = emptyList(),
+  @param:JsonProperty(CUSTOM_CONTENT_PATH) val pathToContent: String = "",
+  @param:JsonProperty(DISABLED_FEATURES) val yamlDisabledFeatures: List<String> = emptyList()
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {

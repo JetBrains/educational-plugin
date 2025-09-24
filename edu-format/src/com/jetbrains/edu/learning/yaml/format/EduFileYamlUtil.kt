@@ -75,8 +75,8 @@ abstract class TaskFileYamlMixin : EduFileYamlMixin() {
  * A base class for building task files and additional files
  */
 open class EduFileBuilder(
-  @JsonProperty(NAME) val name: String?,
-  @JsonProperty(IS_BINARY) val isBinary: Boolean? = false
+  val name: String?,
+  val isBinary: Boolean? = false
 ) {
   protected open fun setupEduFile(eduFile: EduFile) {
     eduFile.name = name ?: formatError(message("yaml.editor.invalid.file.without.name"))
@@ -89,11 +89,11 @@ open class EduFileBuilder(
   }
 }
 
-@JsonPOJOBuilder(buildMethodName = "buildAdditionalFile", withPrefix = "")
+@JsonPOJOBuilder(buildMethodName = "buildAdditionalFile")
 class AdditionalFileBuilder(
-  name: String?,
-  isBinary: Boolean? = false,
-  @JsonProperty(VISIBLE) val isVisible: Boolean = false
+  @JsonProperty(NAME) name: String?,
+  @JsonProperty(IS_BINARY) isBinary: Boolean? = false,
+  @param:JsonProperty(VISIBLE) val isVisible: Boolean = false
 ) : EduFileBuilder(name, isBinary) {
 
   fun buildAdditionalFile(): EduFile {
@@ -108,15 +108,15 @@ class AdditionalFileBuilder(
   }
 }
 
-@JsonPOJOBuilder(buildMethodName = "buildTaskFile", withPrefix = "")
+@JsonPOJOBuilder(buildMethodName = "buildTaskFile")
 open class TaskFileBuilder(
-  name: String?,
-  isBinary: Boolean? = false,
-  @JsonSetter(contentNulls = Nulls.SKIP) @JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = mutableListOf(),
-  @JsonProperty(VISIBLE) val visible: Boolean = true,
-  @JsonProperty(EDITABLE) val editable: Boolean = true,
-  @JsonProperty(PROPAGATABLE) val propagatable: Boolean = true,
-  @JsonProperty(HIGHLIGHT_LEVEL) val errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
+  @JsonProperty(NAME) name: String?,
+  @JsonProperty(IS_BINARY) isBinary: Boolean? = false,
+  @param:JsonSetter(contentNulls = Nulls.SKIP) @param:JsonProperty(PLACEHOLDERS) val placeholders: List<AnswerPlaceholder> = mutableListOf(),
+  @param:JsonProperty(VISIBLE) val visible: Boolean = true,
+  @param:JsonProperty(EDITABLE) val editable: Boolean = true,
+  @param:JsonProperty(PROPAGATABLE) val propagatable: Boolean = true,
+  @param:JsonProperty(HIGHLIGHT_LEVEL) val errorHighlightLevel: EduFileErrorHighlightLevel = EduFileErrorHighlightLevel.ALL_PROBLEMS
 ) : EduFileBuilder(name, isBinary) {
 
   @Suppress("unused") //used for deserialization

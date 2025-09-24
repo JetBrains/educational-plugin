@@ -30,7 +30,7 @@ abstract class FrameworkLessonYamlMixin : LessonYamlMixin() {
 
 @JsonPOJOBuilder(withPrefix = "")
 open class FrameworkLessonBuilder(
-  @JsonProperty(IS_TEMPLATE_BASED) val isTemplateBased: Boolean = true,
+  @param:JsonProperty(IS_TEMPLATE_BASED) val isTemplateBased: Boolean = true,
   @JsonProperty(CONTENT) content: List<String?> = emptyList(),
   @JsonProperty(TAGS) contentTags: List<String> = emptyList(),
   @JsonProperty(CUSTOM_NAME) customName: String? = null

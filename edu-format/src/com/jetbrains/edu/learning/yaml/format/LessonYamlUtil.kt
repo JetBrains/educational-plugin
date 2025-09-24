@@ -39,9 +39,10 @@ abstract class LessonYamlMixin {
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?> = emptyList(),
-                         @JsonProperty(CUSTOM_NAME) val customName: String? = null,
-                         @JsonProperty(TAGS) val contentTags: List<String> = emptyList()
+open class LessonBuilder(
+  @param:JsonProperty(CONTENT) val content: List<String?> = emptyList(),
+  @param:JsonProperty(CUSTOM_NAME) val customName: String? = null,
+  @param:JsonProperty(TAGS) val contentTags: List<String> = emptyList()
 ) {
   private fun build(): Lesson {
     val lesson = createLesson()

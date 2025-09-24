@@ -29,19 +29,19 @@ abstract class MarketplaceEduCourseMixin
 
 @JsonPOJOBuilder(withPrefix = "")
 private class MarketplaceCourseBuilder(
-  @JsonProperty(ID) val courseId: Int,
-  @JsonProperty(NAME) val courseName: String,
-  @JsonProperty(DESCRIPTION) val courseDescription: String,
-  @JsonProperty(AUTHORS) val marketplaceAuthors: List<Author>,
-  @JsonProperty(DOWNLOADS) val downloads: Int,
-  @JsonProperty(RATING) val rating: Double?,
-  @JsonProperty(FIELDS) val fields: Fields,
-  @JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
-  @JsonProperty(MARKETPLACE_COURSE_VERSION) val version: Int?,
-  @JsonProperty(LAST_UPDATE_DATE) val lastUpdateDate: Long,
-  @JsonProperty(CREATE_DATE) val courseCreateDate: Long,
-  @JsonProperty(LINK) val courseLink: String,
-  @JsonProperty(LICENSE) val courseLicense: String,
+  @param:JsonProperty(ID) val courseId: Int,
+  @param:JsonProperty(NAME) val courseName: String,
+  @param:JsonProperty(DESCRIPTION) val courseDescription: String,
+  @param:JsonProperty(AUTHORS) val marketplaceAuthors: List<Author>,
+  @param:JsonProperty(DOWNLOADS) val downloads: Int,
+  @param:JsonProperty(RATING) val rating: Double?,
+  @param:JsonProperty(FIELDS) val fields: Fields,
+  @param:JsonProperty(ORGANIZATION) val courseOrganization: Organization?,
+  @param:JsonProperty(MARKETPLACE_COURSE_VERSION) val version: Int?,
+  @param:JsonProperty(LAST_UPDATE_DATE) val lastUpdateDate: Long,
+  @param:JsonProperty(CREATE_DATE) val courseCreateDate: Long,
+  @param:JsonProperty(LINK) val courseLink: String,
+  @param:JsonProperty(LICENSE) val courseLicense: String,
 ) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
