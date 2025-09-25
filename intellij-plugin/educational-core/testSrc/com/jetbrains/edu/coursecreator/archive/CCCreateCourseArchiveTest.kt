@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.archive
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
@@ -18,6 +19,8 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
@@ -374,6 +377,32 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
           taskFile("cat.jpg", InMemoryBinaryContents(byteArrayOf(1, 2)))
         }
       }
+    }
+
+    createCourseArchiveAndCheck(course)
+  }
+
+  @Test
+  fun `test course archive creation with additional file of wrong binarity`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      // create a file with textual contents
+      additionalFile("cat.txt", TextualContents.EMPTY)
+    }
+
+    // Write some incorrect UTF-8 text to it
+    runWriteAction {
+      project.courseDir.findFileByRelativePath("cat.txt")!!.setBinaryContent(byteArrayOf(-100))
+    }
+
+    val error = createCourseArchiveWithError<FailedToProcessEduFileAsTextualError>(course)
+    assertEquals("cat.txt", error.exception.pathInCourse)
+  }
+
+  @Test
+  fun `test course archive is successfully created with an additional file of the correct binarity`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      // JPEG is treated as binary by the platform, and it cannot create a document for it
+      additionalFile("cat.jpg", InMemoryBinaryContents(byteArrayOf(1, 2)))
     }
 
     createCourseArchiveAndCheck(course)

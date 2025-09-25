@@ -18,11 +18,12 @@ import javax.swing.event.HyperlinkEvent
 
 class FailedToProcessEduFileAsTextualException private constructor(
   val pathInCourse: String,
-  @NotificationContent message: String
-) : Exception(message) {
+  @NotificationContent message: String,
+  cause: Throwable?
+) : Exception(message, cause) {
 
   companion object {
-    fun create(file: EduFile): FailedToProcessEduFileAsTextualException {
+    fun create(file: EduFile, cause: Throwable? = null): FailedToProcessEduFileAsTextualException {
       val pathInCourse = file.pathInCourse
 
       val message = if (file is TaskFile) {
@@ -32,7 +33,7 @@ class FailedToProcessEduFileAsTextualException private constructor(
         EduCoreBundle.message("error.failed.to.process.additional.file.as.textual", pathInCourse, file.name)
       }
 
-      return FailedToProcessEduFileAsTextualException(pathInCourse, message)
+      return FailedToProcessEduFileAsTextualException(pathInCourse, message, cause)
     }
   }
 }

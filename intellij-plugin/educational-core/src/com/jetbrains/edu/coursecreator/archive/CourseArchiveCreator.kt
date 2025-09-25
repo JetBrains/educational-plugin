@@ -22,6 +22,7 @@ import com.intellij.util.concurrency.ThreadingAssertions
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.coursecreator.CCUtils.saveOpenedDocuments
 import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
+import com.jetbrains.edu.coursecreator.actions.TextualContentsDecodingException
 import com.jetbrains.edu.coursecreator.actions.TextualContentsFromDisk
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.cipher.Cipher
@@ -158,6 +159,9 @@ class CourseArchiveCreator(
       catch (e: HugeBinaryFileException) {
         Err(HugeBinaryFileError(e))
       }
+      catch (e: FailedToProcessEduFileAsTextualException) {
+        Err(FailedToProcessEduFileAsTextualError(e))
+      }
       catch (e: IOException) {
         val baseMessage = EduCoreBundle.message("error.failed.to.generate.course.archive.io.exception")
         val exceptionMessage = e.message
@@ -217,7 +221,12 @@ class CourseArchiveCreator(
       outputStream.withNewEntry(eduFile.pathInArchive) {
         val bytes = when (val contents = eduFile.contents) {
           is BinaryContents -> contents.bytes
-          is TextualContents -> contents.text.toByteArray(UTF_8)
+          is TextualContents -> try {
+            contents.text.toByteArray(UTF_8)
+          }
+          catch (e: TextualContentsDecodingException) {
+            throw FailedToProcessEduFileAsTextualException.create(eduFile, e)
+          }
           is UndeterminedContents -> throw IllegalStateException("All contents must be disambiguated before writing archive")
         }
         outputStream.write(cipher.encrypt(bytes))

@@ -3,11 +3,16 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.util.io.FileTooBigException
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.readBytes
 import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.exceptions.HugeBinaryFileException
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.charset.CodingErrorAction
+import java.nio.charset.MalformedInputException
+import java.nio.charset.UnmappableCharacterException
 
 class BinaryContentsFromDisk(val file: VirtualFile) : BinaryContents {
   override val bytes: ByteArray
@@ -23,7 +28,25 @@ class BinaryContentsFromDisk(val file: VirtualFile) : BinaryContents {
 
 class TextualContentsFromDisk(val file: VirtualFile) : TextualContents {
   override val text: String
-    get() = runReadAction {
-      VfsUtilCore.loadText(file)
+    get() {
+      val bytes = runReadAction {
+        file.readBytes()
+      }
+      val decoder = Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
+
+      try {
+        return decoder.decode(ByteBuffer.wrap(bytes)).toString()
+      }
+      catch (e : IOException) {
+        if (e is MalformedInputException || e is UnmappableCharacterException || e is CharacterCodingException) {
+          throw TextualContentsDecodingException(e)
+        }
+        else throw e
+      }
     }
 }
+
+class TextualContentsDecodingException(cause: Throwable) : Exception(
+  "Failed to decode file contents as a UTF-8 text",
+  cause
+)
