@@ -20,6 +20,7 @@ intellijPlatform {
 tasks {
   prepareSandbox { enabled = false }
   test {
+    failOnNoDiscoveredTests = false
     // Needed for both `:intellij-plugin:features:ai-hints-kotlin` and `:intellij-plugin:Edu-Kotlin`
     // Does nothing otherwise because Kotlin does not exist in the classpath
     jvmArgumentProviders += CommandLineArgumentProvider {
