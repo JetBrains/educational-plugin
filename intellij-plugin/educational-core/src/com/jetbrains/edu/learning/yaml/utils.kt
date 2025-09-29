@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskDirectory
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 
 /**
@@ -19,6 +20,10 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.remoteConfigFileName
 fun StudyItem.getConfigDir(project: Project): VirtualFile {
   val configDir = if (this is Task) getTaskDirectory(project) else getDir(project.courseDir)
   return configDir ?: error("Config dir for `$name` not found")
+}
+
+fun StudyItem.configFile(project: Project): VirtualFile? {
+  return getConfigDir(project).findChild(configFileName)
 }
 
 fun StudyItem.remoteConfigFile(project: Project): VirtualFile? {

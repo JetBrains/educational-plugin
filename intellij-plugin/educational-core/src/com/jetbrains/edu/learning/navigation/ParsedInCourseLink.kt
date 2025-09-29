@@ -17,7 +17,7 @@ sealed class ParsedInCourseLink<T : StudyItem>(val file: VirtualFile, val item: 
 
   class ItemContainerDirectory(dir: VirtualFile, container: ItemContainer) : ParsedInCourseLink<ItemContainer>(dir, container)
   class TaskDirectory(file: VirtualFile, task: Task) : ParsedInCourseLink<Task>(file, task)
-  class FileInTask(file: VirtualFile, task: Task) : ParsedInCourseLink<Task>(file, task)
+  class FileInTask(file: VirtualFile, task: Task, val pathInTask: String) : ParsedInCourseLink<Task>(file, task)
 
   companion object {
 
@@ -48,7 +48,7 @@ sealed class ParsedInCourseLink<T : StudyItem>(val file: VirtualFile, val item: 
         is Task -> {
           val taskFile = container.getTaskFile(remainingPath) ?: return null
           val file = taskFile.getVirtualFile(project) ?: return null
-          FileInTask(file, container)
+          FileInTask(file, container, remainingPath)
         }
         is ItemContainer -> {
           val segments = remainingPath.split("/", limit = 2)

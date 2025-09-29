@@ -3,12 +3,16 @@ package com.jetbrains.edu.coursecreator.archive
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
 import com.intellij.externalDependencies.ProjectExternalDependency
+import com.intellij.ide.DataManager
+import com.intellij.notification.Notification
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.runWriteActionAndWait
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.coursecreator.archive.CCCreateCourseArchiveTest.PlainTextCompatibilityProvider.Companion.PLAIN_TEXT_PLUGIN_ID
 import com.jetbrains.edu.coursecreator.courseignore.CourseIgnoreRules
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
@@ -21,10 +25,12 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTextChildFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.runInWriteActionAndWait
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import org.junit.Test
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.test.assertContains
 
 class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
 
@@ -347,8 +353,59 @@ class CCCreateCourseArchiveTest : CourseArchiveTestBase() {
       additionalFile("a.txt")
       additionalFile("a.txt")
     }
-    createConfigFiles(project)
     createCourseArchiveWithError<DuplicateAdditionalFileError>(course)
+  }
+
+  @Test
+  fun `test course archive creation with task file of wrong binarity`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, createYamlConfigs = true) {
+      lesson {
+        eduTask {
+          // JPEG is treated as binary by the platform, and it cannot create a document for it
+          taskFile("cat.jpg", InMemoryTextualContents("A cat image"))
+        }
+      }
+    }
+
+    val error = createCourseArchiveWithError<FailedToProcessEduFileAsTextualError>(course)
+    assertEquals("lesson1/task1/cat.jpg", error.exception.pathInCourse)
+
+    val notification = error.notification(project, "test title")
+
+    assertContains(notification.content, """<a href="lesson1/task1/cat.jpg">cat.jpg</a>""")
+
+    val action = notification.actions.single {
+      // Simple additional check not to get the wrong action in the future
+      it.templatePresentation.text == EduCoreBundle.message("action.mark.file.as.binary")
+    }
+
+    val context = SimpleDataContext.builder()
+      .setParent(DataManager.getInstance().getDataContext(null))
+      .add(Notification.KEY, notification)
+      .build()
+
+    testAction(action, context)
+
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+
+    assertTrue("cat.jpg file must become binary", findTaskFile(0, 0, "cat.jpg").isBinary!!)
+
+    val navigatedFile = FileEditorManagerEx.getInstanceEx(project).currentFile
+    assertEquals("task-info.yaml", navigatedFile?.name)
+  }
+
+  @Test
+  fun `test course archive is successfully created with a task file of the correct binarity`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson {
+        eduTask {
+          // JPEG is treated as binary by the platform, and it cannot create a document for it
+          taskFile("cat.jpg", InMemoryBinaryContents(byteArrayOf(1, 2)))
+        }
+      }
+    }
+
+    createCourseArchiveAndCheck(course)
   }
 
   @Test
