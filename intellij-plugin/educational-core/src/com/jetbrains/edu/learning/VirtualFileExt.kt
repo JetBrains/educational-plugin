@@ -29,6 +29,7 @@ import com.intellij.util.concurrency.annotations.RequiresWriteLock
 import com.intellij.util.io.ReadOnlyAttributeUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.BinaryContentsFromDisk
+import com.jetbrains.edu.coursecreator.archive.FailedToProcessEduFileAsTextualException
 import com.jetbrains.edu.learning.EduDocumentListener.Companion.runWithListener
 import com.jetbrains.edu.learning.configuration.excludeFromArchive
 import com.jetbrains.edu.learning.courseFormat.*
@@ -47,8 +48,11 @@ fun VirtualFile.getEditor(project: Project): Editor? {
   return if (selectedEditor is TextEditor) selectedEditor.editor else null
 }
 
-val VirtualFile.document
-  get() : Document = FileDocumentManager.getInstance().getDocument(this) ?: error("Cannot find document for a file: ${name}")
+val VirtualFile.documentOrNull: Document?
+  get() = FileDocumentManager.getInstance().getDocument(this)
+
+val VirtualFile.document : Document
+  get() = documentOrNull ?: error("Cannot find document for a file: $name")
 
 fun VirtualFile.startLoading(project: Project) {
   val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(this) ?: return
@@ -287,6 +291,7 @@ fun VirtualFile.toStudentFile(project: Project, task: Task, originalTaskFile: Ta
       return taskFile
     }
 
+    val document = documentOrNull ?: throw FailedToProcessEduFileAsTextualException.create(originalTaskFile)
     FileDocumentManager.getInstance().saveDocument(document)
     val studentFile = LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.text)
     runWithListener(project, taskFile, studentFile) { studentDocument: Document ->
