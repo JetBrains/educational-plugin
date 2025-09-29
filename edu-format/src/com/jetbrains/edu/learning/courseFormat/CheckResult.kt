@@ -41,6 +41,8 @@ data class CheckResult(
 
   val fullMessage: String get() = if (details == null) message else "$message\n\n$details"
 
+  fun debugString(): String = "Status: $status, Details: $details, Message: $message"
+
   val isSolved: Boolean get() = status == CheckStatus.Solved
 
   companion object {
