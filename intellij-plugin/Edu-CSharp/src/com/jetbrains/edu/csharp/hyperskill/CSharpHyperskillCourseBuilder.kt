@@ -3,7 +3,7 @@ package com.jetbrains.edu.csharp.hyperskill
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.csharp.CSharpLanguageSettings
 import com.jetbrains.edu.csharp.CSharpProjectSettings
-import com.jetbrains.edu.csharp.includeTopLevelDirsInCourseView
+import com.jetbrains.edu.csharp.includeVisibleTopLevelDirsInCourseView
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -21,7 +21,7 @@ class CSharpHyperskillCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     super.refreshProject(project, cause)
 
     if (cause == RefreshCause.STRUCTURE_MODIFIED) {
-      includeTopLevelDirsInCourseView(project)
+      includeVisibleTopLevelDirsInCourseView(project)
     }
   }
 }

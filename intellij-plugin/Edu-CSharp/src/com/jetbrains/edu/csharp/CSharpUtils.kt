@@ -3,11 +3,13 @@ package com.jetbrains.edu.csharp
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.backend.workspace.WorkspaceModel
-import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.ASSETS_DIRECTORY
-import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.PACKAGES_DIRECTORY
-import com.jetbrains.edu.csharp.CSharpConfigurator.Companion.PROJECT_SETTINGS_DIRECTORY
 import com.jetbrains.edu.learning.capitalize
+import com.jetbrains.edu.learning.configuration.CourseViewVisibility
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -39,12 +41,13 @@ fun Task.toProjectModelEntity(project: Project): ProjectModelEntity? = Workspace
 
 fun Project.getSolutionEntity(): ProjectModelEntity? = WorkspaceModel.getInstance(this).getSolutionEntity()
 
-fun includeTopLevelDirsInCourseView(project: Project) {
-  val filesToIndex = project.courseDir.children.filter { it.isTopLevelDirectory(project) }.mapNotNull { it.toIOFile() }
+fun includeVisibleTopLevelDirsInCourseView(project: Project) {
+  val configurator: EduConfigurator<*> = project.course?.configurator ?: error("No edu configurator associated with project")
+  val filesToIndex = project.courseDir.children.filter { it.isTopLevelVisibleDirectory(project, configurator) }.mapNotNull { it.toIOFile() }
   CSharpBackendService.getInstance(project).includeFilesToCourseView(filesToIndex)
 }
 
-private fun VirtualFile.isTopLevelDirectory(project: Project): Boolean {
+private fun VirtualFile.isTopLevelVisibleDirectory(project: Project, configurator: EduConfigurator<*>): Boolean {
   return getSection(project) != null || getLesson(project) != null
-         || name == PACKAGES_DIRECTORY || name == PROJECT_SETTINGS_DIRECTORY || path.contains("/$ASSETS_DIRECTORY/")
+         || configurator.courseFileAttributes(project, this).visibility == CourseViewVisibility.VISIBLE_FOR_STUDENT
 }
