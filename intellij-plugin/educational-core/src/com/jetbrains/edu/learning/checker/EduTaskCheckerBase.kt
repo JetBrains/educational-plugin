@@ -49,7 +49,10 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       it.isActivateToolWindowBeforeRun = activateRunToolWindow
     }
 
-    if (configurations.isEmpty()) return noTestsRun
+    if (configurations.isEmpty()) {
+      LOG.warn("Failed to create any test configuration")
+      return noTestsRun
+    }
 
     configurations.forEach {
       val validationResult = validateConfiguration(it)
@@ -95,7 +98,10 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
       }
     }
 
-    if (testResults.isEmpty()) return noTestsRun
+    if (testResults.isEmpty()) {
+      LOG.warn("Test results are empty")
+      return noTestsRun
+    }
     val checkResults = testResults.map { CheckResult.from(it) }
 
     val firstFailure = checkResults.firstOrNull { it.status != CheckStatus.Solved }

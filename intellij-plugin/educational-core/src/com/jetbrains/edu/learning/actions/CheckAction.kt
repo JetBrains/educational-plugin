@@ -145,19 +145,33 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
       invokeAndWaitIfNeeded {
         onStarted(indicator)
       }
-      val start = System.currentTimeMillis()
-      val notificationSettings = turnOffTestRunnerNotifications()
-      val localCheckResult = localCheck(indicator)
-      invokeLater { NotificationsConfigurationImpl.getInstanceImpl().changeSettings(notificationSettings) }
-      val end = System.currentTimeMillis()
-      LOG.info(String.format("Checking of %s task took %d ms", task.name, end - start))
+
+      val localCheckResult = measureTimeAndLog("""Local check of task "${task.name}"""", logResult = true, { it.debugString() }) {
+        val notificationSettings = turnOffTestRunnerNotifications()
+        val localCheckResult = localCheck(indicator)
+        invokeLater { NotificationsConfigurationImpl.getInstanceImpl().changeSettings(notificationSettings) }
+
+        localCheckResult
+      }
+
       if (localCheckResult.status === CheckStatus.Failed) {
         result = localCheckResult
         return
       }
+
       val remoteChecker = remoteCheckerForTask(project, task)
-      result = remoteChecker?.check(project, task, indicator) ?: localCheckResult
+
+      result = if (remoteChecker == null) {
+        localCheckResult
+      }
+      else {
+        measureTimeAndLog("""Remote check of task "${task.name}"""", logResult = true, { it.debugString() }) {
+          remoteChecker.check(project, task, indicator)
+        }
+      }
     }
+
+    private fun CheckResult.debugString(): String = "Status: $status, Details: $details, Message: $message"
 
     private fun localCheck(indicator: ProgressIndicator): CheckResult {
       if (checker == null) return CheckResult.NO_LOCAL_CHECK
@@ -185,6 +199,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
             is UndeterminedContents -> replaceFileText(file, "")
           }
         }
+        LOG.info("Cleared test files: ${testFiles.size}")
       }
     }
 
@@ -197,6 +212,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
             is UndeterminedContents -> replaceFileText(file, contents.textualRepresentation)
           }
         }
+        LOG.info("Filled test files with data: ${testFiles.size}")
       }
     }
 

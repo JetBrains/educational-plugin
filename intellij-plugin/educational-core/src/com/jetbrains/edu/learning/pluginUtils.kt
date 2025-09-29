@@ -91,10 +91,25 @@ fun enablePlugins(pluginsId: List<PluginId>) {
 
 val TIME_LOGGER = Logger.getInstance("JetBrainsAcademy.performance.measure")
 
-fun <T> measureTimeAndLog(title: String, block: () -> T): T {
+fun <T> measureTimeAndLog(
+  title: String,
+  logResult: Boolean = false,
+  resultTransformer: (T) -> String? = { it?.toString() },
+  block: () -> T
+): T {
   val start = System.currentTimeMillis()
-  val value = block()
-  val time = System.currentTimeMillis() - start
-  TIME_LOGGER.info("$title: $time ms")
-  return value
+
+  try {
+    val value = block()
+    val time = System.currentTimeMillis() - start
+    val message = "$title: $time ms" + if (logResult) " result: ${resultTransformer(value)}" else ""
+    TIME_LOGGER.info(message)
+    return value
+  }
+  catch (e: Throwable) {
+    val time = System.currentTimeMillis() - start
+    val message = "$title: $time ms finished with exception: ${e.javaClass} ${e.message}"
+    TIME_LOGGER.info(message)
+    throw e
+  }
 }
