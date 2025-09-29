@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -24,7 +23,7 @@ data class TaskFileCheck(
       check(taskFile != null) {
         "`$path` should be in `${task.name}` task"
       }
-      additionalCheck?.invoke(taskFile) // !! is safe because of `check` call
+      additionalCheck?.invoke(taskFile)
     } else {
       check(taskFile == null) {
         "`$path` shouldn't be in `${task.name}` task"
@@ -41,8 +40,7 @@ infix fun String.notIn(task: Task): TaskFileCheck = TaskFileCheck(task, this, fa
 data class AdditionalFileCheck(
   val course: Course,
   val path: String,
-  val shouldContain: Boolean,
-  val additionalCheck: ((EduFile) -> Unit)? = null
+  val shouldContain: Boolean
 ) : FileCheck {
   override fun invert(): AdditionalFileCheck = copy(shouldContain = !shouldContain)
   override fun check() {
@@ -51,7 +49,6 @@ data class AdditionalFileCheck(
       check(additionalFile != null) {
         "`$path` should be in `${course.name}` course"
       }
-      additionalCheck?.invoke(additionalFile) // !! is safe because of `check` call
     } else {
       check(additionalFile == null) {
         "`$path` shouldn't be in `${course.name}` course"

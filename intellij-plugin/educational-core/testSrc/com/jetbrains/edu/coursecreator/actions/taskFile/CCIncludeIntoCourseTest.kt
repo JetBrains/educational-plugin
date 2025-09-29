@@ -32,7 +32,7 @@ class CCIncludeIntoCourseTest : CCChangeFileOwnerTestBase(CCIncludeIntoArchive.A
   }
 
   @Test
-  fun `test include folder`() = doAvailableTest("dir") { course ->
+  fun `test include directory`() = doAvailableTest("dir") { course ->
     Pair(
       listOf(
         "b-excluded.txt" notIn course,
@@ -45,7 +45,7 @@ class CCIncludeIntoCourseTest : CCChangeFileOwnerTestBase(CCIncludeIntoArchive.A
   }
 
   @Test
-  fun `test include file and folder`() = doAvailableTest("b-excluded.txt", "dir") { course ->
+  fun `test include file and directory`() = doAvailableTest("b-excluded.txt", "dir") { course ->
     Pair(
       listOf(
         "dir/x-included.txt" `in` course,
@@ -59,7 +59,7 @@ class CCIncludeIntoCourseTest : CCChangeFileOwnerTestBase(CCIncludeIntoArchive.A
   }
 
   @Test
-  fun `include folder with files that must be excluded`() = doAvailableTest("dir") { course ->
+  fun `include directory with files that must be excluded`() = doAvailableTest("dir") { course ->
     Pair(
       listOf("dir/must_not_include.iml" notIn course, "dir/x-included.txt" `in` course),
       listOf("dir/y-excluded.txt" `in` course)
@@ -71,7 +71,7 @@ class CCIncludeIntoCourseTest : CCChangeFileOwnerTestBase(CCIncludeIntoArchive.A
   @Test
   fun `test do not include file inside and outside task`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "b-excluded.txt")
   @Test
-  fun `test do not include file and a folder`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "dir")
+  fun `test do not include file and a directory`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "dir")
 
   override fun createCourse() {
     courseWithFiles(

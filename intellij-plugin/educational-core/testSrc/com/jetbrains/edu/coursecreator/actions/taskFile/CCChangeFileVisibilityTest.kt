@@ -49,9 +49,9 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
   @Test
   fun `test invisible task and additional files simultaneously`() = doOppositeAvailableTest("a.txt", "lesson1/task1/TaskFile2.kt")
   @Test
-  fun `test available for task folder`() = doAvailableTest(true, "lesson1/task1")
+  fun `test available for task directory`() = doAvailableTest(true, "lesson1/task1")
   @Test
-  fun `test available for folder containing tasks`() = doAvailableTest(true, "lesson1", "dir")
+  fun `test available for directory containing tasks`() = doAvailableTest(true, "lesson1", "dir")
 
   private fun doAvailableTest(
     shouldOppositeActionBeEnabled: Boolean,

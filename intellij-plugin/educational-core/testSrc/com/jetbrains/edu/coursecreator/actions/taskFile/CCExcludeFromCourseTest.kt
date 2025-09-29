@@ -32,7 +32,7 @@ class CCExcludeFromCourseTest : CCChangeFileOwnerTestBase(CCExcludeFromArchive.A
   }
 
   @Test
-  fun `test exclude folder`() = doAvailableTest("dir") { course ->
+  fun `test exclude directory`() = doAvailableTest("dir") { course ->
     Pair(
       listOf(
         "a-included.txt" `in` course,
@@ -45,7 +45,7 @@ class CCExcludeFromCourseTest : CCChangeFileOwnerTestBase(CCExcludeFromArchive.A
   }
 
   @Test
-  fun `test exclude file and folder`() = doAvailableTest("a-included.txt", "dir") { course ->
+  fun `test exclude file and directory`() = doAvailableTest("a-included.txt", "dir") { course ->
     Pair(
       listOf(
         "dir/y-excluded.txt" notIn course,
@@ -63,7 +63,7 @@ class CCExcludeFromCourseTest : CCChangeFileOwnerTestBase(CCExcludeFromArchive.A
   @Test
   fun `test do not exclude file inside and outside task`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "a-included.txt")
   @Test
-  fun `test do not exclude file and a folder`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "dir")
+  fun `test do not exclude file and a directory`() = doUnavailableTest("lesson1/task1/taskFile1.txt", "dir")
   @Test
   fun `test do not exclude already excluded file`() = doUnavailableTest("b-excluded.txt")
 
