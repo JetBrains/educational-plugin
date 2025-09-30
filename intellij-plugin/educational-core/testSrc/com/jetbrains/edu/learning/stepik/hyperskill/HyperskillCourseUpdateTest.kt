@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduExperimentalFeatures.NEW_COURSE_UPDATE
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -359,6 +360,9 @@ class HyperskillCourseUpdateTest : FrameworkLessonsUpdateTest<HyperskillCourse>(
                                        changeCourse: (HyperskillCourse.() -> Unit)? = null) {
     val remoteCourse = changeCourse?.let { toRemoteCourse(changeCourse) }
     HyperskillCourseUpdater(project, localCourse).doUpdate(remoteCourse, problemsUpdates)
+    // `doUpdate` do some operation asynchronously using `invokeLater`, so let's process all such events first
+    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+
     val isProjectUpToDate = remoteCourse == null || localCourse.getProjectLesson()?.shouldBeUpdated(project, remoteCourse) == false
     assertTrue("Project is not up-to-date after update", isProjectUpToDate)
   }
