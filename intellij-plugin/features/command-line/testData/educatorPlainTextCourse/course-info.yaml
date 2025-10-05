@@ -1,0 +1,8 @@
+type: marketplace
+summary: Test plain text course
+title: Plain Text Course
+language: English
+programming_language: Plain text
+content:
+  - lesson1
+yaml_version: 5

@@ -1,0 +1,4 @@
+type: theory
+files:
+  - name: Main.txt
+    visible: true
