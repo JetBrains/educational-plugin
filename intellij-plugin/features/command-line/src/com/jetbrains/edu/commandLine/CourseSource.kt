@@ -1,5 +1,9 @@
 package com.jetbrains.edu.commandLine
 
+import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -10,6 +14,12 @@ import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 enum class CourseSource(val option: String, val description: String) {
@@ -67,6 +77,46 @@ enum class CourseSource(val option: String, val description: String) {
     }
 
     override fun isCourseFromSource(course: Course): Boolean = course is HyperskillCourse
+  },
+
+  LOCAL("local", "Path to local educator course project") {
+    // TODO: can we just open project here and use its own course instead of creating a new one?
+    override suspend fun loadCourse(projectPath: String): Result<Course, String> {
+      val projectPath = Paths.get(projectPath)
+      if (!projectPath.exists()) return Err("$projectPath does not exist")
+      val project = ProjectManagerEx.getInstanceEx().openProjectAsync(projectPath, OpenProjectTask {
+        isNewProject = false
+      }) ?: return Err("Failed to open project at `$projectPath`")
+
+      try {
+        val course = project.course ?: return Err("Failed to load local course `$projectPath`")
+        if (course.isStudy) return Err("Local course should be in educator mode")
+
+        val archiveFile = Files.createTempFile("course_archive_", ".zip")
+        val archiveCreationError = withContext(Dispatchers.EDT) {
+          CourseArchiveCreator(project, archiveFile).createArchive(course)
+        }
+        if (archiveCreationError != null) {
+          return Err("Failed to create course archive: ${archiveCreationError.message}")
+        }
+
+        val courseFromArchive = withContext(Dispatchers.IO) {
+          EduUtilsKt.getLocalCourse(archiveFile.absolutePathString())
+        }
+
+        return if (courseFromArchive == null) {
+          Err("Failed to create course object from `$archiveFile` archive")
+        }
+        else {
+          Ok(courseFromArchive)
+        }
+      }
+      finally {
+        runCatching { ProjectManagerEx.getInstanceEx().forceCloseProjectAsync(project) }
+      }
+    }
+
+    override fun isCourseFromSource(course: Course): Boolean = false
   };
 
   /**

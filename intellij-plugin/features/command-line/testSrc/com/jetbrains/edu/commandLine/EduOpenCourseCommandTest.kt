@@ -49,6 +49,7 @@ class EduOpenCourseCommandTest(
             --marketplace=<value>                             Marketplace course id
             --courseStorage=<value>                           Course id from course storage
             --hyperskill=<value>                              Hyperskill project id
+            --local=<value>                                   Path to local educator course project
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
             --course-params=<value>                           Additional parameters for a course project in JSON object format. Deprecated, pass parameters in the form --param1 value1 --param2 value2 ... (default: {})
             -h, --help                                        Show this message and exit
@@ -64,7 +65,7 @@ class EduOpenCourseCommandTest(
           Usage: openCourse [<options>] [<course params>]...
           
           Error: expected even number of arguments in the form `--param1 value1 --param2 value2 ...` but got `1` instead
-          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill
+          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
         """
       ),
       EduCommandTestData(
@@ -74,7 +75,7 @@ class EduOpenCourseCommandTest(
           Usage: openCourse [<options>] [<course params>]...
 
           Error: expected even number of arguments in the form `--param1 value1 --param2 value2 ...` but got `3` instead
-          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill
+          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
         """
       ),
       EduCommandTestData(
@@ -92,7 +93,7 @@ class EduOpenCourseCommandTest(
         """
           Usage: openCourse [<options>] [<course params>]...
 
-          Error: option --archive cannot be used with --marketplace or --courseStorage or --hyperskill
+          Error: option --archive cannot be used with --marketplace or --courseStorage or --hyperskill or --local
         """
       ),
       EduCommandTestData(
@@ -101,7 +102,7 @@ class EduOpenCourseCommandTest(
         """
           Usage: openCourse [<options>] [<course params>]...
 
-          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill
+          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
         """
       ),
       EduCommandTestData(
