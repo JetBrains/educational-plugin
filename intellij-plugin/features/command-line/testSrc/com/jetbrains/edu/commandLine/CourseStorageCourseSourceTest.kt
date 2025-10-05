@@ -1,6 +1,5 @@
 package com.jetbrains.edu.commandLine
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.application
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
@@ -10,18 +9,15 @@ import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageCon
 import com.jetbrains.edu.learning.mockService
 import io.mockk.every
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertIs
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class CourseSourceTest : EduTestCase() {
+class CourseStorageCourseSourceTest : EduTestCase() {
 
   @Test
   fun `test load course from course storage`() = runTest {
-    val mockConnector = mockService<CourseStorageConnector>(application)
-
+    // given
     val testCourse = EduCourse().apply {
       id = 200_001
       name = "Test Course"
@@ -30,8 +26,13 @@ class CourseSourceTest : EduTestCase() {
       authors = mutableListOf()
     }
 
+    val mockConnector = mockService<CourseStorageConnector>(application)
     every { mockConnector.searchCourse(any(), any()) } returns testCourse
+
+    // when
     val result = CourseSource.COURSE_STORAGE.loadCourse("200001")
+
+    // then
     assertIs<Ok<EduCourse>>(result)
     assertEquals(testCourse, result.value)
     verify(exactly = 1) { mockConnector.searchCourse(200_001, any()) }
@@ -39,11 +40,14 @@ class CourseSourceTest : EduTestCase() {
 
   @Test
   fun `test load incorrect course from course storage`() = runTest {
-    val application = ApplicationManager.getApplication()
+    // given
     val mockConnector = mockService<CourseStorageConnector>(application)
-
     every { mockConnector.searchCourse(any(), any()) } returns null
+
+    // when
     val result = CourseSource.COURSE_STORAGE.loadCourse("123")
+
+    // then
     assertIs<Err<String>>(result)
     assertEquals("Failed to load course from the course storage `123`", result.error)
     verify(exactly = 2) { mockConnector.searchCourse(123, any()) }
