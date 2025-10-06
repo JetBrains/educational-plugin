@@ -13,9 +13,13 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.coursecreator.framework.diff.withFLMultipleFileMergeUI
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import org.junit.Test
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 import kotlin.test.assertFails
 
 class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
@@ -619,6 +623,60 @@ class CCSyncChangesWithNextTaskTest : EduActionTestCase() {
         doTest(listOf(taskFile1, taskFile2), listOf(Resolution.AcceptedYours))
       }
     }
+  }
+
+  @Test
+  fun `test propagate changes in binary file`() {
+    val course = courseWithFiles(
+      courseMode = CourseMode.EDUCATOR,
+      language = FakeGradleBasedLanguage
+    ) {
+      frameworkLesson("lesson1") {
+        repeat(2) {
+          eduTask("task${it + 1}") {
+            taskFile("src/Task.kt", "fun foo() {}")
+            taskFile("src/Mem.png", InMemoryBinaryContents(byteArrayOf(0, 0, 0)))
+          }
+        }
+      }
+    }.apply {
+      val task = course.findTask("lesson1", "task1")
+      doTest(task, List(1) { Resolution.AcceptedYours })
+    }
+
+    withVirtualFileListener(course) {
+      val task2 = course.findTask("lesson1", "task2")
+      task2.openTaskFileInEditor("src/Task.kt")
+      GeneratorUtils.createChildFile(project, rootDir, "lesson1/task1/src/Mem.png", InMemoryBinaryContents(byteArrayOf(0, 0, 1)))
+
+      val task1 = course.findTask("lesson1", "task1")
+      task1.openTaskFileInEditor("src/Task.kt")
+      GeneratorUtils.createChildFile(project, rootDir, "lesson1/task1/src/Mem.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1)))
+
+      doTest(task1, listOf(Resolution.AcceptedYours))
+    }
+
+    val fileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt", "fun foo() {}")
+            file("Mem.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1)))
+          }
+          file("task.md")
+        }
+        dir("task2") {
+          dir("src") {
+            file("Task.kt", "fun foo() {}")
+            file("Mem.png", InMemoryBinaryContents(byteArrayOf(1, 1, 1)))
+          }
+          file("task.md")
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+    fileTree.assertEquals(rootDir, myFixture)
   }
 
   private fun createFrameworkCourse(numberOfTasks: Int): Course = createFrameworkCourseWithFiles(

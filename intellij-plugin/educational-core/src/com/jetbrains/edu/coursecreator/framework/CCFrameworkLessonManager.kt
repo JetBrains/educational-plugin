@@ -8,19 +8,23 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.storage.AbstractStorage
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.diff.applyChangesWithMergeDialog
 import com.jetbrains.edu.coursecreator.framework.diff.equalsTrimTrailingWhitespacesAndTrailingBlankLines
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
+import com.jetbrains.edu.coursecreator.framework.storage.CCFrameworkStorage
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.ext.visitTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
+import com.jetbrains.edu.learning.framework.impl.calculateChanges
+import com.jetbrains.edu.learning.framework.impl.getTaskStateFromFiles
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import org.jetbrains.annotations.TestOnly
@@ -28,6 +32,8 @@ import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.collections.filterTo
+import kotlin.error
 
 /**
  * CCFrameworkLessonManager provides operations for framework lessons for the CC.
@@ -103,19 +109,32 @@ class CCFrameworkLessonManager(
       "`getChangedFiles` should be called only when the task file is in the framework lesson"
     }
 
-    val state = getStateFromStorage(task)
-    return task.taskFiles.values.filter { isTaskFileChanged(it, state) }
+    val taskFiles = task.taskFiles.values
+    val taskDir = task.getDir(project.courseDir) ?: error("Failed to find task directory")
+    val currentState = getTaskStateFromFiles(taskFiles, taskDir)
+    val storedState = getStateFromStorage(task)
+    return taskFiles.filter { isTaskFileChanged(it, currentState[it.name], storedState[it.name]) }
   }
 
-  private fun isTaskFileChanged(taskFile: TaskFile, storedState: FLTaskStateCC): Boolean {
+  private fun isTaskFileChanged(taskFile: TaskFile, currentContents: FileContents?, storedContents: FileContents?): Boolean {
     if (!taskFile.isPropagatable) return false
-    val documentText = taskFile.getDocument(project)?.text
-    val storedText = storedState[taskFile.name]
-    if (documentText == null || storedText == null) {
-      return documentText != storedText
+    if (currentContents == null || storedContents == null) {
+      return currentContents != storedContents
     }
-    return !equalsTrimTrailingWhitespacesAndTrailingBlankLines(documentText, storedText)
+    if (currentContents is BinaryContents || storedContents is BinaryContents) {
+      val currentBytes = currentContents.bytes
+      val storedBytes = storedContents.bytes
+      return !currentBytes.contentEquals(storedBytes)
+    }
+    return !equalsTrimTrailingWhitespacesAndTrailingBlankLines(currentContents.textualRepresentation, storedContents.textualRepresentation)
   }
+
+  private val FileContents.bytes: ByteArray?
+    get() = when (this) {
+      is TextualContents -> null
+      is BinaryContents -> bytes
+      is UndeterminedContents -> bytes
+    }
 
   private fun propagateChanges(
     currentTask: Task,
@@ -142,9 +161,9 @@ class CCFrameworkLessonManager(
   private fun applyChanges(
     currentTask: Task,
     targetTask: Task,
-    currentState: FLTaskStateCC,
-    initialBaseState: FLTaskStateCC,
-    targetState: FLTaskStateCC,
+    currentState: FLTaskState,
+    initialBaseState: FLTaskState,
+    targetState: FLTaskState,
     taskDir: VirtualFile
   ): Boolean {
     // Try to resolve some changes automatically and apply them to previousCurrentState
@@ -207,13 +226,13 @@ class CCFrameworkLessonManager(
     updateRecord(task, updatedUserChanges.record)
 
     if (updatedUserChanges.state.isNotEmpty()) {
-      SyncChangesStateManager.getInstance(project).removeSyncChangesState(task, initialCurrentFiles.mapNotNull { task.taskFiles[it] })
+      SyncChangesStateManager.getInstance(project).removeSyncChangesState(task, initialCurrentFiles.toList())
     }
 
     return updatedUserChanges
   }
 
-  fun getStateFromStorage(task: Task): FLTaskStateCC {
+  fun getStateFromStorage(task: Task): FLTaskState {
     return try {
       storage.getState(getRecord(task))
     }
@@ -224,7 +243,7 @@ class CCFrameworkLessonManager(
   }
 
   @Synchronized
-  private fun updateState(record: Int, state: FLTaskStateCC): UpdatedState {
+  private fun updateState(record: Int, state: FLTaskState): UpdatedState {
     return try {
       val newRecord = storage.updateState(record, state)
       storage.force()
@@ -240,15 +259,16 @@ class CCFrameworkLessonManager(
     Disposer.dispose(storage)
   }
 
-  private fun calcInitialFiles(task: Task, baseFilesNames: List<String>?): Set<String> {
-    return baseFilesNames?.intersect(task.allPropagatableFiles) ?: task.allPropagatableFiles
+  private fun calcInitialFiles(task: Task, baseFilesNames: List<String>?): Set<TaskFile> {
+    if (baseFilesNames == null) return task.allPropagatableFiles
+    return task.allPropagatableFiles.filterTo(mutableSetOf()) { it.name in baseFilesNames }
   }
 
-  private val Task.allPropagatableFiles: Set<String>
-    get() = taskFiles.filterValues { it.isPropagatable }.keys
+  private val Task.allPropagatableFiles: Set<TaskFile>
+    get() = taskFiles.values.filterTo(mutableSetOf()) { it.isPropagatable }
 
-  private val Task.allNonPropagatableFiles: Set<String>
-    get() = taskFiles.filterValues { !it.isPropagatable }.keys
+  private val Task.allNonPropagatableFiles: Set<TaskFile>
+    get() = taskFiles.values.filterTo(mutableSetOf()) { !it.isPropagatable }
 
   private fun showApplyChangesCanceledNotification(project: Project, startTaskName: String, cancelledTaskName: String) {
     EduNotificationManager.showWarningNotification(
@@ -373,7 +393,8 @@ class CCFrameworkLessonManager(
 
     fun getInstance(project: Project): CCFrameworkLessonManager = project.service()
 
-    private fun constructStoragePath(project: Project): Path =
+    @VisibleForTesting
+    fun constructStoragePath(project: Project): Path =
       Paths.get(FileUtil.join(project.basePath!!, Project.DIRECTORY_STORE_FOLDER, "frameworkLessonHistoryCC", "storage"))
 
     private fun createStorage(project: Project): CCFrameworkStorage {
@@ -385,5 +406,5 @@ class CCFrameworkLessonManager(
 
 private data class UpdatedState(
   val record: Int,
-  val state: FLTaskStateCC,
+  val state: FLTaskState,
 )
