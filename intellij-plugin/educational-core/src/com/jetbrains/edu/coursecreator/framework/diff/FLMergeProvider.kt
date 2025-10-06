@@ -91,7 +91,6 @@ class FLMergeProvider(
 
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: return
 
-        @Suppress("UnstableApiUsage")
         invokeAndWaitIfNeeded {
           runWriteAction {
             document.setText(value.textualRepresentation)
