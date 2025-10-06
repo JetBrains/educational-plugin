@@ -234,7 +234,7 @@ class CCFrameworkLessonManager(
 
   fun getStateFromStorage(task: Task): FLTaskState {
     return try {
-      storage.getState(getRecord(task))
+      storage.getState(getRecord(task)).state
     }
     catch (e: IOException) {
       LOG.error("Failed to get user changes for task `${task.name}`", e)
@@ -391,6 +391,8 @@ class CCFrameworkLessonManager(
   companion object {
     private val LOG = logger<CCFrameworkLessonManager>()
 
+    const val STORAGE_VERSION: Int = 1
+
     fun getInstance(project: Project): CCFrameworkLessonManager = project.service()
 
     @VisibleForTesting
@@ -399,7 +401,16 @@ class CCFrameworkLessonManager(
 
     private fun createStorage(project: Project): CCFrameworkStorage {
       val storageFilePath = constructStoragePath(project)
-      return CCFrameworkStorage(storageFilePath)
+      val storage = CCFrameworkStorage(storageFilePath)
+      return try {
+        storage.migrate(STORAGE_VERSION)
+        storage
+      }
+      catch (e: IOException) {
+        LOG.error(e)
+        AbstractStorage.deleteFiles(storageFilePath.toString())
+        CCFrameworkStorage(storageFilePath, STORAGE_VERSION)
+      }
     }
   }
 }
