@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
-import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
+import com.jetbrains.edu.learning.framework.impl.textRepresentationEquals
 
 abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
   /**
@@ -10,44 +12,44 @@ abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
    * Otherwise, the strategy counts this file as conflict
    */
   protected fun resolveSimpleConflicts(
-    currentState: FLTaskStateCC,
-    baseState: FLTaskStateCC,
-    targetState: FLTaskStateCC,
+    currentState: FLTaskState,
+    baseState: FLTaskState,
+    targetState: FLTaskState,
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
     val allFiles = currentState.keys + baseState.keys + targetState.keys
 
-    val resultState = mutableMapOf<String, String>()
+    val resultState = mutableMapOf<String, FileContents>()
     val conflictFiles = mutableListOf<String>()
 
     for (file in allFiles) {
-      val (isConflict, text) = resolveForFile(currentState[file], baseState[file], targetState[file])
+      val (isConflict, contents) = resolveForFile(currentState[file], baseState[file], targetState[file])
       if (isConflict) {
         conflictFiles.add(file)
       }
-      if (text != null) {
-        resultState[file] = text
+      if (contents != null) {
+        resultState[file] = contents
       }
     }
     return FLConflictResolveStrategy.StateWithResolvedChanges(conflictFiles, resultState)
   }
 
   // returns (isConflictFile, content)
-  private fun resolveForFile(contentLeft: String?, contentBase: String?, contentRight: String?): Pair<Boolean, String?> {
+  private fun resolveForFile(contentLeft: FileContents?, contentBase: FileContents?, contentRight: FileContents?): Pair<Boolean, FileContents?> {
     return when {
       contentBase == null && contentLeft == null && contentRight == null -> error("This branch should not be reachable")
 
       // User didn't make any changes with this file in the current task, so there are no changes to propagate.
       // Select a content from targetTask (contentRight)
-      contentBase == contentLeft -> false to contentRight
+      contentBase.textRepresentationEquals(contentLeft) -> false to contentRight
 
       // User didn't make any changes with this file in the target task, so we can propagate the changes
       // Select a content from currentTask (contentLeft)
-      contentBase == contentRight -> false to contentLeft
+      contentBase.textRepresentationEquals(contentRight) -> false to contentLeft
 
       // User changed this file in currentTask and targetTask, and the resulting versions are equal
       // Changes between (contentLeft, contentBase) and (contentRight, contentBase) are the same, so we can use any of them
       // Select a content from currentTask (contentLeft)
-      contentLeft == contentRight -> false to contentLeft
+      contentLeft.textRepresentationEquals(contentRight) -> false to contentLeft
 
       // User added this file in currentTask and targetTask, and the resulting versions are different.
       // The conflict occurs, but there is no base version because it is equal to null.
@@ -66,9 +68,9 @@ abstract class FLConflictResolveStrategyBase : FLConflictResolveStrategy {
  */
 class SimpleConflictResolveStrategy : FLConflictResolveStrategyBase() {
   override fun resolveConflicts(
-    currentState: FLTaskStateCC,
-    baseState: FLTaskStateCC,
-    targetState: FLTaskStateCC
+    currentState: FLTaskState,
+    baseState: FLTaskState,
+    targetState: FLTaskState
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
     return resolveSimpleConflicts(currentState, baseState, targetState)
   }

@@ -2,24 +2,28 @@ package com.jetbrains.edu.coursecreator.framework.impl
 
 import com.jetbrains.edu.coursecreator.framework.diff.resolveConflicts
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.assertContentsEqual
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import org.junit.Test
 
 class DiffConflictResolveStrategyTest : EduTestCase() {
   @Test
   fun `test solve some unrelated changes`() {
-    val baseState = mapOf(
+    val baseState = stateOf(
       "a.kt" to """
         //TODO()
       """.trimIndent()
     )
-    val currentState = mapOf(
+    val currentState = stateOf(
       "a.kt" to """
         //TODO()
         
         fun main() { println("MEM") }
       """.trimIndent()
     )
-    val targetState = mapOf(
+    val targetState = stateOf(
       "a.kt" to """
         fun f() = 128
         
@@ -29,7 +33,7 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
 
     val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
-    val expectedState = mapOf(
+    val expectedState = stateOf(
       "a.kt" to """
         fun f() = 128
         
@@ -38,22 +42,22 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         fun main() { println("MEM") }
       """.trimIndent()
     )
-    assertEquals(expectedState, actualState)
+    assertStateEquals(expectedState, actualState)
   }
 
   @Test
   fun `test do not resolve changes in conflict file`() {
-    val baseState = mapOf("a.kt" to """
+    val baseState = stateOf("a.kt" to """
         //TODO()
       """.trimIndent()
     )
-    val currentState = mapOf("a.kt" to """
+    val currentState = stateOf("a.kt" to """
         //TODO1()
         
         fun main() { println("MEM") }
       """.trimIndent(),
     )
-    val targetState = mapOf(
+    val targetState = stateOf(
       "a.kt" to """
         fun f() = 128
         
@@ -63,41 +67,41 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
 
     val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
-    val expectedState = mapOf(
+    val expectedState = stateOf(
       "a.kt" to """
         //TODO()
       """.trimIndent()
     )
-    assertEquals(expectedState, actualState)
+    assertStateEquals(expectedState, actualState)
   }
 
   @Test
   fun `test resolve simple conflicts`() {
-    val baseState = mapOf(
+    val baseState = stateOf(
       "a.kt" to "TODO()"
     )
-    val currentState = mapOf(
+    val currentState = stateOf(
       "a.kt" to "TODO()",
       "c.kt" to "fun ggg() = 0",
     )
-    val targetState = mapOf(
+    val targetState = stateOf(
       "a.kt" to "TODO()",
       "d.kt" to "fun yyy() = 100",
     )
 
     val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
-    val expectedState = mapOf(
+    val expectedState = stateOf(
       "a.kt" to "TODO()",
       "c.kt" to "fun ggg() = 0",
       "d.kt" to "fun yyy() = 100",
     )
-    assertEquals(expectedState, actualState)
+    assertStateEquals(expectedState, actualState)
   }
 
   @Test
   fun `test do not resolve (deleted, modified) conflict`() {
-    val baseState = mapOf(
+    val baseState = stateOf(
       "a.kt" to """
         fun f() = 12
 
@@ -105,7 +109,7 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         
       """.trimIndent()
     )
-    val currentState = mapOf(
+    val currentState = stateOf(
       "a.kt" to """
         fun f() = 12
 
@@ -114,11 +118,11 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         val x = 12
       """.trimIndent(),
     )
-    val targetState = mapOf<String, String>()
+    val targetState = stateOf()
 
     val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
-    val expectedState = mapOf(
+    val expectedState = stateOf(
       "a.kt" to """
         fun f() = 12
 
@@ -126,12 +130,12 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         
       """.trimIndent()
     )
-    assertEquals(expectedState, actualState)
+    assertStateEquals(expectedState, actualState)
   }
 
   @Test
   fun `test do not resolve (added, added) conflict`() {
-    val currentState = mapOf(
+    val currentState = stateOf(
       "a.kt" to """
         fun f() = 12
 
@@ -139,7 +143,7 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         
       """.trimIndent()
     )
-    val targetState = mapOf(
+    val targetState = stateOf(
       "a.kt" to """
 
         //adjkfjkasdfjkasjkdfjkashdjk
@@ -147,11 +151,11 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         val x = 12
       """.trimIndent(),
     )
-    val baseState = mapOf<String, String>()
+    val baseState = stateOf()
 
     val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(listOf("a.kt"), conflictFiles)
-    val expectedState = mapOf(
+    val expectedState = stateOf(
       "a.kt" to """
         fun f() = 12
 
@@ -159,12 +163,12 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         
       """.trimIndent()
     )
-    assertEquals(expectedState, actualState)
+    assertStateEquals(expectedState, actualState)
   }
 
   @Test
   fun `test resolve several conflicts in one file`() {
-    val baseState = mapOf(
+    val baseState = stateOf(
       "a.kt" to """
         fun f() = 12
         
@@ -173,7 +177,7 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         }
       """.trimIndent()
     )
-    val currentState = mapOf(
+    val currentState = stateOf(
       "a.kt" to """
         fun f() = 12
         
@@ -188,7 +192,7 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         }
       """.trimIndent()
     )
-    val targetState = mapOf(
+    val targetState = stateOf(
       "a.kt" to """
         fun f() = 12
         
@@ -205,7 +209,7 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
 
     val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
     assertEquals(emptyList<String>(), conflictFiles)
-    val expectedState = mapOf(
+    val expectedState = stateOf(
       "a.kt" to """
         fun f() = 12
         
@@ -225,6 +229,27 @@ class DiffConflictResolveStrategyTest : EduTestCase() {
         }
       """.trimIndent(),
     )
-    assertEquals(expectedState, actualState)
+    assertStateEquals(expectedState, actualState)
   }
+
+  @Test
+  fun `test non-trivial conflicts in binary files does not resolve`() {
+    val baseState = mapOf("a.kt" to InMemoryBinaryContents(byteArrayOf(0, 0)))
+    val currentState = mapOf("a.kt" to InMemoryBinaryContents(byteArrayOf(1, 1)))
+    val targetState = mapOf("a.kt" to InMemoryBinaryContents(byteArrayOf(1, 0)))
+
+    val (conflictFiles, actualState) = resolveConflicts(project, currentState, baseState, targetState)
+    assertEquals(listOf("a.kt"), conflictFiles)
+    assertStateEquals(mapOf("a.kt" to InMemoryBinaryContents(byteArrayOf(0, 0))), actualState)
+  }
+
+  private fun assertStateEquals(expectedState: FLTaskState, actualState: FLTaskState) {
+    assertEquals(expectedState.size, actualState.size)
+    for ((path, expectedContents) in expectedState) {
+      val actualContents = actualState[path]!!
+      assertContentsEqual(path, expectedContents, actualContents)
+    }
+  }
+
+  private fun stateOf(vararg files: Pair<String, String>): FLTaskState = files.toMap().mapValues { InMemoryTextualContents(it.value) }
 }

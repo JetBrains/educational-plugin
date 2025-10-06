@@ -19,6 +19,10 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.LineTokenizer
 import com.jetbrains.edu.learning.computeUnderProgress
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class DiffConflictResolveStrategy(private val project: Project) : FLConflictResolveStrategyBase(), Disposable {
@@ -37,9 +41,9 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
   override fun dispose() {}
 
   override fun resolveConflicts(
-    currentState: Map<String, String>,
-    baseState: Map<String, String>,
-    targetState: Map<String, String>
+    currentState: FLTaskState,
+    baseState: FLTaskState,
+    targetState: FLTaskState,
   ): FLConflictResolveStrategy.StateWithResolvedChanges {
     // try to resolve simple conflicts
     val (changedFiles, resolvedSimpleConflictsState) = resolveSimpleConflicts(currentState, baseState, targetState)
@@ -61,12 +65,18 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
           continue
         }
 
+        // do not try to resolve conflicts with binary files
+        if (leftContent is BinaryContents || baseContent is BinaryContents || rightContent is BinaryContents) {
+          conflictFiles += changedFile
+          continue
+        }
+
         val resolvedBaseContent = resolvedSimpleConflictsState[changedFile] ?: error("Base state with resolved conflicts shouldn't be null")
 
         val contents = ThreeSideContentInfo(leftContent, resolvedBaseContent, rightContent)
 
         // create a temporary document with base content for a merge model
-        val baseDocument = EditorFactory.getInstance().createDocument(contents.baseContent)
+        val baseDocument = EditorFactory.getInstance().createDocument(contents.baseContent.textualRepresentation)
 
         val allConflictsAreSolved = tryResolveConflictsForDocument(project, baseDocument, contents, indicator)
         // do not change an original base text if the file contains unresolvable conflicts
@@ -74,7 +84,7 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
           conflictFiles += changedFile
         }
         else {
-          resolvedState[changedFile] = baseDocument.text
+          resolvedState[changedFile] = InMemoryTextualContents(baseDocument.text)
         }
       }
     }
@@ -87,7 +97,12 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     contentInfo: ThreeSideContentInfo,
     indicator: ProgressIndicator,
   ): Boolean {
-    val changes = textDiffProvider.compare(contentInfo.leftContent, contentInfo.baseContent, contentInfo.rightContent, indicator)
+    val changes = textDiffProvider.compare(
+      contentInfo.leftContent.textualRepresentation,
+      contentInfo.baseContent.textualRepresentation,
+      contentInfo.rightContent.textualRepresentation,
+      indicator
+    )
 
     val lineRanges = changes.map { change ->
       val startLine = change.getStartLine(ThreeSide.BASE)
@@ -139,7 +154,7 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
         return null
       }
       val texts = ThreeSide.map { side ->
-        val content = side.select(contentInfo.contents)
+        val content = side.select(contentInfo.contents).textualRepresentation
         val offsets = LineOffsetsUtil.create(content)
 
         val startLine = change.getStartLine(side)
@@ -160,7 +175,7 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     else {
       val side = if (changeType.isChange(Side.LEFT)) ThreeSide.LEFT else ThreeSide.RIGHT
 
-      val content = side.select(contentInfo.contents)
+      val content = side.select(contentInfo.contents).textualRepresentation
       val offsets = LineOffsetsUtil.create(content)
 
       val startLine = change.getStartLine(side)
@@ -191,11 +206,11 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
   }
 
   private class ThreeSideContentInfo(
-    val leftContent: String,
-    val baseContent: String,
-    val rightContent: String,
+    val leftContent: FileContents,
+    val baseContent: FileContents,
+    val rightContent: FileContents,
   ) {
-    val contents: List<String> = listOf(leftContent, baseContent, rightContent)
+    val contents: List<FileContents> = listOf(leftContent, baseContent, rightContent)
   }
 
   companion object {
