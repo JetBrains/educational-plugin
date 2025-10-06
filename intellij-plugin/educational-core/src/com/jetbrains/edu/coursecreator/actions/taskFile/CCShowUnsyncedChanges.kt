@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.framework.CCFrameworkLessonManager
 import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -26,10 +27,16 @@ class CCShowUnsyncedChanges : DumbAwareAction() {
     val file = getSelectedFile(e) ?: return
     val taskFile = file.getTaskFile(project) ?: return
 
-    val storageText = CCFrameworkLessonManager.getInstance(project).getStateFromStorage(taskFile.task)[taskFile.name] ?: "(null)"
+    val storedState = CCFrameworkLessonManager.getInstance(project).getStateFromStorage(taskFile.task)
+    val storageContents = storedState[taskFile.name]
 
     val currentDiffContent = DiffContentFactory.getInstance().create(project, file)
-    val savedDiffContent = DiffContentFactory.getInstance().create(project, storageText, file.fileType)
+    val savedDiffContent = if (storageContents is BinaryContents) {
+      DiffContentFactory.getInstance().createFromBytes(project, storageContents.bytes, file.fileType, file.name)
+    } else {
+      val text = storageContents?.textualRepresentation ?: "(null)"
+      DiffContentFactory.getInstance().create(project, text, file.fileType)
+    }
 
     val request = SimpleDiffRequest(
       EduCoreBundle.message("action.Educational.Educator.ShowUnsyncedChanges.diff.title"),
