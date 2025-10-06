@@ -8,22 +8,34 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.util.text.Strings
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileWithAssignedFileType
+import com.intellij.testFramework.BinaryLightVirtualFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.util.text.CharSequenceSubSequence
-import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryBinaryContents
+import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.isUnitTestMode
 import org.jetbrains.annotations.TestOnly
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class FLLightVirtualFile(
+sealed interface FLLightVirtualFile : VirtualFileWithAssignedFileType {
+  val isBinary: Boolean
+}
+
+private class FLLightTextualVirtualFile(
   private val filePath: String,
   fileType: FileType,
-  content: String,
-) : LightVirtualFile(PathUtil.getFileName(filePath), fileType, content) {
+  text: CharSequence
+) : LightVirtualFile(PathUtil.getFileName(filePath), fileType, text), FLLightVirtualFile {
+  override val isBinary: Boolean = false
+
   override fun toNioPath(): Path {
     return Paths.get(filePath)
   }
@@ -37,23 +49,55 @@ class FLLightVirtualFile(
   }
 }
 
+// LightVirtualFile invalidate content when using `file.setBinaryContent`
+private class FLLightBinaryVirtualFile(
+  private val filePath: String,
+  fileType: FileType,
+  bytes: ByteArray
+) : BinaryLightVirtualFile(PathUtil.getFileName(filePath), fileType, bytes), FLLightVirtualFile {
+  override val isBinary: Boolean = false
+
+  override fun toNioPath(): Path {
+    return Paths.get(filePath)
+  }
+
+  override fun getPath(): String {
+    return filePath
+  }
+
+  override fun delete(requestor: Any?) {
+    isValid = false
+  }
+}
+
+private fun createFLLightFile(path: String, fileType: FileType, contents: FileContents): VirtualFile {
+  return when (contents) {
+    is BinaryContents -> {
+      FLLightBinaryVirtualFile(path, fileType, contents.bytes)
+    }
+    else -> {
+      FLLightTextualVirtualFile(path, fileType, contents.textualRepresentation)
+    }
+  }
+}
+
 fun applyChangesWithMergeDialog(
   project: Project,
   currentTask: Task,
   targetTask: Task,
   conflictFiles: List<String>,
-  leftState: FLTaskStateCC,
-  baseState: FLTaskStateCC,
-  rightState: FLTaskStateCC,
-  initialBaseState: FLTaskStateCC = baseState
-): FLTaskStateCC? {
+  leftState: FLTaskState,
+  baseState: FLTaskState,
+  rightState: FLTaskState,
+  initialBaseState: FLTaskState = baseState
+): FLTaskState? {
   val mergeProvider = FLMergeProvider(leftState, baseState, rightState, initialBaseState)
   val mergeDialogCustomizer = FLMergeDialogCustomizer(currentTask.name, targetTask.name)
   val conflictLightVirtualFiles = conflictFiles.map { path ->
     val fileType = findConflictFileType(project, path, currentTask, targetTask) ?: error("Couldn't find file corresponding for $path")
     val fileContent = baseState[path] ?: error("Conflict file content was not added to baseState during conflict resolution")
     // set file name with a full file path
-    FLLightVirtualFile(path, fileType, fileContent)
+    createFLLightFile(path, fileType, fileContent)
   }
   val isOk = showMultipleFileMergeDialog(project, conflictLightVirtualFiles, mergeProvider, mergeDialogCustomizer, currentTask.name, targetTask.name)
 
@@ -71,9 +115,13 @@ fun applyChangesWithMergeDialog(
       continue
     }
 
-    val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: error("There is no document for ${file.path}")
-
-    finalState[file.path] = document.text
+    if (file is FLLightBinaryVirtualFile) {
+      finalState[file.path] = runReadAction { InMemoryBinaryContents(file.contentsToByteArray(false)) }
+    }
+    else {
+      val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: error("There is no document for ${file.path}")
+      finalState[file.path] = InMemoryTextualContents(document.text)
+    }
   }
 
   return finalState
@@ -111,9 +159,9 @@ private fun showMultipleFileMergeDialog(
 
 fun resolveConflicts(
   project: Project,
-  currentState: FLTaskStateCC,
-  baseState: FLTaskStateCC,
-  targetState: FLTaskStateCC
+  currentState: FLTaskState,
+  baseState: FLTaskState,
+  targetState: FLTaskState
 ): FLConflictResolveStrategy.StateWithResolvedChanges {
   return with(DiffConflictResolveStrategy(project)) {
     try {

@@ -11,14 +11,18 @@ import com.intellij.openapi.vcs.merge.MergeSession.Resolution
 import com.intellij.openapi.vcs.merge.MergeSessionEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.ColumnInfo
-import com.jetbrains.edu.coursecreator.framework.FLTaskStateCC
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
+import com.jetbrains.edu.learning.courseFormat.FileContents
+import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.UndeterminedContents
+import com.jetbrains.edu.learning.framework.impl.FLTaskState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class FLMergeProvider(
-  private val leftState: FLTaskStateCC,
-  private val baseState: FLTaskStateCC,
-  private val rightState: FLTaskStateCC,
-  private val initialBaseState: FLTaskStateCC = baseState,
+  private val leftState: FLTaskState,
+  private val baseState: FLTaskState,
+  private val rightState: FLTaskState,
+  private val initialBaseState: FLTaskState = baseState,
 ) : MergeProvider2 {
   override fun loadRevisions(file: VirtualFile): MergeData {
     return MergeData().apply {
@@ -32,7 +36,8 @@ class FLMergeProvider(
   override fun conflictResolvedForFile(file: VirtualFile) {}
 
   override fun isBinary(file: VirtualFile): Boolean {
-    return file.fileType.isBinary
+    require(file is FLLightVirtualFile)
+    return file.isBinary
   }
 
   override fun createMergeSession(files: List<VirtualFile>): MergeSession {
@@ -72,15 +77,24 @@ class FLMergeProvider(
           // file is deleted
           // invalidate file, so it can be checked by file.exists()
           file.delete(javaClass)
+          continue
         }
-        else {
-          val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: return
 
-          @Suppress("UnstableApiUsage")
+        if (isBinary(file)) {
           invokeAndWaitIfNeeded {
             runWriteAction {
-              document.setText(value)
+              file.setBinaryContent(value.encodeToByteArray())
             }
+          }
+          continue
+        }
+
+        val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: return
+
+        @Suppress("UnstableApiUsage")
+        invokeAndWaitIfNeeded {
+          runWriteAction {
+            document.setText(value.textualRepresentation)
           }
         }
       }
@@ -118,6 +132,12 @@ class FLMergeProvider(
     override fun getAdditionalWidth(): Int {
       return defaultGap
     }
+  }
+
+  private fun FileContents.encodeToByteArray(): ByteArray = when (this) {
+    is TextualContents -> text.encodeToByteArray()
+    is BinaryContents -> bytes
+    is UndeterminedContents -> text.encodeToByteArray()
   }
 
   companion object {
