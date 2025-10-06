@@ -1,17 +1,20 @@
 package com.jetbrains.edu.learning.navigation
 
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.yaml.configFile
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Navigates to the YAML entry of an edu file inside the corresponding `task-info.yaml` or `course-info.yaml`.
@@ -26,23 +29,23 @@ interface NavigateToConfigEntryForEduFileExtension {
   companion object {
     val EP: ExtensionPointName<NavigateToConfigEntryForEduFileExtension> = ExtensionPointName.create("Educational.navigateToConfigEntryForEduFile")
 
-    @RequiresEdt
-    fun navigateToConfigEntryForEduFile(project: Project, eduFile: EduFile): Boolean {
+    suspend fun navigateToConfigEntryForEduFile(project: Project, eduFile: EduFile): Boolean {
       val extension = EP.extensionList.firstOrNull()
 
-      return runReadAction {
-        val configFile = findConfigFile(project, eduFile) ?: return@runReadAction false
+      val navigatableElement = readAction {
+        val configFile = findConfigFile(project, eduFile) ?: return@readAction null
+        extension?.findConfigEntry(configFile, eduFile) ?: configFile
+      } ?: return false
 
-        val navigatableElement = extension?.findConfigEntry(configFile, eduFile) ?: configFile
+      val canNavigate = readAction { navigatableElement.canNavigate() }
 
-        val canNavigate = navigatableElement.canNavigate()
-
-        if (canNavigate) {
+      if (canNavigate) {
+        withContext(Dispatchers.EDT) {
           navigatableElement.navigate(true)
         }
-
-        canNavigate
       }
+
+      return canNavigate
     }
 
     @RequiresReadLock
