@@ -40,8 +40,8 @@ fun getTaskStateFromFiles(initialFiles: Iterable<TaskFile>, taskDir: VirtualFile
   for (taskFile in initialFiles) {
     val file = taskDir.findFileByRelativePath(taskFile.name) ?: continue
 
-    val diskContents = when (taskFile.contents) {
-      is BinaryContents -> runReadAction { InMemoryBinaryContents(file.contentsToByteArray()) }
+    val diskContents = when (taskFile.isBinary) {
+      true -> runReadAction { InMemoryBinaryContents(file.contentsToByteArray()) }
       else -> {
         val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) } ?: continue
         InMemoryTextualContents(document.text)
@@ -76,4 +76,4 @@ fun FLTaskState.stateEquals(other: FLTaskState): Boolean {
  *
  * @return true if [other] has the same [FileContents.textualRepresentation]
  */
-fun FileContents.textRepresentationEquals(other: FileContents?): Boolean = textualRepresentation == other?.textualRepresentation
+fun FileContents?.textRepresentationEquals(other: FileContents?): Boolean = this?.textualRepresentation == other?.textualRepresentation

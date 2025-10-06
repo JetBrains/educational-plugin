@@ -58,7 +58,7 @@ class FrameworkLessonTaskFileHistory private constructor(private val remoteHisto
         val flManager = FrameworkLessonManager.getInstance(project)
         val actualContents = flManager.getTaskState(localLesson, task)[fileName]
 
-        if (actualContents?.textRepresentationEquals(unmodifiedContents) == true) { null } else { actualContents }
+        if (actualContents.textRepresentationEquals(unmodifiedContents)) { null } else { actualContents }
       }
 
       // In the remote history we get user changes from the localHistory evaluated on the previous step
