@@ -4,6 +4,8 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.currentThreadCoroutineScope
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
@@ -17,7 +19,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigateToConfigEntryForEduFileExtension
 import com.jetbrains.edu.learning.navigation.ParsedInCourseLink
 import com.jetbrains.edu.learning.runInBackground
+import com.jetbrains.edu.learning.stepik.api.COURSE
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -94,16 +98,7 @@ private class NavigateToConfigEntryForEduFileNotificationListener(private val pr
     val eduFilePath = e.description ?: return
     val eduFile = eduFilePath.pathInCourseToEduFile(project) ?: return
 
-    runInBackground(project, "Navigating...") {
-      runBlockingCancellable {
-        withContext(Dispatchers.IO) {
-          val navigationSuccess = NavigateToConfigEntryForEduFileExtension.navigateToConfigEntryForEduFile(project, eduFile)
-          if (!navigationSuccess) {
-            notification.expire()
-          }
-        }
-      }
-    }
+    CourseArchiveNotificationService.getInstance(project).navigateToConfigEntryForEduFile(eduFile)
   }
 }
 
@@ -115,4 +110,20 @@ private fun String.pathInCourseToEduFile(project: Project): EduFile? {
   }
 
   return project.course?.getAdditionalFile(this)
+}
+
+@Service(Service.Level.PROJECT)
+class CourseArchiveNotificationService(private val project: Project, private val cs: CoroutineScope) {
+
+  fun navigateToConfigEntryForEduFile(eduFile: EduFile) {
+    cs.launch {
+      withContext(Dispatchers.IO) {
+        NavigateToConfigEntryForEduFileExtension.navigateToConfigEntryForEduFile(project, eduFile)
+      }
+    }
+  }
+
+  companion object {
+    fun getInstance(project: Project): CourseArchiveNotificationService = project.service()
+  }
 }
