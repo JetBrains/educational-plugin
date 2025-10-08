@@ -18,7 +18,9 @@ import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.compatibilityProvider
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import org.jsoup.Jsoup
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.declaredMemberProperties
 
 const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
 val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.9.0")
@@ -50,10 +52,25 @@ private fun restartIDE(messageInfo: String) {
 
 fun pluginVersion(pluginId: String): String? = PluginManagerCore.getPlugin(PluginId.getId(pluginId))?.version
 
-// Kotlin plugin keeps the latest supported language version only in change notes
 fun kotlinVersionFromPlugin(pluginId: String): String? {
-  val changeNotes = PluginManagerCore.getPlugin(PluginId.getId(pluginId))?.changeNotes ?: return null
-  return Jsoup.parse(changeNotes).getElementsByTag("h3").firstOrNull()?.text()
+  val pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId(pluginId)) ?: return null
+
+  // get the value of org.jetbrains.kotlin.config.LanguageVersion.LATEST_STABLE with reflection
+
+  val languageVersionClass = pluginDescriptor
+    .pluginClassLoader
+    ?.loadClass("org.jetbrains.kotlin.config.LanguageVersion")
+    ?.kotlin ?: return null
+
+  val latestLanguageVersionProperty = languageVersionClass.companionObject?.declaredMemberProperties?.firstOrNull {
+    it.name == "LATEST_STABLE"
+  } ?: return null
+
+  val languageVersion = latestLanguageVersionProperty.getter.call(
+    languageVersionClass.companionObjectInstance
+  ) ?: return null
+
+  return languageVersion.toString()
 }
 
 fun kotlinVersion(): KotlinVersion {
