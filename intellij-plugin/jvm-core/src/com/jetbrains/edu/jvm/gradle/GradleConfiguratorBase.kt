@@ -25,18 +25,21 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     file(BUILD_GRADLE, SETTINGS_GRADLE, GRADLE_PROPERTIES, GradleConstants.KOTLIN_DSL_SCRIPT_NAME, GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) {
-      includeIntoArchive()
+      @Suppress("DEPRECATION")
+      undoLegacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
 
     dirAndChildren(*FOLDERS_TO_EXCLUDE) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
       courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
     }
 
     file(*NAMES_TO_EXCLUDE) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
       courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
     }

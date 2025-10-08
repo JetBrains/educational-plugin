@@ -54,7 +54,8 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     dirAndChildren("target") {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }

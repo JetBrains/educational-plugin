@@ -45,12 +45,14 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
     }
 
     dirAndChildren(NodeModuleNamesUtil.MODULES) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     file("package-lock.json") {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
     }
   }
 

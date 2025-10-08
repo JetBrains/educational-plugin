@@ -67,7 +67,8 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
     // we could use it how indicator because CLion generate build dirs with names `cmake-build-*`
     // @see com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace.getProfileGenerationDirNames
     dirAndChildren("^cmake-build-".toRegex(), TEST_FRAMEWORKS_BASE_DIR_VALUE, direct = true) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
