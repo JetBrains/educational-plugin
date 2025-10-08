@@ -81,7 +81,8 @@ object AdditionalFilesUtils {
     useLegacyExcludeFromArchive: Boolean = false
   ): Boolean {
     val excludedByConfigurator = if (useLegacyExcludeFromArchive) {
-      courseConfigurator.courseFileAttributes(project, file).excludedFromArchive
+      @Suppress("DEPRECATION")
+      courseConfigurator.courseFileAttributes(project, file).legacyExcludedFromArchive
     }
     else {
       courseConfigurator.courseFileAttributes(project, file).archiveInclusionPolicy <= ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT

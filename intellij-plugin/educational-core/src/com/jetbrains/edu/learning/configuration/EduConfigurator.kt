@@ -32,10 +32,12 @@ import javax.swing.Icon
 private val NAME_START_WITH_DOT_REGEX = """^\..*$""".toRegex()
 
 private fun AttributesBuilderContext.legacyExcludeFromArchiveHiddenFilesAndDirectories() = name(NAME_START_WITH_DOT_REGEX) {
-  excludeFromArchive()
+  @Suppress("DEPRECATION")
+  legacyExcludeFromArchive()
 
   any {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
   }
 }
 
@@ -44,10 +46,12 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
 
   // .idea folder
   dir(Project.DIRECTORY_STORE_FOLDER) {
-    includeIntoArchive()
+    @Suppress("DEPRECATION")
+    undoLegacyExcludeFromArchive()
 
     dirAndChildren(PROFILE_DIR, "scopes") {
-      includeIntoArchive()
+      @Suppress("DEPRECATION")
+      undoLegacyExcludeFromArchive()
     }
 
     legacyExcludeFromArchiveHiddenFilesAndDirectories()
@@ -70,35 +74,41 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
   }
 
   extension("iml") {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 
   file(taskDescriptionRegex) {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   file(pred { isLocalConfigFileName(it) || isRemoteConfigFileName(it) }) {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   dirAndChildren(CCUtils.GENERATED_FILES_FOLDER, direct = true) {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 
   file(EduNames.COURSE_IGNORE, EduFormatNames.COURSE_ICON_FILE) {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   // legacy files
   file(EduNames.HINTS, EduNames.STEPIK_IDS_JSON) {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
   }
 
   dirAndChildren(EduNames.VCS_GIT) {

@@ -59,12 +59,14 @@ fun Task.getCurrentTaskFilePath(project: Project): String? {
 
 internal fun pythonAttributesEvaluator(baseEvaluator: AttributesEvaluator): AttributesEvaluator = AttributesEvaluator(baseEvaluator) {
   dirAndChildren(*FOLDERS_TO_EXCLUDE, direct = true) {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   extension("pyc") {
-    excludeFromArchive()
+    @Suppress("DEPRECATION")
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 }

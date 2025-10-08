@@ -19,7 +19,8 @@ data class ExpectedCourseFileAttributes(
 ) {
   fun assertAttributes(actual: CourseFileAttributes) {
     if (excludedFromArchive != null) {
-      assertEquals("Excluded from archive attribute mismatch", excludedFromArchive, actual.excludedFromArchive)
+      @Suppress("DEPRECATION")
+      assertEquals("Excluded from archive attribute mismatch", excludedFromArchive, actual.legacyExcludedFromArchive)
     }
     if (archiveInclusionPolicy != null) {
       assertEquals("Archive inclusion policy attribute mismatch", archiveInclusionPolicy, actual.archiveInclusionPolicy)

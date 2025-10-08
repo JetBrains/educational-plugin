@@ -32,12 +32,14 @@ class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     extension(SolutionFileType.defaultExtension) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     dirAndChildren(BIN_DIRECTORY, OBJ_DIRECTORY) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
   }

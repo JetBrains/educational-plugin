@@ -80,7 +80,8 @@ data class CourseFileAttributes(
    * 
    * After some reasonable period of time, this attribute can be removed.
    */
-  val excludedFromArchive : Boolean,
+  @Deprecated("This method is necessary only to preserve the old plugin behaviour")
+  val legacyExcludedFromArchive : Boolean,
 
   /**
    * See [ArchiveInclusionPolicy]. The default value is [ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT]

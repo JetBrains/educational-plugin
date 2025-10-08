@@ -19,7 +19,8 @@ class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkP
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super<GradleConfiguratorBase>.courseFileAttributesEvaluator) {
     extension(DB_EXTENSION) {
-      excludeFromArchive()
+      @Suppress("DEPRECATION")
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
   }

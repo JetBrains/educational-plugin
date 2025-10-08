@@ -22,15 +22,14 @@ class AttributesBuilderContext private constructor(
   internal var rules: MutableList<Rule> = mutableListOf()
   private val setupAttributes: MutableList<AttributesMutator> = mutableListOf()
 
-  /**
-   * Do not use this method in the new code, see [CourseFileAttributes.excludedFromArchive]
-   */
-  fun excludeFromArchive() {
-    setupAttributes += { it.excludedFromArchive = true }
+  @Deprecated("Do not use this method in the new code, see [CourseFileAttributes.legacyExcludedFromArchive]")
+  fun legacyExcludeFromArchive() {
+    setupAttributes += { it.legacyExcludedFromArchive = true }
   }
 
-  fun includeIntoArchive() {
-    setupAttributes += { it.excludedFromArchive = false }
+  @Deprecated("Do not use this method in the new code, see [CourseFileAttributes.legacyExcludedFromArchive]")
+  fun undoLegacyExcludeFromArchive() {
+    setupAttributes += { it.legacyExcludedFromArchive = false }
   }
 
   fun archiveInclusionPolicy(policy: ArchiveInclusionPolicy) {
