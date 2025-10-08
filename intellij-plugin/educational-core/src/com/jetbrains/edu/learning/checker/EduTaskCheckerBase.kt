@@ -11,20 +11,34 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.Project.DIRECTORY_STORE_FOLDER
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.vfs.isFile
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
 import com.jetbrains.edu.learning.checker.tests.SMTestResultCollector
 import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.checker.tests.TestResultGroup
+import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
+import com.jetbrains.edu.learning.configuration.courseFileAttributes
+import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.BinaryContents
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckResult.Companion.noTestsRun
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
+import com.jetbrains.edu.learning.courseFormat.TextualContents
+import com.jetbrains.edu.learning.courseFormat.UndeterminedContents
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestDirectories
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
+import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.runReadActionInSmartMode
 
 abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
@@ -50,7 +64,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     }
 
     if (configurations.isEmpty()) {
-      LOG.warn("Failed to create any test configuration")
+      LOG.warn("Failed to create any test configuration. Actual task files: ${task.fileTreeForLog()}")
       return noTestsRun
     }
 
@@ -80,7 +94,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
         testResultCollector = testResultCollector
       )
     ) {
-      LOG.warn("Execution failed because the configuration is broken")
+      LOG.warn("Execution failed because the configuration is broken. Actual task files: ${task.fileTreeForLog()}")
       return noTestsRun
     }
 
@@ -99,7 +113,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
     }
 
     if (testResults.isEmpty()) {
-      LOG.warn("Test results are empty")
+      LOG.warn("Test results are empty. Actual task files: ${task.fileTreeForLog()}")
       return noTestsRun
     }
     val checkResults = testResults.map { CheckResult.from(it) }
@@ -185,6 +199,53 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
   }
 
   protected open fun validateConfiguration(configuration: RunnerAndConfigurationSettings): CheckResult? = null
+
+  private fun EduTask.fileTreeForLog(): String {
+    val taskDir = getDir(project.courseDir) ?: return "<unknown task dir>"
+    val result = StringBuilder("\n")
+    val configurator = course.configurator ?: return "<no configurator>"
+    VfsUtil.visitChildrenRecursively(taskDir, object : VirtualFileVisitor<String>() {
+      var indent = 0
+
+      override fun visitFile(file: VirtualFile): Boolean {
+        result.append(" ".repeat(indent))
+        result.append(file.name)
+
+        if (file.isFile) {
+          val taskFileName = file.pathRelativeToTask(project)
+          val taskFile = getTaskFile(taskFileName)
+          if (taskFile != null) {
+            val contentsType = when (taskFile.contents) {
+              is BinaryContents -> "binary"
+              is TextualContents -> "text"
+              is UndeterminedContents -> "undetermined"
+            }
+            result.append(" (task file: $contentsType)")
+          }
+        }
+
+        val exclusionPolicy = configurator.courseFileAttributes(project, file).archiveInclusionPolicy
+        // skip excluded folders and the .idea folder
+        val skipChildren = file.isDirectory && (exclusionPolicy == ArchiveInclusionPolicy.MUST_EXCLUDE || file.name == DIRECTORY_STORE_FOLDER)
+
+        if (skipChildren) {
+          result.append(" <skipped>")
+        }
+        else {
+          indent += 2
+        }
+
+        result.append("\n")
+        return !skipChildren
+      }
+
+      override fun afterChildrenVisited(file: VirtualFile) {
+        indent -= 2
+      }
+    })
+
+    return result.toString()
+  }
 
   companion object {
 
