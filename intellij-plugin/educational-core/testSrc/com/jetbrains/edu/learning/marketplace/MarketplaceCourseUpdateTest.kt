@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import com.jetbrains.edu.learning.update.UpdateHistoryService
 import com.jetbrains.edu.rules.WithExperimentalFeature
 import com.jetbrains.rd.util.firstOrNull
 import org.junit.Test
@@ -629,6 +630,54 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
 
     doTest(course, serverCourse, expectedStructure, 2)
     assertEquals(course.updateDate, serverCourse.updateDate)
+  }
+
+  @Test
+  @WithExperimentalFeature(NEW_COURSE_UPDATE, false)
+  fun `update history is recorded for first updater`() {
+    val course = createCourse(CheckStatus.Solved)
+    course.init(false)
+    val serverCourse2 = course.copy().apply {
+      marketplaceCourseVersion = 2
+    }
+    loadCourseStructure(course, serverCourse2)
+    updateCourse(course, serverCourse2, 2)
+
+    val updatedCourse = project.course as EduCourse
+
+    val remoteCourse3 = updatedCourse.copy().apply {
+      marketplaceCourseVersion = 3
+    }
+    updateCourse(updatedCourse, remoteCourse3, 3)
+
+    assertEquals(
+      "1->2(updater FIRST),2->3(updater FIRST)",
+      UpdateHistoryService.getInstance(project).updatesString()
+    )
+  }
+
+  @Test
+  @WithExperimentalFeature(NEW_COURSE_UPDATE, true)
+  fun `update history is recorded for collect-update updater`() {
+    val course = createCourse(CheckStatus.Solved)
+    course.init(false)
+    val serverCourse2 = course.copy().apply {
+      marketplaceCourseVersion = 2
+    }
+    loadCourseStructure(course, serverCourse2)
+    updateCourse(course, serverCourse2, 2)
+
+    val updatedCourse = project.course as EduCourse
+
+    val remoteCourse3 = updatedCourse.copy().apply {
+      marketplaceCourseVersion = 3
+    }
+    updateCourse(updatedCourse, remoteCourse3, 3)
+
+    assertEquals(
+      "1->2,2->3",
+      UpdateHistoryService.getInstance(project).updatesString()
+    )
   }
 
   private fun createCourseWithFrameworkLesson(
