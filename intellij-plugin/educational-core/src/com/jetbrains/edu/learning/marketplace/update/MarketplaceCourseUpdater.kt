@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
@@ -22,18 +23,22 @@ import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.courseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.UPDATE
+import com.jetbrains.edu.learning.update.UpdateHistoryService
+import com.jetbrains.edu.learning.update.UpdateItem
 import com.jetbrains.edu.learning.update.UpdateUtils
+import com.jetbrains.edu.learning.update.UpdaterImplementation
 import kotlinx.coroutines.runBlocking
 
 class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
   private val tasksStatuses = mutableMapOf<Int, CheckStatus>()
 
   override fun doUpdate(courseFromServer: EduCourse) {
+    val initialVersion = course.marketplaceCourseVersion
     if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE)) {
       runBlocking {
         MarketplaceCourseUpdaterNew(project, course).update(courseFromServer)
       }
-      doAfterUpdate()
+      doAfterUpdate(initialVersion, UpdaterImplementation.COLLECT_UPDATE)
       return
     }
 
@@ -50,14 +55,23 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
 
     saveLearningProgress(courseFromServer)
 
-    doAfterUpdate()
+    doAfterUpdate(initialVersion, UpdaterImplementation.FIRST)
   }
 
-  private fun doAfterUpdate() {
+  private fun doAfterUpdate(initialVersion: Int, updater: UpdaterImplementation) {
     UpdateUtils.navigateToTaskAfterUpdate(project)
     //remove editor notification, suggesting to update course
     EditorNotifications.getInstance(project).updateAllNotifications()
     showUpdateNotification()
+    val updatesHistory = UpdateHistoryService.getInstance(project)
+    updatesHistory.updateHappened(
+      UpdateItem(
+        versionBefore = initialVersion.toString(),
+        versionAfter = course.marketplaceCourseVersion.toString(),
+        updater = updater
+      )
+    )
+    thisLogger().info("Course has been updated. Updates history ${updatesHistory.updatesString()}")
   }
 
   private fun showUpdateNotification() {

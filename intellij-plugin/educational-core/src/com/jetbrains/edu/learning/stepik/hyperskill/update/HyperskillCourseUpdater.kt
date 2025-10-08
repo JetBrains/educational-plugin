@@ -4,6 +4,7 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -34,16 +35,21 @@ import com.jetbrains.edu.learning.stepik.hyperskill.eduEnvironment
 import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.submissions.isSignificantlyAfter
+import com.jetbrains.edu.learning.update.UpdateHistoryService
+import com.jetbrains.edu.learning.update.UpdateItem
 import com.jetbrains.edu.learning.update.UpdateUtils
 import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpdated
 import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
+import com.jetbrains.edu.learning.update.UpdaterImplementation
 import com.jetbrains.edu.learning.update.elements.TaskUpdateInfo
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class HyperskillCourseUpdater(private val project: Project, val course: HyperskillCourse) {
@@ -175,7 +181,7 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
         runBlockingCancellable {
           HyperskillCourseUpdaterNew(project, course).update(remoteCourse)
         }
-        doAfterUpdate()
+        doAfterUpdate(UpdaterImplementation.COLLECT_UPDATE)
         return
       }
 
@@ -191,10 +197,10 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       YamlFormatSynchronizer.saveItemWithRemoteInfo(course)
       ProjectManager.getInstance().reloadProject(project)
     }
-    doAfterUpdate()
+    doAfterUpdate(UpdaterImplementation.FIRST)
   }
 
-  private fun doAfterUpdate() {
+  private fun doAfterUpdate(updater: UpdaterImplementation) {
     UpdateUtils.navigateToTaskAfterUpdate(project)
 
     @Suppress("DialogTitleCapitalization")
@@ -207,6 +213,16 @@ class HyperskillCourseUpdater(private val project: Project, val course: Hyperski
       if (project.isDisposed) return@runInEdt
       project.messageBus.syncPublisher(CourseUpdateListener.COURSE_UPDATE).courseUpdated(project, course)
     }
+
+    val updatesHistory = UpdateHistoryService.getInstance(project)
+    updatesHistory.updateHappened(
+      UpdateItem(
+        versionBefore = "",
+        versionAfter = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
+        updater = updater
+      )
+    )
+    thisLogger().info("Hyperskill course has been updated. Updates history ${updatesHistory.updatesString()}")
   }
 
   @VisibleForTesting
