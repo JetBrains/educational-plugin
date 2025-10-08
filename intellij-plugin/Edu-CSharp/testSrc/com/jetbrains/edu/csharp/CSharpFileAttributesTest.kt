@@ -7,17 +7,17 @@ import com.jetbrains.edu.coursecreator.archive.FileAttributesTest.Companion.expe
 import com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
+import com.jetbrains.rider.test.BaseIntegrationTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
-@Suppress("Junit4RunWithInspection")
 @RunWith(Parameterized::class)
 class CSharpFileAttributesTest(
   private val filePath: String,
   private val expectedAttributes: ExpectedCourseFileAttributes
-) : CSharpTestBase() {
+) : BaseIntegrationTest() {
 
   @Test
   fun `file has correct course attributes`() {
