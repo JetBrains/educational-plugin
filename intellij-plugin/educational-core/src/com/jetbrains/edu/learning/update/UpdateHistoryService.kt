@@ -17,6 +17,8 @@ class UpdateHistoryService : SerializablePersistentStateComponent<UpdateHistoryS
 
   fun updatesString(): String = state.updates.joinToString(separator = ",")
 
+  fun isEmpty(): Boolean = state.updates.isEmpty()
+
   override fun cleanUpState() {
     state = State(emptyList())
   }

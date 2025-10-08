@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduExperimentalFeatures.NEW_COURSE_UPDATE
+import com.jetbrains.edu.learning.actions.CreateNewYouTrackIssue
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -12,11 +13,14 @@ import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.update.UpdateHistoryService
+import com.jetbrains.edu.learning.update.UpdateItem
+import com.jetbrains.edu.learning.update.UpdaterImplementation
 import com.jetbrains.edu.rules.WithExperimentalFeature
 import com.jetbrains.rd.util.firstOrNull
 import org.junit.Test
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.test.assertContains
 
 @WithExperimentalFeature(id = NEW_COURSE_UPDATE, value = false)
 class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSettings>() {
@@ -678,6 +682,25 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
       "1->2,2->3",
       UpdateHistoryService.getInstance(project).updatesString()
     )
+  }
+
+  @Test
+  fun `CreateNewYouTrackIssue action includes information about course updates`() {
+    val course = createCourse(CheckStatus.Solved)
+    createCourseStructure(course)
+    UpdateHistoryService.getInstance(project).updateHappened(UpdateItem(
+      versionBefore = "1", versionAfter = "2", updater = UpdaterImplementation.COLLECT_UPDATE
+    ))
+    val issueDescription = CreateNewYouTrackIssue.createIssueDescription(course)
+    assertContains(issueDescription, "* **Course updates**: 1->2")
+  }
+
+  @Test
+  fun `CreateNewYouTrackIssue action does not include information about course updates if history is empty`() {
+    val course = createCourse(CheckStatus.Solved)
+    createCourseStructure(course)
+    val issueDescription = CreateNewYouTrackIssue.createIssueDescription(course)
+    assertFalse("Issue description should not contain updates history", issueDescription.contains("**Course updates**"))
   }
 
   private fun createCourseWithFrameworkLesson(

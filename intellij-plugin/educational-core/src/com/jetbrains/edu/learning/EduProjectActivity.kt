@@ -46,6 +46,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
+import com.jetbrains.edu.learning.update.UpdateHistoryService
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -106,6 +107,9 @@ class EduProjectActivity : ProjectActivity {
         }
       }
     }
+
+    LOG.info("Course opened: ${course.name}. Update history: ${UpdateHistoryService.getInstance(project).updatesString()}")
+
     EduCounterUsageCollector.eduProjectOpened(course)
   }
 
