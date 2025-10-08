@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.rider.languages.fileTypes.csharp.CSharpLanguage
 import org.junit.Test
 
-class CSharpCourseBuilderTest : CSharpTestBase() {
+class CSharpCourseBuilderTest : CSharpCourseGenerationTestBase() {
 
   @Test
   fun `test new educator course`() {
