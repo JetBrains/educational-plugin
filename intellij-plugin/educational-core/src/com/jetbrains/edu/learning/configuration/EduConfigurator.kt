@@ -32,10 +32,10 @@ import javax.swing.Icon
 private val NAME_START_WITH_DOT_REGEX = """^\..*$""".toRegex()
 
 private fun AttributesBuilderContext.legacyExcludeFromArchiveHiddenFilesAndDirectories() = name(NAME_START_WITH_DOT_REGEX) {
-  excludeFromArchive()
+  legacyExcludeFromArchive()
 
   any {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
   }
 }
 
@@ -44,10 +44,10 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
 
   // .idea folder
   dir(Project.DIRECTORY_STORE_FOLDER) {
-    includeIntoArchive()
+    undoLegacyExcludeFromArchive()
 
     dirAndChildren(PROFILE_DIR, "scopes") {
-      includeIntoArchive()
+      undoLegacyExcludeFromArchive()
     }
 
     legacyExcludeFromArchiveHiddenFilesAndDirectories()
@@ -70,35 +70,35 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
   }
 
   extension("iml") {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 
   file(taskDescriptionRegex) {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   file(pred { isLocalConfigFileName(it) || isRemoteConfigFileName(it) }) {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   dirAndChildren(CCUtils.GENERATED_FILES_FOLDER, direct = true) {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
   }
 
   file(EduNames.COURSE_IGNORE, EduFormatNames.COURSE_ICON_FILE) {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
     archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
   }
 
   // legacy files
   file(EduNames.HINTS, EduNames.STEPIK_IDS_JSON) {
-    excludeFromArchive()
+    legacyExcludeFromArchive()
   }
 
   dirAndChildren(EduNames.VCS_GIT) {

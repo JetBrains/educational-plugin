@@ -6,9 +6,9 @@ import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 
 internal class CourseFileAttributesMutable {
   fun toImmutable(): CourseFileAttributes =
-    CourseFileAttributes(excludedFromArchive, inclusionPolicy, visibility)
+    CourseFileAttributes(legacyExcludedFromArchive, inclusionPolicy, visibility)
 
-  var excludedFromArchive: Boolean = false
+  var legacyExcludedFromArchive: Boolean = false
   var inclusionPolicy: ArchiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT
   var visibility: CourseViewVisibility = CourseViewVisibility.AUTHOR_DECISION
 }

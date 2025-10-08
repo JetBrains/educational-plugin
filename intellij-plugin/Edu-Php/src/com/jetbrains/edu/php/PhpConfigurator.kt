@@ -43,7 +43,7 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     dirAndChildren(ComposerUtils.VENDOR_DIR_DEFAULT_NAME) {
-      excludeFromArchive()
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
@@ -52,7 +52,7 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
     }
 
     file(ComposerUtils.COMPOSER_PHAR_NAME) {
-      excludeFromArchive()
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
   }

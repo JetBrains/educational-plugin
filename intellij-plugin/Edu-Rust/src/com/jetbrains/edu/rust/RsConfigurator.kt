@@ -42,19 +42,19 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {
     dir(".cargo", direct = true) {
       name(CargoConstants.CONFIG_TOML_FILE, CargoConstants.CONFIG_FILE, direct = true) {
-        includeIntoArchive()
+        undoLegacyExcludeFromArchive()
         archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
       }
-      includeIntoArchive()
+      undoLegacyExcludeFromArchive()
     }
 
     dirAndChildren(CargoConstants.ProjectLayout.target) {
-      excludeFromArchive()
+      legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
     }
 
     file(CargoConstants.LOCK_FILE) {
-      excludeFromArchive()
+      legacyExcludeFromArchive()
     }
 
     file("Cargo.toml") {
