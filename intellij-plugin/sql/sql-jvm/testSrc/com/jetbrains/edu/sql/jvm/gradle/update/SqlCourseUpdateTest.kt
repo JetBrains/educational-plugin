@@ -1,6 +1,7 @@
 package com.jetbrains.edu.sql.jvm.gradle.update
 
 import com.intellij.database.dataSource.LocalDataSourceManager
+import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -137,11 +138,12 @@ class SqlCourseUpdateTest : SqlCourseGenerationTestBase() {
     course: Course,
     metadata: Map<String, String>,
     waitForProjectConfiguration: Boolean
-  ) {
-    super.createCourseStructure(course, metadata, waitForProjectConfiguration)
+  ): Project {
+    val project = super.createCourseStructure(course, metadata, waitForProjectConfiguration)
     if (course is EduCourse) {
       setTopLevelSection(course)
     }
+    return project
   }
 
   private fun setTopLevelSection(course: EduCourse) {

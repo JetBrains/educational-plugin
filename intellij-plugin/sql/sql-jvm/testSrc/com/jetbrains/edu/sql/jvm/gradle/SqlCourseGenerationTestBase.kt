@@ -48,10 +48,11 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     course: Course,
     metadata: Map<String, String>,
     waitForProjectConfiguration: Boolean
-  ) {
-    super.createCourseStructure(course, metadata, waitForProjectConfiguration)
+  ): Project {
+    val project = super.createCourseStructure(course, metadata, waitForProjectConfiguration)
     waitWhileDataSourceSyncInProgress()
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    return project
   }
 
   protected fun checkAllTasksHaveDataSource(course: Course) {
