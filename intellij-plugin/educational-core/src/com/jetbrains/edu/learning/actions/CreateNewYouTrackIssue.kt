@@ -14,8 +14,11 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.technologyName
 import com.jetbrains.edu.learning.pluginVersion
+import com.jetbrains.edu.learning.update.UpdateHistoryService
+import org.jetbrains.annotations.VisibleForTesting
 
 @Suppress("ComponentNotRegistered")
 class CreateNewYouTrackIssue : DumbAwareAction() {
@@ -37,8 +40,9 @@ class CreateNewYouTrackIssue : DumbAwareAction() {
 
   companion object {
 
-    private fun createIssueDescription(course: Course?): String {
-      val pluginVersion = pluginVersion(EduNames.PLUGIN_ID)!!
+    @VisibleForTesting
+    fun createIssueDescription(course: Course?): String {
+      val pluginVersion = pluginVersion(EduNames.PLUGIN_ID) ?: pluginVersion("com.jetbrains.edu.core") !!
       return buildString {
         appendLine("""
           ## Environment
@@ -52,7 +56,9 @@ class CreateNewYouTrackIssue : DumbAwareAction() {
             * **Course name**: ${course.name}
             * **Course info**: ${course.courseInfo}
             * **Course mode**: ${course.mode}
-            """.trimIndent())
+            """.trimIndent()
+          )
+          appendUpdateHistoryIfNeeded(course)
         }
         appendLine("""
           
@@ -99,5 +105,12 @@ class CreateNewYouTrackIssue : DumbAwareAction() {
       }
 
     private val Course.mode: String get() = if (isStudy) "Learner" else "Educator"
+
+    private fun StringBuilder.appendUpdateHistoryIfNeeded(course: Course) {
+      val project = course.project ?: return
+      val updateHistory = UpdateHistoryService.getInstance(project)
+      if (updateHistory.isEmpty()) return
+      appendLine("* **Course updates**: ${updateHistory.updatesString()}")
+    }
   }
 }
