@@ -45,6 +45,7 @@ class EduUiOnboardingAnimationData private constructor(
 
     val ZHABA_DIMENSION: Dimension get() = Dimension(zhabaScale(121), zhabaScale(107))
     val EYE_SHIFT: Int get() = zhabaScale(40)
+    val SMALL_SHIFT: Int get() = zhabaScale(4)
 
     const val FRAME_DURATION: Long = 42 // is approximately 24 FPS
     const val JUMP_DURATION: Long = 300

@@ -9,6 +9,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE_SHIFT
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
@@ -49,7 +50,7 @@ class WelcomeStep : EduUiOnboardingStep {
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)
 
     // Position the balloon at the bottom of the project view component
-    val point = Point(zhabaPoint.x + EYE_SHIFT, zhabaPoint.y - 4)
+    val point = Point(zhabaPoint.x + EYE_SHIFT, zhabaPoint.y - SMALL_SHIFT)
     val relativePoint = RelativePoint(component, point)
 
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("welcome.step.text") }

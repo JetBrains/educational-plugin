@@ -7,6 +7,7 @@ import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.*
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import java.awt.Point
 
@@ -44,7 +45,7 @@ class CourseViewStep : EduUiOnboardingStep {
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)
 
     // Position the balloon a bit to the right from the middle of the project view
-    val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - 4)
+    val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - SMALL_SHIFT)
     val relativePoint = RelativePoint(component, point)
 
     return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)

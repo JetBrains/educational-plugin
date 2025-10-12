@@ -9,6 +9,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE_SHIFT
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
@@ -42,10 +43,10 @@ class TaskDescriptionStep : EduUiOnboardingStep {
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("task.description.step.text") }
       .withHeader(EduUiOnboardingBundle.message("task.description.step.header"))
 
-    val zhabaPoint = Point(4, component.height / 2 - ZHABA_DIMENSION.height / 2)
+    val zhabaPoint = Point(SMALL_SHIFT, component.height / 2 - ZHABA_DIMENSION.height / 2)
     val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
 
-    val tooltipPoint = Point(zhabaPoint.x + EYE_SHIFT, zhabaPoint.y - 4)
+    val tooltipPoint = Point(zhabaPoint.x + EYE_SHIFT, zhabaPoint.y - SMALL_SHIFT)
     val relativePoint = RelativePoint(component, tooltipPoint)
 
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)

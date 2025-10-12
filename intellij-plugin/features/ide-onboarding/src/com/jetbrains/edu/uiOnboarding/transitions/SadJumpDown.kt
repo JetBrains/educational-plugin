@@ -21,5 +21,5 @@ class SadJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoint,
 
 internal fun pointAtTheBottom(zhabaComponent: ZhabaComponent, startPoint: RelativePoint) = RelativePoint(
   zhabaComponent,
-  Point(startPoint.getPointOn(zhabaComponent).point.x, zhabaComponent.height + 40)
+  Point(startPoint.getPointOn(zhabaComponent).point.x, zhabaComponent.height + EduUiOnboardingAnimationData.zhabaScale(40))
 )

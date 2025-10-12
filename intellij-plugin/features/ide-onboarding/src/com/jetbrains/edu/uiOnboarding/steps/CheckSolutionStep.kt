@@ -9,6 +9,7 @@ import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.uiOnboarding.*
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import java.awt.Point
 
@@ -41,11 +42,11 @@ class CheckSolutionStep : EduUiOnboardingStep {
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("check.solution.step.text") }
       .withHeader(EduUiOnboardingBundle.message("check.solution.step.header"))
 
-    val zhabaPoint = Point(4, -ZHABA_DIMENSION.height - 4)
+    val zhabaPoint = Point(SMALL_SHIFT, -ZHABA_DIMENSION.height - SMALL_SHIFT)
     val relativeZhabaPoint = RelativePoint(checkActionsPanel, zhabaPoint)
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)
 
-    val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - 4)
+    val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - SMALL_SHIFT)
     val relativePoint = RelativePoint(checkActionsPanel, point)
     return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
