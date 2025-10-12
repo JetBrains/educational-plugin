@@ -1,9 +1,11 @@
 package com.jetbrains.edu.uiOnboarding
 
-import com.intellij.util.ImageLoader
 import java.awt.Image
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.util.ui.JBUI
 import java.awt.Dimension
+import java.io.InputStream
+import javax.imageio.ImageIO
 import kotlin.math.roundToInt
 
 class EduUiOnboardingAnimationData private constructor(
@@ -29,17 +31,28 @@ class EduUiOnboardingAnimationData private constructor(
     val LOG = logger<EduUiOnboardingAnimationData>()
 
     private const val ZHABA_SCALE: Double = 0.80
-    fun zhabaScale(length: Int): Int = (length * ZHABA_SCALE).roundToInt()
 
-    val ZHABA_DIMENSION: Dimension = Dimension(zhabaScale(121), zhabaScale(107))
-    val EYE_SHIFT: Int = zhabaScale(40)
+    /**
+     * The toad image is scaled to respect the IDE zoom, also it is scaled to [ZHABA_SCALE] for
+     * design purposes to experiment with Tode size without modifying the original image.
+     *
+     * [zhabaScale] transforms lengths inside the original toad image to the on-screen pixel length.
+     *
+     * @param length size in pixels inside an original toad image.
+     * @return size in pixels on the screen.
+     */
+    fun zhabaScale(length: Int): Int = (JBUI.scale(length) * ZHABA_SCALE).roundToInt()
+
+    val ZHABA_DIMENSION: Dimension get() = Dimension(zhabaScale(121), zhabaScale(107))
+    val EYE_SHIFT: Int get() = zhabaScale(40)
 
     const val FRAME_DURATION: Long = 42 // is approximately 24 FPS
     const val JUMP_DURATION: Long = 300
 
     fun load(): EduUiOnboardingAnimationData? {
       fun loadImage(fileName: String): Image {
-        val image = ImageLoader.loadFromResource("/images/$fileName.svg", this::class.java)
+        val stream: InputStream? = this::class.java.getResourceAsStream("/images/$fileName.svg")
+        val image = stream?.use { ImageIO.read(it) }
         if (image == null) {
           LOG.error("Failed to load image '$fileName' for in ide onboarding")
           throw Exception("Failed to load image '$fileName' for in ide onboarding")
