@@ -50,7 +50,7 @@ class CourseStoragePushCourseActionTest : EduActionTestCase() {
   }
 
   @Test
-  @WithExperimentalFeature(EduExperimentalFeatures.COURSE_STORAGE, false)
+  @WithExperimentalFeature(EduExperimentalFeatures.CC_COURSE_STORAGE, false)
   fun `test course storage push is not available without exp feature`() {
     mockJBUserInfo()
     createEduCourse()

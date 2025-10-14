@@ -4,8 +4,8 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector"
                         serviceImplementation="com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnectorImpl"
                         testServiceImplementation="com.jetbrains.edu.learning.marketplace.courseStorage.MockCourseStorageConnector"/>
-    <experimentalFeature id="edu.course.storage" percentOfUsers="100">
-      <description>Enables support for courses from course storage</description>
+    <experimentalFeature id="edu.course.creator.storage" internal="true" percentOfUsers="100">
+      <description>Enables upload of courses to course storage</description>
     </experimentalFeature>
   </extensions>
   <actions>
