@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.marketplace.courseStorage.course
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.StartCourseAction
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
@@ -17,7 +15,7 @@ class ImportCourseFromStorageAction : StartCourseAction() {
   override fun update(e: AnActionEvent) {
     super.update(e)
     if (!e.presentation.isEnabledAndVisible) return
-    e.presentation.isEnabledAndVisible = CourseStorageConnector.getInstance().isLoggedIn() && isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE)
+    e.presentation.isEnabledAndVisible = CourseStorageConnector.getInstance().isLoggedIn()
   }
 
   override fun showFailedToAddCourseNotification(courseLink: String) {

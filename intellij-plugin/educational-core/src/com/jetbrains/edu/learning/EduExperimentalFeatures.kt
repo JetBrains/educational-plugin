@@ -11,5 +11,5 @@ object EduExperimentalFeatures {
   const val CSHARP_COURSES = "edu.course.csharp"
   const val NEW_COURSE_UPDATE = "edu.course.update.new"
   const val EDUCATOR_HELP = "edu.educator.help"
-  const val COURSE_STORAGE = "edu.course.storage"
+  const val CC_COURSE_STORAGE = "edu.course.creator.storage"
 }

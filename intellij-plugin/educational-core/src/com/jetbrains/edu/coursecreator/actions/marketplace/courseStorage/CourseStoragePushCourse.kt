@@ -77,7 +77,7 @@ class CourseStoragePushCourse : DumbAwareAction(addGluingSlash(uploadCourseActio
 
   private fun isActionVisible(project: Project, course: EduCourse): Boolean {
     return isCourseCreator(project) &&
-           isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE) &&
+           isFeatureEnabled(EduExperimentalFeatures.CC_COURSE_STORAGE) &&
            isUnderJBEmail() &&
            course.isMarketplace &&
            (course.id == 0 || course.isFromCourseStorage())

@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtilsKt
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.computeUnderProgress
@@ -17,7 +16,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
@@ -131,7 +129,7 @@ fun EduCourse.isFromCourseStorage(): Boolean = id >= COURSE_STORAGE_ID_LOWER_BOU
 
 val EduCourse.courseConnector: EduCourseConnector
   get() = when {
-    isFromCourseStorage() && isFeatureEnabled(EduExperimentalFeatures.COURSE_STORAGE) -> CourseStorageConnector.getInstance()
+    isFromCourseStorage() -> CourseStorageConnector.getInstance()
     else -> MarketplaceConnector.getInstance()
   }
 
