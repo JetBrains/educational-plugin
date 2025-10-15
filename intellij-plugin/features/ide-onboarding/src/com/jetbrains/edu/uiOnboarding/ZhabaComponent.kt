@@ -19,6 +19,8 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
   private var stepIndex: Int = 0
   private var stepStartTime: Long = 0 // nano time of step start
 
+  private var interrupted: Boolean = false
+
   override fun paintComponent(g: java.awt.Graphics) {
     val animation = this.animation ?: return
 
@@ -64,25 +66,47 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     super.paintComponent(g)
   }
 
-  suspend fun start() {
+  /**
+   * Starts the animation.
+   * The animation continues until
+   *  - the animation is over, and does not cycle (`animation.cycle == false`)
+   *  - the component is disposed
+   *  - the zhaba is interrupted by user (see [stop]), and the animation finished its another cycle.
+   *
+   * @return false if animation has stopped because of the interrupt.
+   */
+  suspend fun start(): Boolean {
     var index = 0
     while (true) {
-      val animation = animation ?: return
+      val animation = animation ?: return true
 
       runStep(index)
+
       index++
       if (index > animation.steps.lastIndex) {
+        if (interrupted) {
+          return false
+        }
+
         if (animation.cycle) {
           index = 0
         }
         else {
-          return
+          return true
         }
       }
     }
   }
 
-  suspend fun runStep(index: Int) {
+  /**
+   * Interrupt Zhaba after it finishes the animation cycle.
+   * This makes method [start] return false.
+   */
+  fun stop() {
+    interrupted = true
+  }
+
+  private suspend fun runStep(index: Int) {
     val animation = animation ?: return
 
     stepIndex = index
@@ -98,7 +122,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     }
   }
 
-  suspend fun animateMotion(step: EduUiOnboardingAnimationStep) {
+  private suspend fun animateMotion(step: EduUiOnboardingAnimationStep) {
     while (true) {
       repaint()
       val timeLeft = step.duration - (System.nanoTime() - stepStartTime) / 1_000_000

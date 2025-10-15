@@ -15,7 +15,7 @@ class CourseViewStep : EduUiOnboardingStep {
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
       override val steps: List<EduUiOnboardingAnimationStep> = listOf(
-        EduUiOnboardingAnimationStep(data.lookUp, point, point, 10_000),
+        EduUiOnboardingAnimationStep(data.lookUp, point, point, 3_000),
       )
 
       override val cycle: Boolean = true
