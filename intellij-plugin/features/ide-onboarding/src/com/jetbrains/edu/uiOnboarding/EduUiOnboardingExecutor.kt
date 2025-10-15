@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UiOnboardingRelaunchLocation
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
 import com.jetbrains.edu.uiOnboarding.transitions.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -204,12 +205,40 @@ class EduUiOnboardingExecutor(
 
   private fun getTransition(
     fromStepId: String, toStepId: String, fromPoint: RelativePoint, toPoint: RelativePoint
-  ): EduUiOnboardingAnimation? = when (fromStepId to toStepId) {
-    "welcome" to "taskDescription" -> JumpRight(animationData, fromPoint, toPoint)
-    "courseView" to "taskDescription" -> JumpRight(animationData, fromPoint, toPoint)
-    "codeEditor" to "checkSolution" -> JumpDown(animationData, fromPoint, toPoint)
-    "checkSolution" to "courseView" -> JumpLeft(animationData, fromPoint, toPoint)
-    else -> null
+  ): EduUiOnboardingAnimation? {
+    if (fromStepId == toStepId) {
+      return selectTransitionFromPoints(fromPoint, toPoint)
+    }
+
+    return when (fromStepId to toStepId) {
+      "welcome" to "taskDescription" -> JumpRight(animationData, fromPoint, toPoint)
+      "courseView" to "taskDescription" -> JumpRight(animationData, fromPoint, toPoint)
+      "codeEditor" to "checkSolution" -> JumpDown(animationData, fromPoint, toPoint)
+      "checkSolution" to "courseView" -> JumpLeft(animationData, fromPoint, toPoint)
+      else -> null
+    }
+  }
+
+  private fun selectTransitionFromPoints(fromPoint: RelativePoint, toPoint: RelativePoint): EduUiOnboardingAnimation? {
+    val frame = WindowManager.getInstance().getFrame(project) ?: return null
+    val localFromPoint = fromPoint.getPoint(frame)
+    val localToPoint = toPoint.getPoint(frame)
+
+    val distanceSq = localFromPoint.distanceSq(localToPoint)
+
+    val longEnoughToJump = zhabaScale(100)
+
+    if (distanceSq < longEnoughToJump * longEnoughToJump) {
+      return ShortStep(animationData, fromPoint, toPoint, localFromPoint, localToPoint)
+    }
+
+    val longEnoughForSideJump = zhabaScale(10)
+    return when {
+      localFromPoint.x + longEnoughForSideJump < localToPoint.x -> JumpRight(animationData, fromPoint, toPoint)
+      localFromPoint.x - longEnoughForSideJump > localToPoint.x -> JumpLeft(animationData, fromPoint, toPoint)
+      localFromPoint.y < localToPoint.y -> JumpDown(animationData, fromPoint, toPoint)
+      else -> /*there is no JumpUp by now*/ JumpRight(animationData, fromPoint, toPoint)
+    }
   }
 
   private suspend fun finishOnboarding(data: EduUiOnboardingStepData, isHappy: Boolean) {
