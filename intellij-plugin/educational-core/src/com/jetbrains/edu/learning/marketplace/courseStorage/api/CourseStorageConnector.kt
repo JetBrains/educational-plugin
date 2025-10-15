@@ -57,15 +57,16 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
     objectMapper
   }
 
-  open val repositoryUrl: String
-    get() = CourseStorageServiceHost.selectedHost.url
+  open fun getRepositoryUrl(project: Project? = null): String {
+    return CourseStorageServiceHost.getSelectedHost(project).url
+  }
 
   override fun getCurrentUserInfo(): JBAccountUserInfo? {
     return account?.userInfo
   }
 
-  private fun getRepositoryEndpoints(hubToken: String? = null): CourseStorageRepositoryEndpoints {
-    return getEndpoints(account = null, baseUrl = repositoryUrl, accessToken = hubToken)
+  private fun getRepositoryEndpoints(project: Project? = null, hubToken: String? = null): CourseStorageRepositoryEndpoints {
+    return getEndpoints(account = null, baseUrl = getRepositoryUrl(project), accessToken = hubToken)
   }
 
   override fun searchCourse(courseId: Int, searchPrivate: Boolean): EduCourse? {
@@ -96,7 +97,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
   }
 
   private fun getCourseDownloadLink(courseId: Int, updateVersion: Int): String {
-    return "$repositoryUrl/api/courses/download?courseId=$courseId&updateVersion=$updateVersion"
+    return "${getRepositoryUrl()}/api/courses/download?courseId=$courseId&updateVersion=$updateVersion"
   }
 
   override fun getLatestCourseUpdateInfo(courseId: Int): CourseUpdateInfo? {
@@ -120,7 +121,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
 
   fun uploadNewCourse(project: Project, course: EduCourse, file: File) {
     runWithModalProgressBlocking(project, message("action.push.course")) {
-      val remoteCourse = uploadCourse(file).onError {
+      val remoteCourse = uploadCourse(project, file).onError {
         showFailedToLoadNotification(project, course, it)
         return@runWithModalProgressBlocking
       }
@@ -133,7 +134,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
         message("course.storage.course.successfully.uploaded.message", course.name, course.id),
         NotificationAction.createSimpleExpiring(message("course.storage.course.browse.text")) {
           //TODO(change it to courses pages url after they will be ready)
-          EduBrowser.getInstance().browse(repositoryUrl)
+          EduBrowser.getInstance().browse(getRepositoryUrl(project))
         }
       )
       LOG.info("Course ${course.name} has been uploaded to course storage with id = ${course.id}")
@@ -162,7 +163,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
         return@runWithModalProgressBlocking
       }
 
-      val remoteCourse = uploadCourse(file).onError {
+      val remoteCourse = uploadCourse(project, file).onError {
         showFailedToLoadNotification(project, course, it)
         return@runWithModalProgressBlocking
       }
@@ -175,7 +176,7 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
         message("course.storage.course.successfully.updated.message", course.name, course.id, course.marketplaceCourseVersion),
         NotificationAction.createSimpleExpiring(message("course.storage.course.browse.text")) {
           //TODO(change it to courses pages url after they will be ready)
-          EduBrowser.getInstance().browse(repositoryUrl)
+          EduBrowser.getInstance().browse(getRepositoryUrl(project))
         }
       )
       LOG.info("Course ${course.name} (id ${course.id}) has been successfully uploaded to course storage with version ${course.marketplaceCourseVersion}")
@@ -198,9 +199,9 @@ abstract class CourseStorageConnector : MarketplaceAuthConnector(), EduCourseCon
     YamlFormatSynchronizer.saveItem(course)
   }
 
-  private fun uploadCourse(file: File): Result<EduCourse, String> {
+  private fun uploadCourse(project: Project, file: File): Result<EduCourse, String> {
     LOG.info("Uploading course from ${file.absolutePath}")
-    return getRepositoryEndpoints()
+    return getRepositoryEndpoints(project)
       .uploadCourse(file.toMultipartBody("courseArchive"))
       .executeParsingErrors()
       .flatMap { 
