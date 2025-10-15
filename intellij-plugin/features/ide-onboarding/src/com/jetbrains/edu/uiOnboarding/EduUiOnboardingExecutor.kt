@@ -237,7 +237,7 @@ class EduUiOnboardingExecutor(
       localFromPoint.x + longEnoughForSideJump < localToPoint.x -> JumpRight(animationData, fromPoint, toPoint)
       localFromPoint.x - longEnoughForSideJump > localToPoint.x -> JumpLeft(animationData, fromPoint, toPoint)
       localFromPoint.y < localToPoint.y -> JumpDown(animationData, fromPoint, toPoint)
-      else -> /*there is no JumpUp by now*/ JumpRight(animationData, fromPoint, toPoint)
+      else -> JumpUp(animationData, fromPoint, toPoint)
     }
   }
 
