@@ -7,6 +7,7 @@ import com.jetbrains.rider.model.RdUnitTestResultData
 import com.jetbrains.rider.model.RdUnitTestSession
 import com.jetbrains.rider.projectView.SolutionDescriptionFactory
 import com.jetbrains.rider.projectView.SolutionInitializer
+import com.jetbrains.rider.run.configurations.project.DotNetProjectConfiguration
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -19,4 +20,8 @@ fun initializeSolution(project: Project, location: Path, solutionFileName: Strin
   )
   val strategy = RdOpenSolution(description, true)
   SolutionInitializer.initSolution(project, strategy)
+}
+
+fun allowAnsiCharactersRedirection(dotNetConfig: DotNetProjectConfiguration) {
+  // this functionality is only supported starting from 2025.3
 }

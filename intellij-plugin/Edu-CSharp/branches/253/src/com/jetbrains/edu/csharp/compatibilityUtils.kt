@@ -9,6 +9,8 @@ import com.jetbrains.rider.model.RdUnitTestResultData
 import com.jetbrains.rider.model.RdUnitTestSession
 import com.jetbrains.rider.projectView.SolutionDescriptionFactory
 import com.jetbrains.rider.projectView.SolutionInitializerService
+import com.jetbrains.rider.run.configurations.TerminalMode
+import com.jetbrains.rider.run.configurations.project.DotNetProjectConfiguration
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -21,4 +23,8 @@ fun initializeSolution(project: Project, location: Path, solutionFileName: Strin
   )
   val strategy = RdOpenSolution(description, true)
   application.service<SolutionInitializerService>().initSolution(project, strategy)
+}
+
+fun allowAnsiCharactersRedirection(dotNetConfig: DotNetProjectConfiguration) {
+  dotNetConfig.parameters.terminalMode = TerminalMode.DotNetAllowAnsiColorRedirection
 }
