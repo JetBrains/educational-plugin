@@ -1,11 +1,12 @@
 package com.jetbrains.edu.uiOnboarding
 
-import java.awt.Image
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.util.ImageLoader
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_SCALE
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
 import java.awt.Dimension
-import java.io.InputStream
-import javax.imageio.ImageIO
+import java.awt.Image
 import kotlin.math.roundToInt
 
 class EduUiOnboardingAnimationData private constructor(
@@ -44,6 +45,13 @@ class EduUiOnboardingAnimationData private constructor(
      */
     fun zhabaScale(length: Int): Int = (JBUI.scale(length) * ZHABA_SCALE).roundToInt()
 
+    /**
+     * See [zhabaScale], but IDE zoom is not taken into account.
+     * The method is intended to be used with the width or height of an [Image], that has been loaded by [ImageLoader.loadFromResource].
+     * Such loading already takes IDE zoom into account.
+     */
+    fun zhabaScaleWithoutIDEScale(length: Int): Int = (length * ZHABA_SCALE).roundToInt()
+
     val ZHABA_DIMENSION: Dimension get() = Dimension(zhabaScale(121), zhabaScale(107))
     val EYE_SHIFT: Int get() = zhabaScale(40)
     val SMALL_SHIFT: Int get() = zhabaScale(4)
@@ -53,8 +61,7 @@ class EduUiOnboardingAnimationData private constructor(
 
     fun load(): EduUiOnboardingAnimationData? {
       fun loadImage(fileName: String): Image {
-        val stream: InputStream? = this::class.java.getResourceAsStream("/images/$fileName.svg")
-        val image = stream?.use { ImageIO.read(it) }
+        val image = ImageLoader.loadFromResource("/images/$fileName.svg", this::class.java)
         if (image == null) {
           LOG.error("Failed to load image '$fileName' for in ide onboarding")
           throw Exception("Failed to load image '$fileName' for in ide onboarding")

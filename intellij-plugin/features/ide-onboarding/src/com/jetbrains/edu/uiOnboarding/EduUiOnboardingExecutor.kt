@@ -7,6 +7,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.observable.util.addComponentListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
@@ -30,7 +31,7 @@ import javax.swing.JLayeredPane
 // copy-pasted from mono-repo
 class EduUiOnboardingExecutor(
   private val project: Project,
-  private val animationData: EduUiOnboardingAnimationData,
+  private var animationData: EduUiOnboardingAnimationData,
   private val steps: List<Pair<String, EduUiOnboardingStep>>,
   private val cs: CoroutineScope,
   parentDisposable: Disposable
@@ -53,6 +54,14 @@ class EduUiOnboardingExecutor(
 
     // Listen to IDE Zoom changes and other changes that might affect UI components positions and sizes
     project.messageBus.connect(parentDisposable).subscribe(UISettingsListener.TOPIC, UISettingsListener {
+      val loadedData = EduUiOnboardingAnimationData.load()
+      if (loadedData != null) {
+        animationData = loadedData
+      }
+      else {
+        thisLogger().error("Failed to reload EduUiOnboardingAnimationData after IDE UI settings changed, using the old data")
+      }
+
       changeZhabaLocation()
     })
   }
