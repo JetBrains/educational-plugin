@@ -87,12 +87,17 @@ open class DefaultCodeExecutor : CodeExecutor {
       return Err(err)
     }
 
-    var outputString = output.stdout
+    var outputString = output.stdout.applyOutputPostProcessing()
     if (outputString.isEmpty()) {
       outputString = NO_OUTPUT
     }
     return Ok(outputString)
   }
+
+  /**
+   * Perform language-specific cleanup of program output
+   */
+  protected open fun String.applyOutputPostProcessing(): String = this
 
   override fun tryToExtractCheckResultError(errorOutput: String): CheckResult? = null
 

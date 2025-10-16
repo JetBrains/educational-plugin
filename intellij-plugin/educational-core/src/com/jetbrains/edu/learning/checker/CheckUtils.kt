@@ -16,6 +16,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiUtilCore
@@ -108,7 +109,7 @@ object CheckUtils {
     }
 
   fun postProcessOutput(output: String): String {
-    return output.replace(System.lineSeparator(), "\n")
+    return convertLineSeparators(output, "\n")
   }
 
   fun createRunConfiguration(project: Project, taskFile: VirtualFile?): RunnerAndConfigurationSettings? {
