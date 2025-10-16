@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.WindowManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScaleWithoutIDEScale
 import kotlinx.coroutines.delay
 import java.awt.Graphics2D
 import java.awt.Rectangle
@@ -36,8 +37,8 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
       val w = image.getWidth(this)
       val h = image.getHeight(this)
 
-      val scaledW = zhabaScale(w)
-      val scaledH = zhabaScale(h)
+      val scaledW = zhabaScaleWithoutIDEScale(w)
+      val scaledH = zhabaScaleWithoutIDEScale(h)
 
       UIUtil.drawImage(
         g2d,
