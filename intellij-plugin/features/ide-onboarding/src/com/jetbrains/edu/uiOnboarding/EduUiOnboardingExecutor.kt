@@ -36,15 +36,13 @@ class EduUiOnboardingExecutor(
   private val cs: CoroutineScope,
   parentDisposable: Disposable
 ) {
-  private val disposable = Disposer.newCheckedDisposable()
+  private val disposable = Disposer.newCheckedDisposable(parentDisposable)
 
   private var curStepId: String? = null
 
   private var currentZhabaComponent: ZhabaComponent? = null
 
   init {
-    Disposer.register(parentDisposable, disposable)
-
     // Listen to IDE resize
     WindowManager.getInstance().getFrame(project)?.addComponentListener(parentDisposable = parentDisposable, object : ComponentAdapter() {
       override fun componentResized(e: ComponentEvent?) {
@@ -123,12 +121,12 @@ class EduUiOnboardingExecutor(
       }
     }
 
-    if (previousData != null && previousStepId != null) {
-      val completed = animateTransitionBetweenSteps(previousStepId, stepId, previousData, gotItData)
-      if (!completed) {
-        rerunCurrentStep()
-        return
-      }
+    // Animate transition to the current step.
+    // It is either a transition from the previous step or a transition from nowhere to the first step.
+    val transitionCompleted = animateTransitionBetweenSteps(previousStepId, stepId, previousData, gotItData)
+    if (!transitionCompleted) {
+      rerunCurrentStep()
+      return
     }
 
     val showInCenter = gotItData.position == null
@@ -191,19 +189,30 @@ class EduUiOnboardingExecutor(
   }
 
   private suspend fun animateTransitionBetweenSteps(
-    fromStepId: String, toStepId: String, fromData: EduUiOnboardingStepData, toData: EduUiOnboardingStepData
+    fromStepId: String?, toStepId: String, fromData: EduUiOnboardingStepData?, toData: EduUiOnboardingStepData
   ): Boolean {
     val frame = WindowManager.getInstance().getFrame(project) ?: return true
 
-    val fromPoint = fromData.zhabaPoint
+    val fromPoint = fromData?.zhabaPoint
     val toPoint = toData.zhabaPoint
-
-    val transitionAnimation = getTransition(fromStepId, toStepId, fromPoint, toPoint)
 
     val zhaba = ZhabaComponent(project)
     Disposer.register(disposable, zhaba)
     frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER, -1)
     zhaba.setBounds(0, 0, frame.width, frame.height)
+
+    // select transition whether it is a transition from the previous step or a transition from nowhere to the first step
+    val transitionAnimation = if (fromStepId != null && fromPoint != null) {
+      getTransition(fromStepId, toStepId, fromPoint, toPoint)
+    }
+    else {
+      val appearance = BottomToTopAppearance(toData.zhaba.animation, toPoint)
+      // This hack makes Zhaba invisible below its bottom, so that it "appears" and does not slide from the bottom.
+      zhaba.setBounds(0, 0, frame.width, appearance.lowerBoundPoint.getPoint(zhaba).y)
+
+      appearance
+    }
+
     zhaba.animation = transitionAnimation
 
     currentZhabaComponent = zhaba
