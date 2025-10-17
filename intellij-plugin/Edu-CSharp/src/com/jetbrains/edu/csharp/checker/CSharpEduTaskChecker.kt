@@ -89,13 +89,28 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
   private suspend fun getOrCreateSession(name: String): RdUnitTestSession? {
     val session = project.solution.rdUnitTestHost.sessions.values.firstOrNull { it.options.title.valueOrNull == name }
-    if (session != null && isNotRunningState(session.state.valueOrNull?.status)) {
+    if (session != null && isNotRunningState(session.state.valueOrNull?.status) && session.state.valueOrNull?.status != RdUnitTestStatus.None) {
       return session
     }
     // if there is already a running session with the same tests, we need to close it and create a new one
     if (session != null) {
+      val sessionClosed = CompletableDeferred<Unit>()
       withContext(Dispatchers.EDT) {
+        project.solution.rdUnitTestHost.sessions.advise(project.lifetime) { entry ->
+          if (entry.key == session.sessionId && entry.newValueOpt == null) {
+            // wait for the session to be closed
+            sessionClosed.complete(Unit)
+          }
+        }
         project.solution.rdUnitTestHost.sessionManager.closeSession.fire(session.sessionId)
+      }
+      try {
+        withTimeout(5000) {
+          sessionClosed.await()
+        }
+      }
+      catch (e: TimeoutCancellationException) {
+        LOG.warn("Timeout waiting for session to close: ${session.sessionId}")
       }
     }
     return createUnitTestSession(name)
