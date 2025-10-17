@@ -39,6 +39,7 @@ import com.jetbrains.rider.projectView.workspace.getProjectModelEntities
 import com.jetbrains.rider.protocol.protocol
 import com.jetbrains.rider.unitTesting.RiderUnitTestSessionConductor
 import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.milliseconds
 
 class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChecker, project: Project) :
   TaskChecker<EduTask>(task, project) {
@@ -89,16 +90,33 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
   private suspend fun getOrCreateSession(name: String): RdUnitTestSession? {
     val session = project.solution.rdUnitTestHost.sessions.values.firstOrNull { it.options.title.valueOrNull == name }
-    if (session != null && isNotRunningState(session.state.valueOrNull?.status)) {
+    if (session != null && isNotRunningState(session.state.valueOrNull?.status) && session.state.valueOrNull?.status != RdUnitTestStatus.None) {
       return session
     }
-    // if there is already a running session with the same tests, we need to close it and create a new one
-    if (session != null) {
-      withContext(Dispatchers.EDT) {
-        project.solution.rdUnitTestHost.sessionManager.closeSession.fire(session.sessionId)
+    // if there is already a session with the same tests, we need to close it and create a new one
+    session?.close()
+    return createUnitTestSession(name)
+  }
+
+  private suspend fun RdUnitTestSession.close() {
+    val sessionClosed = CompletableDeferred<Unit>()
+    withContext(Dispatchers.EDT) {
+      project.solution.rdUnitTestHost.sessions.advise(project.lifetime) { entry ->
+        if (entry.key == sessionId && entry.newValueOpt == null) {
+          // wait for the session to be closed
+          sessionClosed.complete(Unit)
+        }
+      }
+      project.solution.rdUnitTestHost.sessionManager.closeSession.fire(sessionId)
+    }
+    try {
+      withTimeout(CLOSE_SESSION_TIMEOUT) {
+        sessionClosed.await()
       }
     }
-    return createUnitTestSession(name)
+    catch (_: TimeoutCancellationException) {
+      LOG.warn("Timeout waiting for session to close: ${sessionId}")
+    }
   }
 
   suspend fun getRdUnitTestCriterion(): RdUnitTestCriterion? = withContext(Dispatchers.EDT) {
@@ -247,6 +265,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
   companion object {
     const val EXPECTED = "Expected: "
     const val ACTUAL = "But was: "
+    private val CLOSE_SESSION_TIMEOUT = 5000.milliseconds
 
     private val LOG = logger<CSharpEduTaskChecker>()
   }
