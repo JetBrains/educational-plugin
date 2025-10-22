@@ -3,7 +3,6 @@ package com.jetbrains.edu.uiOnboarding.steps
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
-import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
@@ -29,10 +28,9 @@ class WelcomeStep : EduUiOnboardingStep {
       override val cycle: Boolean = true
     }
 
-  override suspend fun performStep(
+  override fun performStep(
     project: Project,
     data: EduUiOnboardingAnimationData,
-    disposable: CheckedDisposable
   ): EduUiOnboardingStepData? {
     val projectViewToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
                                   .getToolWindow("Project") ?: return null
@@ -47,7 +45,7 @@ class WelcomeStep : EduUiOnboardingStep {
       component.height - zhabaDimension.height
     )
     val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
-    val zhabaComponent = createZhaba(project, data, relativeZhabaPoint, disposable)
+    val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
 
     // Position the balloon at the bottom of the project view component
     val point = Point(zhabaPoint.x + EYE_SHIFT, zhabaPoint.y - SMALL_SHIFT)
