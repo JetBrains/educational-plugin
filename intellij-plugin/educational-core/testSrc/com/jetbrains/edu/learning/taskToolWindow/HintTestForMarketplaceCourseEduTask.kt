@@ -36,18 +36,14 @@ abstract class HintsInTaskDescriptionTestBase(
 
     const val JCEF_PROCESSED_HINT_DIV = """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Hint
           </div>
-          <div class="hint_content">
-           Hint text
-          </div>
+          <div class="hint_content">Hint text</div>
          </div>
         </div>
        </body>
@@ -56,9 +52,7 @@ abstract class HintsInTaskDescriptionTestBase(
 
     fun swingProcessedHintDiv() = """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <div class="top">
@@ -73,14 +67,10 @@ abstract class HintsInTaskDescriptionTestBase(
 
     const val UNPROCESSED_HINT_DIV = """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
-         <div class="hint">
-          Hint text
-         </div>
+         <div class="hint">Hint text</div>
         </div>
        </body>
       </html>
@@ -129,9 +119,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
       <div class="hint" title="Explanation">Text 7</div>
     """, """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <p>Hello</p>
@@ -139,66 +127,50 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Explanation 1
           </div>
-          <div class="hint_content">
-           Text 1
-          </div>
+          <div class="hint_content">Text 1</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Clarification 1
           </div>
-          <div class="hint_content">
-           Text 2
-          </div>
+          <div class="hint_content">Text 2</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Hint 1
           </div>
-          <div class="hint_content">
-           Text 3
-          </div>
+          <div class="hint_content">Text 3</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Clarification 2
           </div>
-          <div class="hint_content">
-           Text 4
-          </div>
+          <div class="hint_content">Text 4</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Random title
           </div>
-          <div class="hint_content">
-           Text 5
-          </div>
+          <div class="hint_content">Text 5</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Hint 2
           </div>
-          <div class="hint_content">
-           Text 6
-          </div>
+          <div class="hint_content">Text 6</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Explanation 2
           </div>
-          <div class="hint_content">
-           Text 7
-          </div>
+          <div class="hint_content">Text 7</div>
          </div>
         </div>
        </body>
       </html>
     """, """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <p>Hello</p>
@@ -256,25 +228,21 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
       <div class="hint">  <!--no text-->  <p>Text in **HTML** mode</p></div>
     """, """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Hint 1
           </div>
-          <div class="hint_content">
-           Text in **HTML** mode
-          </div>
+          <div class="hint_content">Text in **HTML** mode</div>
          </div>
          <div class="hint">
           <div class="hint_header">
            <img src="" style="display: inline-block;"> Hint 2
           </div>
           <div class="hint_content">
-           Text in **HTML** mode 
+           Text in **HTML** mode
            <p>Text in <strong>Markdown</strong> mode</p>
           </div>
          </div>
@@ -308,9 +276,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
       </html>
     """, """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <div class="top">
@@ -319,19 +285,19 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
           </div>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text in **HTML** mode 
-      <p>Text in <strong>Markdown</strong> mode</p>">Hint 2</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://2" value="Text in **HTML** mode
+      &lt;p&gt;Text in &lt;strong&gt;Markdown&lt;/strong&gt; mode&lt;/p&gt;">Hint 2</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://3" value="<p class=&quot;first-paragraph&quot;>Text in <strong>Markdown</strong> mode</p>
-      <p>Text in <strong>Markdown</strong> mode</p>">Hint 3</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://3" value="&lt;p class=&quot;first-paragraph&quot;&gt;Text in &lt;strong&gt;Markdown&lt;/strong&gt; mode&lt;/p&gt;
+      &lt;p&gt;Text in &lt;strong&gt;Markdown&lt;/strong&gt; mode&lt;/p&gt;">Hint 3</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://4" value="<p class=&quot;first-paragraph&quot;>Text in **HTML** mode</p>">Hint 4</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://4" value="&lt;p class=&quot;first-paragraph&quot;&gt;Text in **HTML** mode&lt;/p&gt;">Hint 4</a> <span class="chevron">›</span></span>
          </div>
          <div class="hint">
-          <img src="" width="0" height="0"> <span><a href="hint://5" value="<!--no text-->
-      <p class=&quot;first-paragraph&quot;>Text in **HTML** mode</p>">Hint 5</a> <span class="chevron">›</span></span>
+          <img src="" width="0" height="0"> <span><a href="hint://5" value="&lt;!--no text--&gt;
+      &lt;p class=&quot;first-paragraph&quot;&gt;Text in **HTML** mode&lt;/p&gt;">Hint 5</a> <span class="chevron">›</span></span>
          </div>
         </div>
        </body>
@@ -350,9 +316,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
     """,
     """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <div class="hint">
@@ -360,9 +324,7 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
            <img src="" style="display: inline-block;"> Hint
           </div>
           <div class="hint_content">
-           <div>
-            Title
-           </div>
+           <div>Title</div>
            <p>Paragraph with <strong>formatting</strong> and symbols '"&amp;</p>
           </div>
          </div>
@@ -372,17 +334,13 @@ class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false
     """,
     """
       <html>
-       <head>
-        ...
-       </head>
+       <head>...</head>
        <body>
         <div class="wrapper">
          <div class="top">
           <div class="hint">
-           <img src="" width="0" height="0"> <span><a href="hint://" value="<div>
-       Title
-      </div>
-      <p>Paragraph with <strong>formatting</strong> and symbols '&quot;&amp;amp;</p>">Hint </a> <span class="chevron">›</span></span>
+           <img src="" width="0" height="0"> <span><a href="hint://" value="&lt;div&gt;Title&lt;/div&gt;
+      &lt;p&gt;Paragraph with &lt;strong&gt;formatting&lt;/strong&gt; and symbols '&quot;&amp;amp;&lt;/p&gt;">Hint </a> <span class="chevron">›</span></span>
           </div>
          </div>
         </div>

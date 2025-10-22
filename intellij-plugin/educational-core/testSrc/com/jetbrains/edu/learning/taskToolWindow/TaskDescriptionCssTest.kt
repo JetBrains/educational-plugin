@@ -18,27 +18,24 @@ class TaskDescriptionCssTest : TaskDescriptionTestBase() {
     Some <i>other</i> text.     
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
-       Some <b>simple</b> text. 
+       Some <b>simple</b> text.
        <style>
     img {
       display: block;
       margin-left: auto;
       margin-right: auto;
     }
-    </style> Some <i>other</i> text.
+    </style>
+       Some <i>other</i> text.
       </div>
      </body>
     </html>
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
        Some <b>simple</b> text. Some <i>other</i> text.

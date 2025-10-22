@@ -28,21 +28,23 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     Inline code `if (condition) {} else {}`
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
-       <p>Code block with default language:</p><span class="code-block">
+       <p>Code block with default language:</p>
+       <span class="code-block">
         <pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
-    </pre></span>
-       <p>Code block with specific language:</p><span class="code-block">
+    </pre>
+       </span>
+       <p>Code block with specific language:</p>
+       <span class="code-block">
         <pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
-    </pre></span>
+    </pre>
+       </span>
        <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
       </div>
      </body>
@@ -68,21 +70,23 @@ class KtTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
     </html>
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
-       <p>Code block with default language:</p><span class="code-block">
+       <p>Code block with default language:</p>
+       <span class="code-block">
         <pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
-    </pre></span>
-       <p>Code block with specific language:</p><span class="code-block">
+    </pre>
+       </span>
+       <p>Code block with specific language:</p>
+       <span class="code-block">
         <pre>  <span style="...">fun </span><span style="...">main(args: Array&lt;String&gt;) {</span>
         <span style="...">println(</span><span style="...">"Hello!"</span><span style="...">)</span>
       <span style="...">}</span>
-    </pre></span>
+    </pre>
+       </span>
        <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
       </div>
      </body>
