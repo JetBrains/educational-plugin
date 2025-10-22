@@ -6,11 +6,11 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.uiOnboarding.steps.CheckSolutionStep
-import com.jetbrains.edu.uiOnboarding.steps.CodeEditorStep
-import com.jetbrains.edu.uiOnboarding.steps.CourseViewStep
-import com.jetbrains.edu.uiOnboarding.steps.TaskDescriptionStep
-import com.jetbrains.edu.uiOnboarding.steps.WelcomeStep
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.use
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaGraph
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaMainGraph
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStepBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,35 +25,25 @@ internal class EduUiOnboardingService(private val project: Project, private val 
     get() = myTourInProgress.get()
 
   fun startOnboarding() {
+    val graph = ZhabaMainGraph.create()
+    executeZhaba(graph, graph.initialStep)
+  }
+
+  private fun executeZhaba(graph: ZhabaGraph, initialStep: ZhabaStepBase) {
     val alreadyInProgress = myTourInProgress.getAndSet(true)
     if (alreadyInProgress) return
 
-    val steps = getSteps()
-    val data = EduUiOnboardingAnimationData.load() ?: return
-    val executor = EduUiOnboardingExecutor(project, data, steps, cs, this)
-    cs.launch(Dispatchers.EDT) { executor.start() }
+    cs.launch(Dispatchers.EDT) {
+      val executor = ZhabaExecutor(project, graph, cs, parentDisposable = this@EduUiOnboardingService)
+      Disposer.register(executor) {
+        onboardingFinished()
+      }
+      executor.use { it.start(initialStep) }
+    }
   }
 
   fun onboardingFinished() {
     myTourInProgress.set(false)
-  }
-
-  private fun getSteps(): List<Pair<String, EduUiOnboardingStep>> {
-    val stepIds = getDefaultStepsOrder()
-    return stepIds.mapNotNull { id ->
-      val step = EduUiOnboardingStep.getIfAvailable(id)
-      if (step != null) id to step else null
-    }
-  }
-
-  private fun getDefaultStepsOrder(): List<String> {
-    return listOf(
-      WelcomeStep.STEP_KEY,
-      TaskDescriptionStep.STEP_KEY,
-      CodeEditorStep.STEP_KEY,
-      CheckSolutionStep.STEP_KEY,
-      CourseViewStep.STEP_KEY
-    )
   }
 
   override fun dispose() {}
