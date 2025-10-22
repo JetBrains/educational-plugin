@@ -36,9 +36,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p><span style="border-bottom: 1px dashed gray;" class="term">mem</span> mem</p>
@@ -54,9 +52,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p><span style="border-bottom: 1px dashed gray;" class="term">mem</span> mem</p>
@@ -78,9 +74,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p>hello! <span style="border-bottom: 1px dashed gray;" class="term">green thread</span></p>
@@ -99,9 +93,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p>hello! <span style="border-bottom: 1px dashed gray;" class="term">green thread</span></p>
@@ -124,9 +116,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p>threading</p>
@@ -145,9 +135,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p>threading</p>
@@ -169,9 +157,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p>hello! <span style="border-bottom: 1px dashed gray;" class="term">green thread</span> <span style="border-bottom: 1px dashed gray;" class="term">thread</span></p>
@@ -187,9 +173,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p>hello! <span style="border-bottom: 1px dashed gray;" class="term">green thread</span> <span style="border-bottom: 1px dashed gray;" class="term">thread</span></p>
@@ -212,9 +196,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p><a href="TODO.html">thread</a></p>
@@ -231,9 +213,7 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
            <p><a href="thread" title="thread">thread</a></p>
@@ -257,14 +237,13 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
-           <span class="code-block">
+           <span class="code-block"> 
             <pre>  <span style="color: #000000;">thread</span>
-        </pre></span> <span class="code"><span style="color: #000000;">green thread</span></span>
+        </pre> 
+           </span> <span class="code"><span style="color: #000000;">green thread</span></span>
           </div>
          </body>
         </html>
@@ -281,14 +260,13 @@ class TermsInTaskDescriptionTestBase : TaskDescriptionTestBase() {
       """,
       """
         <html>
-         <head>
-          ...
-         </head>
+         <head>...</head>
          <body>
           <div class="wrapper">
-           <span class="code-block">
+           <span class="code-block"> 
             <pre><span style="color: #000000;">thread</span>
-        </pre></span>
+        </pre> 
+           </span>
            <p><span class="code"><span style="color: #000000;">green thread</span></span></p>
           </div>
          </body>

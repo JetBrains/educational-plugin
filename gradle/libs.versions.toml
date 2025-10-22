@@ -16,7 +16,7 @@ educational-ml-library-test-generation = { group = "com.jetbrains.educational.ml
 jackson-dataformat-yaml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
-jsoup = { group = "org.jsoup", name = "jsoup", version = "1.17.2" }
+jsoup = { group = "org.jsoup", name = "jsoup", version = "1.21.2" }
 kotlin-css-jvm = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-css-jvm", version = "2025.5.11" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.6.2" }

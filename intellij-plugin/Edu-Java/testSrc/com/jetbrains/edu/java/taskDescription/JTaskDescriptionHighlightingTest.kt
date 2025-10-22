@@ -32,25 +32,27 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     Inline code `if (condition) {} else {}`
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
-       <p>Code block with default language:</p><span class="code-block">
+       <p>Code block with default language:</p>
+       <span class="code-block">
         <pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
-    </pre></span>
-       <p>Code block with specific language:</p><span class="code-block">
+    </pre>
+       </span>
+       <p>Code block with specific language:</p>
+       <span class="code-block">
         <pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
-    </pre></span>
+    </pre>
+       </span>
        <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
       </div>
      </body>
@@ -80,25 +82,27 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     </html>
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
-       <p>Code block with default language:</p><span class="code-block">
+       <p>Code block with default language:</p>
+       <span class="code-block">
         <pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
-    </pre></span>
-       <p>Code block with specific language:</p><span class="code-block">
+    </pre>
+       </span>
+       <p>Code block with specific language:</p>
+       <span class="code-block">
         <pre>  <span style="...">class </span><span style="...">Main {</span>
           <span style="...">public static void </span><span style="...">main(String[] args) {</span>
             <span style="...">System.out.println(</span><span style="...">"Hello!"</span><span style="...">);</span>
           <span style="...">}</span>
       <span style="...">}</span>
-    </pre></span>
+    </pre>
+       </span>
        <p>Inline code <span class="code"><span style="...">if </span><span style="...">(condition) {} </span><span style="...">else </span><span style="...">{}</span></span></p>
       </div>
      </body>
@@ -118,9 +122,7 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
     </html>
   """, """
     <html>
-     <head>
-      ...
-     </head>
+     <head>...</head>
      <body>
       <div class="wrapper">
        <span class="code-block">
@@ -129,7 +131,8 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
             <span style="...">System.out.println("Hello!");</span>
           <span style="...">}</span>
       <span style="...">}</span>
-    </pre></span>
+    </pre>
+       </span>
       </div>
      </body>
     </html>
