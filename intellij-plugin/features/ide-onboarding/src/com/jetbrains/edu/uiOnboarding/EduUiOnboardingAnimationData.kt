@@ -27,6 +27,10 @@ class EduUiOnboardingAnimationData private constructor(
   val lookUp: Image,
   val sad: Image,
   val winking: Image,
+
+  val scholarDefault: Image,
+  val scholarWinking: Image,
+  val scholarSad: Image,
 ) {
 
   companion object {
@@ -88,6 +92,9 @@ class EduUiOnboardingAnimationData private constructor(
           loadImage("look-up"),
           loadImage("sad"),
           loadImage("winking"),
+          loadImage("scholar-default"),
+          loadImage("scholar-winking"),
+          loadImage("scholar-sad"),
         )
       }
       catch (_: Exception) {
