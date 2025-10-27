@@ -75,9 +75,9 @@
                   displayName="C#"/>
     <!-- currently, Unity support for macOS is disabled; hence we have 2 configurators - for linux and windows only -->
     <configurator implementationClass="com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator" language="C#"
-                  courseType="Hyperskill" os="linux"/>
-    <configurator implementationClass="com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator" language="C#"
-                  courseType="Hyperskill" os="windows"/>
+                  courseType="Hyperskill"/>
+<!--    <configurator implementationClass="com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator" language="C#"-->
+<!--                  courseType="Hyperskill" os="windows"/>-->
     <courseViewPaneCustomization implementation="com.jetbrains.edu.csharp.CSharpCourseViewPaneCustomization"/>
     <studyItemRefactoringHandler implementation="com.jetbrains.edu.csharp.refactoring.CSharpStudyItemRefactoringHandler"/>
     <hyperskillCourseCreator implementation="com.jetbrains.edu.csharp.hyperskill.UnityHyperskillCourseCreator"/>
