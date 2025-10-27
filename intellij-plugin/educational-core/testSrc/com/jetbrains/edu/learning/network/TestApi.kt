@@ -7,6 +7,8 @@ import retrofit2.http.GET
 interface TestApi {
   @GET("/call")
   fun call(): Call<Answer>
+  @GET("/callSuspend")
+  suspend fun callAsync(): Answer
 }
 
 data class Answer(@param:JsonProperty("value") val value: String)

@@ -32,10 +32,11 @@ fun createRetrofitBuilder(
   accessToken: String? = null,
   authHeaderName: String = "Authorization",
   authHeaderValue: String? = "Bearer",
+  retryPolicy: RetryPolicy? = RetryPolicy(),
   customInterceptor: Interceptor? = null
 ): Retrofit.Builder {
   return Retrofit.Builder()
-    .client(createOkHttpClient(baseUrl, connectionPool, accessToken, authHeaderName, authHeaderValue, customInterceptor))
+    .client(createOkHttpClient(baseUrl, connectionPool, accessToken, authHeaderName, authHeaderValue, retryPolicy, customInterceptor))
     .baseUrl(baseUrl)
 }
 
@@ -45,6 +46,7 @@ private fun createOkHttpClient(
   accessToken: String?,
   authHeaderName: String,
   authHeaderValue: String?,
+  retryPolicy: RetryPolicy?,
   customInterceptor: Interceptor?
 ): OkHttpClient {
   val dispatcher = Dispatcher()
@@ -68,6 +70,10 @@ private fun createOkHttpClient(
     }
     .addInterceptor(logger)
     .dispatcher(dispatcher)
+
+  if (retryPolicy != null) {
+    builder.addInterceptor(RetryInterceptor(retryPolicy))
+  }
 
   if (customInterceptor != null) {
     builder.addInterceptor(customInterceptor)
