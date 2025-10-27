@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.network
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.credentialStore.Credentials
 import com.intellij.util.net.ProxyConfiguration
 import com.intellij.util.net.ProxyCredentialStore
@@ -12,10 +11,8 @@ import com.jetbrains.edu.learning.Ok
 import okhttp3.ConnectionPool
 import okhttp3.mockwebserver.MockResponse
 import org.junit.Test
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
-import retrofit2.http.GET
 import java.net.HttpURLConnection.HTTP_PROXY_AUTH
 import kotlin.test.assertIs
 
@@ -116,10 +113,3 @@ class RetrofitProxySettingsTest : EduTestCase() {
     private const val EXTERNAL_HOST = "example.com"
   }
 }
-
-private interface TestApi {
-  @GET("/call")
-  fun call(): Call<Answer>
-}
-
-private data class Answer(@JsonProperty("value") val value: String)
