@@ -14,13 +14,19 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
+import com.jetbrains.edu.learning.submissions.SubmissionsListener
+import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
+import okhttp3.mockwebserver.MockResponse
 import org.junit.Test
+import java.net.HttpURLConnection.HTTP_UNAVAILABLE
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertNotNull as kAssertNotNull
 
 // TODO: unify with `MarketplaceSubmissionsTest`
@@ -49,7 +55,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
 
     val submissionRequestPath = "/api/course/${course.id}/${course.marketplaceCourseVersion}/task/${task.id}/submission"
 
-    helper.addResponseHandlerWithRequestBodyRecording { request, path ->
+    helper.addResponseHandlerWithRequestBodyRecording { _, path ->
       when (path) {
         submissionRequestPath -> MockResponseFactory.fromString(SUBMISSION_RESPONSE)
         else -> MockResponseFactory.badRequest()
@@ -67,7 +73,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
   }
 
   @Test
-  fun `test submission metadata `() {
+  fun `test submission metadata`() {
     // given
     val course = createEduCourse()
     val task = course.findTask("lesson1", "task1")
@@ -94,6 +100,41 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
       mapOf("foo" to "bar", "123" to "456"),
       actualSubmission.metadata
     )
+  }
+
+  @Test
+  fun `test submission retries`() {
+    // given
+    val course = createEduCourse()
+    val task = course.findTask("lesson1", "task1")
+
+    val submissionRequestPath = "/api/course/${course.id}/${course.marketplaceCourseVersion}/task/${task.id}/submission"
+
+    val counter = AtomicInteger()
+    helper.addResponseHandlerWithRequestBodyRecording { _, path ->
+      when (path) {
+        submissionRequestPath -> {
+          val attempt = counter.incrementAndGet()
+          if (attempt == 1) MockResponse().setResponseCode(HTTP_UNAVAILABLE) else MockResponseFactory.fromString(SUBMISSION_RESPONSE)
+        }
+        else -> MockResponseFactory.badRequest()
+      }
+    }
+
+    val submissionsChanged = AtomicBoolean()
+    project.messageBus.connect(testRootDisposable).subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
+      submissionsChanged.set(true)
+    })
+
+    // when
+    task.checkTask()
+    PlatformTestUtil.waitWhileBusy { !submissionsChanged.get() }
+
+    // then
+    assertEquals(2, counter.get())
+
+    val submission = kAssertNotNull(SubmissionsManager.getInstance(project).getSubmissions(task)?.singleOrNull())
+    assertEquals(SUBMISSION_ID, submission.id)
   }
 
   // TODO: unify with similar method from `com.jetbrains.edu.socialMedia.x.XConnectorTest`
@@ -129,6 +170,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
   }
 
   companion object {
-    private const val SUBMISSION_RESPONSE = """{"id":5749695,"time":"2025-06-11T11:25:17.97224012"}"""
+    private const val SUBMISSION_ID = 5749695
+    private const val SUBMISSION_RESPONSE = """{"id":$SUBMISSION_ID,"time":"2025-06-11T11:25:17.97224012"}"""
   }
 }
