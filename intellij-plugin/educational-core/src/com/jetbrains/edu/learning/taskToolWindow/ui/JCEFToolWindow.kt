@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.taskToolWindow.ui
 
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.jcef.JBCefApp
@@ -31,7 +32,7 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
     taskInfoJBCefBrowser.jbCefClient.apply {
       addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
       addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
-      setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_INFO_PANEL_JS_QUERY_POOL_SIZE)
+      taskInfoJBCefBrowser.setJSQueryPoolSize()
     }
 
     taskSpecificJBCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
@@ -88,6 +89,20 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
     val html = htmlWithResources(project, taskText, task)
     taskSpecificJBCefBrowser.loadHTML(html)
     taskSpecificJBCefBrowser.component.isVisible = true
+  }
+
+  /**
+   * This is a workaround for a bug in JCEF. See
+   * - EDU-8247 Task Description is empty
+   * - IJPL-186252 JCEF. NullPointerException: Cannot read field "objId" because "robj" is null
+   */
+  private fun JCEFHtmlPanel.setJSQueryPoolSize() {
+    try {
+      setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_INFO_PANEL_JS_QUERY_POOL_SIZE)
+    }
+    catch (th: Throwable) {
+      thisLogger().error("Failed to set JS_QUERY_POOL_SIZE", th)
+    }
   }
 
   override fun dispose() {
