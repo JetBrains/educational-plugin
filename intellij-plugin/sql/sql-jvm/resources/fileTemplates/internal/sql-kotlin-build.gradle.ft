@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '${KOTLIN_VERSION}' apply false
 }
@@ -10,13 +12,19 @@ subprojects {
         mavenCentral()
     }
 
-    sourceCompatibility = 11
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "11"
+        compilerOptions {
+            jvmTarget = JvmTarget.fromVersion("17")
+        }
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "11"
+        compilerOptions {
+            jvmTarget = JvmTarget.fromVersion("17")
+        }
     }
 
     sourceSets {
