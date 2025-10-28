@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 buildscript {
     ext.kotlin_version = '${KOTLIN_VERSION}'
 
@@ -26,7 +28,9 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'kotlin'
 
-    sourceCompatibility = 1.8
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
 
     repositories {
         mavenCentral()
@@ -38,10 +42,14 @@ subprojects {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
 
     sourceSets {
@@ -55,7 +63,10 @@ subprojects {
         }
     }
 
-    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+    application {
+        mainClass = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+    }
+
     test {
         outputs.upToDateWhen { false }
         afterTest { TestDescriptor test, TestResult result ->

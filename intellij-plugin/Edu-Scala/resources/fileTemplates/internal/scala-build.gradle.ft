@@ -20,7 +20,9 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'scala'
 
-    sourceCompatibility = 1.8
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
 
     repositories {
         mavenCentral()
@@ -43,7 +45,9 @@ subprojects {
         }
     }
 
-    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+    application {
+        mainClass = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+    }
 
     if (project.hasProperty("educationalRun") && "true".equalsIgnoreCase(project.getProperty("educationalRun"))) {
         def runOutput = new ByteArrayOutputStream()

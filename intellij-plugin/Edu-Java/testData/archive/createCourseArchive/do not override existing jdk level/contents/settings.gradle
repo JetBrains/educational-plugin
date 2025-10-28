@@ -23,3 +23,4 @@ def isTaskDir(File dir) {
 }
 
 include 'util'
+project(":util").projectDir.mkdirs()
