@@ -1,0 +1,7 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.clion.radler"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="Edu-Cpp"/>
+  </dependencies>
+</idea-plugin>
