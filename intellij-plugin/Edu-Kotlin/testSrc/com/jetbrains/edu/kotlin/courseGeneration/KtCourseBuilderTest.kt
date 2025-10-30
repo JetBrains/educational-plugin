@@ -1,11 +1,14 @@
 package com.jetbrains.edu.kotlin.courseGeneration
 
+import com.intellij.openapi.vfs.readText
 import com.jetbrains.edu.jvm.courseGeneration.JvmCourseGenerationTestBase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.junit.Test
+import kotlin.test.assertContains
 
 class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
 
@@ -125,5 +128,15 @@ class KtCourseBuilderTest : JvmCourseGenerationTestBase() {
       file("settings.gradle")
     }
     expectedFileTree.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `Kotlin version in auto-generated build_gradle has form Major_dot_Minor_dot_Patch`() {
+    val course = course(language = KotlinLanguage.INSTANCE, courseMode = CourseMode.EDUCATOR) {}
+    createCourseStructure(course)
+
+    val text = findFile("build.gradle").readText()
+
+    assertContains(text, """kotlin_version\s*=\s*['"](\d+\.\d+\.\d+)['"]""".toRegex(), "Kotlin version must be of the form major.minor.patch")
   }
 }
