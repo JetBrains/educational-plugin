@@ -31,15 +31,6 @@ subprojects {
     }
 }
 
-project(':util')
-
-configure(subprojects.findAll { it.name != 'util' }) {
-    dependencies {
-        implementation project(':util').sourceSets.main.output
-        testImplementation project(':util').sourceSets.test.output
-    }
-}
-
 def printOutput(def output) {
   return tasks.create("printOutput") {
     println "#educational_plugin_checker_version 1"

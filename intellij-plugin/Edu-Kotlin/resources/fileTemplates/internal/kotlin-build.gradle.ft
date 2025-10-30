@@ -89,16 +89,3 @@ subprojects {
         tasks.run.doLast { printOutput(runOutput) }
     }
 }
-
-project(':util') {
-    dependencies {
-        implementation group: 'junit', name: 'junit', version: '4.12'
-    }
-}
-
-configure(subprojects.findAll { it.name != 'util' }) {
-    dependencies {
-        implementation project(':util').sourceSets.main.output
-        testImplementation project(':util').sourceSets.test.output
-    }
-}
