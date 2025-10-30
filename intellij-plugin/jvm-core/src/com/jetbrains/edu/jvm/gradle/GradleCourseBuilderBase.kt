@@ -45,9 +45,10 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     const val HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME: String = "hyperskill-settings.gradle"
 
     fun getKotlinTemplateVariables(): Map<String, Any> {
-      val kotlinVersion = kotlinVersion()
       return mapOf(
-        "KOTLIN_VERSION" to kotlinVersion.version
+        // Uses the Kotlin version from stdlib the platform was compiled with, it should be enough for the course template.
+        // toString() returns the "major.minor.patch" form.
+        "KOTLIN_VERSION" to KotlinVersion.CURRENT.toString()
       )
     }
   }
