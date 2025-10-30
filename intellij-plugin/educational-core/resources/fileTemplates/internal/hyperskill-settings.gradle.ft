@@ -38,6 +38,3 @@ rootProject.projectDir.eachDirRecurse {
 def isTaskDir(File dir) {
   return new File(dir, "src").exists() || new File(dir, "test").exists()
 }
-
-include 'util'
-project(":util").projectDir.mkdirs()
