@@ -4,7 +4,7 @@ plugins {
 
 tasks {
   test {
-    setClionSystemProperties(withRadler = false)
+    setClionSystemProperties(project, withRadler = false)
   }
 }
 

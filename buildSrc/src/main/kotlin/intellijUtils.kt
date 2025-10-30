@@ -161,29 +161,47 @@ fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(notations: List<St
 // and `idea.suppressed.plugins.set.radler` properties in tests,
 // as a result, the platform tries to load all plugins and fails because of duplicate definitions.
 // Here is a workaround to make test work with CLion by defining proper values for necessary properties
-fun JavaForkOptions.setClionSystemProperties(withRadler: Boolean = false) {
+fun JavaForkOptions.setClionSystemProperties(project: Project, withRadler: Boolean = false) {
   val (mode, suppressedPlugins) = if (withRadler) {
-    val radlerSuppressedPlugins = listOfNotNull(
-      "com.intellij.cidr.lang",
-      "com.intellij.cidr.lang.clangdBridge",
-      "com.intellij.c.performanceTesting",
-      "org.jetbrains.plugins.cidr-intelliLang",
-      "com.intellij.cidr.grazie",
-      "com.intellij.cidr.markdown",
-    )
-    "radler" to radlerSuppressedPlugins
+    "radler" to project.clionRadlerSuppressedPlugins
   }
   else {
-    val classicSuppressedPlugins = listOf(
-      "org.jetbrains.plugins.clion.radler",
-      "intellij.rider.cpp.debugger",
-      "intellij.rider.plugins.clion.radler.cwm"
-    )
-    "classic" to classicSuppressedPlugins
+    "classic" to project.clionClassicSuppressedPlugins
   }
   systemProperty("idea.suppressed.plugins.set.selector", mode) // possible values: `classic` and `radler`
   systemProperty("idea.suppressed.plugins.set.$mode", suppressedPlugins.joinToString(","))
 }
+
+private val Project.clionRadlerSuppressedPlugins: List<String>
+  get() {
+    return if (isAtLeast253) {
+      listOf("com.intellij.cidr.lang")
+    }
+    else {
+      listOf(
+        "com.intellij.cidr.lang",
+        "com.intellij.cidr.lang.clangdBridge",
+        "com.intellij.c.performanceTesting",
+        "org.jetbrains.plugins.cidr-intelliLang",
+        "com.intellij.cidr.grazie",
+        "com.intellij.cidr.markdown",
+      )
+    }
+  }
+
+private val Project.clionClassicSuppressedPlugins: List<String>
+  get() {
+    return if (isAtLeast253) {
+      listOf("org.jetbrains.plugins.clion.radler")
+    }
+    else {
+      listOf(
+        "org.jetbrains.plugins.clion.radler",
+        "intellij.rider.cpp.debugger",
+        "intellij.rider.plugins.clion.radler.cwm"
+      )
+    }
+  }
 
 // There isn't an implicit `project` object here, so
 // this is a minor workaround to use delegation for properties almost like in a regular plugin
