@@ -118,14 +118,20 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     openCourseParams: Map<String, String> = emptyMap(),
     initialLessonProducer: () -> Lesson = ::Lesson
   ): Project? {
-    return runWithModalProgressBlocking(
+    var project: Project? = null
+    runWithModalProgressBlocking(
       ModalTaskOwner.guess(),
       EduCoreBundle.message("generate.course.progress.title"),
       TaskCancellation.cancellable()
     ) {
-      doCreateCourseProjectAsync(location, projectSettings, openCourseParams, initialLessonProducer)
+      runInProperContext {
+        project = doCreateCourseProjectAsync(location, projectSettings, openCourseParams, initialLessonProducer)
+      }
     }
+    return project
   }
+
+  protected open fun runInProperContext(action: suspend () -> Unit) {}
 
   private suspend fun doCreateCourseProjectAsync(
     location: String,

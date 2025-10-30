@@ -5,6 +5,9 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
+import com.jetbrains.rider.projectView.projectTemplates.RiderProjectTemplatesAppService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.file.Path
 
 class CSharpCourseProjectGenerator(
@@ -12,6 +15,13 @@ class CSharpCourseProjectGenerator(
   course: Course
 ) : CSharpCourseProjectGeneratorBase(builder, course) {
   private val solutionFileName = "${course.name}.${SolutionFileType.defaultExtension}"
+
+  override fun runInProperContext(action: suspend () -> Unit) {
+    val applicationScope = RiderProjectTemplatesAppService.getInstance().scope
+    applicationScope.launch(Dispatchers.Default) {
+      action.invoke()
+    }
+  }
 
   override fun applySettings(projectSettings: CSharpProjectSettings) {
     super.applySettings(projectSettings)
