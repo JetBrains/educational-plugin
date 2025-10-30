@@ -1,0 +1,11 @@
+<!-- BACKCOMPAT: 2025.2. Inline it -->
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.clion"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="intellij.clion.runFile"/>
+    <module name="intellij.cmake.clion"/>
+    <plugin id="org.jetbrains.plugins.clion.test.catch"/>
+    <plugin id="org.jetbrains.plugins.clion.test.google"/>
+  </dependencies>
+</idea-plugin>
