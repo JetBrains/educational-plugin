@@ -1,5 +1,6 @@
 package com.jetbrains.edu.kotlin
 
+import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.courseFormat.Course
 
@@ -10,9 +11,7 @@ open class KtCourseBuilder : GradleCourseBuilderBase() {
   override fun mainTemplateName(course: Course): String = KtConfigurator.MAIN_KT
   override fun testTemplateName(course: Course): String = KtConfigurator.TESTS_KT
 
-  override fun getSupportedLanguageVersions(): List<String> = listOf("1.2", "1.3", "1.4", "1.5", "1.6", "1.7")
-
-  override fun getLanguageSettings() = KtLanguageSettings()
+  override fun getLanguageSettings() = JdkLanguageSettings()
 
   companion object {
     const val KOTLIN_BUILD_GRADLE_TEMPLATE_NAME = "kotlin-build.gradle"
