@@ -30,7 +30,7 @@ class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.ai.features",
       "The metric is reported in case a user has called the corresponding JetBrains Academy AI features.",
-      4,
+      5,
     )
 
     private val TRANSLATION_BUTTON_CLICKED_EVENT = GROUP.registerEvent(

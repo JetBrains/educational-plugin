@@ -45,7 +45,7 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.state",
       "The metric is reported in case a user has JetBrains Academy plugin installed and contains data about settings related to the plugin.",
-      7
+      8
     )
 
     private val TASK_PANEL_EVENT = GROUP.registerEvent(
