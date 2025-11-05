@@ -137,6 +137,41 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
     assertEquals(SUBMISSION_ID, submission.id)
   }
 
+  @Test
+  fun `test submission successful from first attempt`() {
+    // given
+    val course = createEduCourse()
+    val task = course.findTask("lesson1", "task1")
+
+    val submissionRequestPath = "/api/course/${course.id}/${course.marketplaceCourseVersion}/task/${task.id}/submission"
+
+    val counter = AtomicInteger()
+    helper.addResponseHandlerWithRequestBodyRecording { _, path ->
+      when (path) {
+        submissionRequestPath -> {
+          counter.incrementAndGet()
+          MockResponseFactory.fromString(SUBMISSION_RESPONSE)
+        }
+        else -> MockResponseFactory.badRequest()
+      }
+    }
+
+    val submissionsChanged = AtomicBoolean()
+    project.messageBus.connect(testRootDisposable).subscribe(SubmissionsManager.TOPIC, SubmissionsListener {
+      submissionsChanged.set(true)
+    })
+
+    // when
+    task.checkTask()
+    PlatformTestUtil.waitWhileBusy { !submissionsChanged.get() }
+
+    // then
+    assertEquals(1, counter.get())
+
+    val submission = kAssertNotNull(SubmissionsManager.getInstance(project).getSubmissions(task)?.singleOrNull())
+    assertEquals(SUBMISSION_ID, submission.id)
+  }
+
   // TODO: unify with similar method from `com.jetbrains.edu.socialMedia.x.XConnectorTest`
   private fun MockWebServerHelper.addResponseHandlerWithRequestBodyRecording(handler: ResponseHandler) {
     addResponseHandler(testRootDisposable) { request, path ->
