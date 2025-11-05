@@ -22,6 +22,7 @@ abstract class GradleFileAttributesTest(
         archiveInclusionPolicy = ArchiveInclusionPolicy.MUST_EXCLUDE,
         visibility = CourseViewVisibility.INVISIBLE_FOR_ALL
       )
+      val inArchiveAndInvisible = inArchive.copy(visibility = CourseViewVisibility.INVISIBLE_FOR_ALL)
 
       return FileAttributesTest.data().extend(
         arrayOf("settings.gradle", inArchive),
@@ -43,15 +44,15 @@ abstract class GradleFileAttributesTest(
         arrayOf("gradlew", outsideArchive),
         arrayOf("gradlew.bat", outsideArchive),
         arrayOf("local.properties", outsideArchive),
-        arrayOf("gradle-wrapper.jar", outsideArchive),
-        arrayOf("gradle-wrapper.properties", outsideArchive),
+        arrayOf("gradle/wrapper/gradle-wrapper.jar", outsideArchive),
+        arrayOf("gradle/wrapper/gradle-wrapper.properties", inArchiveAndInvisible),
 
         arrayOf("subfolder/EduTestRunner.java", outsideArchive),
         arrayOf("subfolder/gradlew", outsideArchive),
         arrayOf("subfolder/gradlew.bat", outsideArchive),
         arrayOf("subfolder/local.properties", outsideArchive),
-        arrayOf("subfolder/gradle-wrapper.jar", outsideArchive),
-        arrayOf("subfolder/gradle-wrapper.properties", outsideArchive),
+        arrayOf("subfolder/gradle/wrapper/gradle-wrapper.jar", outsideArchive),
+        arrayOf("subfolder/gradle/wrapper/gradle-wrapper.properties", inArchiveAndInvisible),
 
         // override 'build' and 'out' directories from the FileAttributesTest.data()
         arrayOf("build/", outsideArchive),

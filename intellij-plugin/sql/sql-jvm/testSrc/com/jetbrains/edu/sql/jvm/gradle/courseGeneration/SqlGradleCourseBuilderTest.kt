@@ -148,8 +148,7 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
     createCourseStructure(newCourse)
 
     assertListOfAdditionalFiles(newCourse,
-      // TODO(uncomment following line after either EDU-8545 or EDU-8540 will be merged)
-      //"gradle/wrapper/gradle-wrapper.properties" to null,
+      "gradle/wrapper/gradle-wrapper.properties" to null,
       "build.gradle.kts" to null,
       "settings.gradle.kts" to null
       //build.gradle and settings.gradle are not created
