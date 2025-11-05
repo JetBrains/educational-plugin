@@ -35,6 +35,12 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
       legacyExcludeFromArchive()
       archiveInclusionPolicy(ArchiveInclusionPolicy.MUST_EXCLUDE)
       courseViewVisibility(CourseViewVisibility.INVISIBLE_FOR_ALL)
+
+      file(GRADLE_WRAPPER_PROPERTIES) {
+        @Suppress("DEPRECATION")
+        undoLegacyExcludeFromArchive()
+        archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
+      }
     }
 
     file(*NAMES_TO_EXCLUDE) {
@@ -57,7 +63,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   companion object {
     private val NAMES_TO_EXCLUDE = arrayOf(
       "EduTestRunner.java", GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN, LOCAL_PROPERTIES,
-      GRADLE_WRAPPER_JAR, GRADLE_WRAPPER_PROPERTIES
+      GRADLE_WRAPPER_JAR,
     )
 
     private val FOLDERS_TO_EXCLUDE = arrayOf(EduNames.OUT, EduNames.BUILD, GRADLE)
