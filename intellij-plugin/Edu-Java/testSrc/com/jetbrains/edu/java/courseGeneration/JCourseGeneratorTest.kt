@@ -44,6 +44,11 @@ class JCourseGeneratorTest : JvmCourseGenerationTestBase() {
           file("task.html")
         }
       }
+      dir("gradle") {
+        dir("wrapper") {
+          file("gradle-wrapper.properties")
+        }
+      }
       file("build.gradle")
       file("settings.gradle")
     }
