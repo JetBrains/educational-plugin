@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TROUBLESHOOTING_GU
 object EduNames {
   const val PLUGIN_ID = "com.jetbrains.edu"
   const val JBA = "Hyperskill"
-  const val LEARNING_CENTER = "Learning Center"
   const val HINTS = "hints"
 
   const val FRAMEWORK_LESSON = "guided project"
