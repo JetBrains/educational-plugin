@@ -44,7 +44,6 @@ import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.metrics.HyperskillMetricsService
 import com.jetbrains.edu.learning.submissions.SubmissionsListener
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.ui.MarketplaceSubmissionsTab
@@ -112,7 +111,6 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       updateNavigationPanel(value)
       updateHeaders(value)
       updateTabs(value)
-      HyperskillMetricsService.getInstance().viewEvent(value)
       EduCounterUsageCollector.viewEvent(value)
       field = value
     }
