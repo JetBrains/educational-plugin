@@ -255,3 +255,6 @@ fun EduConfigurator<*>.courseFileAttributes(project: Project, file: VirtualFile)
 
 fun EduConfigurator<*>.courseFileAttributes(holder: CourseInfoHolder<out Course?>, file: VirtualFile): CourseFileAttributes =
   courseFileAttributesEvaluator.attributesForFile(holder, file)
+
+fun EduConfigurator<*>.courseFileAttributes(path: String, isDirectory: Boolean): CourseFileAttributes =
+  courseFileAttributesEvaluator.attributesForPath(path, isDirectory)

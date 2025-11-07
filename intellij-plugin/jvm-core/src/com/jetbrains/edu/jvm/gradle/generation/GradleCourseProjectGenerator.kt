@@ -7,9 +7,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.GRADLE_WRAPPER_PROPERTIES_PATH
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
+import com.jetbrains.edu.learning.courseFormat.TextualContents
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -40,6 +42,13 @@ open class GradleCourseProjectGenerator(
       gradleCourseBuilder.templates(holder.course),
       gradleCourseBuilder.templateVariables(holder.courseDir.name)
     )
+  }
+
+  override fun autoCreatedLaterAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
+    return if (!holder.course.isStudy) {
+      listOf(EduFile(GRADLE_WRAPPER_PROPERTIES_PATH, TextualContents.EMPTY))
+    }
+    else emptyList()
   }
 
   protected open fun getJdk(settings: JdkProjectSettings): Sdk? {

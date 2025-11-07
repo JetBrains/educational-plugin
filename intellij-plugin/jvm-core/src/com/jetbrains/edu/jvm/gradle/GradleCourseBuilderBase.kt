@@ -63,7 +63,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
     private const val GRADLE_WRAPPER_PROPERTIES = "gradle-wrapper.properties"
 
-    private val GRADLE_WRAPPER_PROPERTIES_PATH: String = GeneratorUtils.joinPaths(GRADLE_DIR_NAME, "wrapper", GRADLE_WRAPPER_PROPERTIES)
+    val GRADLE_WRAPPER_PROPERTIES_PATH: String = GeneratorUtils.joinPaths(GRADLE_DIR_NAME, "wrapper", GRADLE_WRAPPER_PROPERTIES)
 
     private const val GRADLE_VERSION_VARIABLE: String = "GRADLE_VERSION"
     // Starting from release 2025.10.1, we put gradle-wrapper.properties in the archive.
