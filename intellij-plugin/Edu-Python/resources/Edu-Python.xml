@@ -1,10 +1,8 @@
-<idea-plugin package="com.jetbrains.edu.python" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin package="com.jetbrains.edu.python">
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="com.intellij.modules.python"/>
   </dependencies>
-
-  <xi:include href="/META-INF/Hyperskill-Python.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.edu.python.learning.run.PyRunTestsConfigurationType"/>

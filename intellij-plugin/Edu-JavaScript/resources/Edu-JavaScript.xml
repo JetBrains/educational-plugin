@@ -1,12 +1,10 @@
-<idea-plugin package="com.jetbrains.edu.javascript" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin package="com.jetbrains.edu.javascript">
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <plugin id="JavaScript"/>
     <plugin id="NodeJS"/>
     <plugin id="com.intellij.css"/>
   </dependencies>
-
-  <xi:include href="/META-INF/Hyperskill-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.javascript.learning.JsConfigurator" language="JavaScript"/>

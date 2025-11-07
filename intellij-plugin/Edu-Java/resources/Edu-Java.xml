@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.java" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin package="com.jetbrains.edu.java">
   <!--suppress PluginXmlValidity -->
   <dependencies>
     <!--suppress PluginXmlValidity -->
@@ -8,8 +8,6 @@
     <plugin id="org.jetbrains.plugins.gradle"/>
     <plugin id="JUnit"/>
   </dependencies>
-
-  <xi:include href="/META-INF/Hyperskill-Java.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>

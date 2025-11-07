@@ -6,8 +6,5 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="go" implementationClass="com.jetbrains.edu.go.GoConfigurator"/>
-
-    <!-- Hyperskill -->
-    <configurator implementationClass="com.jetbrains.edu.go.stepik.hyperskill.GoHyperskillConfigurator" language="go" courseType="Hyperskill"/>
   </extensions>
 </idea-plugin>

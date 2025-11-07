@@ -17,10 +17,6 @@
     <checkListener implementation="com.jetbrains.edu.socialMedia.SocialMediaMultiplePostAction"/>
 
     <xPluginConfigurator implementation="com.jetbrains.edu.socialMedia.kotlin.KtXConfigurator"/>
-    <xPluginConfigurator
-        implementation="com.jetbrains.edu.socialMedia.hyperskill.HyperskillXConfigurator"/>
-    <linkedInPluginConfigurator
-        implementation="com.jetbrains.edu.socialMedia.hyperskill.HyperskillLinkedInConfigurator"/>
 
     <optionsProvider instance="com.jetbrains.edu.socialMedia.x.XOptionsProvider"/>
     <optionsProvider instance="com.jetbrains.edu.socialMedia.linkedIn.LinkedInOptionsProvider"/>
