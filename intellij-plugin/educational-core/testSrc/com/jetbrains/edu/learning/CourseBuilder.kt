@@ -69,7 +69,10 @@ fun Course.createCourseFiles(
       configurator
         ?.courseBuilder
         ?.getCourseProjectGenerator(this@createCourseFiles)
-        ?.createCourseStructure(holder)
+        ?.apply {
+          createCourseStructure(holder)
+          createAutoCreatedLaterAdditionalFiles(holder)
+        }
     }
 
     GeneratorUtils.unpackAdditionalFiles(holder, ONLY_IDEA_DIRECTORY)

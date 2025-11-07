@@ -48,6 +48,11 @@
       "name" : "settings.gradle",
       "is_visible" : false,
       "is_binary" : false
+    },
+    {
+      "name" : "gradle/wrapper/gradle-wrapper.properties",
+      "is_visible" : false,
+      "is_binary" : false
     }
   ],
   "version" : <last version>,

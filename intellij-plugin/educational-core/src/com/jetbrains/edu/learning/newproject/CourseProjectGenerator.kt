@@ -349,6 +349,13 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     }
   }
 
+  @VisibleForTesting
+  fun createAutoCreatedLaterAdditionalFiles(holder: CourseInfoHolder<Course>) {
+    for (file in autoCreatedLaterAdditionalFiles(holder)) {
+      createChildFile(holder, holder.courseDir, file.name, file.contents)
+    }
+  }
+
   /**
    * Returns the list of additional files that must be added to the project.
    * Examines the FS and [Course.additionalFiles] to check, whether they lack some necessary files.
