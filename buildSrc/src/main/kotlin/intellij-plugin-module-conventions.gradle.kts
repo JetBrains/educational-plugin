@@ -26,6 +26,10 @@ tasks {
     jvmArgumentProviders += CommandLineArgumentProvider {
       listOf("-Didea.kotlin.plugin.use.k2=true")
     }
+
+    // TODO: Drop Hyperskill-related code. See EDU-8582
+    exclude("com/jetbrains/edu/learning/stepik/**")
+    exclude("**/hyperskill/**")
   }
 }
 

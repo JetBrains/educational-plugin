@@ -18,11 +18,14 @@ import com.jetbrains.edu.learning.stepik.hyperskill.PlainTextHyperskillConfigura
 import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourse
 import junit.framework.ComparisonFailure
 import org.jdom.Element
+import org.junit.Ignore
 import org.junit.Test
 import java.nio.file.Paths
 
 open class CoursesInfosStorageTestBase : EduTestCase() {
 
+  // TODO: Drop Hyperskill-related code. See EDU-8582
+  @Ignore
   @Test
   fun `test correct configurator found for courses in storage`() {
     val coursesStorage = CoursesStorage.getInstance()
