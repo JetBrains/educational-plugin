@@ -2,6 +2,7 @@ package com.jetbrains.edu.kotlin.hyperskill
 
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
+import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.LEGACY_TEMPLATE_PREFIX
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.getKotlinTemplateVariables
 import com.jetbrains.edu.kotlin.hyperskill.KtHyperskillConfigurator.Companion.KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
 import com.jetbrains.edu.learning.EduTestCase
@@ -51,8 +52,8 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
       language = KotlinLanguage.INSTANCE
     ) {}
     val actualBuildGradleContent = findFile(DEFAULT_SCRIPT_NAME).document.text
-    val expectedBuildGradleContent = GeneratorUtils.getInternalTemplateText(KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME,
-                                                                            getKotlinTemplateVariables())
+    val templateName = LEGACY_TEMPLATE_PREFIX + KOTLIN_HYPERSKILL_BUILD_GRADLE_TEMPLATE_NAME
+    val expectedBuildGradleContent = GeneratorUtils.getInternalTemplateText(templateName, getKotlinTemplateVariables())
 
     assertEquals(expectedBuildGradleContent, actualBuildGradleContent)
   }
@@ -64,7 +65,8 @@ class KtHyperskillCourseGenerationTest : EduTestCase() {
       language = KotlinLanguage.INSTANCE
     ) {}
     val actualSettingsGradleContent = findFile(SETTINGS_FILE_NAME).document.text
-    val expectedSettingsGradleContent = GeneratorUtils.getInternalTemplateText(HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME)
+    val templateName = LEGACY_TEMPLATE_PREFIX + HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME
+    val expectedSettingsGradleContent = GeneratorUtils.getInternalTemplateText(templateName)
 
     assertEquals(expectedSettingsGradleContent, actualSettingsGradleContent)
   }

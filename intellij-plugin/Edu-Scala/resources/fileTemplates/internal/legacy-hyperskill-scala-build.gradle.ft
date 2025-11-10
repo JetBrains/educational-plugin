@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'application'
+    apply plugin: 'java'
+    apply plugin: 'scala'
+
+    sourceCompatibility = 11
+
+    repositories {
+        mavenCentral()
+
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        implementation 'org.scala-lang:scala-library:2.12.6'
+        testImplementation 'com.github.hyperskill:hs-test:release-SNAPSHOT'
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+
+    sourceSets {
+        main {
+            java.srcDir 'src'
+            scala.srcDir 'src'
+        }
+        test {
+            java.srcDir 'test'
+            scala.srcDir 'test'
+        }
+    }
+}
+
+project(':util') {
+  dependencies {
+    implementation 'com.github.hyperskill:hs-test:release-SNAPSHOT'
+  }
+}
+
+configure(subprojects.findAll { it.name != 'util' }) {
+  dependencies {
+    testImplementation project(':util').sourceSets.main.output
+    testImplementation project(':util').sourceSets.test.output
+  }
+}

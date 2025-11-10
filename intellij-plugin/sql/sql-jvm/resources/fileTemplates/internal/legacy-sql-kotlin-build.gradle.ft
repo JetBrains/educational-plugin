@@ -1,0 +1,88 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '${KOTLIN_VERSION}' apply false
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+
+    repositories {
+        mavenCentral()
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+    }
+
+    compileKotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromVersion("17")
+        }
+    }
+    compileTestKotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromVersion("17")
+        }
+    }
+
+    sourceSets {
+        main {
+            kotlin.srcDir 'src'
+            java.srcDir 'src'
+        }
+        test {
+            kotlin.srcDir 'test'
+            java.srcDir 'test'
+        }
+    }
+
+    dependencies {
+        testImplementation 'junit:junit:4.13.2'
+        testImplementation 'com.h2database:h2:2.1.214'
+    }
+
+    test {
+        outputs.upToDateWhen { false }
+        afterTest { TestDescriptor test, TestResult result ->
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                def message = result.exception?.message ?: "Wrong answer"
+                def lines = message.readLines()
+                println "#educational_plugin FAILED + " + lines[0]
+                lines.subList(1, lines.size()).forEach { line ->
+                    println "#educational_plugin" + line
+                }
+                // we need this to separate output of different tests
+                println()
+            }
+        }
+    }
+
+    if (project.hasProperty("educationalRun") && "true".equalsIgnoreCase(project.getProperty("educationalRun"))) {
+        def runOutput = new ByteArrayOutputStream()
+        tasks.run.setStandardOutput(runOutput)
+        tasks.run.doLast { printOutput(runOutput) }
+    }
+}
+
+project(':util')
+
+configure(subprojects.findAll { it.name != 'util' }) {
+  dependencies {
+    implementation project(':util').sourceSets.main.output
+    testImplementation project(':util').sourceSets.test.output
+  }
+}
+
+
+def printOutput(def output) {
+  return tasks.create("printOutput") {
+    println "#educational_plugin_checker_version 1"
+    def separator = System.lineSeparator()
+    def lines = output.toString().split("(?<=${separator})|(?=${separator})")
+    for (line in lines) {
+      println "#educational_plugin" + line
+    }
+  }
+}
