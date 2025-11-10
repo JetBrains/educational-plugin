@@ -42,7 +42,8 @@ class SqlGradleCourseBuilderTest : JvmCourseGenerationTestBase() {
 
     assertListOfAdditionalFiles(newCourse,
       "build.gradle" to null,
-      "settings.gradle" to null
+      "settings.gradle" to null,
+      "gradle/wrapper/gradle-wrapper.properties" to null,
     )
   }
 
