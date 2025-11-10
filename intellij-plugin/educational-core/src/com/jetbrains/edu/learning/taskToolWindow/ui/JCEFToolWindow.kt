@@ -32,10 +32,10 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
     taskInfoJBCefBrowser.jbCefClient.apply {
       addRequestHandler(taskInfoRequestHandler, taskInfoJBCefBrowser.cefBrowser)
       addLifeSpanHandler(taskInfoLifeSpanHandler, taskInfoJBCefBrowser.cefBrowser)
-      taskInfoJBCefBrowser.setJSQueryPoolSize()
+      setJSQueryPoolSize(TASK_INFO_PANEL_JS_QUERY_POOL_SIZE)
     }
 
-    taskSpecificJBCefBrowser.jbCefClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
+    taskSpecificJBCefBrowser.jbCefClient.setJSQueryPoolSize(TASK_SPECIFIC_PANEL_JS_QUERY_POOL_SIZE)
 
     taskInfoJBCefBrowser.disableNavigation()
     Disposer.register(this, taskInfoJBCefBrowser)
@@ -96,9 +96,9 @@ class JCEFToolWindow(project: Project) : TaskToolWindow(project) {
    * - EDU-8247 Task Description is empty
    * - IJPL-186252 JCEF. NullPointerException: Cannot read field "objId" because "robj" is null
    */
-  private fun JCEFHtmlPanel.setJSQueryPoolSize() {
+  private fun JBCefClient.setJSQueryPoolSize(size: Int) {
     try {
-      setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, TASK_INFO_PANEL_JS_QUERY_POOL_SIZE)
+      setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, size)
     }
     catch (th: Throwable) {
       thisLogger().error("Failed to set JS_QUERY_POOL_SIZE", th)
