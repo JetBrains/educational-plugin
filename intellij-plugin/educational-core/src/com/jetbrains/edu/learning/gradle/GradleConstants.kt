@@ -10,5 +10,5 @@ object GradleConstants {
   const val LOCAL_PROPERTIES = "local.properties"
   const val GRADLE_PROPERTIES = "gradle.properties"
   const val GRADLE = "gradle"
-
+  const val WRAPPER = "wrapper"
 }
