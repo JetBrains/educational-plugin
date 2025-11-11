@@ -58,6 +58,7 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
 
     // then
     assertTrue(isDialogShown)
+    assertFalse(SocialMediaPostManager.needToAskedToPost(course.id))
 
     verify(exactly = 1) { mockXConnector.tweet(X_MESSAGE, match { it.endsWith(X_GIF_PATH) }) }
     verify(exactly = 1) { mockLinkedInConnector.createPostWithMedia(any(), LINKEDIN_MESSAGE, match { it.endsWith(LINKEDIN_GIF_PATH) }) }
@@ -76,6 +77,7 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
 
     // then
     assertTrue(isDialogShown)
+    assertFalse(SocialMediaPostManager.needToAskedToPost(course.id))
 
     verify(exactly = 1) { mockXConnector.tweet(X_MESSAGE, match { it.endsWith(X_GIF_PATH) }) }
     verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
@@ -95,13 +97,50 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
 
     // then
     assertFalse(isDialogShown)
+    assertTrue(SocialMediaPostManager.needToAskedToPost(course.id))
 
     verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
     verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
   }
 
-  private fun createEduCourse(): Course {
-    return courseWithFiles {
+  @Test
+  fun `test do not post for the second time`() {
+    // given
+    val course = createEduCourse()
+    val currentTask = course.findTask("lesson1", "task1")
+
+    // Mark that the social media dialog was already shown
+    SocialMediaPostManager.setAskedToPost(course.id)
+
+    // when
+    val isDialogShown = launchCheckAction(currentTask)
+
+    // then
+    assertFalse(isDialogShown)
+
+    verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
+    verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
+  }
+
+  @Test
+  fun `test do not post for the local course`() {
+    // given
+    val course = createEduCourse(id = 0)
+    val currentTask = course.findTask("lesson1", "task1")
+
+    // when
+    val isDialogShown = launchCheckAction(currentTask)
+
+    // then
+    assertFalse(isDialogShown)
+    assertFalse(SocialMediaPostManager.needToAskedToPost(course.id))
+
+    verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
+    verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
+  }
+
+  private fun createEduCourse(id: Int = 123): Course {
+    return courseWithFiles(id = id) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("taskFile1.txt")

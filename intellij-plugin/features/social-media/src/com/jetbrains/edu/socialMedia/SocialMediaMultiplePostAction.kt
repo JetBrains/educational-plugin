@@ -46,6 +46,9 @@ class SocialMediaMultiplePostAction : CheckListener {
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
+    val courseId = task.course.id
+    if (!SocialMediaPostManager.needToAskedToPost(courseId)) return
+
     val previousStatus = PreviousTaskStatusService.getInstance(project).getPreviousStatus(task) ?: return
     val activeConfigurators = listOf(XPluginConfigurator.EP_NAME, LinkedInPluginConfigurator.EP_NAME)
       .flatMap { it.extensionList }
@@ -54,6 +57,8 @@ class SocialMediaMultiplePostAction : CheckListener {
     if (activeConfigurators.isEmpty()) return
 
     createDialogAndShow(project, activeConfigurators, task)
+
+    SocialMediaPostManager.setAskedToPost(courseId)
     sendStatistics(task.course)
   }
 }
