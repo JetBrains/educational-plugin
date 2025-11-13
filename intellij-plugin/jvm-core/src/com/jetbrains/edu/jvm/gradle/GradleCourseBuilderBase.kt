@@ -92,8 +92,6 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     @VisibleForTesting
     const val LEGACY_TEMPLATE_PREFIX: String = "legacy-"
 
-    private const val GRADLE_WRAPPER_PROPERTIES = "gradle-wrapper.properties"
-
     val GRADLE_WRAPPER_PROPERTIES_PATH: String = GeneratorUtils.joinPaths(GRADLE_DIR_NAME, WRAPPER, GRADLE_WRAPPER_PROPERTIES)
 
     private const val GRADLE_VERSION_VARIABLE: String = "GRADLE_VERSION"
