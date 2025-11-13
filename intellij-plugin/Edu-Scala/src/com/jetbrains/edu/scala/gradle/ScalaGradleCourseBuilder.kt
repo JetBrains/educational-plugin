@@ -2,6 +2,7 @@ package com.jetbrains.edu.scala.gradle
 
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.courseFormat.Course
+import org.jetbrains.annotations.VisibleForTesting
 
 open class ScalaGradleCourseBuilder : GradleCourseBuilderBase() {
 
@@ -11,6 +12,7 @@ open class ScalaGradleCourseBuilder : GradleCourseBuilderBase() {
   override fun testTemplateName(course: Course): String = ScalaGradleConfigurator.TEST_SCALA
 
   companion object {
-    private const val SCALA_BUILD_GRADLE_TEMPLATE_NAME = "scala-build.gradle"
+    @VisibleForTesting
+    const val SCALA_BUILD_GRADLE_TEMPLATE_NAME = "scala-build.gradle"
   }
 }

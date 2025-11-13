@@ -8,6 +8,7 @@ import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
+import org.jetbrains.annotations.VisibleForTesting
 
 class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
   override fun taskTemplateName(course: Course): String = SqlConfiguratorBase.TASK_SQL
@@ -32,8 +33,8 @@ class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
 
   override fun buildGradleTemplateName(course: Course): String {
     return when (course.sqlTestLanguage) {
-      SqlTestLanguage.KOTLIN -> "sql-kotlin-build.gradle"
-      SqlTestLanguage.JAVA -> "sql-java-build.gradle"
+      SqlTestLanguage.KOTLIN -> SQL_KOTLIN_BUILD_GRADLE_TEMPLATE_NAME
+      SqlTestLanguage.JAVA -> SQL_JAVA_BUILD_GRADLE_TEMPLATE_NAME
     }
   }
 
@@ -48,6 +49,12 @@ class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
 
   companion object {
     const val INIT_SQL = "init.sql"
+
+    @VisibleForTesting
+    const val SQL_KOTLIN_BUILD_GRADLE_TEMPLATE_NAME = "sql-kotlin-build.gradle"
+
+    @VisibleForTesting
+    const val SQL_JAVA_BUILD_GRADLE_TEMPLATE_NAME = "sql-java-build.gradle"
   }
 }
 
