@@ -34,4 +34,7 @@
                        key="notification.group.edu.onboarding"/>
     <postStartupActivity implementation="com.jetbrains.edu.uiOnboarding.EduUiOnboardingProjectActivity"/>
   </extensions>
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.uiOnboarding.checker.StudentPackPromotionCheckListener"/>
+  </extensions>
 </idea-plugin>
