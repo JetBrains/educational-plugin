@@ -4,9 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
-import com.jetbrains.edu.uiOnboarding.steps.HappyFinishData
-import com.jetbrains.edu.uiOnboarding.steps.SadFinishData
-import com.jetbrains.edu.uiOnboarding.steps.StartStepData
+import com.jetbrains.edu.uiOnboarding.stepsGraph.JumpingAwayZhabaData
+import com.jetbrains.edu.uiOnboarding.stepsGraph.StartZhabaData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaDataWithComponent
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
@@ -29,19 +28,14 @@ class TransitionAnimator(private val project: Project, private val animationData
         animateTransitionBetweenPoints(frame, animationData, fromPoint, toPoint)
       }
 
-      currentData is StartStepData && nextData is ZhabaDataWithComponent -> {
+      currentData is StartZhabaData && nextData is ZhabaDataWithComponent -> {
         val toPoint = nextData.zhabaPoint
         BottomToTopAppearance(nextData.zhaba.animation, toPoint)
       }
 
-      currentData is ZhabaDataWithComponent && nextData is SadFinishData -> {
+      currentData is ZhabaDataWithComponent && nextData is JumpingAwayZhabaData -> {
         val fromPoint = currentData.zhabaPoint
-        SadJumpDown(animationData, fromPoint, frame)
-      }
-
-      currentData is ZhabaDataWithComponent && nextData is HappyFinishData -> {
-        val fromPoint = currentData.zhabaPoint
-        HappyJumpDown(animationData, fromPoint, frame)
+        FinalJumpDown(nextData.zhabaImage, animationData, fromPoint, frame)
       }
 
       else -> null
