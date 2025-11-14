@@ -28,6 +28,10 @@ class HappyJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoin
   data.winking, data, startPoint, frame
 )
 
+class SadScholarJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoint, frame: JFrame) : FinalJumpDown(
+  data.scholarSad, data, startPoint, frame
+)
+
 private fun pointAtTheBottom(data: EduUiOnboardingAnimationData, frame: JFrame, startPoint: RelativePoint) = RelativePoint(
   frame,
   Point(startPoint.getPointOn(frame).point.x, frame.height + data.jumpDown.screenSize.height + EduUiOnboardingAnimationData.zhabaScale(40))

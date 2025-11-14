@@ -10,9 +10,12 @@ import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRAN
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.NEXT_TRANSITION
 import kotlinx.coroutines.CoroutineScope
 
-object StartStepData : ZhabaData
+object OnboardingStartStepData : ZhabaData
 object SadFinishData : ZhabaData
 object HappyFinishData : ZhabaData
+
+object StudentPackStartStepData : ZhabaData
+object StudentPackSadFinishData : ZhabaData
 
 /**
  * This step does not have any actions, it always yields the transition [outboundTransition], and when the step is
@@ -35,6 +38,9 @@ abstract class NoOpStep<StepData: ZhabaData>(
     outboundTransition
 }
 
-class StartStep : NoOpStep<StartStepData>(".start", StartStepData, NEXT_TRANSITION)
+class OnboardingStartStep : NoOpStep<OnboardingStartStepData>(".onboarding.start", OnboardingStartStepData, NEXT_TRANSITION)
 class SadFinishStep : NoOpStep<SadFinishData>(".sad.finish", SadFinishData, FINISH_TRANSITION)
 class HappyFinishStep : NoOpStep<HappyFinishData>(".happy.finish", HappyFinishData, FINISH_TRANSITION)
+
+class StudentPackStartStep: NoOpStep<StudentPackStartStepData>(".student.pack.start", StudentPackStartStepData, NEXT_TRANSITION)
+class StudentPackSadFinishStep : NoOpStep<StudentPackSadFinishData>(".sad.finish", StudentPackSadFinishData, FINISH_TRANSITION)

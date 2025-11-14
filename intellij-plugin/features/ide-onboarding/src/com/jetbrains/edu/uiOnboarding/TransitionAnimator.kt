@@ -5,8 +5,10 @@ import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
 import com.jetbrains.edu.uiOnboarding.steps.HappyFinishData
+import com.jetbrains.edu.uiOnboarding.steps.OnboardingStartStepData
 import com.jetbrains.edu.uiOnboarding.steps.SadFinishData
-import com.jetbrains.edu.uiOnboarding.steps.StartStepData
+import com.jetbrains.edu.uiOnboarding.steps.StudentPackSadFinishData
+import com.jetbrains.edu.uiOnboarding.steps.StudentPackStartStepData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaDataWithComponent
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
@@ -29,10 +31,19 @@ class TransitionAnimator(private val project: Project, private val animationData
         animateTransitionBetweenPoints(frame, animationData, fromPoint, toPoint)
       }
 
-      currentData is StartStepData && nextData is ZhabaDataWithComponent -> {
+      // starting animations
+
+      currentData is OnboardingStartStepData && nextData is ZhabaDataWithComponent -> {
         val toPoint = nextData.zhabaPoint
         BottomToTopAppearance(nextData.zhaba.animation, toPoint)
       }
+
+      currentData is StudentPackStartStepData && nextData is ZhabaDataWithComponent -> {
+        val toPoint = nextData.zhabaPoint
+        StudentPackAppearance.create(animationData, toPoint)
+      }
+
+      // ending animations
 
       currentData is ZhabaDataWithComponent && nextData is SadFinishData -> {
         val fromPoint = currentData.zhabaPoint
@@ -42,6 +53,11 @@ class TransitionAnimator(private val project: Project, private val animationData
       currentData is ZhabaDataWithComponent && nextData is HappyFinishData -> {
         val fromPoint = currentData.zhabaPoint
         HappyJumpDown(animationData, fromPoint, frame)
+      }
+
+      currentData is ZhabaDataWithComponent && nextData is StudentPackSadFinishData -> {
+        val fromPoint = currentData.zhabaPoint
+        SadScholarJumpDown(animationData, fromPoint, frame)
       }
 
       else -> null
