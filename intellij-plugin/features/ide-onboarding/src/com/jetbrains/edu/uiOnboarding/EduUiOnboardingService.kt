@@ -29,6 +29,11 @@ internal class EduUiOnboardingService(private val project: Project, private val 
     executeZhaba(graph, graph.initialOnboardingStep)
   }
 
+  fun promoteStudentPack() {
+    val graph = ZhabaMainGraph.create()
+    executeZhaba(graph, graph.initialStudentPackPromotionStep)
+  }
+
   private fun executeZhaba(graph: ZhabaGraph, initialStep: ZhabaStepBase) {
     val alreadyInProgress = myTourInProgress.getAndSet(true)
     if (alreadyInProgress) return
