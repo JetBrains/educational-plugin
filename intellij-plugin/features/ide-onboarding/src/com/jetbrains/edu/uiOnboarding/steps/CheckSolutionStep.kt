@@ -37,6 +37,8 @@ class CheckSolutionStep : EduUiOnboardingStep {
     val checkPanel = component.findComponentOfType(CheckPanel::class.java) ?: return null
     val checkActionsPanel = checkPanel.checkActionsPanel
 
+    if (!checkActionsPanel.isShowing) return null
+
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("check.solution.step.text") }
       .withHeader(EduUiOnboardingBundle.message("check.solution.step.header"))
 

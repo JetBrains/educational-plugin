@@ -37,6 +37,7 @@ class WelcomeStep : EduUiOnboardingStep {
     projectViewToolWindow.show()
 
     val component = projectViewToolWindow.component
+    if (!component.isShowing) return null
 
     // Position of the zhaba on the project view component
     val zhabaDimension = ZHABA_DIMENSION

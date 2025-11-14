@@ -98,7 +98,7 @@ class ZhabaExecutor(
       }
 
       val dataForNextStep = dataForNextStep(data, nextStep)
-      if (dataForNextStep != null && (dataForNextStep !is ZhabaDataWithComponent || dataForNextStep.boundComponent.isVisible)) {
+      if (dataForNextStep != null) {
         return nextStep to dataForNextStep
       }
       nextStep = graph.move(nextStep, ZhabaStep.STEP_UNAVAILABLE_TRANSITION) ?: return null

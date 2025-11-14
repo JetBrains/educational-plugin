@@ -30,6 +30,7 @@ class CourseViewStep : EduUiOnboardingStep {
     projectViewToolWindow.show()
 
     val component = projectViewToolWindow.component
+    if (!component.isShowing) return null
 
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("course.view.step.text") }
       .withHeader(EduUiOnboardingBundle.message("course.view.step.header"))

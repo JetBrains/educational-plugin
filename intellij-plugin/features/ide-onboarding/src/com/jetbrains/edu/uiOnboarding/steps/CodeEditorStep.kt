@@ -33,6 +33,7 @@ class CodeEditorStep : EduUiOnboardingStep {
     taskToolWindow.show()
 
     val component = taskToolWindow.component
+    if (!component.isShowing) return null
 
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("code.editor.step.text") }
       .withHeader(EduUiOnboardingBundle.message("code.editor.step.header"))
