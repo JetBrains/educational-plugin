@@ -26,6 +26,9 @@ class EduUiOnboardingAnimationData private constructor(
   val lookUp: ZhabaImage,
   val sad: ZhabaImage,
   val winking: ZhabaImage,
+  val scholarDefault: ZhabaImage,
+  val scholarWinking: ZhabaImage,
+  val scholarSad: ZhabaImage,
 ) {
 
   companion object {
@@ -76,6 +79,9 @@ class EduUiOnboardingAnimationData private constructor(
           ZhabaImage.load("look-up"),
           ZhabaImage.load("sad"),
           ZhabaImage.load("winking", 0, 4),
+          ZhabaImage.load("scholar-default", 13, 38),
+          ZhabaImage.load("scholar-winking", 13, 41),
+          ZhabaImage.load("scholar-sad", 13, 38),
         )
       }
       catch (_: Exception) {

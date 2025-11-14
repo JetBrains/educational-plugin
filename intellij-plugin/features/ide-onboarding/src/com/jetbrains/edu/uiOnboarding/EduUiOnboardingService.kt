@@ -26,7 +26,7 @@ internal class EduUiOnboardingService(private val project: Project, private val 
 
   fun startOnboarding() {
     val graph = ZhabaMainGraph.create()
-    executeZhaba(graph, graph.initialStep)
+    executeZhaba(graph, graph.initialOnboardingStep)
   }
 
   private fun executeZhaba(graph: ZhabaGraph, initialStep: ZhabaStepBase) {
