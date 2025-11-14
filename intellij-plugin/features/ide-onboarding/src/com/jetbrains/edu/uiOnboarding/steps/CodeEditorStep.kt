@@ -26,7 +26,7 @@ class CodeEditorStep : EduUiOnboardingStep {
   override fun performStep(
     project: Project,
     data: EduUiOnboardingAnimationData,
-  ): EduUiOnboardingStepData? {
+  ): GotItBalloonStepData? {
     val taskToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
                            .getToolWindow("Task") ?: return null
 
@@ -45,7 +45,7 @@ class CodeEditorStep : EduUiOnboardingStep {
     val relativePoint = RelativePoint(component, tooltipPoint)
 
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
-    return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.below, zhabaComponent)
+    return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.below, zhabaComponent)
   }
 
   override fun isAvailable(): Boolean = true

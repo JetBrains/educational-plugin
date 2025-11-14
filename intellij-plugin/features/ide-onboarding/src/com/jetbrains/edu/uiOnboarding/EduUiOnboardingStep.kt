@@ -6,7 +6,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.KeyedLazyInstanceEP
 
 interface EduUiOnboardingStep {
-  fun performStep(project: Project, data: EduUiOnboardingAnimationData): EduUiOnboardingStepData?
+  fun performStep(project: Project, data: EduUiOnboardingAnimationData): GotItBalloonStepData?
 
   fun isAvailable(): Boolean = true
 

@@ -26,7 +26,7 @@ class CheckSolutionStep : EduUiOnboardingStep {
   override fun performStep(
     project: Project,
     data: EduUiOnboardingAnimationData
-  ): EduUiOnboardingStepData? {
+  ): GotItBalloonStepData? {
     val taskToolWindow = ToolWindowManager.getInstance(project)
                            .getToolWindow("Task") ?: return null
 
@@ -48,7 +48,7 @@ class CheckSolutionStep : EduUiOnboardingStep {
 
     val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - SMALL_SHIFT)
     val relativePoint = RelativePoint(checkActionsPanel, point)
-    return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
+    return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
 
   override fun isAvailable(): Boolean = true

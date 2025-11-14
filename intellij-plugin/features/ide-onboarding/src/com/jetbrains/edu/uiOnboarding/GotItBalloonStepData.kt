@@ -5,7 +5,7 @@ import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaDataWithComponent
 
-class EduUiOnboardingStepData(
+class GotItBalloonStepData(
   val builder: GotItComponentBuilder,
   val tooltipPoint: RelativePoint,
   override val zhabaPoint: RelativePoint,
