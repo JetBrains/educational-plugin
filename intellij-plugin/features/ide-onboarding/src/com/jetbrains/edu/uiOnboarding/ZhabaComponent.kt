@@ -29,8 +29,17 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC)
 
     val step = animation.steps[stepIndex]
-    val x1 = step.fromPoint.getPoint(this).x
-    val y1 = step.fromPoint.getPoint(this).y
+
+    val fromPointLocal = step.fromPoint.getPoint(this)
+    val toPointLocal = step.toPoint.getPoint(this)
+    
+    val x1 = fromPointLocal.x
+    val y1 = fromPointLocal.y
+    
+    val savedClip = g2d.clip
+    if (step.visibleBounds != null) {
+      g2d.clipRect(toPointLocal.x + step.visibleBounds.x, toPointLocal.y + step.visibleBounds.y, step.visibleBounds.width, step.visibleBounds.height)
+    }
 
     fun drawImage(x: Int, y: Int) {
       val image = step.image
@@ -53,8 +62,8 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
       drawImage(x1, y1)
     }
     else {
-      val x2 = step.toPoint.getPoint(this).x
-      val y2 = step.toPoint.getPoint(this).y
+      val x2 = toPointLocal.x
+      val y2 = toPointLocal.y
 
       val timePassed = ((System.nanoTime() - stepStartTime) / 1_000_000.0 / step.duration).coerceIn(0.0, 1.0)
       val delta = step.transitionType.f(timePassed)
@@ -64,6 +73,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
       drawImage(x.toInt(), y.toInt())
     }
 
+    g2d.clip(savedClip)
     super.paintComponent(g)
   }
 

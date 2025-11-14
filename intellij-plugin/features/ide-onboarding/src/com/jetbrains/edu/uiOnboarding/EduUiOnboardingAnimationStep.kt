@@ -3,6 +3,7 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.ui.awt.RelativePoint
 import java.awt.Image
 import java.awt.Point
+import java.awt.Rectangle
 
 data class EduUiOnboardingAnimationStep(
   val image: Image,
@@ -10,7 +11,11 @@ data class EduUiOnboardingAnimationStep(
   val toPoint: RelativePoint,
   val duration: Long, // time in milliseconds
   val imageShift: Point = Point(0, 0),
-  val transitionType: TransitionType = TransitionType.LINEAR
+  val transitionType: TransitionType = TransitionType.LINEAR,
+  /**
+   * Crop bounds relative to the [toPoint]
+   */
+  val visibleBounds: Rectangle? = null
 ) {
 
   val notMoving: Boolean get() =
