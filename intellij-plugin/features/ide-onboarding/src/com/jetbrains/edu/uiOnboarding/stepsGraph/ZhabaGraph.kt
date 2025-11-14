@@ -1,12 +1,19 @@
 package com.jetbrains.edu.uiOnboarding.stepsGraph
 
+import com.jetbrains.edu.uiOnboarding.DefaultTransitionAnimator
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
+import com.jetbrains.edu.uiOnboarding.TransitionAnimator
 import com.jetbrains.edu.uiOnboarding.steps.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.HAPPY_FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.NEXT_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.SAD_FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.STEP_UNAVAILABLE_TRANSITION
+
+data class StepMoveResult(
+  val step: ZhabaStepBase,
+  val transitionAnimator: TransitionAnimator
+)
 
 /**
  * Represents a graph of [ZhabaStep]s.
@@ -15,7 +22,7 @@ interface ZhabaGraph {
   /**
    * Determines the next step given the current step [step] (a vertex) and the transition [transition] (the name of the edge).
    */
-  fun move(step: ZhabaStepBase, transition: String): ZhabaStepBase?
+  fun move(step: ZhabaStepBase, transition: String): StepMoveResult?
 
   /**
    * Each [ZhabaStep] must have some additional data associated with it, see [ZhabaStep] for the information about this data.
@@ -42,12 +49,13 @@ class ZhabaMainGraph private constructor(
   private data class Edge(
     val fromStep: ZhabaStepBase,
     val transition: String,
-    val toStep: ZhabaStepBase
+    val toStep: ZhabaStepBase,
+    val transitionAnimator: TransitionAnimator = DefaultTransitionAnimator
   )
   
-  override fun move(step: ZhabaStepBase, transition: String): ZhabaStepBase? {
+  override fun move(step: ZhabaStepBase, transition: String): StepMoveResult? {
     val edge = edges.firstOrNull { it.fromStep == step && it.transition == transition } ?: return null
-    return edge.toStep
+    return StepMoveResult(edge.toStep, edge.transitionAnimator)
   }
 
   override fun <GD: GraphData> additionalStepData(step: ZhabaStep<*, GD>): GD {

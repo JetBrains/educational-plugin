@@ -87,32 +87,35 @@ class ZhabaExecutor(
       typedStep.executeStep(data, graphData, cs, stepDisposable)
     }
 
-    var nextStep = graph.move(step, transition)
+    var moveResult = graph.move(step, transition)
 
     while (true) {
-      if (nextStep == null) {
+      if (moveResult == null) {
         if (transition != FINISH_TRANSITION) {
           thisLogger().error("No next step for ${step.stepId} with transition $transition")
         }
         return null
       }
 
-      val dataForNextStep = dataForNextStep(data, nextStep)
+      val (nextStep, animationToNextStep) = moveResult
+
+      val dataForNextStep = dataForNextStep(data, nextStep, animationToNextStep)
       if (dataForNextStep != null) {
         return nextStep to dataForNextStep
       }
-      nextStep = graph.move(nextStep, ZhabaStep.STEP_UNAVAILABLE_TRANSITION) ?: return null
+
+      moveResult = graph.move(nextStep, ZhabaStep.STEP_UNAVAILABLE_TRANSITION) ?: return null
     }
   }
 
-  private suspend fun dataForNextStep(data: ZhabaData, nextStep: ZhabaStepBase): ZhabaData? {
+  private suspend fun dataForNextStep(data: ZhabaData, nextStep: ZhabaStepBase, animationToNextStep: TransitionAnimator): ZhabaData? {
     var currentData = data
 
     while (true) {
       val animationData = this.animationData ?: return null
       val nextData = nextStep.typed().performStep(project, animationData) ?: return null
 
-      val transitionAnimation = TransitionAnimator(project, animationData).animateTransition(currentData, nextData)
+      val transitionAnimation = animationToNextStep.animateTransition(project, animationData, currentData, nextData)
       val transitionAnimationCompleted = if (transitionAnimation == null) {
         true
       }

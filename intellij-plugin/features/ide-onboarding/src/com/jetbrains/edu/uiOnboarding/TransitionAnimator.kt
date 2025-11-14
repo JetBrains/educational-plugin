@@ -9,17 +9,21 @@ import com.jetbrains.edu.uiOnboarding.steps.SadFinishData
 import com.jetbrains.edu.uiOnboarding.steps.StartStepData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaDataWithComponent
-import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
 import com.jetbrains.edu.uiOnboarding.transitions.*
 import javax.swing.JFrame
 
-/**
- * A helper class to create a transition between two [ZhabaStep].
- * To decide on the type of transition, [ZhabaData]s are examined.
- */
-class TransitionAnimator(private val project: Project, private val animationData: EduUiOnboardingAnimationData) {
+interface TransitionAnimator {
+  fun animateTransition(project: Project, animationData: EduUiOnboardingAnimationData, currentData: ZhabaData, nextData: ZhabaData): EduUiOnboardingAnimation?
+}
 
-  fun animateTransition(currentData: ZhabaData, nextData: ZhabaData): EduUiOnboardingAnimation? {
+object DefaultTransitionAnimator : TransitionAnimator {
+
+  override fun animateTransition(
+    project: Project,
+    animationData: EduUiOnboardingAnimationData,
+    currentData: ZhabaData,
+    nextData: ZhabaData
+  ): EduUiOnboardingAnimation? {
     val frame = WindowManager.getInstance().getFrame(project) ?: return null
 
     return when {
