@@ -2,6 +2,7 @@ package com.jetbrains.edu.uiOnboarding.stepsGraph
 
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
 import com.jetbrains.edu.uiOnboarding.steps.*
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.HAPPY_FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.NEXT_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
@@ -30,7 +31,7 @@ class ZhabaMainGraph private constructor(
   private val edges: MutableList<Edge> = mutableListOf(),
   private val stepsData: MutableMap<ZhabaStepBase, GraphData> = mutableMapOf(),
 
-  val initialStep: ZhabaStepBase = StartStep()
+  val initialStep: ZhabaStepBase = NoOpStep(".start", NEXT_TRANSITION, StartZhabaData)
 ): ZhabaGraph {
 
   init {
@@ -63,8 +64,8 @@ class ZhabaMainGraph private constructor(
 
     // create the loop 0 -> 1 -> 2 -> ... -> stepCount -> 1 with the NEXT_TRANSITION transition
 
-    val happyEnding = HappyFinishStep()
-    val sadEnding = SadFinishStep()
+    val happyEnding = NoOpStep(".end.happy", FINISH_TRANSITION) { JumpingAwayZhabaData(it.winking) }
+    val sadEnding = NoOpStep(".end.sad", FINISH_TRANSITION) { JumpingAwayZhabaData(it.sad) }
 
     stepsData[happyEnding] = GraphData.EMPTY
     stepsData[sadEnding] = GraphData.EMPTY
