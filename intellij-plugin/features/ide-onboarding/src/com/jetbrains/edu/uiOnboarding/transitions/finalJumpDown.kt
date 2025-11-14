@@ -6,20 +6,29 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.JUMP_DURATION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.TransitionType
+import com.jetbrains.edu.uiOnboarding.ZhabaImage
 import java.awt.Point
 import javax.swing.JFrame
 
-class SadJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoint, frame: JFrame) : EduUiOnboardingAnimation {
+sealed class FinalJumpDown(image: ZhabaImage, data: EduUiOnboardingAnimationData, startPoint: RelativePoint, frame: JFrame) : EduUiOnboardingAnimation {
 
   override val steps: List<EduUiOnboardingAnimationStep> = listOf(
-    EduUiOnboardingAnimationStep(data.sad, startPoint, startPoint, 1_000),
+    EduUiOnboardingAnimationStep(image, startPoint, startPoint, 1_000),
     EduUiOnboardingAnimationStep(data.jumpDown, startPoint, pointAtTheBottom(data, frame, startPoint), JUMP_DURATION, TransitionType.EASE_OUT),
   )
 
   override val cycle: Boolean = false
 }
 
-internal fun pointAtTheBottom(data: EduUiOnboardingAnimationData, frame: JFrame, startPoint: RelativePoint) = RelativePoint(
+class SadJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoint, frame: JFrame) : FinalJumpDown(
+  data.sad, data, startPoint, frame
+)
+
+class HappyJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoint, frame: JFrame) : FinalJumpDown(
+  data.winking, data, startPoint, frame
+)
+
+private fun pointAtTheBottom(data: EduUiOnboardingAnimationData, frame: JFrame, startPoint: RelativePoint) = RelativePoint(
   frame,
   Point(startPoint.getPointOn(frame).point.x, frame.height + data.jumpDown.screenSize.height + EduUiOnboardingAnimationData.zhabaScale(40))
 )
