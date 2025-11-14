@@ -37,6 +37,7 @@ class TaskDescriptionStep : EduUiOnboardingStep {
     taskToolWindow.show()
 
     val component = taskToolWindow.component
+    if (!component.isShowing) return null
 
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("task.description.step.text") }
       .withHeader(EduUiOnboardingBundle.message("task.description.step.header"))
