@@ -13,13 +13,13 @@ class SadJumpDown(data: EduUiOnboardingAnimationData, startPoint: RelativePoint,
 
   override val steps: List<EduUiOnboardingAnimationStep> = listOf(
     EduUiOnboardingAnimationStep(data.sad, startPoint, startPoint, 1_000),
-    EduUiOnboardingAnimationStep(data.jumpDown, startPoint, pointAtTheBottom(frame, startPoint), JUMP_DURATION, Point(0, 10), TransitionType.EASE_OUT),
+    EduUiOnboardingAnimationStep(data.jumpDown, startPoint, pointAtTheBottom(data, frame, startPoint), JUMP_DURATION, TransitionType.EASE_OUT),
   )
 
   override val cycle: Boolean = false
 }
 
-internal fun pointAtTheBottom(frame: JFrame, startPoint: RelativePoint) = RelativePoint(
+internal fun pointAtTheBottom(data: EduUiOnboardingAnimationData, frame: JFrame, startPoint: RelativePoint) = RelativePoint(
   frame,
-  Point(startPoint.getPointOn(frame).point.x, frame.height + EduUiOnboardingAnimationData.zhabaScale(40))
+  Point(startPoint.getPointOn(frame).point.x, frame.height + data.jumpDown.screenSize.height + EduUiOnboardingAnimationData.zhabaScale(40))
 )

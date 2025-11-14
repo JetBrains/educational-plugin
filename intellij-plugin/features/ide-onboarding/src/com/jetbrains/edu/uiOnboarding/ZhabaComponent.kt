@@ -3,13 +3,9 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScaleWithoutIDEScale
 import kotlinx.coroutines.delay
 import java.awt.Graphics2D
-import java.awt.Rectangle
 import java.awt.RenderingHints
 import javax.swing.JComponent
 
@@ -41,25 +37,8 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
       g2d.clipRect(toPointLocal.x + step.visibleBounds.x, toPointLocal.y + step.visibleBounds.y, step.visibleBounds.width, step.visibleBounds.height)
     }
 
-    fun drawImage(x: Int, y: Int) {
-      val image = step.image
-      val w = image.getWidth(this)
-      val h = image.getHeight(this)
-
-      val scaledW = zhabaScaleWithoutIDEScale(w)
-      val scaledH = zhabaScaleWithoutIDEScale(h)
-
-      UIUtil.drawImage(
-        g2d,
-        step.image,
-        Rectangle(x - zhabaScale(step.imageShift.x), y - zhabaScale(step.imageShift.y), scaledW, scaledH),
-        Rectangle(0, 0, w, h),
-        null
-      )
-    }
-
     if (step.notMoving) { // do less computation if there is no movement
-      drawImage(x1, y1)
+      step.image.draw(g2d, x1, y1)
     }
     else {
       val x2 = toPointLocal.x
@@ -70,7 +49,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
       val x = x1 + delta * (x2 - x1)
       val y = y1 + delta * (y2 - y1)
-      drawImage(x.toInt(), y.toInt())
+      step.image.draw(g2d, x.toInt(), y.toInt())
     }
 
     g2d.clip(savedClip)

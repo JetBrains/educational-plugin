@@ -4,7 +4,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
-import java.awt.Image
+import com.jetbrains.edu.uiOnboarding.ZhabaImage
 import java.awt.Point
 import kotlin.math.abs
 
@@ -27,7 +27,7 @@ class ShortStep(
       data: EduUiOnboardingAnimationData,
       localFromPoint: Point,
       localToPoint: Point
-    ): Image {
+    ): ZhabaImage {
       val dx = localToPoint.x - localFromPoint.x
       val dy = localToPoint.y - localFromPoint.y
 
