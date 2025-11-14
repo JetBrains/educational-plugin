@@ -13,7 +13,7 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHA
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepData
+import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import java.awt.Point
 
 class TaskDescriptionStep : EduUiOnboardingStep {
@@ -30,7 +30,7 @@ class TaskDescriptionStep : EduUiOnboardingStep {
   override fun performStep(
     project: Project,
     data: EduUiOnboardingAnimationData
-  ): EduUiOnboardingStepData? {
+  ): GotItBalloonStepData? {
     val taskToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
                            .getToolWindow("Task") ?: return null
 
@@ -49,7 +49,7 @@ class TaskDescriptionStep : EduUiOnboardingStep {
     val relativePoint = RelativePoint(component, tooltipPoint)
 
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
-    return EduUiOnboardingStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
+    return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
 
   override fun isAvailable(): Boolean = true
