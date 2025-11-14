@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepData
+import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.HAPPY_FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.NEXT_TRANSITION
@@ -27,17 +27,17 @@ import javax.swing.JComponent
  * The implementations of [performStep] is taken from the [EduUiOnboardingStep] extension point.
  * Only the stepId of the [EduUiOnboardingStep] is stored to avoid storing an instance managed by the platform.
  */
-class EduUiOnboardingStepAsZhabaStep(override val stepId: String): ZhabaStep<EduUiOnboardingStepData, EduUiOnboardingStepGraphData> {
+class EduUiOnboardingStepAsZhabaStep(override val stepId: String): ZhabaStep<GotItBalloonStepData, EduUiOnboardingStepGraphData> {
 
   private val wrappedStep: EduUiOnboardingStep?
     get() = EduUiOnboardingStep.getIfAvailable(stepId)
 
-  override fun performStep(project: Project, data: EduUiOnboardingAnimationData): EduUiOnboardingStepData? {
+  override fun performStep(project: Project, data: EduUiOnboardingAnimationData): GotItBalloonStepData? {
     return wrappedStep?.performStep(project, data)
   }
 
   override suspend fun executeStep(
-    stepData: EduUiOnboardingStepData,
+    stepData: GotItBalloonStepData,
     graphData: EduUiOnboardingStepGraphData,
     cs: CoroutineScope,
     disposable: Disposable
