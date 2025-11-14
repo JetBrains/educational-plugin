@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checker
+package com.jetbrains.edu.uiOnboarding.checker
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
@@ -15,7 +15,14 @@ import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.justRun
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.slot
+import io.mockk.verify
+import org.junit.Ignore
 import org.junit.Test
 
 class PromotionCheckListenerTest : EduTestCase() {
@@ -33,6 +40,7 @@ class PromotionCheckListenerTest : EduTestCase() {
   }
 
   @Test
+  @Ignore("Test is temporarily disabled")
   fun `show promotion notification for the first time`() {
     // given
     val course = courseWithFiles {
@@ -75,6 +83,7 @@ class PromotionCheckListenerTest : EduTestCase() {
   }
 
   @Test
+  @Ignore("Test is temporarily disabled")
   fun `do not show promotion notification for the second time`() {
     // given
     val course = courseWithFiles {

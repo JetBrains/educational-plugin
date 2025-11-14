@@ -5,6 +5,8 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
+import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.uiOnboarding.checker.STUDENT_PACK_LINK
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE_SHIFT
@@ -68,6 +70,7 @@ class StudentPackPromotionStep : GotItBalloonStepBase<GotItBalloonGraphData>() {
   override fun onEscape(graphData: GotItBalloonGraphData): String = SAD_FINISH_TRANSITION
 
   override fun onPrimaryButton(graphData: GotItBalloonGraphData): String {
+    EduBrowser.getInstance().browse(STUDENT_PACK_LINK)
     return FINISH_TRANSITION
   }
 
