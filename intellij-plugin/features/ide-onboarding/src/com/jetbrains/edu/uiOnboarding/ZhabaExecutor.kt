@@ -112,7 +112,7 @@ class ZhabaExecutor(
       val animationData = this.animationData ?: return null
       val nextData = nextStep.typed().performStep(project, animationData) ?: return null
 
-      val transitionAnimation = TransitionAnimator(project, animationData).animateTransition(currentData, nextData)
+      val transitionAnimation = TransitionAnimator.animateTransition(project, animationData, currentData, nextData)
       val transitionAnimationCompleted = if (transitionAnimation == null) {
         true
       }
