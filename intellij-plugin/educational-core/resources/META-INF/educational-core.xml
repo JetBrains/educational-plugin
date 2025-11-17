@@ -259,6 +259,7 @@
     <action id="Educational.Educator.StepikChangeHost"
             class="com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost"
             internal="true"/>
+    <action id="Educational.Hyperskill.InstallHyperskillPlugin" class="com.jetbrains.edu.learning.stepik.hyperskill.actions.InstallHyperskillPluginAction"/>
 
     <group id="Educational.LearnAndTeachFileMenu"
            class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
