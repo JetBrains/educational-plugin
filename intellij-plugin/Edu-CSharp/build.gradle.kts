@@ -8,6 +8,7 @@ dependencies {
     intellijPlugins(csharpPlugins)
 
     bundledModule("intellij.rider")
+    intellijPlugins("com.jetbrains.dpa")
   }
 
   implementation(project(":intellij-plugin:educational-core"))

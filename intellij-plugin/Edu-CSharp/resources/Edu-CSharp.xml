@@ -2,6 +2,7 @@
   <dependencies>
     <plugin id="com.intellij.modules.rider"/>
     <plugin id="com.intellij.resharper.unity"/>
+    <plugin id="com.jetbrains.dpa"/>
     <module name="intellij.rider"/>
   </dependencies>
 
