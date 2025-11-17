@@ -2,18 +2,24 @@ package com.jetbrains.edu.csharp.checker
 
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.rd.util.lifetime
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.platform.backend.workspace.WorkspaceModel
+import com.intellij.platform.backend.workspace.virtualFile
 import com.jetbrains.edu.csharp.CSharpConfigurator
 import com.jetbrains.edu.csharp.getTestName
 import com.jetbrains.edu.csharp.testResultData
+import com.jetbrains.edu.csharp.toProjectModelEntity
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.checker.CheckUtils.removeAttributes
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
@@ -32,7 +38,11 @@ import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.adviseWithPrev
 import com.jetbrains.rd.util.reactive.fire
 import com.jetbrains.rdclient.util.idea.callSynchronously
+import com.jetbrains.rider.build.BuildEventsService
+import com.jetbrains.rider.build.BuildParameters
+import com.jetbrains.rider.build.tasks.BuildTaskThrottler
 import com.jetbrains.rider.model.*
+import com.jetbrains.rider.model.build.BuildEvent
 import com.jetbrains.rider.projectView.solution
 import com.jetbrains.rider.projectView.workspace.getId
 import com.jetbrains.rider.projectView.workspace.getProjectModelEntities
@@ -64,6 +74,11 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
   }
 
   private suspend fun asyncCheck(): CheckResult {
+    val compilationResult = tryBuildTaskProject()
+    if (compilationResult != null) {
+      return compilationResult
+    }
+
     val name = task.getTestName()
     val rdUnitTestSession = getOrCreateSession(name) ?: return failedToCheck
     withContext(Dispatchers.EDT) {
@@ -86,6 +101,70 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     }
     val checkResult = collectTestResults(rdUnitTestSession)
     return checkResult
+  }
+
+  private suspend fun tryBuildTaskProject(): CheckResult? {
+    val projectFilePath = task.toProjectModelEntity(project)?.url?.virtualFile?.path ?: return failedToCheck
+
+    val buildEventsService = project.service<BuildEventsService>()
+    val buildParameters = BuildParameters(
+      operation = BuildTarget(),
+      selectedProjectsPaths = listOf(projectFilePath),
+      silentMode = true,
+      diagnosticsMode = false,
+      withoutDependencies = false,
+      noRestore = false
+    )
+
+    val eventsCollected = CompletableDeferred<String>()
+
+    withContext(Dispatchers.EDT) {
+      buildEventsService.getEventsAndSubscribe(project.lifetime) { events ->
+        val errorMessages = events.joinToString("\n") { eventRef ->
+          val buildEvent = buildEventsService.getEvent(eventRef.offset)
+          val sourceFile = buildEvent.filePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
+          formatBuildEvent(buildEvent, sourceFile, eventRef).joinToString("\n")
+        }
+
+        eventsCollected.complete(errorMessages)
+      }
+    }
+
+    val buildStatus = project.service<BuildTaskThrottler>().buildSequentially(buildParameters)
+
+    if (buildStatus.buildResultKind == BuildResultKind.HasErrors) {
+      val err = try {
+        withTimeout(500.milliseconds) {
+          eventsCollected.await()
+        }
+      }
+      catch (_: TimeoutCancellationException) {
+        LOG.warn("Timeout waiting for build events for task ${task.name}")
+        ""
+      }
+      return CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, err.trimEnd('\n'))
+    }
+    return null
+  }
+
+  /**
+   * Format build output, implementation borrowed from Rider
+   */
+  private fun formatBuildEvent(buildEvent: BuildEvent, sourceFile: VirtualFile?, eventRef: BuildEventRef): Array<String> {
+    val message = if (eventRef.offset == (-1).toLong() && eventRef.customMessage != null) eventRef.customMessage else buildEvent.message
+    return if (sourceFile == null) {
+      message ?: ""
+    }
+    else {
+      val code = if (buildEvent.code != null) " [${buildEvent.code}]" else ""
+      "${sourceFile.name}${formatLine(buildEvent.line ?: 0, buildEvent.column ?: 0)}:$code $message"
+    }.split('\r', '\n').filter { it.isNotEmpty() }.toTypedArray()
+  }
+
+  private fun formatLine(line: Int, column: Int) = when {
+    line > 0 && column > 0 -> "($line, $column)"
+    line > 0 -> "($line)"
+    else -> ""
   }
 
   private suspend fun getOrCreateSession(name: String): RdUnitTestSession? {
