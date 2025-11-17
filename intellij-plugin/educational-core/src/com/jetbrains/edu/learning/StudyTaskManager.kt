@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillProject
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.isEduYamlProject
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.startSynchronization
@@ -48,6 +49,7 @@ class StudyTaskManager(private val project: Project) : DumbAware, Disposable, Ed
     && !courseLoadedWithError
     && project.isEduYamlProject()
     && UserAgreementSettings.getInstance().isPluginAllowed
+    && !project.isHyperskillProject
 
   private fun initializeCourse() {
     if (!needToLoadCourse(project)) return

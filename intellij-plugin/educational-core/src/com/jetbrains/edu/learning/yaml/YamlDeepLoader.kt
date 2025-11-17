@@ -2,19 +2,15 @@ package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.lang.Language
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.collectAdditionalFiles
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager.findConfigurator
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL_PROJECTS_URL
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat
@@ -22,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillProject
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
@@ -35,7 +31,6 @@ import com.jetbrains.edu.learning.yaml.migrate.YamlMigrator
 import org.jetbrains.annotations.NonNls
 
 object YamlDeepLoader {
-  private val HYPERSKILL_PROJECT_REGEX = "$HYPERSKILL_PROJECTS_URL/(\\d+)/.*".toRegex()
   private val LOG = Logger.getInstance(YamlDeepLoader::class.java)
 
   @Throws(RemoteYamlLoadingException::class)
@@ -95,8 +90,9 @@ object YamlDeepLoader {
     deserializedCourse.init(true)
     deserializedCourse.loadRemoteInfoRecursively(project)
 
-    if (deserializedCourse is HyperskillCourse && deserializedCourse.hyperskillProject == null) {
-      deserializedCourse.reconnectHyperskillProject()
+    if (deserializedCourse is HyperskillCourse) {
+      project.isHyperskillProject = true
+      return null
     }
 
     if (!deserializedCourse.isStudy) {
@@ -151,31 +147,6 @@ object YamlDeepLoader {
     visitLessons { lesson ->
       lesson.loadRemoteInfo(project)
       lesson.taskList.forEach { task -> task.loadRemoteInfo(project) }
-    }
-  }
-
-  private fun HyperskillCourse.reconnectHyperskillProject() {
-    LOG.info("Current project is disconnected from Hyperskill")
-    val firstTask = getProjectLesson()?.taskList?.firstOrNull() ?: return
-    val link = firstTask.feedbackLink ?: return
-    val matchResult = HYPERSKILL_PROJECT_REGEX.matchEntire(link) ?: return
-    val projectId = matchResult.groupValues[1].toInt()
-
-    ApplicationManager.getApplication().executeOnPooledThread {
-      HyperskillConnector.getInstance().getProject(projectId).let {
-        when (it) {
-          is Err -> return@executeOnPooledThread
-          is Ok -> {
-            hyperskillProject = it.value
-            LOG.info("Current project successfully reconnected to Hyperskill")
-          }
-        }
-      }
-
-      HyperskillConnector.getInstance().getStages(projectId)?.let {
-        stages = it
-        LOG.info("Stages for disconnected Hyperskill project retrieved")
-      }
     }
   }
 
