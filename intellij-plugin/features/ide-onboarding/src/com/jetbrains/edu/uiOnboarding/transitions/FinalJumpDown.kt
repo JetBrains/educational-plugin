@@ -17,8 +17,6 @@ class FinalJumpDown(image: ZhabaImage, data: EduUiOnboardingAnimationData, start
     EduUiOnboardingAnimationStep(data.jumpDown, startPoint, pointAtTheBottom(data, frame, startPoint), JUMP_DURATION, TransitionType.EASE_OUT),
   )
 
-  override val cycle: Boolean = false
-
   private fun pointAtTheBottom(data: EduUiOnboardingAnimationData, frame: JFrame, startPoint: RelativePoint) = RelativePoint(
     frame,
     Point(startPoint.getPointOn(frame).point.x, frame.height + data.jumpDown.screenSize.height + EduUiOnboardingAnimationData.zhabaScale(40))

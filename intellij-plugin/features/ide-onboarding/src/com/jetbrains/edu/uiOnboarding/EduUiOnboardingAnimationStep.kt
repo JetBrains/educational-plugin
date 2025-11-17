@@ -21,7 +21,7 @@ data class EduUiOnboardingAnimationStep(
 
 interface EduUiOnboardingAnimation {
   val steps: List<EduUiOnboardingAnimationStep>
-  val cycle: Boolean
+  val cycle: Boolean get() = false
 }
 
 enum class TransitionType(val f: (Double) -> Double) {
