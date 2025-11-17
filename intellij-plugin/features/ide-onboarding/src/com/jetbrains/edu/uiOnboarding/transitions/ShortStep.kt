@@ -20,8 +20,6 @@ class ShortStep(
     EduUiOnboardingAnimationStep(lookImage(data, localFromPoint, localToPoint), fromPoint, toPoint, 500),
   )
 
-  override val cycle: Boolean = false
-
   companion object {
     private fun lookImage(
       data: EduUiOnboardingAnimationData,

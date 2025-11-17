@@ -13,6 +13,4 @@ class JumpLeft(data: EduUiOnboardingAnimationData, fromPoint: RelativePoint, toP
     EduUiOnboardingAnimationStep(data.jumpLeft2, fromPoint, toPoint, JUMP_DURATION, TransitionType.EASE_OUT),
     EduUiOnboardingAnimationStep(data.lookUp, toPoint, toPoint, 500)
   )
-
-  override val cycle: Boolean = false
 }
