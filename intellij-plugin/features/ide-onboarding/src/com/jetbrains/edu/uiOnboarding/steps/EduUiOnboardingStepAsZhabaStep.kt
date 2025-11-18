@@ -13,7 +13,7 @@ import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
  * The implementations of [performStep] is taken from the [com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep] extension point.
  * Only the stepId of the [com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep] is stored to avoid storing an instance managed by the platform.
  */
-class EduUiOnboardingStepAsZhabaStep(override val stepId: String): GotItBalloonStepBase<EduUiOnboardingStepGraphData>() {
+class EduUiOnboardingStepAsZhabaStep internal constructor(override val stepId: String): GotItBalloonStepBase<EduUiOnboardingStepGraphData>() {
 
   private val wrappedStep: EduUiOnboardingStep?
     get() = EduUiOnboardingStep.getIfAvailable(stepId)
