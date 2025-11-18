@@ -14,13 +14,11 @@ import kotlinx.coroutines.CoroutineScope
  *
  * Such a step is intended mostly to be the initial or the final step of the step graph.
  */
-class NoOpStep<StepData: ZhabaData>(
+class NoOpStep<StepData: ZhabaData> internal constructor(
   override val stepId: String,
   private val outboundTransition: String,
   private val dataProvider: (data: EduUiOnboardingAnimationData) -> StepData
 ): ZhabaStep<StepData, GraphData.EMPTY> {
-
-  constructor(stepId: String, outboundTransition: String, constantData: StepData): this(stepId, outboundTransition, { constantData })
 
   override fun performStep(
     project: Project,

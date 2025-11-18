@@ -2,6 +2,7 @@ package com.jetbrains.edu.uiOnboarding.stepsGraph
 
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
 import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
+import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory
 import com.jetbrains.edu.uiOnboarding.steps.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.HAPPY_FINISH_TRANSITION
@@ -32,8 +33,8 @@ class ZhabaMainGraph private constructor(
   private val edges: MutableList<Edge> = mutableListOf(),
   private val stepsData: MutableMap<ZhabaStepBase, GraphData> = mutableMapOf(),
 
-  val initialOnboardingStep: ZhabaStepBase = NoOpStep(".start.onboarding", NEXT_TRANSITION, StartOnboardingZhabaData),
-  val initialStudentPackPromotionStep: ZhabaStepBase = NoOpStep(".start.student.pack", NEXT_TRANSITION, StartStudentPackPromotionZhabaData),
+  val initialOnboardingStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(".start.onboarding", NEXT_TRANSITION, StartOnboardingZhabaData),
+  val initialStudentPackPromotionStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(".start.student.pack", NEXT_TRANSITION, StartStudentPackPromotionZhabaData),
 ): ZhabaGraph {
 
   init {
@@ -70,13 +71,13 @@ class ZhabaMainGraph private constructor(
 
     // create the loop 0 -> 1 -> 2 -> ... -> stepCount -> 1 with the NEXT_TRANSITION transition
 
-    val happyEnding = NoOpStep(".end.happy", FINISH_TRANSITION) { JumpingAwayZhabaData(it.winking) }
-    val sadEnding = NoOpStep(".end.sad", FINISH_TRANSITION) { JumpingAwayZhabaData(it.sad) }
+    val happyEnding = ZhabaStepFactory.noOpStep(".end.happy", FINISH_TRANSITION) { JumpingAwayZhabaData(it.winking) }
+    val sadEnding = ZhabaStepFactory.noOpStep(".end.sad", FINISH_TRANSITION) { JumpingAwayZhabaData(it.sad) }
 
     stepsData[happyEnding] = GraphData.EMPTY
     stepsData[sadEnding] = GraphData.EMPTY
 
-    val uiOnboardingSteps = uiOnboardingStepsIds.map { EduUiOnboardingStepAsZhabaStep(it) }
+    val uiOnboardingSteps = uiOnboardingStepsIds.map { ZhabaStepFactory.onboardingStep(it) }
     val firstOnboardingStep = uiOnboardingSteps.first()
 
     for (i in 0..stepCount) {
@@ -100,10 +101,10 @@ class ZhabaMainGraph private constructor(
   }
 
   private fun fillStudentPackPromotionGraph(): ZhabaStepBase {
-    val studentPackPromotionStep = StudentPackPromotionStep()
+    val studentPackPromotionStep = ZhabaStepFactory.studentPackPromotionStep()
     stepsData[studentPackPromotionStep] = GotItBalloonGraphData(null, 1)
 
-    val sadEnding = NoOpStep(".end.sad.scholar", FINISH_TRANSITION) { JumpingAwayZhabaData(it.scholarSad) }
+    val sadEnding = ZhabaStepFactory.noOpStep(".end.sad.scholar", FINISH_TRANSITION) { JumpingAwayZhabaData(it.scholarSad) }
     stepsData[sadEnding] = GraphData.EMPTY
 
     edges.add(Edge(studentPackPromotionStep, RERUN_TRANSITION, studentPackPromotionStep))
