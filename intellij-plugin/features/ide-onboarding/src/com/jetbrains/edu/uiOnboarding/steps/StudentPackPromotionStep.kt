@@ -21,7 +21,7 @@ import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRAN
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.SAD_FINISH_TRANSITION
 import java.awt.Point
 
-class StudentPackPromotionStep : GotItBalloonStepBase<GotItBalloonGraphData>() {
+class StudentPackPromotionStep internal constructor() : GotItBalloonStepBase<GotItBalloonGraphData>() {
 
   private fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
