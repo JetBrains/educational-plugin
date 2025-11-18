@@ -2,11 +2,20 @@ package com.jetbrains.edu.uiOnboarding
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
 import kotlinx.coroutines.delay
+import java.awt.Component
 import java.awt.Graphics2D
 import java.awt.RenderingHints
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.awt.event.HierarchyBoundsAdapter
+import java.awt.event.HierarchyEvent
+import java.awt.event.HierarchyListener
+import java.awt.event.MouseEvent
+import java.awt.event.MouseWheelEvent
 import javax.swing.JComponent
 
 class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
@@ -17,6 +26,19 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
   private var stepStartTime: Long = 0 // nano time of step start
 
   private var interrupted: Boolean = false
+
+  override fun contains(x: Int, y: Int): Boolean = false
+
+  init {
+    isFocusable = false
+    isOpaque = false
+    actionMap.clear()
+    inputMap.clear()
+  }
+
+  override fun processMouseEvent(e: MouseEvent?) { }
+  override fun processMouseMotionEvent(e: MouseEvent?) { }
+  override fun processMouseWheelEvent(e: MouseWheelEvent?) { }
 
   override fun paintComponent(g: java.awt.Graphics) {
     val animation = this.animation ?: return
@@ -94,6 +116,32 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
    */
   fun stop() {
     interrupted = true
+  }
+
+  /**
+   * The Toad is interrupted if the tracked component is moved or resized or its visibility changed.
+   */
+  fun trackComponent(component: Component) {
+    val componentListener = object : ComponentAdapter() {
+      override fun componentHidden(e: ComponentEvent?) { stop() }
+      override fun componentShown(e: ComponentEvent?) { stop() }
+      override fun componentMoved(e: ComponentEvent?) { stop() }
+      override fun componentResized(e: ComponentEvent?) { stop() }
+    }
+    val hierarchyListener = HierarchyListener { stop() }
+    val hierarchyBoundsListener = object : HierarchyBoundsAdapter() {
+      override fun ancestorMoved(e: HierarchyEvent?) { stop() }
+      override fun ancestorResized(e: HierarchyEvent?) { stop() }
+    }
+
+    Disposer.register(this) {
+      component.removeComponentListener(componentListener)
+      component.removeHierarchyListener(hierarchyListener)
+      component.removeHierarchyBoundsListener(hierarchyBoundsListener)
+    }
+    component.addComponentListener(componentListener)
+    component.addHierarchyListener(hierarchyListener)
+    component.addHierarchyBoundsListener(hierarchyBoundsListener)
   }
 
   private suspend fun runStep(index: Int) {

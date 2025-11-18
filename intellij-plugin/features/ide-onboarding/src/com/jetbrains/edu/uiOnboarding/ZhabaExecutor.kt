@@ -4,7 +4,6 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.ide.ui.UISettingsListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
-import com.intellij.openapi.observable.util.addComponentListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
@@ -12,8 +11,6 @@ import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.stepsGraph.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import kotlinx.coroutines.CoroutineScope
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
 import javax.swing.JLayeredPane
 
 class ZhabaExecutor(
@@ -28,13 +25,6 @@ class ZhabaExecutor(
 
   init {
     Disposer.register(parentDisposable, this)
-
-    // Listen to IDE resize
-    WindowManager.getInstance().getFrame(project)?.addComponentListener(parentDisposable = this, object : ComponentAdapter() {
-      override fun componentResized(e: ComponentEvent?) {
-        changeZhabaLocation()
-      }
-    })
 
     // Listen to IDE Zoom changes and other changes that might affect UI components positions and sizes
     project.messageBus.connect(this).subscribe(UISettingsListener.TOPIC, UISettingsListener {
