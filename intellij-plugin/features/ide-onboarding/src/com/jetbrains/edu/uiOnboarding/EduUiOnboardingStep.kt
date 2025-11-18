@@ -15,6 +15,7 @@ interface EduUiOnboardingStep {
   fun createZhaba(project: Project, data: EduUiOnboardingAnimationData, point: RelativePoint): ZhabaComponent {
     val zhabaComponent = ZhabaComponent(project)
     zhabaComponent.animation = buildAnimation(data, point)
+    zhabaComponent.trackComponent(point.originalComponent)
     return zhabaComponent
   }
 
