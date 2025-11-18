@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.uiOnboarding.checker.STUDENT_PACK_LINK
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
@@ -67,14 +68,21 @@ class StudentPackPromotionStep internal constructor() : GotItBalloonStepBase<Got
 
   override fun secondaryButtonLabel(graphData: GotItBalloonGraphData): String = EduUiOnboardingBundle.message("student.pack.promotion.not.a.student")
 
-  override fun onEscape(graphData: GotItBalloonGraphData): String = SAD_FINISH_TRANSITION
+  override fun onEscape(graphData: GotItBalloonGraphData): String {
+    EduCounterUsageCollector.studentPackPromotionRefused()
+    return SAD_FINISH_TRANSITION
+  }
 
   override fun onPrimaryButton(graphData: GotItBalloonGraphData): String {
+    EduCounterUsageCollector.studentPackPromotionLinkFollowed()
     EduBrowser.getInstance().browse(STUDENT_PACK_LINK)
     return FINISH_TRANSITION
   }
 
-  override fun onSecondaryButton(graphData: GotItBalloonGraphData): String = SAD_FINISH_TRANSITION
+  override fun onSecondaryButton(graphData: GotItBalloonGraphData): String {
+    EduCounterUsageCollector.studentPackPromotionRefused()
+    return SAD_FINISH_TRANSITION
+  }
 
   override val stepId: String
     get() = "promote.student.pack"

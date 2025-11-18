@@ -141,7 +141,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      25,
+      26,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -372,6 +372,15 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       enumField<UserAgreementState>(USER_AGREEMENT_AI),
     )
 
+    private val STUDENT_PACK_PROMOTION_LINK_FOLLOWED = GROUP.registerEvent(
+      "student.pack.promotion.link.followed",
+      """The event is recorded when a user clicks the "Apply Now" button in the Student Pack Promotion dialog."""
+    )
+    private val STUDENT_PACK_PROMOTION_REFUSED = GROUP.registerEvent(
+      "student.pack.promotion.refused",
+      """The event is recorded when a user clicks the "Not a student" button or presses Escape in the Student Pack Promotion dialog."""
+    )
+
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
     fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
@@ -484,5 +493,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       pluginAgreement: UserAgreementState,
       aiServiceAgreement: UserAgreementState
     ) = USER_AGREEMENT_CHANGE_EVENT.log(place, pluginAgreement, aiServiceAgreement)
+
+    fun studentPackPromotionLinkFollowed() = STUDENT_PACK_PROMOTION_LINK_FOLLOWED.log()
+
+    fun studentPackPromotionRefused() = STUDENT_PACK_PROMOTION_REFUSED.log()
   }
 }
