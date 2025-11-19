@@ -1,5 +1,8 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.courseDir
@@ -103,5 +106,15 @@ class RemoteInfoNotificationTest : NotificationsTestBase() {
       |id: 2
       |update_date: Thu, 01 Jan 1970 00:00:00 UTC
     """.trimIndent()
+  }
+
+  private fun withYamlFileTypeRegistered(action: () -> Unit) {
+    try {
+      runWriteAction { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "yaml") }
+      action()
+    }
+    finally {
+      runWriteAction { FileTypeManager.getInstance().removeAssociatedExtension(PlainTextFileType.INSTANCE, "yaml") }
+    }
   }
 }
