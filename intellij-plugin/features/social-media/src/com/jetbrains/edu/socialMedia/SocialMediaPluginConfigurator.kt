@@ -32,7 +32,7 @@ interface SocialMediaPluginConfigurator {
   fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean
 
   fun getMessage(solvedTask: Task): String
-  fun getIndexWithImagePath(solvedTask: Task?, imageIndex: Int? = null): Pair<Int?, Path?>
+  fun getIndexWithImagePath(solvedTask: Task, imageIndex: Int? = null): Pair<Int?, Path?>
   fun doPost(project: Project, solvedTask: Task, imageIndex: Int?)
 
 }

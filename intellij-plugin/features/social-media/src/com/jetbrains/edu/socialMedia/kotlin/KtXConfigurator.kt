@@ -5,17 +5,12 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CheckStatus.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.socialMedia.SocialMediaSettings
 import com.jetbrains.edu.socialMedia.SocialMediaUtils
 import com.jetbrains.edu.socialMedia.x.XPluginConfigurator
-import com.jetbrains.edu.socialMedia.x.XSettings
-import com.jetbrains.edu.socialMedia.x.XUtils
 import org.jetbrains.annotations.NonNls
 import java.nio.file.Path
 
 class KtXConfigurator : XPluginConfigurator {
-
-  override val settings: SocialMediaSettings<SocialMediaSettings.SocialMediaSettingsState> = XSettings.getInstance()
 
   override fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
     val course = StudyTaskManager.getInstance(project).course ?: return false
@@ -32,18 +27,11 @@ class KtXConfigurator : XPluginConfigurator {
     return String.format(COMPLETE_KOTLIN_KOANS_LEVEL, solvedTaskNumber / 8)
   }
 
-  override fun getIndexWithImagePath(solvedTask: Task?, imageIndex: Int?): Pair<Int, Path?> {
-    solvedTask ?: error("Task is not provided")
+  override fun getIndexWithImagePath(solvedTask: Task, imageIndex: Int?): Pair<Int, Path?> {
     val solvedTaskNumber = imageIndex ?: calculateTaskNumber(solvedTask)
     val level = solvedTaskNumber / 8
     val imagePath = SocialMediaUtils.pluginRelativePath("socialMedia/x/kotlin_koans/images/${level}level.gif")
     return level to imagePath
-  }
-
-  override fun doPost(project: Project, solvedTask: Task, imageIndex: Int?) {
-    if (!settings.askToPost) return
-    val (_, imagePath) = getIndexWithImagePath(solvedTask, imageIndex)
-    XUtils.doPost(project, getMessage(solvedTask), imagePath)
   }
 
   companion object {
