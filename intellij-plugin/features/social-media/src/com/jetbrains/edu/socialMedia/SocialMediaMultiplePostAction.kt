@@ -49,6 +49,7 @@ class SocialMediaMultiplePostAction : CheckListener {
     val course = task.course
     // It doesn't make sense to suggest posting to social media in educator mode
     if (!course.isStudy) return
+    if (result.status != CheckStatus.Solved) return
 
     val courseId = course.id
     if (!SocialMediaPostManager.needToAskedToPost(courseId)) return

@@ -158,11 +158,33 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
     verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
   }
 
-  private fun createEduCourse(id: Int = 123, courseMode: CourseMode = STUDENT): Course {
+  @Test
+  fun `test do not post on failed task`() {
+    // given
+    val course = createEduCourse(solved = false)
+    val currentTask = course.findTask("lesson1", "task1")
+
+    // when
+    val isDialogShown = launchCheckAction(currentTask)
+
+    // then
+    assertFalse(isDialogShown)
+    assertTrue(SocialMediaPostManager.needToAskedToPost(course.id))
+
+    verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
+    verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
+  }
+
+  private fun createEduCourse(
+    id: Int = 123,
+    courseMode: CourseMode = STUDENT,
+    solved: Boolean = true
+  ): Course {
     return courseWithFiles(id = id, courseMode = courseMode) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("taskFile1.txt")
+          taskFile("checkResult.txt", if (solved) "Solved" else "Failed")
         }
       }
     }
