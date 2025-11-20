@@ -42,7 +42,7 @@ class XSettings : SocialMediaSettings<XSettings.XSettingsState>(XSettingsState()
 
   @TestOnly
   override fun cleanUpState() {
-    account = null
+    loadState(XSettingsState())
   }
 
   companion object {

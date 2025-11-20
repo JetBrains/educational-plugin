@@ -2,10 +2,10 @@ package com.jetbrains.edu.socialMedia
 
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.components.SimplePersistentStateComponent
-import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.EduTestAware
 
 abstract class SocialMediaSettings<out T : SocialMediaSettings.SocialMediaSettingsState>(state: T) :
-  SimplePersistentStateComponent<@UnsafeVariance T>(state) {
+  SimplePersistentStateComponent<@UnsafeVariance T>(state), EduTestAware {
 
   abstract val name: String
 
@@ -29,6 +29,6 @@ abstract class SocialMediaSettings<out T : SocialMediaSettings.SocialMediaSettin
 
   open class SocialMediaSettingsState : BaseState() {
     var userId by string()
-    var askToPost by property(!isUnitTestMode)
+    var askToPost by property(true)
   }
 }

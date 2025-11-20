@@ -17,12 +17,12 @@ class XSettingsTest : EduSettingsServiceTestBase() {
     val settings = XSettings()
     settings.loadStateAndCheck("""
       <XSettingsState>
-        <option name="askToPost" value="true" />
+        <option name="askToPost" value="false" />
         <option name="userId" value="username" />
       </XSettingsState>
     """)
 
-    assertTrue(settings.askToPost)
+    assertFalse(settings.askToPost)
     assertEquals("username", settings.userId)
     assertNull(settings.account)
   }
@@ -32,14 +32,14 @@ class XSettingsTest : EduSettingsServiceTestBase() {
     val settings = XSettings()
     settings.loadStateAndCheck("""
       <XSettingsState>
-        <option name="askToPost" value="true" />
+        <option name="askToPost" value="false" />
         <option name="expiresIn" value="12345" />
         <option name="name" value="name" />
         <option name="userId" value="username" />
       </XSettingsState>
     """)
 
-    assertTrue(settings.askToPost)
+    assertFalse(settings.askToPost)
 
     val actualAccount = kotlin.test.assertNotNull(settings.account)
     assertEquals("username", actualAccount.userInfo.userName)

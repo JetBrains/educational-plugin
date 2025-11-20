@@ -2,12 +2,13 @@ package com.jetbrains.edu.socialMedia.linkedIn
 
 import com.intellij.openapi.components.*
 import com.jetbrains.edu.socialMedia.SocialMediaSettings
+import org.jetbrains.annotations.TestOnly
 
 private const val serviceName = "LinkedInSettings"
 
 @Service
 @State(name = serviceName, storages = [Storage("academy.social.media.settings.xml", roamingType = RoamingType.DISABLED)])
-class LinkedInSettings : SocialMediaSettings<LinkedInSettings.LinkedSate>(LinkedSate()) {
+class LinkedInSettings : SocialMediaSettings<LinkedInSettings.LinkedState>(LinkedState()) {
 
   override val name = "LinkedIn"
 
@@ -51,11 +52,16 @@ class LinkedInSettings : SocialMediaSettings<LinkedInSettings.LinkedSate>(Linked
     return ""
   }
 
+  @TestOnly
+  override fun cleanUpState() {
+    loadState(LinkedState())
+  }
+
   companion object {
     fun getInstance(): LinkedInSettings = service()
   }
 
-  open class LinkedSate : SocialMediaSettingsState() {
+  class LinkedState : SocialMediaSettingsState() {
     var userName by string()
     var expiresIn by property(0L)
   }

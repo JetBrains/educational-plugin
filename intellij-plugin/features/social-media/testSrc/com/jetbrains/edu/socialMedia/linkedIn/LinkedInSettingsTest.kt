@@ -9,7 +9,7 @@ class LinkedInSettingsTest : EduSettingsServiceTestBase() {
   @Test
   fun `test empty state`() {
     val settings = LinkedInSettings()
-    settings.loadStateAndCheck("<LinkedSate />")
+    settings.loadStateAndCheck("<LinkedState />")
 
     assertNull(settings.account)
   }
@@ -20,15 +20,15 @@ class LinkedInSettingsTest : EduSettingsServiceTestBase() {
 
     val currentTime = currentTimeMillis() + 12345
     settings.loadStateAndCheck("""
-      <LinkedSate>
-        <option name="askToPost" value="true" />
+      <LinkedState>
+        <option name="askToPost" value="false" />
         <option name="expiresIn" value="$currentTime" />
         <option name="userId" value="userId" />
         <option name="userName" value="userName" />
-      </LinkedSate>
+      </LinkedState>
     """)
 
-    assertTrue(settings.askToPost)
+    assertFalse(settings.askToPost)
     val account = kotlin.test.assertNotNull(settings.account)
 
     assertEquals("userId", account.userInfo.id)
@@ -44,15 +44,15 @@ class LinkedInSettingsTest : EduSettingsServiceTestBase() {
     val settings = LinkedInSettings()
 
     settings.loadStateAndCheck("""
-      <LinkedSate>
-        <option name="askToPost" value="true" />
+      <LinkedState>
+        <option name="askToPost" value="false" />
         <option name="expiresIn" value="12345" />
         <option name="userId" value="userId" />
         <option name="userName" value="userName" />
-      </LinkedSate>
+      </LinkedState>
     """)
 
-    assertTrue(settings.askToPost)
+    assertFalse(settings.askToPost)
     assertNull(settings.account)
   }
 }
