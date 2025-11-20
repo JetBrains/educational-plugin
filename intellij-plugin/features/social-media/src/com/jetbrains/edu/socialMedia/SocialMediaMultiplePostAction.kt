@@ -1,6 +1,9 @@
 package com.jetbrains.edu.socialMedia
 
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -12,13 +15,11 @@ import com.jetbrains.edu.socialMedia.linkedIn.LinkedInPluginConfigurator
 import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import com.jetbrains.edu.socialMedia.suggestToPostDialog.createSuggestToPostDialogUI
 import com.jetbrains.edu.socialMedia.x.XPluginConfigurator
+import org.jetbrains.annotations.TestOnly
+import java.util.concurrent.ConcurrentHashMap
 
 
 class SocialMediaMultiplePostAction : CheckListener {
-
-  private var statusBeforeCheck: CheckStatus? = null
-
-  private val configurators = listOf(XPluginConfigurator.EP_NAME, LinkedInPluginConfigurator.EP_NAME).flatMap { it.extensionList }
 
   private fun sendStatistics(course: Course) {
     EduCounterUsageCollector.linkedInDialogShown(course)
@@ -26,7 +27,7 @@ class SocialMediaMultiplePostAction : CheckListener {
   }
 
   override fun beforeCheck(project: Project, task: Task) {
-    statusBeforeCheck = task.status
+    PreviousTaskStatusService.getInstance(project).saveCurrentStatus(task)
   }
 
   private fun createDialogAndShow(project: Project, configurators: List<SocialMediaPluginConfigurator>, task: Task) {
@@ -45,12 +46,36 @@ class SocialMediaMultiplePostAction : CheckListener {
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    val status = statusBeforeCheck ?: return
-    val activeConfigurators = configurators.filter { it.askToPost(project, task, status) }
+    val previousStatus = PreviousTaskStatusService.getInstance(project).getPreviousStatus(task) ?: return
+    val activeConfigurators = listOf(XPluginConfigurator.EP_NAME, LinkedInPluginConfigurator.EP_NAME)
+      .flatMap { it.extensionList }
+      .filter { it.askToPost(project, task, previousStatus) }
     if (activeConfigurators.all { !it.settings.askToPost }) return
     if (activeConfigurators.isEmpty()) return
 
     createDialogAndShow(project, activeConfigurators, task)
     sendStatistics(task.course)
+  }
+}
+
+// TODO: reevaluate this solution. It seems we can do it better
+@Service(Service.Level.PROJECT)
+private class PreviousTaskStatusService() : EduTestAware {
+
+  private val previousStatuses = ConcurrentHashMap<Int, CheckStatus>()
+
+  fun saveCurrentStatus(task: Task) {
+    previousStatuses[task.id] = task.status
+  }
+
+  fun getPreviousStatus(task: Task): CheckStatus? = previousStatuses[task.id]
+
+  @TestOnly
+  override fun cleanUpState() {
+    previousStatuses.clear()
+  }
+
+  companion object {
+    fun getInstance(project: Project): PreviousTaskStatusService = project.service()
   }
 }
