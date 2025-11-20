@@ -16,6 +16,7 @@ class LinkedInAccount : OAuthAccount<LinkedInUserInfo> {
 
   override val servicePrefix: String = LinkedInConnector.LINKEDIN
 
+  object Factory
 }
 
 class LinkedInUserInfo : UserInfo {
