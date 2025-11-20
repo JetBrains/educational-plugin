@@ -13,7 +13,6 @@ object HyperskillSocialMediaUtils {
 
   fun askToPost(project: Project, solvedTask: Task, statusBeforeCheck: CheckStatus): Boolean {
     val course = project.course as? HyperskillCourse ?: return false
-    if (!course.isStudy) return false
     if (statusBeforeCheck == CheckStatus.Solved) return false
 
     val projectLesson = course.getProjectLesson() ?: return false

@@ -46,7 +46,11 @@ class SocialMediaMultiplePostAction : CheckListener {
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    val courseId = task.course.id
+    val course = task.course
+    // It doesn't make sense to suggest posting to social media in educator mode
+    if (!course.isStudy) return
+
+    val courseId = course.id
     if (!SocialMediaPostManager.needToAskedToPost(courseId)) return
 
     val previousStatus = PreviousTaskStatusService.getInstance(project).getPreviousStatus(task) ?: return
@@ -59,7 +63,7 @@ class SocialMediaMultiplePostAction : CheckListener {
     createDialogAndShow(project, activeConfigurators, task)
 
     SocialMediaPostManager.setAskedToPost(courseId)
-    sendStatistics(task.course)
+    sendStatistics(course)
   }
 }
 
