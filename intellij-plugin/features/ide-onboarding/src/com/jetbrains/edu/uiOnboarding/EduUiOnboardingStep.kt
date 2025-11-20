@@ -4,6 +4,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.KeyedLazyInstanceEP
+import com.jetbrains.edu.uiOnboarding.stepsGraph.GotItBalloonStepData
 
 interface EduUiOnboardingStep {
   fun performStep(project: Project, data: EduUiOnboardingAnimationData): GotItBalloonStepData?

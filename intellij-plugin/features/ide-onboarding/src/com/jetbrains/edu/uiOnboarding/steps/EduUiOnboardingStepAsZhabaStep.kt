@@ -5,8 +5,8 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
+import com.jetbrains.edu.uiOnboarding.stepsGraph.EduUiOnboardingStepGraphData
+import com.jetbrains.edu.uiOnboarding.stepsGraph.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
 
 /**

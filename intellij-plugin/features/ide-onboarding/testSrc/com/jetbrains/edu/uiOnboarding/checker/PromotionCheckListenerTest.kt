@@ -8,8 +8,8 @@ import com.intellij.util.asSafely
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
-import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
+import com.jetbrains.edu.uiOnboarding.stepsGraph.GotItBalloonGraphData
+import com.jetbrains.edu.uiOnboarding.stepsGraph.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.TransitionAnimator
 import com.jetbrains.edu.uiOnboarding.ZhabaComponent
 import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory

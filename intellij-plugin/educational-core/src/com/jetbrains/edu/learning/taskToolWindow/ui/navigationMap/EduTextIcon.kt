@@ -4,7 +4,9 @@ import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.ui.EduColors
 import java.awt.*
+import java.awt.font.FontRenderContext
 import javax.swing.Icon
+import kotlin.math.ceil
 
 class EduTextIcon(private val text: String, private val font: Font = JBFont.label().biggerOn(3f)) : Icon {
 

@@ -9,6 +9,7 @@ import com.jetbrains.edu.uiOnboarding.*
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.GotItBalloonStepData
 import java.awt.Point
 
 class CodeEditorStep : EduUiOnboardingStep {

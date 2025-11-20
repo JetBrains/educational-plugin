@@ -1,4 +1,4 @@
-package com.jetbrains.edu.uiOnboarding
+package com.jetbrains.edu.uiOnboarding.stepsGraph
 
 class EduUiOnboardingStepGraphData(
   val isLast: Boolean,
