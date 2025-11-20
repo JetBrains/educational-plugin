@@ -8,6 +8,7 @@ import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.*
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.GotItBalloonStepData
 import java.awt.Point
 
 class CourseViewStep : EduUiOnboardingStep {
@@ -24,30 +25,20 @@ class CourseViewStep : EduUiOnboardingStep {
     project: Project,
     data: EduUiOnboardingAnimationData
   ): GotItBalloonStepData? {
-    val projectViewToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
-                                  .getToolWindow("Project") ?: return null
+    val relativeZhabaPoint = locateZhabaInProjectToolWindow(project) ?: return null
+    val zhabaPoint = relativeZhabaPoint.originalPoint
+    val component = relativeZhabaPoint.originalComponent
 
-    projectViewToolWindow.show()
+    val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
 
-    val component = projectViewToolWindow.component
-    if (!component.isShowing) return null
+    // Position the balloon a bit to the right from the middle of the project view
+    val tooltipPoint = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - SMALL_SHIFT)
+    val tooltipRelativePoint = RelativePoint(component, tooltipPoint)
 
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("course.view.step.text") }
       .withHeader(EduUiOnboardingBundle.message("course.view.step.header"))
 
-    val zhabaPoint = Point(
-      (component.width - ZHABA_DIMENSION.width) / 2,
-      component.height - ZHABA_DIMENSION.height
-    )
-
-    val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
-    val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
-
-    // Position the balloon a bit to the right from the middle of the project view
-    val point = Point(zhabaPoint.x + ZHABA_DIMENSION.width / 2, zhabaPoint.y - SMALL_SHIFT)
-    val relativePoint = RelativePoint(component, point)
-
-    return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
+    return GotItBalloonStepData(builder, tooltipRelativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
 
   override fun isAvailable(): Boolean = true

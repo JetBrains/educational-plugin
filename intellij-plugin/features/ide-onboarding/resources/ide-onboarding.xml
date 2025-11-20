@@ -12,8 +12,8 @@
   </extensionPoints>
 
   <actions>
-    <action id="StartNewUiOnboardingAction"
-            class="com.jetbrains.edu.uiOnboarding.StartEduUiOnboardingAction"
+    <action id="Educational.Tode.CallTodeAction"
+            class="com.jetbrains.edu.uiOnboarding.actions.CallTodeAction"
             icon="com.jetbrains.edu.uiOnboarding.EduUiOnboardingIcons.ToadIcon">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
