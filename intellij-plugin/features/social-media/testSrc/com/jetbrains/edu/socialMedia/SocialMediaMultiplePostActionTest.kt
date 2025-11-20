@@ -2,51 +2,26 @@ package com.jetbrains.edu.socialMedia
 
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.ExtensionTestUtil
-import com.intellij.util.application
-import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseMode.STUDENT
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.mockService
-import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.testAction
-import com.jetbrains.edu.learning.ui.getUICheckLabel
-import com.jetbrains.edu.socialMedia.linkedIn.*
-import com.jetbrains.edu.socialMedia.suggestToPostDialog.SuggestToPostDialogUI
-import com.jetbrains.edu.socialMedia.suggestToPostDialog.withMockSuggestToPostDialogUI
-import com.jetbrains.edu.socialMedia.x.XAccount
-import com.jetbrains.edu.socialMedia.x.XConnector
+import com.jetbrains.edu.socialMedia.linkedIn.LinkedInPluginConfigurator
+import com.jetbrains.edu.socialMedia.linkedIn.LinkedInSettings
 import com.jetbrains.edu.socialMedia.x.XPluginConfigurator
 import com.jetbrains.edu.socialMedia.x.XSettings
-import com.jetbrains.edu.socialMedia.x.api.TweetData
-import com.jetbrains.edu.socialMedia.x.api.TweetResponse
-import com.jetbrains.edu.socialMedia.x.create
-import io.mockk.every
 import io.mockk.verify
 import org.junit.Test
 import java.nio.file.Path
 
-class SocialMediaMultiplePostActionTest : EduActionTestCase() {
-
-  private lateinit var mockXConnector: XConnector
-  private lateinit var mockLinkedInConnector: LinkedInConnector
+class SocialMediaMultiplePostActionTest : SocialMediaPostActionTestBase() {
 
   override fun setUp() {
     super.setUp()
     ExtensionTestUtil.maskExtensions(XPluginConfigurator.EP_NAME, listOf(TestXConfigurator()), testRootDisposable)
     ExtensionTestUtil.maskExtensions(LinkedInPluginConfigurator.EP_NAME, listOf(TestLinkedInConfigurator()), testRootDisposable)
-
-    mockXConnector = mockService<XConnector>(application)
-    mockXConnector.account = XAccount.Factory.create()
-    every { mockXConnector.tweet(any(), any()) } answers { TweetResponse(TweetData("123", firstArg())) }
-
-    mockLinkedInConnector = mockService<LinkedInConnector>(application)
-    mockLinkedInConnector.account = LinkedInAccount.Factory.create()
-    every { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) } returns Unit
   }
 
   @Test
@@ -206,22 +181,6 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
         }
       }
     } as EduCourse
-  }
-
-  private fun launchCheckAction(task: Task): Boolean {
-    NavigationUtils.navigateToTask(project, task)
-
-    var isDialogShown = false
-    withMockSuggestToPostDialogUI(object : SuggestToPostDialogUI {
-      override fun showAndGet(): Boolean {
-        isDialogShown = true
-        return true
-      }
-    }) {
-      testAction(CheckAction(task.getUICheckLabel()))
-    }
-
-    return isDialogShown
   }
 }
 

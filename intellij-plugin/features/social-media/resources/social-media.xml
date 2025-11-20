@@ -18,5 +18,8 @@
 
     <optionsProvider instance="com.jetbrains.edu.socialMedia.x.XOptionsProvider"/>
     <optionsProvider instance="com.jetbrains.edu.socialMedia.linkedIn.LinkedInOptionsProvider"/>
+
+    <xPluginConfigurator implementation="com.jetbrains.edu.socialMedia.marketplace.MarketplaceXConfigurator"/>
+    <linkedInPluginConfigurator implementation="com.jetbrains.edu.socialMedia.marketplace.MarketplaceLinkedInConfigurator"/>
   </extensions>
 </idea-plugin>
