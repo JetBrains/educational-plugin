@@ -21,7 +21,22 @@ data class EduUiOnboardingAnimationStep(
 
 interface EduUiOnboardingAnimation {
   val steps: List<EduUiOnboardingAnimationStep>
+
+  /**
+   * After all steps are executed, should the animation be restarted from the beginning?
+   */
   val cycle: Boolean get() = false
+
+  /**
+   * If the animation is interrupted, specifies whether it should be stopped immediately, or after all steps are finished.
+   *
+   * Normally, we do not want to interrupt Zhaba when it moves from one location to another. Because we don't know the intermediate
+   * location where it might stop. Such animations with moving are usually not cycled.
+   *
+   * But if Zhaba stays somewhere without moving, we can interrupt it immediately, and we know its location for sure.
+   * Such animations are usually cycled.
+   */
+  val mayBeInterruptedInsideAnimation: Boolean get() = cycle
 }
 
 enum class TransitionType(val f: (Double) -> Double) {

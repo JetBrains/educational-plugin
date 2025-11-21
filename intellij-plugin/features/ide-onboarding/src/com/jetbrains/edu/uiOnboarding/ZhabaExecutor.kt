@@ -122,7 +122,7 @@ class ZhabaExecutor(
 
     Disposer.newDisposable(this).use { transitionDisposable ->
       installComponent(zhaba, transitionDisposable)
-      return zhaba.start()
+      return zhaba.start(cs)
     }
   }
 
