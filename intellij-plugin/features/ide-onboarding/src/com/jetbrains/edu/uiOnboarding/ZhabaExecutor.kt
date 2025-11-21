@@ -11,6 +11,8 @@ import com.intellij.openapi.util.use
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.stepsGraph.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.STEP_UNAVAILABLE_TRANSITION
 import kotlinx.coroutines.CoroutineScope
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -61,56 +63,32 @@ class ZhabaExecutor(
     currentZhabaComponent?.stop()
   }
 
-
   suspend fun start(step: ZhabaStepBase) {
     val animationData = this.animationData ?: return
 
     var currentStep = step
     var currentData = step.typed().performStep(project, animationData) ?: return
+    var currentTransition: String? = null
 
     while (true) {
-      val (nextStep, nextData) = runStep(currentStep, currentData) ?: return
-
-      currentStep = nextStep
-      currentData = nextData
-    }
-  }
-
-  suspend fun runStep(step: ZhabaStepBase, data: ZhabaData): Pair<ZhabaStepBase, ZhabaData>? {
-    val transition = Disposer.newDisposable(this).use { stepDisposable ->
-      if (data is ZhabaDataWithComponent) {
-        installComponent(data.zhaba, stepDisposable)
+      if (currentTransition == null) {
+        currentTransition = runStep(currentStep, currentData)
       }
 
-      val typedStep = step.typed()
-      val graphData = graph.additionalStepData(typedStep)
-      typedStep.executeStep(data, graphData, cs, stepDisposable)
-    }
+      val nextStep = graph.move(currentStep, currentTransition)
 
-    var nextStep = graph.move(step, transition)
-
-    while (true) {
       if (nextStep == null) {
-        if (transition != FINISH_TRANSITION) {
-          thisLogger().error("No next step for ${step.stepId} with transition $transition")
+        if (currentTransition != FINISH_TRANSITION) {
+          thisLogger().error("No next step for ${step.stepId} with transition $currentTransition")
         }
-        return null
+        return
       }
 
-      val dataForNextStep = dataForNextStep(data, nextStep)
-      if (dataForNextStep != null) {
-        return nextStep to dataForNextStep
+      val nextData = nextStep.typed().performStep(project, animationData)
+      if (nextData == null) {
+        currentTransition = STEP_UNAVAILABLE_TRANSITION
+        continue
       }
-      nextStep = graph.move(nextStep, ZhabaStep.STEP_UNAVAILABLE_TRANSITION) ?: return null
-    }
-  }
-
-  private suspend fun dataForNextStep(data: ZhabaData, nextStep: ZhabaStepBase): ZhabaData? {
-    var currentData = data
-
-    while (true) {
-      val animationData = this.animationData ?: return null
-      val nextData = nextStep.typed().performStep(project, animationData) ?: return null
 
       val transitionAnimation = TransitionAnimator.animateTransition(project, animationData, currentData, nextData)
       val transitionAnimationCompleted = if (transitionAnimation == null) {
@@ -120,9 +98,22 @@ class ZhabaExecutor(
         executeAnimation(transitionAnimation)
       }
 
-      if (transitionAnimationCompleted) return nextData
-
+      currentStep = nextStep
       currentData = nextData
+
+      currentTransition = if (!transitionAnimationCompleted) { RERUN_TRANSITION } else { null }
+    }
+  }
+
+  private suspend fun runStep(step: ZhabaStepBase, data: ZhabaData): String {
+    return Disposer.newDisposable(this).use { stepDisposable ->
+      if (data is ZhabaDataWithComponent) {
+        installComponent(data.zhaba, stepDisposable)
+      }
+
+      val typedStep = step.typed()
+      val graphData = graph.additionalStepData(typedStep)
+      typedStep.executeStep(data, graphData, cs, stepDisposable)
     }
   }
 
