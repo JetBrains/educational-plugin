@@ -34,6 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.rd.util.lifetime.Lifetime
 import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.adviseWithPrev
 import com.jetbrains.rd.util.reactive.fire
@@ -81,32 +82,65 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
     val name = task.getTestName()
     val rdUnitTestSession = getOrCreateSession(name) ?: return failedToCheck
+    val isReady = CompletableDeferred<Unit>()
+
     withContext(Dispatchers.EDT) {
+      rdUnitTestSession.options.buildPolicy.set(RdUnitTestBuildPolicy.Never)
       rdUnitTestSession.run.fire()
     }
-    val isReady = CompletableDeferred<Unit>()
+
     withContext(Dispatchers.EDT) {
       rdUnitTestSession.state.adviseWithPrev(project.lifetime) { prev, cur ->
         if (isRunningState(prev.asNullable?.status) && isNotRunningState(cur.status)) {
           isReady.complete(Unit)
         }
       }
-      try {
-        isReady.await()
-      }
-      catch (_: CancellationException) {
-        project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
-        return@withContext noTestsRun
-      }
     }
+
+    try {
+      isReady.await()
+    }
+    catch (_: CancellationException) {
+      withContext(Dispatchers.EDT) {
+        project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
+      }
+      return noTestsRun
+    }
+
     val checkResult = collectTestResults(rdUnitTestSession)
     return checkResult
   }
 
   private suspend fun tryBuildTaskProject(): CheckResult? {
+    val buildLifetime = Lifetime.Eternal.createNested()
+
+    val isBuildFailed = CompletableDeferred<String>()
+    val buildEventsService = project.service<BuildEventsService>()
+
+    withContext(Dispatchers.EDT) {
+      buildEventsService.getEventsAndSubscribe(buildLifetime.lifetime) { events ->
+        val errorMessages = events.joinToString("\n") { eventRef ->
+          val buildEvent = buildEventsService.getEvent(eventRef.offset)
+          val sourceFile = buildEvent.filePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
+          val taskProjectId = task.toProjectModelEntity(project)?.getId(project)
+
+          // `getEventsAndSubscribe` receives all the events, not necessarily related to our current task
+          if (eventRef.projectId == taskProjectId) {
+            formatBuildEvent(buildEvent, sourceFile, eventRef).joinToString("\n")
+          }
+          else {
+            ""
+          }
+        }
+
+        if (errorMessages.isNotEmpty()) {
+          isBuildFailed.complete(errorMessages)
+        }
+      }
+    }
+
     val projectFilePath = task.toProjectModelEntity(project)?.url?.virtualFile?.path ?: return failedToCheck
 
-    val buildEventsService = project.service<BuildEventsService>()
     val buildParameters = BuildParameters(
       operation = BuildTarget(),
       selectedProjectsPaths = listOf(projectFilePath),
@@ -115,35 +149,24 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
       withoutDependencies = false,
       noRestore = false
     )
+    val buildResult = project.service<BuildTaskThrottler>().buildSequentially(buildParameters)
 
-    val eventsCollected = CompletableDeferred<String>()
-
-    withContext(Dispatchers.EDT) {
-      buildEventsService.getEventsAndSubscribe(project.lifetime) { events ->
-        val errorMessages = events.joinToString("\n") { eventRef ->
-          val buildEvent = buildEventsService.getEvent(eventRef.offset)
-          val sourceFile = buildEvent.filePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
-          formatBuildEvent(buildEvent, sourceFile, eventRef).joinToString("\n")
-        }
-
-        eventsCollected.complete(errorMessages)
-      }
-    }
-
-    val buildStatus = project.service<BuildTaskThrottler>().buildSequentially(buildParameters)
-
-    if (buildStatus.buildResultKind == BuildResultKind.HasErrors) {
+    if (buildResult.buildResultKind == BuildResultKind.HasErrors) {
       val err = try {
         withTimeout(500.milliseconds) {
-          eventsCollected.await()
+          isBuildFailed.await()
         }
       }
       catch (_: TimeoutCancellationException) {
         LOG.warn("Timeout waiting for build events for task ${task.name}")
         ""
       }
+      finally {
+        buildLifetime.terminate()
+      }
       return CheckResult(CheckStatus.Failed, COMPILATION_FAILED_MESSAGE, err.trimEnd('\n'))
     }
+    buildLifetime.terminate()
     return null
   }
 
