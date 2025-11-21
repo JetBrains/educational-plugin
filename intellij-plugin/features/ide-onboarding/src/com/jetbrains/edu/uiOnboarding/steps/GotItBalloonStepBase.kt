@@ -54,7 +54,7 @@ abstract class GotItBalloonStepBase<GD: GotItBalloonGraphData>: ZhabaStep<GotItB
     }
 
     cs.launch(Dispatchers.EDT) {
-      val success = stepData.zhaba.start()
+      val success = stepData.zhaba.start(cs)
       if (!success) {
         resume(RERUN_TRANSITION)
       }
