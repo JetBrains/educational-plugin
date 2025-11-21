@@ -50,7 +50,7 @@ class ZhabaExecutor(
    * Notify zhaba that it has to change its location because of movements of UI components.
    */
   private fun changeZhabaLocation() {
-    currentZhabaComponent?.stop()
+    currentZhabaComponent?.stop(RERUN_TRANSITION)
   }
 
   suspend fun start(step: ZhabaStepBase) {
@@ -82,8 +82,8 @@ class ZhabaExecutor(
       }
 
       val transitionAnimation = TransitionAnimator.animateTransition(project, animationData, currentData, nextData)
-      val transitionAnimationCompleted = if (transitionAnimation == null) {
-        true
+      currentTransition = if (transitionAnimation == null) {
+        null
       }
       else {
         executeAnimation(transitionAnimation)
@@ -91,8 +91,6 @@ class ZhabaExecutor(
 
       currentStep = nextStep
       currentData = nextData
-
-      currentTransition = if (!transitionAnimationCompleted) { RERUN_TRANSITION } else { null }
     }
   }
 
@@ -108,13 +106,18 @@ class ZhabaExecutor(
     }
   }
 
-  suspend fun executeAnimation(animation: EduUiOnboardingAnimation): Boolean {
+  suspend fun executeAnimation(animation: EduUiOnboardingAnimation): String? {
     val zhaba = ZhabaComponent(project)
     zhaba.animation = animation
 
     Disposer.newDisposable(this).use { transitionDisposable ->
       installComponent(zhaba, transitionDisposable)
-      return zhaba.start(cs)
+      if (zhaba.start(cs)) {
+        return null
+      }
+      else {
+        return zhaba.interruptionReason
+      }
     }
   }
 
