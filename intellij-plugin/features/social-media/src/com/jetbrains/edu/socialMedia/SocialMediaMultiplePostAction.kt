@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -47,8 +48,8 @@ class SocialMediaMultiplePostAction : CheckListener {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val course = task.course
-    // It doesn't make sense to suggest posting to social media in educator mode
-    if (!course.isStudy) return
+    // It doesn't make sense to suggest posting to social media in educator mode or for preview course
+    if (!course.isStudy || course.isPreview) return
     if (result.status != CheckStatus.Solved) return
 
     val courseId = course.id

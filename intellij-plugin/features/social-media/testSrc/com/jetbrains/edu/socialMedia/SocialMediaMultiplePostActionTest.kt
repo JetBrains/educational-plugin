@@ -6,9 +6,9 @@ import com.intellij.util.application
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.CourseMode.STUDENT
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.mockService
@@ -175,11 +175,29 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
     verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
   }
 
+  @Test
+  fun `test do not post for the preview course`() {
+    // given
+    val course = createEduCourse()
+    course.isPreview = true
+    val currentTask = course.findTask("lesson1", "task1")
+
+    // when
+    val isDialogShown = launchCheckAction(currentTask)
+
+    // then
+    assertFalse(isDialogShown)
+    assertTrue(SocialMediaPostManager.needToAskedToPost(course.id))
+
+    verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
+    verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
+  }
+
   private fun createEduCourse(
     id: Int = 123,
     courseMode: CourseMode = STUDENT,
     solved: Boolean = true
-  ): Course {
+  ): EduCourse {
     return courseWithFiles(id = id, courseMode = courseMode) {
       lesson("lesson1") {
         eduTask("task1") {
@@ -187,7 +205,7 @@ class SocialMediaMultiplePostActionTest : EduActionTestCase() {
           taskFile("checkResult.txt", if (solved) "Solved" else "Failed")
         }
       }
-    }
+    } as EduCourse
   }
 
   private fun launchCheckAction(task: Task): Boolean {
