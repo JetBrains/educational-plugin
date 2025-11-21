@@ -14,6 +14,9 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
   var animation: EduUiOnboardingAnimation? = null
 
+  var interruptionReason: String? = null
+    private set
+
   private var stepIndex: Int = 0
   private var stepStartTime: Long = 0 // nano time of step start
 
@@ -106,12 +109,14 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
   /**
    * Interrupt Zhaba after. If [animation]'s `mayBeInterruptedInsideCycle == true`, the interruption is immediate.
-   * Otherwise the interruption is after the animation finishes the animation cycle.
+   * Otherwise, the interruption is after the animation finishes the animation cycle.
    *
    * This call makes method [start] return false.
+   * * [reason] contains some arbitrary string, it will be available to the caller of the [start] method after it returns.
    */
-  fun stop() {
+  fun stop(reason: String? = null) {
     interrupted = true
+    interruptionReason = reason
 
     if (animation?.mayBeInterruptedInsideCycle == true) {
       animationJob?.cancel()
