@@ -1,11 +1,12 @@
 package com.jetbrains.edu.uiOnboarding
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import java.awt.Component
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -26,6 +27,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
   private var stepStartTime: Long = 0 // nano time of step start
 
   private var interrupted: Boolean = false
+  private var animationJob: Job? = null
 
   override fun contains(x: Int, y: Int): Boolean = false
 
@@ -83,39 +85,59 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
    * The animation continues until
    *  - the animation is over, and does not cycle (`animation.cycle == false`)
    *  - the component is disposed
-   *  - the zhaba is interrupted by user (see [stop]), and the animation finished its another cycle.
+   *  - the zhaba is interrupted by user (see [stop]).
+   *    If [animation]'s [EduUiOnboardingAnimation.mayBeInterruptedInsideAnimation] == true`, the interruption is immediate.
+   *    Otherwise, the animation continues until the end of the current cycle.
    *
    * @return false if animation has stopped because of the interrupt.
    */
-  suspend fun start(): Boolean {
+  suspend fun start(cs: CoroutineScope): Boolean {
+    val animationJob = cs.launch(Dispatchers.EDT) {
+      runAnimation()
+    }
+
+    this.animationJob = animationJob
+
+    animationJob.join()
+
+    return !animationJob.isCancelled
+  }
+
+  private suspend fun runAnimation() {
     var index = 0
     while (true) {
-      val animation = animation ?: return true
+      val animation = animation ?: return
 
       runStep(index)
 
       index++
       if (index > animation.steps.lastIndex) {
         if (interrupted) {
-          return false
+          throw CancellationException()
         }
 
         if (animation.cycle) {
           index = 0
         }
         else {
-          return true
+          return
         }
       }
     }
   }
 
   /**
-   * Interrupt Zhaba after it finishes the animation cycle.
-   * This makes method [start] return false.
+   * Interrupt Zhaba after. If [animation]'s `mayBeInterruptedInsideCycle == true`, the interruption is immediate.
+   * Otherwise the interruption is after the animation finishes the animation cycle.
+   *
+   * This call makes method [start] return false.
    */
   fun stop() {
     interrupted = true
+
+    if (animation?.mayBeInterruptedInsideAnimation == true) {
+      animationJob?.cancel()
+    }
   }
 
   /**
@@ -174,5 +196,6 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     animation = null
     val frame = WindowManager.getInstance().getFrame(project) ?: return
     frame.layeredPane.remove(this)
+    animationJob?.cancel()
   }
 }
