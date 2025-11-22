@@ -86,6 +86,7 @@ class ZhabaExecutor(
 
       val nextData = nextStep.typed().performStep(project, animationData)
       if (nextData == null) {
+        currentStep = nextStep
         currentTransition = STEP_UNAVAILABLE_TRANSITION
         continue
       }
