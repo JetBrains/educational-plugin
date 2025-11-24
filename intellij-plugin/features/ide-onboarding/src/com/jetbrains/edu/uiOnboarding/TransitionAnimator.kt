@@ -29,8 +29,7 @@ class TransitionAnimator(private val project: Project, private val animationData
       }
 
       currentData is StartZhabaData && nextData is ZhabaDataWithComponent -> {
-        val toPoint = nextData.zhabaPoint
-        BottomToTopAppearance(nextData.zhaba.animation, toPoint)
+        currentData.transitionAnimation(nextData, animationData)
       }
 
       currentData is ZhabaDataWithComponent && nextData is JumpingAwayZhabaData -> {
