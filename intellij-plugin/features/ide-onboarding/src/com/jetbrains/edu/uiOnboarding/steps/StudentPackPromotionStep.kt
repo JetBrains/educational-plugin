@@ -78,5 +78,9 @@ class StudentPackPromotionStep internal constructor() : GotItBalloonStepBase<Got
   override fun onSecondaryButton(graphData: GotItBalloonGraphData): String = SAD_FINISH_TRANSITION
 
   override val stepId: String
-    get() = "promote.student.pack"
+    get() = STEP_ID
+
+  companion object {
+    const val STEP_ID: String = "promote.student.pack"
+  }
 }

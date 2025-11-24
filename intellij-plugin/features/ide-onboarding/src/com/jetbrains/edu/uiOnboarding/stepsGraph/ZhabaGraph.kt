@@ -1,7 +1,6 @@
 package com.jetbrains.edu.uiOnboarding.stepsGraph
 
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
-import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
 import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory
 import com.jetbrains.edu.uiOnboarding.steps.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
@@ -24,6 +23,8 @@ interface ZhabaGraph {
    * Each [ZhabaStep] must have some additional data associated with it, see [ZhabaStep] for the information about this data.
    */
   fun <GD: GraphData> additionalStepData(step: ZhabaStep<*, GD>): GD
+
+  fun findStep(stepId: String): ZhabaStepBase?
 }
 
 /**
@@ -31,17 +32,16 @@ interface ZhabaGraph {
  */
 class ZhabaMainGraph private constructor(
   private val edges: MutableList<Edge> = mutableListOf(),
-  private val stepsData: MutableMap<ZhabaStepBase, GraphData> = mutableMapOf(),
-
-  val initialOnboardingStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(".start.onboarding", NEXT_TRANSITION, StartOnboardingZhabaData),
-  val initialStudentPackPromotionStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(".start.student.pack", NEXT_TRANSITION, StartStudentPackPromotionZhabaData),
+  private val stepsData: MutableMap<ZhabaStepBase, GraphData> = mutableMapOf()
 ): ZhabaGraph {
 
   init {
+    val initialOnboardingStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(STEP_ID_START_ONBOARDING, NEXT_TRANSITION, StartOnboardingZhabaData)
     stepsData[initialOnboardingStep] = GraphData.EMPTY
     val firstOnboardingStep = fillOnboardingGraph()
     edges.add(Edge(initialOnboardingStep, NEXT_TRANSITION, firstOnboardingStep))
 
+    val initialStudentPackPromotionStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(STEP_ID_START_PROMOTE_STUDENT_PACK, NEXT_TRANSITION, StartStudentPackPromotionZhabaData)
     stepsData[initialStudentPackPromotionStep] = GraphData.EMPTY
     val studentPackPromotionStep = fillStudentPackPromotionGraph()
     edges.add(Edge(initialStudentPackPromotionStep, NEXT_TRANSITION, studentPackPromotionStep))
@@ -61,6 +61,10 @@ class ZhabaMainGraph private constructor(
   override fun <GD: GraphData> additionalStepData(step: ZhabaStep<*, GD>): GD {
     @Suppress("UNCHECKED_CAST")
     return stepsData[step] as? GD ?: error("No data for step $step")
+  }
+
+  override fun findStep(stepId: String): ZhabaStepBase? {
+    return stepsData.keys.firstOrNull { it.stepId == stepId }
   }
 
   private fun fillOnboardingGraph(): ZhabaStepBase {
@@ -115,6 +119,12 @@ class ZhabaMainGraph private constructor(
 
   companion object {
 
+    const val STEP_ID_START_ONBOARDING: String = ".start.onboarding"
+    const val STEP_ID_FIRST_ONBOARDING: String = WelcomeStep.STEP_KEY
+
+    const val STEP_ID_START_PROMOTE_STUDENT_PACK: String = ".start.student.pack"
+    const val STEP_ID_FIRST_PROMOTE_STUDENT_PACK: String = StudentPackPromotionStep.STEP_ID
+
     fun create(): ZhabaMainGraph = ZhabaMainGraph()
 
     private fun getDefaultOnboardingStepsOrder(): List<String> {
@@ -123,7 +133,8 @@ class ZhabaMainGraph private constructor(
         TaskDescriptionStep.STEP_KEY,
         CodeEditorStep.STEP_KEY,
         CheckSolutionStep.STEP_KEY,
-        CourseViewStep.STEP_KEY
+        CourseViewStep.STEP_KEY,
+        "run.debug.action"
       )
     }
   }
