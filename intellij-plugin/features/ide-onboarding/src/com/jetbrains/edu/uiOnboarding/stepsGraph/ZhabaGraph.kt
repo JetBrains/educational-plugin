@@ -1,6 +1,7 @@
 package com.jetbrains.edu.uiOnboarding.stepsGraph
 
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
+import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
 import com.jetbrains.edu.uiOnboarding.steps.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.HAPPY_FINISH_TRANSITION
@@ -31,13 +32,18 @@ class ZhabaMainGraph private constructor(
   private val edges: MutableList<Edge> = mutableListOf(),
   private val stepsData: MutableMap<ZhabaStepBase, GraphData> = mutableMapOf(),
 
-  val initialStep: ZhabaStepBase = NoOpStep(".start", NEXT_TRANSITION, StartZhabaData)
+  val initialOnboardingStep: ZhabaStepBase = NoOpStep(".start.onboarding", NEXT_TRANSITION, StartOnboardingZhabaData),
+  val initialStudentPackPromotionStep: ZhabaStepBase = NoOpStep(".start.student.pack", NEXT_TRANSITION, StartStudentPackPromotionZhabaData),
 ): ZhabaGraph {
 
   init {
-    stepsData[initialStep] = GraphData.EMPTY
+    stepsData[initialOnboardingStep] = GraphData.EMPTY
     val firstOnboardingStep = fillOnboardingGraph()
-    edges.add(Edge(initialStep, NEXT_TRANSITION, firstOnboardingStep))
+    edges.add(Edge(initialOnboardingStep, NEXT_TRANSITION, firstOnboardingStep))
+
+    stepsData[initialStudentPackPromotionStep] = GraphData.EMPTY
+    val studentPackPromotionStep = fillStudentPackPromotionGraph()
+    edges.add(Edge(initialStudentPackPromotionStep, NEXT_TRANSITION, studentPackPromotionStep))
   }
 
   private data class Edge(
@@ -45,7 +51,7 @@ class ZhabaMainGraph private constructor(
     val transition: String,
     val toStep: ZhabaStepBase
   )
-  
+
   override fun move(step: ZhabaStepBase, transition: String): ZhabaStepBase? {
     val edge = edges.firstOrNull { it.fromStep == step && it.transition == transition } ?: return null
     return edge.toStep
@@ -91,6 +97,19 @@ class ZhabaMainGraph private constructor(
     }
 
     return firstOnboardingStep
+  }
+
+  private fun fillStudentPackPromotionGraph(): ZhabaStepBase {
+    val studentPackPromotionStep = StudentPackPromotionStep()
+    stepsData[studentPackPromotionStep] = GotItBalloonGraphData(null, 1)
+
+    val sadEnding = NoOpStep(".end.sad.scholar", FINISH_TRANSITION) { JumpingAwayZhabaData(it.scholarSad) }
+    stepsData[sadEnding] = GraphData.EMPTY
+
+    edges.add(Edge(studentPackPromotionStep, RERUN_TRANSITION, studentPackPromotionStep))
+    edges.add(Edge(studentPackPromotionStep, SAD_FINISH_TRANSITION, sadEnding))
+
+    return studentPackPromotionStep
   }
 
   companion object {

@@ -21,4 +21,22 @@ object StartOnboardingZhabaData: StartZhabaData {
     BottomToTopAppearance(nextData.zhaba.animation, nextData.zhabaPoint)
 }
 
+/**
+ * In student pack promotion, the appearance animation consists of two steps:
+ * - the toad appears from bottom to top
+ * - then stays for a while with a smiling face.
+ */
+object StartStudentPackPromotionZhabaData: StartZhabaData {
+  override fun transitionAnimation(nextData: ZhabaDataWithComponent, animationData: EduUiOnboardingAnimationData): EduUiOnboardingAnimation {
+    val toPoint = nextData.zhabaPoint
+
+    val helloToadStep = EduUiOnboardingAnimationStep(animationData.scholarDefault, toPoint, toPoint, 2000)
+    val bottomToTopStep = BottomToTopAppearance.computeStep(helloToadStep, toPoint)
+
+    return object : EduUiOnboardingAnimation {
+      override val steps: List<EduUiOnboardingAnimationStep> = listOf(bottomToTopStep, helloToadStep)
+    }
+  }
+}
+
 data class JumpingAwayZhabaData(val zhabaImage: ZhabaImage) : ZhabaData
