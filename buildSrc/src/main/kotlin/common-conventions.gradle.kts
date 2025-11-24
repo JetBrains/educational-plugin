@@ -63,6 +63,7 @@ tasks {
 
   withType<Test> {
     withProp("excludeTests") { exclude(it) }
+    systemProperty("java.awt.headless", "true")
 
     ignoreFailures = true
     filter {
