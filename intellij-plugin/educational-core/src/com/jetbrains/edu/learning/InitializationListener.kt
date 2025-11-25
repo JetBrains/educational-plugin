@@ -10,8 +10,13 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType.ERROR
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.Anchor
+import com.intellij.openapi.actionSystem.Constraints
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
@@ -25,6 +30,7 @@ import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlMapper
+import org.intellij.lang.annotations.Language
 import org.jetbrains.ide.BuiltInServerManager
 import java.io.File
 
@@ -64,6 +70,8 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isIdeaEducational()) {
       showSwitchFromEduNotification()
     }
+
+    setupEduActionsLocation()
   }
 
   private fun showSwitchFromEduNotification() {
@@ -133,7 +141,80 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       .notify(null)
   }
 
+  /**
+   * Sets up location (groups) for some JetBrains plugin actions in runtime.
+   * Do it in this way because the declarative way via plugin manifest doesn't work well
+   * in cases of custom action groups in IDE UI or overridden existing action groups.
+   */
+  private fun setupEduActionsLocation() {
+    // Rider customizes some of its action groups, so common locations don't work here
+    if (PlatformUtils.isRider()) {
+      val actionManager = ActionManagerEx.getInstanceEx()
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.NewFile",
+        "SolutionViewAddGroup.SolutionSection",
+        Constraints.FIRST
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.FrameworkLesson",
+        "SolutionExplorerPopupMenu",
+        relativeConstraints(Anchor.BEFORE, "RunContextGroupInner")
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.LearnAndTeachFileMenu",
+        "FileMenu",
+        relativeConstraints(Anchor.BEFORE, "RiderFileOpenGroup")
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.Menu",
+        "SolutionExplorerPopupMenu.Edit",
+        Constraints.LAST
+      )
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.Menu",
+        "SolutionExplorerPopupMenu",
+        relativeConstraints(Anchor.AFTER, "Educational.Educator.CourseCreator.FrameworkLesson")
+      )
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.Menu",
+        "FileMenu",
+        relativeConstraints(Anchor.AFTER, "Educational.LearnAndTeachFileMenu")
+      )
+    }
+  }
+
+  private fun ActionManagerEx.addActionToGroup(
+    @Language("devkit-action-id") actionId: String,
+    @Language("devkit-action-id") groupId: String,
+    constraints: Constraints
+  ) {
+    val action = getAction(actionId)
+    if (action == null) {
+      LOG.warn("Action `$actionId` not found")
+      return
+    }
+    val group = getAction(groupId) as? ActionGroup
+    if (group == null) {
+      LOG.warn("Action group `$groupId` not found")
+      return
+    }
+    asActionRuntimeRegistrar().addToGroup(group, action, constraints)
+  }
+
+  private fun relativeConstraints(anchor: Anchor, @Language("devkit-action-id") actionId: String): Constraints {
+    require(anchor == Anchor.BEFORE || anchor == Anchor.AFTER) {
+      "Only `Anchor.BEFORE` and `Anchor.AFTER` make sense for relative constraints"
+    }
+    return Constraints(anchor, actionId)
+  }
+
   companion object {
+    private val LOG = logger<InitializationListener>()
+
     const val RECENT_COURSES_FILLED = "Educational.recentCoursesFilled"
     const val STEPIK_AUTH_RESET = "Educational.stepikOAuthReset"
     private const val SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID = "Edu IDEs aren't supported"
