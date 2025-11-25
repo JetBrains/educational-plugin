@@ -158,12 +158,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       )
 
       actionManager.addActionToGroup(
-        "Educational.Educator.CourseCreator.FrameworkLesson",
-        "SolutionExplorerPopupMenu",
-        relativeConstraints(Anchor.BEFORE, "RunContextGroupInner")
-      )
-
-      actionManager.addActionToGroup(
         "Educational.LearnAndTeachFileMenu",
         "FileMenu",
         relativeConstraints(Anchor.BEFORE, "RiderFileOpenGroup")
@@ -171,18 +165,19 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
 
       actionManager.addActionToGroup(
         "Educational.Educator.CourseCreator.Menu",
-        "SolutionExplorerPopupMenu.Edit",
-        Constraints.LAST
-      )
-      actionManager.addActionToGroup(
-        "Educational.Educator.CourseCreator.Menu",
         "SolutionExplorerPopupMenu",
-        relativeConstraints(Anchor.AFTER, "Educational.Educator.CourseCreator.FrameworkLesson")
+        relativeConstraints(Anchor.BEFORE, "RunContextGroupInner")
       )
       actionManager.addActionToGroup(
         "Educational.Educator.CourseCreator.Menu",
         "FileMenu",
         relativeConstraints(Anchor.AFTER, "Educational.LearnAndTeachFileMenu")
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.FrameworkLesson",
+        "SolutionExplorerPopupMenu",
+        relativeConstraints(Anchor.BEFORE, "Educational.Educator.CourseCreator.Menu")
       )
     }
     else {
@@ -191,12 +186,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
         "Educational.Educator.NewFile",
         "NewGroup",
         Constraints.FIRST
-      )
-
-      actionManager.addActionToGroup(
-        "Educational.Educator.CourseCreator.FrameworkLesson",
-        "ProjectViewPopupMenu",
-        relativeConstraints(Anchor.BEFORE, "Educational.Educator.CourseCreator.Menu")
       )
 
       actionManager.addActionToGroup(
@@ -212,8 +201,14 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       )
       actionManager.addActionToGroup(
         "Educational.Educator.CourseCreator.Menu",
-        "FileMenu",
-        relativeConstraints(Anchor.BEFORE, "FileMainSettingsGroup")
+        "FileOpenGroup",
+        relativeConstraints(Anchor.AFTER, "Educational.LearnAndTeachFileMenu")
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.FrameworkLesson",
+        "ProjectViewPopupMenu",
+        relativeConstraints(Anchor.BEFORE, "Educational.Educator.CourseCreator.Menu")
       )
     }
   }
