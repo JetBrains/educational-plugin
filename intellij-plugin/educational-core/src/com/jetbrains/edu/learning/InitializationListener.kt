@@ -147,10 +147,10 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
    * in cases of custom action groups in IDE UI or overridden existing action groups.
    */
   private fun setupEduActionsLocation() {
+    val actionManager = ActionManagerEx.getInstanceEx()
+
     // Rider customizes some of its action groups, so common locations don't work here
     if (PlatformUtils.isRider()) {
-      val actionManager = ActionManagerEx.getInstanceEx()
-
       actionManager.addActionToGroup(
         "Educational.Educator.NewFile",
         "SolutionViewAddGroup.SolutionSection",
@@ -183,6 +183,37 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
         "Educational.Educator.CourseCreator.Menu",
         "FileMenu",
         relativeConstraints(Anchor.AFTER, "Educational.LearnAndTeachFileMenu")
+      )
+    }
+    else {
+      // For other IDEs, add actions to standard groups programmatically
+      actionManager.addActionToGroup(
+        "Educational.Educator.NewFile",
+        "NewGroup",
+        Constraints.FIRST
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.FrameworkLesson",
+        "ProjectViewPopupMenu",
+        relativeConstraints(Anchor.BEFORE, "Educational.Educator.CourseCreator.Menu")
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.LearnAndTeachFileMenu",
+        "FileOpenGroup",
+        relativeConstraints(Anchor.AFTER, "OpenFile")
+      )
+
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.Menu",
+        "ProjectViewPopupMenu",
+        relativeConstraints(Anchor.BEFORE, "CutCopyPasteGroup")
+      )
+      actionManager.addActionToGroup(
+        "Educational.Educator.CourseCreator.Menu",
+        "FileMenu",
+        relativeConstraints(Anchor.BEFORE, "FileMainSettingsGroup")
       )
     }
   }
