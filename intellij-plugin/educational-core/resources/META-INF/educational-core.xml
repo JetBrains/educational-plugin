@@ -178,7 +178,7 @@
       <action id="Educational.Educator.CreateSection"
               class="com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateSection"/>
       <separator/>
-      <add-to-group group-id="NewGroup" anchor="first"/>
+      <!-- Adding to necessary action groups happens in com.jetbrains.edu.learning.InitializationListener -->
     </group>
 
     <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
@@ -207,7 +207,7 @@
               internal="true">
       </action>
       <separator/>
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="Educational.Educator.CourseCreator.Menu"/>
+      <!-- Adding to necessary action groups happens in com.jetbrains.edu.learning.InitializationListener -->
     </group>
 
     <group id="Educational.Educator.CourseCreator.Menu" popup="true"
@@ -228,8 +228,7 @@
       <reference ref="Educational.Educator.ChangeCourseInfo"/>
       <reference ref="Educational.Educator.CheckAllTasks"/>
       <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchiveAction"/>
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
-      <add-to-group group-id="FileMenu" anchor="before" relative-to-action="FileMainSettingsGroup"/>
+      <!-- Adding to necessary action groups happens in com.jetbrains.edu.learning.InitializationListener -->
     </group>
 
     <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.actions.stepik.ExportStepikIds"/>
@@ -264,7 +263,7 @@
            icon="com.jetbrains.edu.EducationalCoreIcons.Actions.EduCourse">
       <reference ref="Educational.BrowseCourses"/>
       <reference ref="Educational.Educator.NewCourse"/>
-      <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
+      <!-- Adding to necessary action groups happens in com.jetbrains.edu.learning.InitializationListener -->
     </group>
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.LearnMoreAction">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
