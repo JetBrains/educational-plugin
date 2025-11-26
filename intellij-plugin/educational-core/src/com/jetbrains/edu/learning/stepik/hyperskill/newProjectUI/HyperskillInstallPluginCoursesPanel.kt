@@ -21,14 +21,14 @@ class HyperskillInstallPluginCoursesPanel(
   scope: CoroutineScope,
   disposable: Disposable
 ) : CoursesPanel(platformProvider, scope, disposable) {
-  override fun createNoCoursesPanel(): JPanel = object : Wrapper() {
+  override fun createNoCoursesPanel(disposable: Disposable): JPanel = object : Wrapper() {
     init {
       val panel = panel {
         row {
           cell(createTextPanel())
         }
         row {
-          // TODO(Add button)
+          cell(HyperskillInstallPluginInteractivePanel(disposable))
         }
       }.apply {
         border = JBEmptyBorder(JBUI.scale(40))

@@ -72,7 +72,7 @@ abstract class CoursesPanel(
     this.add(createContentPanel(), CONTENT_CARD_NAME)
     this.add(createLoadingPanel(), LOADING_CARD_NAME)
     @Suppress("LeakingThis")
-    this.add(createNoCoursesPanel(), NO_COURSES)
+    this.add(createNoCoursesPanel(disposable), NO_COURSES)
     showProgressState()
   }
 
@@ -82,7 +82,7 @@ abstract class CoursesPanel(
 
   private fun getEmptySearchText(): String = EduCoreBundle.message("course.dialog.search.placeholder")
 
-  open fun createNoCoursesPanel(): JPanel {
+  open fun createNoCoursesPanel(disposable: Disposable): JPanel {
     val emptyTextPanel = JBPanelWithEmptyText()
     setNoCoursesPanelDefaultText(emptyTextPanel)
 

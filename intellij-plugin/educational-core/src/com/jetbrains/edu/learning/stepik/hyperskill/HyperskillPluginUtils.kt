@@ -11,6 +11,10 @@ import com.intellij.ide.plugins.RepositoryHelper
 import com.intellij.ide.plugins.marketplace.MarketplaceRequests
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.asContextElement
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.checkCanceled
@@ -30,54 +34,56 @@ private val hyperskillPluginId: PluginId
  * Copied from [com.intellij.openapi.wm.impl.welcomeScreen.learnIde.jbAcademy.InstallJBAcademyTask.install]
  */
 @Suppress("removal", "DEPRECATION", "UsagesOfObsoleteApi")
-suspend fun installAndEnableHyperskillPlugin(): Unit = reportSequentialProgress { reporter ->
-  val descriptors = reporter.nextStep(endFraction = 20) {
-    val marketplacePlugins = MarketplaceRequests.loadLastCompatiblePluginDescriptors(setOf(hyperskillPluginId))
-    val customPlugins = coroutineToIndicator {
-      val indicator = ProgressManager.getGlobalProgressIndicator()
-      RepositoryHelper.loadPluginsFromCustomRepositories(indicator)
+suspend fun installAndEnableHyperskillPlugin(modalityContext: CoroutineContext = ModalityState.defaultModalityState().asContextElement()) {
+  reportSequentialProgress { reporter ->
+    val descriptors = reporter.nextStep(endFraction = 20) {
+      val marketplacePlugins = MarketplaceRequests.loadLastCompatiblePluginDescriptors(setOf(hyperskillPluginId))
+      val customPlugins = coroutineToIndicator {
+        val indicator = ProgressManager.getGlobalProgressIndicator()
+        RepositoryHelper.loadPluginsFromCustomRepositories(indicator)
+      }
+      val descriptors: MutableList<IdeaPluginDescriptor> =
+        RepositoryHelper.mergePluginsFromRepositories(marketplacePlugins, customPlugins, true).toMutableList()
+      PluginManagerCore.plugins.filterTo(descriptors) {
+        !it.isEnabled && PluginManagerCore.isCompatible(it) && PluginManagementPolicy.getInstance().canInstallPlugin(it)
+      }
+      checkCanceled()
+      descriptors
     }
-    val descriptors: MutableList<IdeaPluginDescriptor> =
-      RepositoryHelper.mergePluginsFromRepositories(marketplacePlugins, customPlugins, true).toMutableList()
-    PluginManagerCore.plugins.filterTo(descriptors) {
-      !it.isEnabled && PluginManagerCore.isCompatible(it) && PluginManagementPolicy.getInstance().canInstallPlugin(it)
+
+    val plugins: List<PluginNode> = reporter.nextStep(endFraction = 40) {
+      val downloader = PluginDownloader.createDownloader(descriptors.first())
+      val nodes = mutableListOf<PluginNode>()
+      val plugin = downloader.descriptor
+      if (plugin.isEnabled) {
+        nodes.add(downloader.toPluginNode())
+      }
+      PluginEnabler.HEADLESS.enable(listOf(plugin))
+      checkCanceled()
+      nodes
     }
-    checkCanceled()
-    descriptors
-  }
 
-  val plugins: List<PluginNode> = reporter.nextStep(endFraction = 40) {
-    val downloader = PluginDownloader.createDownloader(descriptors.first())
-    val nodes = mutableListOf<PluginNode>()
-    val plugin = downloader.descriptor
-    if (plugin.isEnabled) {
-      nodes.add(downloader.toPluginNode())
+    if (plugins.isEmpty()) return
+
+    val operation = reporter.nextStep(endFraction = 80) {
+      coroutineToIndicator {
+        val indicator = ProgressManager.getGlobalProgressIndicator()
+        val operation = PluginInstallOperation(plugins, emptyList(), PluginEnabler.HEADLESS, indicator)
+        indicator.checkCanceled()
+        operation.setAllowInstallWithoutRestart(true)
+        operation.run()
+        operation
+      }
     }
-    PluginEnabler.HEADLESS.enable(listOf(plugin))
-    checkCanceled()
-    nodes
-  }
 
-  if (plugins.isEmpty()) return
+    if (!operation.isSuccess) return
 
-  val operation = reporter.nextStep(endFraction = 80) {
-    coroutineToIndicator {
-      val indicator = ProgressManager.getGlobalProgressIndicator()
-      val operation = PluginInstallOperation(plugins, emptyList(), PluginEnabler.HEADLESS, indicator)
-      indicator.checkCanceled()
-      operation.setAllowInstallWithoutRestart(true)
-      operation.run()
-      operation
-    }
-  }
-
-  if (!operation.isSuccess) return
-
-  reporter.nextStep(endFraction = 100) {
-    withContext(Dispatchers.EDT) {
-      for ((file, pluginDescriptor) in operation.pendingDynamicPluginInstalls) {
-        checkCanceled()
-        PluginInstaller.installAndLoadDynamicPlugin(file, pluginDescriptor)
+    reporter.nextStep(endFraction = 100) {
+      withContext(Dispatchers.EDT + modalityContext) {
+        for ((file, pluginDescriptor) in operation.pendingDynamicPluginInstalls) {
+          checkCanceled()
+          PluginInstaller.installAndLoadDynamicPlugin(file, pluginDescriptor)
+        }
       }
     }
   }
