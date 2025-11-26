@@ -6,7 +6,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -28,7 +27,6 @@ class NewHyperskillCourseAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = false
     if (!isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)) return
-    if (RemoteEnvHelper.isRemoteDevServer()) return
     e.presentation.isEnabledAndVisible = true
   }
 

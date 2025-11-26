@@ -13,7 +13,6 @@ import com.intellij.ui.HyperlinkAdapter
 import com.intellij.ui.components.AnActionLink
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
@@ -35,7 +34,7 @@ class HyperskillProjectAction : DumbAwareAction(EduCoreBundle.message("hyperskil
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable() && !RemoteEnvHelper.isRemoteDevServer()
+    e.presentation.isEnabledAndVisible = isHyperskillSupportAvailable()
   }
 
   override fun actionPerformed(e: AnActionEvent) {

@@ -157,7 +157,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     val needToShowNotification = needToShowUpdateNotification(futures.values)
     runInEdt {
       if (project.isDisposed) return@runInEdt
-      if (needToShowNotification && !RemoteEnvHelper.isRemoteDevServer() ) {
+      if (needToShowNotification) {
         // Suppression is needed here because DialogTitleCapitalization is demanded by the superclass constructor,
         // but the plugin naming with the capital letters used in the notification title
         @Suppress("DialogTitleCapitalization")

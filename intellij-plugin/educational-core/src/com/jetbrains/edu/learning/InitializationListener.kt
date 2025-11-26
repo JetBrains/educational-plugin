@@ -61,7 +61,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     }
 
     @Suppress("UnstableApiUsage", "DEPRECATION")
-    if (!RemoteEnvHelper.isRemoteDevServer() && (PlatformUtils.isPyCharmEducational() || PlatformUtils.isIdeaEducational())) {
+    if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isIdeaEducational()) {
       showSwitchFromEduNotification()
     }
   }

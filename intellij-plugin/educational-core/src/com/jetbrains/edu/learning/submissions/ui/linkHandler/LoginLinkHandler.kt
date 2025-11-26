@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.submissions.ui.linkHandler
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab.Companion.SUBMISSION_PROTOCOL
@@ -27,12 +26,10 @@ class LoginLinkHandler(
   companion object {
     private const val SUBMISSION_LOGIN_URL = "${SUBMISSION_PROTOCOL}login/"
 
-    fun getLoginText(): String = if (!RemoteEnvHelper.isRemoteDevServer()) {
-      "<a $textStyleHeader;color:#${ColorUtil.toHex(EduColors.hyperlinkColor)} href=$SUBMISSION_LOGIN_URL>" +
-      EduCoreBundle.message("submissions.tab.login") + "</a>"
-    }
-    else {
-      EduCoreBundle.message("submissions.wait.user.data.being.retrieved")
+    fun getLoginText(): String {
+      val hyperlinkColor = ColorUtil.toHex(EduColors.hyperlinkColor)
+      val linkText = EduCoreBundle.message("submissions.tab.login")
+      return "<a $textStyleHeader;color:#$hyperlinkColor href=$SUBMISSION_LOGIN_URL>$linkText</a>"
     }
   }
 }

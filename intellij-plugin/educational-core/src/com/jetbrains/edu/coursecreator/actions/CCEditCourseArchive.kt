@@ -9,16 +9,11 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 
 class CCEditCourseArchive : DumbAwareAction() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
-  }
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)

@@ -7,7 +7,6 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.authUtils.Account
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -35,8 +34,6 @@ abstract class LoginOptions<T : Account<out UserInfo>> : OptionsProvider {
   protected abstract fun createAuthorizeListener(): HyperlinkAdapter
 
   protected abstract fun createLogOutListener(): HyperlinkAdapter?
-
-  override fun isAvailable(): Boolean = !RemoteEnvHelper.isRemoteDevServer()
 
   private fun initUI() {
     val additionalComponents = getAdditionalComponents()

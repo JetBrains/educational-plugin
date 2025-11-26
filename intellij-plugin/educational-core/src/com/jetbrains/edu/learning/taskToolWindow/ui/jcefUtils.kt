@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.ui.jcef.JBCefBrowser
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -19,12 +18,8 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.ChoiceTa
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.SortingBasedTaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TableTaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TaskQueryManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.ChoiceTaskResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.*
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.INTELLIJ_ICON_QUICKFIX_OFF_BULB
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TableTaskResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TaskToolWindowBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
 import com.jetbrains.edu.learning.xmlEscaped
@@ -98,12 +93,7 @@ fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: St
     return String.format(HINT_BLOCK_TEMPLATE, escapedHintTitle, displayedHintNumber, hintText)
   }
 
-  val bulbIcon = if (!RemoteEnvHelper.isRemoteDevServer()) {
-    StyleResourcesManager.resourceUrl(INTELLIJ_ICON_QUICKFIX_OFF_BULB)
-  }
-  else {
-    "https://intellij-icons.jetbrains.design/icons/AllIcons/expui/codeInsight/quickfixOffBulb.svg"
-  }
+  val bulbIcon = StyleResourcesManager.resourceUrl(INTELLIJ_ICON_QUICKFIX_OFF_BULB)
   val bulbIconWithTheme = if (!isUnitTestMode) getIconPath(bulbIcon) else ""
 
   val study = course.isStudy

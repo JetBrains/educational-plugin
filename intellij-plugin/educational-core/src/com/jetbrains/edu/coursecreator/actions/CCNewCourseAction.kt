@@ -6,7 +6,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.NlsContexts
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.ContextHelpProvider
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -37,10 +36,6 @@ class CCNewCourseAction(
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
-  }
 
   companion object {
     @NonNls

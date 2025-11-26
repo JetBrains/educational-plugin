@@ -7,7 +7,6 @@ import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
 import com.jetbrains.edu.learning.EduExperimentalFeatures
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.settings.OptionsProvider
@@ -21,8 +20,6 @@ private const val HTML = "Html"
 private const val MARKDOWN = "Markdown"
 
 class CCOptions : BoundConfigurable(EduCoreBundle.message("ccoptions.display.name")), OptionsProvider {
-
-  override fun isAvailable(): Boolean = !RemoteEnvHelper.isRemoteDevServer()
 
   override fun createPanel(): DialogPanel {
     val settings = CCSettings.getInstance()

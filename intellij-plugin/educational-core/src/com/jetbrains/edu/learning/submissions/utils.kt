@@ -12,7 +12,6 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.icons.CachedImageIcon
 import com.intellij.util.Time
 import com.jetbrains.edu.EducationalCoreIcons.Submission.*
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.JSON_FORMAT_VERSION
@@ -89,10 +88,7 @@ internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
 fun formatDate(time: Date): String {
   val calendar = GregorianCalendar()
   calendar.time = time
-  val forceShowInUTC = RemoteEnvHelper.isRemoteDevServer()
-  val timeStyle = if (forceShowInUTC) DateFormat.LONG else DateFormat.MEDIUM
-  val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, timeStyle, Locale.getDefault())
-  if (forceShowInUTC) formatter.timeZone = TimeZone.getTimeZone("UTC")
+  val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault())
   return formatter.format(calendar.time).replace("UTC", "(UTC)")
 }
 

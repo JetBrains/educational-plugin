@@ -17,7 +17,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtilsKt
-import com.jetbrains.edu.learning.RemoteEnvHelper
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -30,10 +29,6 @@ import java.awt.Component
 class ImportLocalCourseAction : DumbAwareAction() {
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-  override fun update(e: AnActionEvent) {
-    e.presentation.isEnabledAndVisible = !RemoteEnvHelper.isRemoteDevServer()
-  }
 
   override fun actionPerformed(e: AnActionEvent) {
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
