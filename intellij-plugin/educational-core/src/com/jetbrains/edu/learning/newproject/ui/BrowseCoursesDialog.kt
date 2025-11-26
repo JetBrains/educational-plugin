@@ -36,6 +36,7 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     Disposer.register(disposable) { job.cancel() }
     setupPluginListeners(disposable)
     panel.loadCourses()
+    instance = this
   }
 
   override fun createCenterPanel(): JComponent = panel
@@ -72,7 +73,16 @@ class BrowseCoursesDialog : OpenCourseDialogBase(), CoroutineScope {
     DisabledPluginsState.addDisablePluginListener(disablePluginListener)
   }
 
+  override fun dispose() {
+    super.dispose()
+    instance = null
+  }
+
   companion object {
+    private var instance: BrowseCoursesDialog? = null
+
+    fun getInstance(): BrowseCoursesDialog? = instance
+
     @NonNls
     const val ACTION_PLACE = "COURSE_SELECTION_DIALOG"
   }
