@@ -89,8 +89,6 @@ dependencies {
     pluginComposedModule(implementation(project("features:ai-hints-python")))
     pluginComposedModule(implementation(project("features:ai-test-generation")))
     pluginComposedModule(implementation(project("features:ide-onboarding")))
-    // BACKCOMPAT: Temporarily exclude since 2025.2 as it doesn't compile
-    // pluginComposedModule(implementation(project("features:remote-env")))
     pluginComposedModule(implementation(project("features:social-media")))
     pluginComposedModule(implementation(project("localization")))
 

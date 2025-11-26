@@ -44,11 +44,6 @@ include(
   "intellij-plugin:features:social-media",
 )
 
-// BACKCOMPAT: Temporarily exclude for 2025.2 as it doesn't compile
-if (settings.providers.gradleProperty("environmentName").get().toInt() < 252) {
-  include("intellij-plugin:features:remote-env")
-}
-
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
   include("fleet-plugin")
 }

@@ -61,7 +61,6 @@ val Project.javaScriptPlugin: String get() = "JavaScript"
 val Project.nodeJsPlugin: String get() = "NodeJS"
 val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
-val Project.codeWithMePlugin: String get() = "com.jetbrains.codeWithMe"
 val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 
