@@ -27,12 +27,24 @@ import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
+import com.intellij.openapi.wm.WelcomeScreenLeftPanel
+import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
+import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen
+import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen.DefaultWelcomeScreenTab
+import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame
 import com.intellij.platform.ide.CoreUiCoroutineScopeHolder
 import com.intellij.platform.util.progress.reportSequentialProgress
+import com.intellij.ui.components.JBLabel
+import com.intellij.util.containers.TreeTraversal
+import com.intellij.util.ui.tree.TreeUtil
+import com.intellij.util.ui.tree.TreeUtil.invalidateCacheAndRepaint
 import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.swing.JTree
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.TreeNode
 import kotlin.coroutines.CoroutineContext
 
 private const val HYPERSKILL_PLUGIN_ID: String = "org.hyperskill.academy"
@@ -115,6 +127,37 @@ fun closeDialogAndOpenHyperskillBrowseCourses(modalityContext: CoroutineContext)
   service<CoreUiCoroutineScopeHolder>().coroutineScope.launch(Dispatchers.EDT + modalityContext) {
     BrowseCoursesDialog.getInstance()?.close()
 
+    val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
+    val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
+
+    if (tabbedWelcomeScreen == null) {
+      openHyperskillBrowseCoursesAction()
+      return@launch
+    }
+
+    refreshWelcomeScreen(tabbedWelcomeScreen)
+    navigateToHyperskillAcademyTab()
+  }
+}
+
+private fun refreshWelcomeScreen(tabbedWelcomeScreen: TabbedWelcomeScreen) {
+  tabbedWelcomeScreen.loadTabs()
+
+  (tabbedWelcomeScreen.leftPanel?.component as? JTree)?.apply {
+    updateUI()
+    revalidate()
+    invalidateCacheAndRepaint(ui)
+  }
+}
+
+private fun navigateToHyperskillAcademyTab() {
+  val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
+  val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
+  val hyperskillTab = tabbedWelcomeScreen?.findTabByTitle("Hyperskill Academy")
+  if (hyperskillTab != null) {
+    tabbedWelcomeScreen.selectTab(hyperskillTab)
+  }
+  else {
     openHyperskillBrowseCoursesAction()
   }
 }
@@ -130,5 +173,39 @@ private fun openHyperskillBrowseCoursesAction() {
   }
   ActionUtil.performAction(action, event)
 }
+
+private fun TabbedWelcomeScreen.findTabByTitle(title: String): DefaultWelcomeScreenTab? {
+  val root = leftPanel?.root ?: return null
+
+  val targetNode = TreeUtil.treeNodeTraverser(root).traverse(TreeTraversal.POST_ORDER_DFS).find { node: TreeNode? ->
+    if (node is DefaultMutableTreeNode) {
+      val currentTab = node.userObject
+      if (currentTab is DefaultWelcomeScreenTab && currentTab.title == title) {
+        return@find true
+      }
+    }
+    false
+  }
+
+  return (targetNode as? DefaultMutableTreeNode)?.userObject as? DefaultWelcomeScreenTab
+}
+
+private val TabbedWelcomeScreen.leftPanel: WelcomeScreenLeftPanel?
+  get() = getPrivateField("myLeftSidebar")
+
+private val WelcomeScreenLeftPanel.root: DefaultMutableTreeNode?
+  get() = getPrivateField("root")
+
+private val DefaultWelcomeScreenTab.title: String?
+  get() {
+    val label = runCatching {
+      javaClass.superclass.getDeclaredField("myLabel").apply { isAccessible = true }.get(this) as? JBLabel
+    }.getOrNull()
+    return label?.text
+  }
+
+private inline fun <reified T> Any.getPrivateField(fieldName: String): T? = runCatching {
+  javaClass.getDeclaredField(fieldName).apply { isAccessible = true }.get(this) as? T
+}.getOrNull()
 
 private val LOG: Logger = Logger.getInstance("HyperskillPluginUtils")
