@@ -42,7 +42,7 @@ class HyperskillCoursesPanel(
     super.updateModelAfterCourseDeletedFromStorage(deletedCourse)
   }
 
-  override fun createNoCoursesPanel(): JPanel = if (isLoggedIn()) {
+  override fun createNoCoursesPanel(disposable: Disposable): JPanel = if (isLoggedIn()) {
     HyperskillSelectTrackPanel()
   }
   else {
