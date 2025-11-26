@@ -26,13 +26,27 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
+import com.intellij.openapi.wm.WelcomeScreenLeftPanel
+import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
+import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen
+import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen.DefaultWelcomeScreenTab
+import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame
 import com.intellij.platform.ide.CoreUiCoroutineScopeHolder
 import com.intellij.platform.util.progress.reportSequentialProgress
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
+import com.intellij.ui.components.JBLabel
+import com.intellij.util.containers.TreeTraversal
+import com.intellij.util.ui.tree.TreeUtil
+import com.intellij.util.ui.tree.TreeUtil.invalidateCacheAndRepaint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.VisibleForTesting
+import javax.swing.JPanel
+import javax.swing.JTree
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.TreeNode
 import kotlin.coroutines.CoroutineContext
 
 private const val HYPERSKILL_PLUGIN_ID: String = "org.hyperskill.academy"
@@ -111,10 +125,41 @@ var Project.isHyperskillProject: Boolean
 
 private const val IS_HYPERSKILL_COURSE_PROPERTY: String = "edu.course.is.hyperskill"
 
-fun closeDialogAndOpenHyperskillBrowseCourses(modalityContext: CoroutineContext) {
+fun closeDialogAndOpenHyperskillBrowseCourses(dialogPanel: JPanel, modalityContext: CoroutineContext) {
   service<CoreUiCoroutineScopeHolder>().coroutineScope.launch(Dispatchers.EDT + modalityContext) {
-    BrowseCoursesDialog.getInstance()?.close()
+    DialogWrapper.findInstance(dialogPanel)?.close(DialogWrapper.OK_EXIT_CODE)
 
+    val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
+    val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
+
+    if (tabbedWelcomeScreen == null) {
+      openHyperskillBrowseCoursesAction()
+      return@launch
+    }
+
+    refreshWelcomeScreen(tabbedWelcomeScreen)
+    navigateToHyperskillAcademyTab()
+  }
+}
+
+private fun refreshWelcomeScreen(tabbedWelcomeScreen: TabbedWelcomeScreen) {
+  tabbedWelcomeScreen.loadTabs()
+
+  (tabbedWelcomeScreen.leftPanel?.component as? JTree)?.apply {
+    updateUI()
+    revalidate()
+    invalidateCacheAndRepaint(ui)
+  }
+}
+
+private fun navigateToHyperskillAcademyTab() {
+  val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
+  val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
+  val hyperskillTab = tabbedWelcomeScreen?.findTabByTitle("Hyperskill Academy")
+  if (hyperskillTab != null) {
+    tabbedWelcomeScreen.selectTab(hyperskillTab)
+  }
+  else {
     openHyperskillBrowseCoursesAction()
   }
 }
@@ -130,5 +175,37 @@ private fun openHyperskillBrowseCoursesAction() {
   }
   ActionUtil.performAction(action, event)
 }
+
+private fun TabbedWelcomeScreen.findTabByTitle(title: String): DefaultWelcomeScreenTab? {
+  val root = leftPanel?.root ?: return null
+
+  val targetNode = TreeUtil.treeNodeTraverser(root).traverse(TreeTraversal.POST_ORDER_DFS).find { node: TreeNode? ->
+    if (node is DefaultMutableTreeNode) {
+      val currentTab = node.userObject
+      if (currentTab is DefaultWelcomeScreenTab && currentTab.title == title) {
+        return@find true
+      }
+    }
+    false
+  }
+
+  return (targetNode as? DefaultMutableTreeNode)?.userObject as? DefaultWelcomeScreenTab
+}
+
+@get:VisibleForTesting
+val TabbedWelcomeScreen.leftPanel: WelcomeScreenLeftPanel?
+  get() = getPrivateField("myLeftSidebar")
+
+@get:VisibleForTesting
+val WelcomeScreenLeftPanel.root: DefaultMutableTreeNode?
+  get() = getPrivateField("root")
+
+@get:VisibleForTesting
+val DefaultWelcomeScreenTab.title: String?
+  get() = getPrivateField<JBLabel>("myLabel", javaClass.superclass)?.text
+
+private inline fun <reified T> Any.getPrivateField(fieldName: String, clazz: Class<*> = javaClass): T? = runCatching {
+  clazz.getDeclaredField(fieldName).apply { isAccessible = true }.get(this) as? T
+}.getOrNull()
 
 private val LOG: Logger = Logger.getInstance("HyperskillPluginUtils")
