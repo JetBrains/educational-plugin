@@ -72,7 +72,7 @@ class HyperskillStartupActivity : StartupActivity {
 
   companion object {
     private const val NEW_HYPERSKILL_PLUGIN_NOTIFICATION_KEY = "edu.new.hyperskill.plugin.notification"
-    private const val NEW_HYPERSKILL_PLUGIN_INFO_LINK = "https://jb.gg/academy/hyperskill/plugin"
+    const val NEW_HYPERSKILL_PLUGIN_INFO_LINK = "https://jb.gg/academy/hyperskill/plugin"
 
     fun synchronizeTopics(project: Project, hyperskillCourse: HyperskillCourse) {
       ApplicationManager.getApplication().executeOnPooledThread {
