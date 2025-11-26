@@ -513,6 +513,8 @@
                                     implementation="com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProviderFactory"/>
     <coursesPlatformProviderFactory id="Coursera" order="after Marketplace"
                                     implementation="com.jetbrains.edu.learning.coursera.CourseraPlatformProviderFactory"/>
+    <coursesPlatformProviderFactory id="Hyperskill" order="after Coursera"
+                                    implementation="com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillInstallPluginPlatformProviderFactory"/>
 
 
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
