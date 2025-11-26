@@ -17,6 +17,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.installAndEnableHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.needInstallHyperskillPlugin
+import com.jetbrains.edu.learning.stepik.hyperskill.closeDialogAndOpenHyperskillBrowseCourses
 import com.jetbrains.edu.learning.ui.isDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -52,7 +53,7 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
     add(installButton, INSTALL_BUTTON_ID)
 
     val openButton = createButtonPanel(EduCoreBundle.message("hyperskill.new.plugin.courses.panel.open.hyperskill.academy.button.text"), false) {
-      //TODO(close dialog and open hyperskill browse courses)
+      closeDialogAndOpenHyperskillBrowseCourses(this, modalityContext)
     }
     add(openButton, OPEN_BUTTON_ID)
 
@@ -81,7 +82,7 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
         progressPipe.collectProgressUpdates { installAndEnableHyperskillPlugin(modalityContext) }
       } finally {
         progressUpdater.cancel()
-        //TODO(close dialog and open hyperskill browse courses)
+        closeDialogAndOpenHyperskillBrowseCourses(this@HyperskillInstallPluginInteractivePanel, modalityContext)
       }
     }
   }
