@@ -10,6 +10,12 @@ import com.intellij.ide.plugins.PluginNode
 import com.intellij.ide.plugins.RepositoryHelper
 import com.intellij.ide.plugins.marketplace.MarketplaceRequests
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.ActionUiKind
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
@@ -21,9 +27,13 @@ import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
+import com.intellij.platform.ide.CoreUiCoroutineScopeHolder
 import com.intellij.platform.util.progress.reportSequentialProgress
+import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 private const val HYPERSKILL_PLUGIN_ID: String = "org.hyperskill.academy"
 
@@ -100,3 +110,25 @@ var Project.isHyperskillProject: Boolean
   }
 
 private const val IS_HYPERSKILL_COURSE_PROPERTY: String = "edu.course.is.hyperskill"
+
+fun closeDialogAndOpenHyperskillBrowseCourses(modalityContext: CoroutineContext) {
+  service<CoreUiCoroutineScopeHolder>().coroutineScope.launch(Dispatchers.EDT + modalityContext) {
+    BrowseCoursesDialog.getInstance()?.close()
+
+    openHyperskillBrowseCoursesAction()
+  }
+}
+
+private const val HYPERSKILL_BROWSE_COURSES_ACTION_ID: String = "HyperskillEducational.BrowseCourses"
+
+private fun openHyperskillBrowseCoursesAction() {
+  val event = AnActionEvent.createEvent(DataContext.EMPTY_CONTEXT, null, ActionPlaces.WELCOME_SCREEN, ActionUiKind.NONE, null)
+  val action = ActionManager.getInstance().getAction(HYPERSKILL_BROWSE_COURSES_ACTION_ID)
+  if (action == null) {
+    LOG.error("Cannot find browse courses action by id: $HYPERSKILL_BROWSE_COURSES_ACTION_ID")
+    return
+  }
+  ActionUtil.performAction(action, event)
+}
+
+private val LOG: Logger = Logger.getInstance("HyperskillPluginUtils")
