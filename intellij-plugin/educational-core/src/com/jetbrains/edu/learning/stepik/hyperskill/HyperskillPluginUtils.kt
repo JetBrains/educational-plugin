@@ -42,6 +42,7 @@ import com.intellij.util.ui.tree.TreeUtil.invalidateCacheAndRepaint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.VisibleForTesting
 import javax.swing.JPanel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
@@ -191,22 +192,20 @@ private fun TabbedWelcomeScreen.findTabByTitle(title: String): DefaultWelcomeScr
   return (targetNode as? DefaultMutableTreeNode)?.userObject as? DefaultWelcomeScreenTab
 }
 
-private val TabbedWelcomeScreen.leftPanel: WelcomeScreenLeftPanel?
+@get:VisibleForTesting
+val TabbedWelcomeScreen.leftPanel: WelcomeScreenLeftPanel?
   get() = getPrivateField("myLeftSidebar")
 
-private val WelcomeScreenLeftPanel.root: DefaultMutableTreeNode?
+@get:VisibleForTesting
+val WelcomeScreenLeftPanel.root: DefaultMutableTreeNode?
   get() = getPrivateField("root")
 
-private val DefaultWelcomeScreenTab.title: String?
-  get() {
-    val label = runCatching {
-      javaClass.superclass.getDeclaredField("myLabel").apply { isAccessible = true }.get(this) as? JBLabel
-    }.getOrNull()
-    return label?.text
-  }
+@get:VisibleForTesting
+val DefaultWelcomeScreenTab.title: String?
+  get() = getPrivateField<JBLabel>("myLabel", javaClass.superclass)?.text
 
-private inline fun <reified T> Any.getPrivateField(fieldName: String): T? = runCatching {
-  javaClass.getDeclaredField(fieldName).apply { isAccessible = true }.get(this) as? T
+private inline fun <reified T> Any.getPrivateField(fieldName: String, clazz: Class<*> = javaClass): T? = runCatching {
+  clazz.getDeclaredField(fieldName).apply { isAccessible = true }.get(this) as? T
 }.getOrNull()
 
 private val LOG: Logger = Logger.getInstance("HyperskillPluginUtils")
