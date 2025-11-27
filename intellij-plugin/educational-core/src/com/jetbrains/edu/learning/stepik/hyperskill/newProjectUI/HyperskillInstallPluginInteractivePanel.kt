@@ -53,7 +53,7 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
     add(installButton, INSTALL_BUTTON_ID)
 
     val openButton = createButtonPanel(EduCoreBundle.message("hyperskill.new.plugin.courses.panel.open.hyperskill.academy.button.text"), false) {
-      closeDialogAndOpenHyperskillBrowseCourses(modalityContext)
+      closeDialogAndOpenHyperskillBrowseCourses(this, modalityContext)
     }
     add(openButton, OPEN_BUTTON_ID)
 
@@ -82,7 +82,7 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
         progressPipe.collectProgressUpdates { installAndEnableHyperskillPlugin(modalityContext) }
       } finally {
         progressUpdater.cancel()
-        closeDialogAndOpenHyperskillBrowseCourses(modalityContext)
+        closeDialogAndOpenHyperskillBrowseCourses(this@HyperskillInstallPluginInteractivePanel, modalityContext)
       }
     }
   }

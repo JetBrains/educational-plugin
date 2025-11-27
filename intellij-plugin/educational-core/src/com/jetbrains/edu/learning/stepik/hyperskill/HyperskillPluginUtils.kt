@@ -26,6 +26,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.wm.WelcomeScreenLeftPanel
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
@@ -38,10 +39,10 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.containers.TreeTraversal
 import com.intellij.util.ui.tree.TreeUtil
 import com.intellij.util.ui.tree.TreeUtil.invalidateCacheAndRepaint
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.swing.JPanel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.TreeNode
@@ -123,9 +124,9 @@ var Project.isHyperskillProject: Boolean
 
 private const val IS_HYPERSKILL_COURSE_PROPERTY: String = "edu.course.is.hyperskill"
 
-fun closeDialogAndOpenHyperskillBrowseCourses(modalityContext: CoroutineContext) {
+fun closeDialogAndOpenHyperskillBrowseCourses(dialogPanel: JPanel, modalityContext: CoroutineContext) {
   service<CoreUiCoroutineScopeHolder>().coroutineScope.launch(Dispatchers.EDT + modalityContext) {
-    BrowseCoursesDialog.getInstance()?.close()
+    DialogWrapper.findInstance(dialogPanel)?.close(DialogWrapper.OK_EXIT_CODE)
 
     val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
     val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
