@@ -3,6 +3,7 @@ package com.jetbrains.edu.uiOnboarding
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.awt.RelativePoint
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.zhabaScale
 import com.jetbrains.edu.uiOnboarding.stepsGraph.JumpingAwayZhabaData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.StartZhabaData
@@ -64,7 +65,7 @@ object TransitionAnimator {
       return ShortStep(animationData, fromPoint, toPoint, localFromPoint, localToPoint)
     }
 
-    val longEnoughForSideJump = zhabaScale(10)
+    val longEnoughForSideJump = ZHABA_DIMENSION.width / 3
     return when {
       localFromPoint.x + longEnoughForSideJump < localToPoint.x -> JumpRight(animationData, fromPoint, toPoint)
       localFromPoint.x - longEnoughForSideJump > localToPoint.x -> JumpLeft(animationData, fromPoint, toPoint)
