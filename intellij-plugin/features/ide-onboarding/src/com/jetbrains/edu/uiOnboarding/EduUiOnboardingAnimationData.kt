@@ -73,7 +73,7 @@ class EduUiOnboardingAnimationData private constructor(
           ZhabaImage.load("jump-right-2", 16, 80),
           ZhabaImage.load("jump-left-1"),
           ZhabaImage.load("jump-left-2", 0, 100),
-          ZhabaImage.load("jump-down", 0, 100),
+          ZhabaImage.load("jump-down", 0, 60),
           ZhabaImage.load("jump-up", 0, 60),
           ZhabaImage.load("look-forward"),
           ZhabaImage.load("look-up"),
