@@ -169,7 +169,8 @@ private fun openHyperskillBrowseCoursesAction() {
   ActionUtil.performAction(action, event)
 }
 
-private fun TabbedWelcomeScreen.findTabByTitle(title: String): DefaultWelcomeScreenTab? {
+@VisibleForTesting
+fun TabbedWelcomeScreen.findTabByTitle(title: String): DefaultWelcomeScreenTab? {
   val root = leftPanel?.root ?: return null
 
   val targetNode = TreeUtil.treeNodeTraverser(root).traverse(TreeTraversal.POST_ORDER_DFS).find { node: TreeNode? ->
