@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.components.service
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.NlsContexts
 import com.intellij.platform.ide.CoreUiCoroutineScopeHolder
 import com.intellij.platform.util.coroutines.flow.throttle
 import com.intellij.platform.util.progress.createProgressPipe
@@ -47,20 +46,27 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
 
     layout = CardLayout()
 
-    val installButton = createButtonPanel(EduCoreBundle.message("hyperskill.new.plugin.courses.panel.install.button.text"), true) {
-      doInstall()
+    val buttonText = if (needInstallHyperskillPlugin()) {
+      EduCoreBundle.message("hyperskill.new.plugin.courses.panel.install.button.text")
     }
-    add(installButton, INSTALL_BUTTON_ID)
+    else {
+      EduCoreBundle.message("hyperskill.new.plugin.courses.panel.open.hyperskill.academy.button.text")
+    }
 
-    val openButton = createButtonPanel(EduCoreBundle.message("hyperskill.new.plugin.courses.panel.open.hyperskill.academy.button.text"), false) {
-      closeDialogAndOpenHyperskillBrowseCourses(this, modalityContext)
+    val button = panel {
+      row {
+        button(buttonText) { doButtonAction() }.applyToComponent {
+          isDefault = true
+        }
+      }
     }
-    add(openButton, OPEN_BUTTON_ID)
+
+    add(button, BUTTON_ID)
 
     progressBarPanel = ProgressBarPanel(CancelPluginActionListener())
     add(progressBarPanel, PROGRESS_BAR_ID)
 
-    showButtonAndUpdateText()
+    showButton()
   }
 
   private fun doInstall() {
@@ -80,39 +86,29 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
 
       try {
         progressPipe.collectProgressUpdates { installAndEnableHyperskillPlugin(modalityContext) }
-      } finally {
+      }
+      finally {
         progressUpdater.cancel()
         closeDialogAndOpenHyperskillBrowseCourses(this@HyperskillInstallPluginInteractivePanel, modalityContext)
       }
     }
   }
 
-  private fun createButtonPanel(
-    @NlsContexts.Button text: String,
-    isDefaultButton: Boolean,
-    action: () -> Unit
-  ): JPanel {
-    return panel {
-      row {
-        button(text) { action() }.applyToComponent {
-          isDefault = isDefaultButton
-        }
-      }
-    }
-  }
-
-  private fun showButtonAndUpdateText() {
-    val buttonId = if (needInstallHyperskillPlugin()) {
-      INSTALL_BUTTON_ID
-    }
-    else {
-      OPEN_BUTTON_ID
-    }
-    (layout as CardLayout).show(this, buttonId)
-  }
-
   override fun dispose() {
     job?.cancel()
+  }
+
+  private fun showButton() {
+    (layout as CardLayout).show(this, BUTTON_ID)
+  }
+
+  private fun doButtonAction() {
+    if (needInstallHyperskillPlugin()) {
+      doInstall()
+    }
+    else {
+      closeDialogAndOpenHyperskillBrowseCourses(this, modalityContext)
+    }
   }
 
   private inner class CancelPluginActionListener : MouseAdapter() {
@@ -121,15 +117,14 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
       if (mouseEvent.clickCount == 1 && SwingUtilities.isLeftMouseButton(mouseEvent)) {
         job?.cancel()
         job = null
-        showButtonAndUpdateText()
+        showButton()
       }
     }
   }
 
   companion object {
-    private const val INSTALL_BUTTON_ID = "INSTALL_BUTTON"
+    private const val BUTTON_ID = "BUTTON"
     private const val PROGRESS_BAR_ID = "PROGRESS_BAR"
-    private const val OPEN_BUTTON_ID = "OPEN_BUTTON"
   }
 }
 
@@ -163,7 +158,7 @@ private class ProgressBarPanel(listener: MouseAdapter) : JPanel() {
 
   override fun getPreferredSize(): Dimension {
     val size = super.getPreferredSize()
-    size.width = 175
+    size.width = JBUI.scale(175)
     return size
   }
 }
