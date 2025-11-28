@@ -19,31 +19,27 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.progress.coroutineToIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.wm.WelcomeScreenLeftPanel
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen
 import com.intellij.openapi.wm.impl.welcomeScreen.TabbedWelcomeScreen.DefaultWelcomeScreenTab
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomeFrame
-import com.intellij.platform.ide.CoreUiCoroutineScopeHolder
 import com.intellij.platform.util.progress.reportSequentialProgress
 import com.intellij.ui.components.JBLabel
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.containers.TreeTraversal
 import com.intellij.util.ui.tree.TreeUtil
 import com.intellij.util.ui.tree.TreeUtil.invalidateCacheAndRepaint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
-import javax.swing.JPanel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.TreeNode
@@ -125,21 +121,18 @@ var Project.isHyperskillProject: Boolean
 
 private const val IS_HYPERSKILL_COURSE_PROPERTY: String = "edu.course.is.hyperskill"
 
-fun closeDialogAndOpenHyperskillBrowseCourses(dialogPanel: JPanel, modalityContext: CoroutineContext) {
-  service<CoreUiCoroutineScopeHolder>().coroutineScope.launch(Dispatchers.EDT + modalityContext) {
-    DialogWrapper.findInstance(dialogPanel)?.close(DialogWrapper.OK_EXIT_CODE)
+@RequiresEdt
+fun openHyperskillBrowseCourses() {
+  val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
+  val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
 
-    val welcomeFrame = WelcomeFrame.getInstance() as? FlatWelcomeFrame
-    val tabbedWelcomeScreen = welcomeFrame?.screen as? TabbedWelcomeScreen
-
-    if (tabbedWelcomeScreen == null) {
-      openHyperskillBrowseCoursesAction()
-      return@launch
-    }
-
-    refreshWelcomeScreen(tabbedWelcomeScreen)
-    navigateToHyperskillAcademyTab()
+  if (tabbedWelcomeScreen == null) {
+    openHyperskillBrowseCoursesAction()
+    return
   }
+
+  refreshWelcomeScreen(tabbedWelcomeScreen)
+  navigateToHyperskillAcademyTab()
 }
 
 private fun refreshWelcomeScreen(tabbedWelcomeScreen: TabbedWelcomeScreen) {
