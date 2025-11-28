@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill.actions
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.platform.ide.progress.ModalTaskOwner
@@ -18,6 +19,8 @@ class InstallHyperskillPluginAction : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabledAndVisible = needInstallHyperskillPlugin()
   }
+
+  override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
   companion object {
     const val ACTION_ID: String = "Educational.Hyperskill.InstallHyperskillPlugin"
