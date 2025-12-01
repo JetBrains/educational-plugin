@@ -1,8 +1,10 @@
 package com.jetbrains.edu.socialMedia
 
 import com.intellij.util.application
+import com.intellij.util.asSafely
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -38,7 +40,8 @@ abstract class SocialMediaPostActionTestBase : EduActionTestCase() {
   }
 
   protected fun launchCheckAction(task: Task): Boolean {
-    NavigationUtils.navigateToTask(project, task)
+    val currentTask = task.lesson.asSafely<FrameworkLesson>()?.currentTask()
+    NavigationUtils.navigateToTask(project, task, currentTask)
 
     var isDialogShown = false
     withMockSuggestToPostDialogUI(object : SuggestToPostDialogUI {
