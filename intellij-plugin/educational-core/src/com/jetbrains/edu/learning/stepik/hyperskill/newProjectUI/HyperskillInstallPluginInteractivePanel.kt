@@ -14,6 +14,7 @@ import com.intellij.platform.util.progress.createProgressPipe
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.launchOnShow
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.installAndEnableHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.needInstallHyperskillPlugin
@@ -28,6 +29,7 @@ import java.awt.CardLayout
 import java.awt.Dimension
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JProgressBar
@@ -37,6 +39,7 @@ import kotlin.coroutines.CoroutineContext
 class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JPanel(), Disposable {
   private var job: Job? = null
   private val progressBarPanel: ProgressBarPanel
+  private lateinit var actionButton: JButton
 
   private val modalityContext: CoroutineContext
     get() = ModalityState.stateForComponent(this).asContextElement()
@@ -58,6 +61,7 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
       row {
         button(buttonText) { doButtonAction() }.applyToComponent {
           isDefault = true
+          actionButton = this
         }
       }
     }
@@ -68,6 +72,10 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
     add(progressBarPanel, PROGRESS_BAR_ID)
 
     showButton()
+
+    launchOnShow("EduHyperskillInstallButtonPanelRequestFocus", context = modalityContext) {
+      actionButton.requestFocusInWindow()
+    }
   }
 
   private fun doInstall() {
