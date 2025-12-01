@@ -68,7 +68,7 @@ object XUtils {
   private fun showSuccessNotification(project: Project, postId: String) {
     EduNotificationManager
       .create(INFORMATION, EduSocialMediaBundle.message("social.media.success.notification.title"), EduSocialMediaBundle.message("x.tweet.posted"))
-      .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("social.media.open.in.browser.notification.action.text")) {
+      .addAction(NotificationAction.createSimple(EduSocialMediaBundle.message("social.media.open.in.browser.notification.action.text")) {
         EduBrowser.getInstance().browse("https://x.com/anyuser/status/${postId}")
       })
       .notify(project)
