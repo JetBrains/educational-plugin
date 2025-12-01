@@ -14,5 +14,5 @@ fun askToPost(solvedTask: Task): Boolean {
   if (!course.isMarketplace || course.isFromCourseStorage()) return false
 
   val (solved, total) = ProgressUtil.countProgress(course)
-  return solved > total * SOLVED_TASK_THRESHOLD
+  return total > 0 && solved >= total * SOLVED_TASK_THRESHOLD
 }
