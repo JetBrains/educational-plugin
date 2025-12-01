@@ -126,7 +126,7 @@ class LinkedInConnector : EduOAuthCodeFlowConnector<LinkedInAccount, LinkedInUse
       if (postId != null) {
         EduNotificationManager
           .create(INFORMATION, EduSocialMediaBundle.message("social.media.success.notification.title"), EduSocialMediaBundle.message("linkedin.post.posted"))
-          .addAction(NotificationAction.createSimpleExpiring(EduSocialMediaBundle.message("social.media.open.in.browser.notification.action.text")) {
+          .addAction(NotificationAction.createSimple(EduSocialMediaBundle.message("social.media.open.in.browser.notification.action.text")) {
             EduBrowser.getInstance().browse("https://www.linkedin.com/feed/update/${postId}")
           })
           .notify(project)
