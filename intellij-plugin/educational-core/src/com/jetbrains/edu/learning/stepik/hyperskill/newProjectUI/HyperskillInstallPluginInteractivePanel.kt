@@ -6,6 +6,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.components.service
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.ide.CoreUiCoroutineScopeHolder
@@ -93,8 +94,10 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
         }
       }
 
+      val hasOpenProjects = ProjectManager.getInstance().openProjects.any { !it.isDisposed }
+
       try {
-        progressPipe.collectProgressUpdates { installAndEnableHyperskillPlugin(modalityContext) }
+        progressPipe.collectProgressUpdates { installAndEnableHyperskillPlugin(modalityContext, !hasOpenProjects) }
       }
       finally {
         progressUpdater.cancel()

@@ -54,7 +54,10 @@ private val hyperskillPluginId: PluginId
  * Copied from [com.intellij.openapi.wm.impl.welcomeScreen.learnIde.jbAcademy.InstallJBAcademyTask.install]
  */
 @Suppress("removal", "DEPRECATION", "UsagesOfObsoleteApi")
-suspend fun installAndEnableHyperskillPlugin(modalityContext: CoroutineContext = ModalityState.defaultModalityState().asContextElement()) {
+suspend fun installAndEnableHyperskillPlugin(
+  modalityContext: CoroutineContext = ModalityState.defaultModalityState().asContextElement(),
+  shouldLoadPlugin: Boolean = false,
+) {
   reportSequentialProgress { reporter ->
     val descriptors = reporter.nextStep(endFraction = 20) {
       val marketplacePlugins = MarketplaceRequests.loadLastCompatiblePluginDescriptors(setOf(hyperskillPluginId))
@@ -90,7 +93,7 @@ suspend fun installAndEnableHyperskillPlugin(modalityContext: CoroutineContext =
         val indicator = ProgressManager.getGlobalProgressIndicator()
         val operation = PluginInstallOperation(plugins, emptyList(), PluginEnabler.HEADLESS, indicator)
         indicator.checkCanceled()
-        operation.setAllowInstallWithoutRestart(true)
+        operation.setAllowInstallWithoutRestart(shouldLoadPlugin)
         operation.run()
         operation
       }
@@ -99,6 +102,7 @@ suspend fun installAndEnableHyperskillPlugin(modalityContext: CoroutineContext =
     if (!operation.isSuccess) return
 
     reporter.nextStep(endFraction = 100) {
+      if (!shouldLoadPlugin) return@nextStep
       withContext(Dispatchers.EDT + modalityContext) {
         for ((file, pluginDescriptor) in operation.pendingDynamicPluginInstalls) {
           checkCanceled()
