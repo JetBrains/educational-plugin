@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -18,10 +20,22 @@ class InstallHyperskillPluginEditorNotificationsProvider : EditorNotificationPro
 
     return Function {
       EditorNotificationPanel(EditorNotificationPanel.Status.Error).apply {
-        text = EduCoreBundle.message("hyperskill.new.plugin.editor.notification.install.text")
-        // Action label text should have sentence capitalization, but `Hyperskill Academy` is a name of the plugin
-        @Suppress("DialogTitleCapitalization")
-        createActionLabel(EduCoreBundle.message("hyperskill.new.plugin.editor.notification.install.action.text"), InstallHyperskillPluginAction.ACTION_ID)
+        if (wasHyperskillPluginInstalled) {
+          val productName = ApplicationNamesInfo.getInstance().fullProductName
+          text = if (ApplicationManager.getApplication().isRestartCapable) {
+            EduCoreBundle.message("hyperskill.new.plugin.editor.notification.restart.text", productName)
+          }
+          else {
+            EduCoreBundle.message("hyperskill.new.plugin.editor.notification.shutdown.text", productName)
+          }
+          createActionLabel(getRestartButtonText()) { restartIde(withConfirmationDialog = false) }
+        }
+        else {
+          text = EduCoreBundle.message("hyperskill.new.plugin.editor.notification.install.text")
+          // Action label text should have sentence capitalization, but `Hyperskill Academy` is a name of the plugin
+          @Suppress("DialogTitleCapitalization")
+          createActionLabel(EduCoreBundle.message("hyperskill.new.plugin.editor.notification.install.action.text"), InstallHyperskillPluginAction.ACTION_ID)
+        }
       }
     }
   }
