@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.fixtures.EditorNotificationFixture
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
@@ -9,6 +11,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.InstallHyperskillPluginEditorNotificationsProvider
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillProject
+import com.jetbrains.edu.learning.stepik.hyperskill.wasHyperskillPluginInstalled
 import kotlin.test.Test
 
 class InstallNewHyperskillPluginEditorNotificationTest : CourseReopeningTestBase<EmptyProjectSettings>() {
@@ -53,6 +56,28 @@ class InstallNewHyperskillPluginEditorNotificationTest : CourseReopeningTestBase
     openStudentProjectThenReopenStudentProject(course, {}) { project ->
       assertFalse(project.isHyperskillProject)
       editorNotificationFixture.checkNoEditorNotification<InstallHyperskillPluginEditorNotificationsProvider>(findFile("lesson/task/task.txt"))
+    }
+  }
+
+  @Test
+  fun `test shutdown ide editor notification is shown if user has installed hyperskill plugin flag but it was not loaded`() {
+    val course = course(courseProducer = ::HyperskillCourse) {
+      lesson("lesson") {
+        eduTask("task") {
+          taskFile("task.txt", "text")
+        }
+      }
+    }
+
+    openStudentProjectThenReopenStudentProject(course, {}) { project ->
+      assertTrue(project.isHyperskillProject)
+      wasHyperskillPluginInstalled = true
+      EditorNotifications.updateAll()
+      val platformName = ApplicationNamesInfo.getInstance().fullProductName
+      editorNotificationFixture.checkEditorNotification<InstallHyperskillPluginEditorNotificationsProvider>(
+        findFile("lesson/task/task.txt"),
+        "You need to shutdown $platformName to apply the Hyperskill Academy plugin"
+      )
     }
   }
 }
