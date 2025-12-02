@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.ide.IdeBundle
 import com.intellij.ide.plugins.*
 import com.intellij.ide.plugins.marketplace.MarketplaceRequests
 import com.intellij.ide.util.PropertiesComponent
@@ -9,6 +10,7 @@ import com.intellij.openapi.actionSystem.ActionUiKind
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
@@ -43,6 +45,8 @@ private const val HYPERSKILL_PLUGIN_ID: String = "org.hyperskill.academy"
 
 private val hyperskillPluginId: PluginId
   get() = PluginId.getId(HYPERSKILL_PLUGIN_ID)
+
+var wasHyperskillPluginInstalled: Boolean = false
 
 /**
  * Copied from [com.intellij.openapi.wm.impl.welcomeScreen.learnIde.jbAcademy.InstallJBAcademyTask.install]
@@ -95,6 +99,8 @@ suspend fun installAndEnableHyperskillPlugin(
 
     if (!operation.isSuccess) return
 
+    wasHyperskillPluginInstalled = true
+
     reporter.nextStep(endFraction = 100) {
       if (!shouldLoadPlugin) return@nextStep
       withContext(Dispatchers.EDT + modalityContext) {
@@ -126,6 +132,15 @@ var Project.isHyperskillProject: Boolean
   set(value) {
     PropertiesComponent.getInstance(this).setValue(IS_HYPERSKILL_COURSE_PROPERTY, value)
   }
+
+fun getRestartButtonText(): String {
+  return if (ApplicationManager.getApplication().isRestartCapable) {
+    IdeBundle.message("ide.restart.action")
+  }
+  else {
+    IdeBundle.message("ide.shutdown.action");
+  }
+}
 
 private const val IS_HYPERSKILL_COURSE_PROPERTY: String = "edu.course.is.hyperskill"
 

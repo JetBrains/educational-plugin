@@ -17,10 +17,12 @@ import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.launchOnShow
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.stepik.hyperskill.getRestartButtonText
 import com.jetbrains.edu.learning.stepik.hyperskill.installAndEnableHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.needInstallHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.openHyperskillBrowseCourses
 import com.jetbrains.edu.learning.stepik.hyperskill.restartIde
+import com.jetbrains.edu.learning.stepik.hyperskill.wasHyperskillPluginInstalled
 import com.jetbrains.edu.learning.ui.isDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -52,16 +54,9 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
 
     layout = CardLayout()
 
-    val buttonText = if (needInstallHyperskillPlugin()) {
-      EduCoreBundle.message("hyperskill.new.plugin.courses.panel.install.button.text")
-    }
-    else {
-      EduCoreBundle.message("hyperskill.new.plugin.courses.panel.open.hyperskill.academy.button.text")
-    }
-
     val button = panel {
       row {
-        button(buttonText) { doButtonAction() }.applyToComponent {
+        button(getActionButtonText()) { doButtonAction() }.applyToComponent {
           isDefault = true
           actionButton = this
         }
@@ -118,7 +113,22 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
   }
 
   private fun showButton() {
+    actionButton.text = getActionButtonText()
+    actionButton.revalidate()
+    actionButton.repaint()
     (layout as CardLayout).show(this, BUTTON_ID)
+  }
+
+  private fun getActionButtonText(): String = when {
+    !needInstallHyperskillPlugin() -> EduCoreBundle.message("hyperskill.new.plugin.courses.panel.open.hyperskill.academy.button.text")
+    wasHyperskillPluginInstalled -> getRestartButtonText()
+    else -> EduCoreBundle.message("hyperskill.new.plugin.courses.panel.install.button.text")
+  }
+
+  private fun doButtonAction() = when {
+    !needInstallHyperskillPlugin() -> closeDialogAndOpenHyperskillBrowseCourses()
+    wasHyperskillPluginInstalled -> tryRestartIDE(withConfirmationDialog = false)
+    else -> doInstall()
   }
 
   private fun tryRestartIDE(withConfirmationDialog: Boolean) {
