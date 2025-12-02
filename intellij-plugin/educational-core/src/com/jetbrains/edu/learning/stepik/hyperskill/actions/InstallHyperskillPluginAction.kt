@@ -8,12 +8,14 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.installAndEnableHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.needInstallHyperskillPlugin
+import com.jetbrains.edu.learning.stepik.hyperskill.restartIde
 
 class InstallHyperskillPluginAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     runWithModalProgressBlocking(ModalTaskOwner.guess(), EduCoreBundle.message("action.Educational.Hyperskill.InstallHyperskillPlugin.progress.text")) {
       installAndEnableHyperskillPlugin()
     }
+    restartIde(withConfirmationDialog = true)
   }
 
   override fun update(e: AnActionEvent) {

@@ -1,13 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginEnabler
-import com.intellij.ide.plugins.PluginInstallOperation
-import com.intellij.ide.plugins.PluginInstaller
-import com.intellij.ide.plugins.PluginManagementPolicy
-import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.ide.plugins.PluginNode
-import com.intellij.ide.plugins.RepositoryHelper
+import com.intellij.ide.plugins.*
 import com.intellij.ide.plugins.marketplace.MarketplaceRequests
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.actionSystem.ActionManager
@@ -19,6 +12,7 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.asContextElement
+import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressManager
@@ -115,6 +109,16 @@ suspend fun installAndEnableHyperskillPlugin(
 
 fun needInstallHyperskillPlugin(): Boolean {
   return !PluginManagerCore.isPluginInstalled(hyperskillPluginId) || PluginManagerCore.isDisabled(hyperskillPluginId)
+}
+
+@RequiresEdt
+fun restartIde(withConfirmationDialog: Boolean = true) {
+  if (withConfirmationDialog) {
+    PluginManagerConfigurable.shutdownOrRestartApp()
+  }
+  else {
+    ApplicationManagerEx.getApplicationEx().restart(true)
+  }
 }
 
 var Project.isHyperskillProject: Boolean

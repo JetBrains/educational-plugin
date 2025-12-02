@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.installAndEnableHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.needInstallHyperskillPlugin
 import com.jetbrains.edu.learning.stepik.hyperskill.openHyperskillBrowseCourses
+import com.jetbrains.edu.learning.stepik.hyperskill.restartIde
 import com.jetbrains.edu.learning.ui.isDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -101,7 +102,13 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
       }
       finally {
         progressUpdater.cancel()
-        closeDialogAndOpenHyperskillBrowseCourses()
+        showButton()
+        if (!needInstallHyperskillPlugin()) {
+          closeDialogAndOpenHyperskillBrowseCourses()
+        }
+        else {
+          tryRestartIDE(withConfirmationDialog = true)
+        }
       }
     }
   }
@@ -114,12 +121,9 @@ class HyperskillInstallPluginInteractivePanel(parentDisposable: Disposable) : JP
     (layout as CardLayout).show(this, BUTTON_ID)
   }
 
-  private fun doButtonAction() {
-    if (needInstallHyperskillPlugin()) {
-      doInstall()
-    }
-    else {
-      closeDialogAndOpenHyperskillBrowseCourses()
+  private fun tryRestartIDE(withConfirmationDialog: Boolean) {
+    service<CoreUiCoroutineScopeHolder>().coroutineScope.launch(Dispatchers.EDT + modalityContext) {
+      restartIde(withConfirmationDialog)
     }
   }
 
