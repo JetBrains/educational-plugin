@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.lti
 
 import com.intellij.notification.NotificationType
 import com.intellij.notification.NotificationType.ERROR
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
@@ -40,17 +41,22 @@ class LTICheckListener : CheckListener {
       }
     }
 
-    notifyPostingResponse(response, ltiSettings.lmsDescription, project, launchId)
+    notifyPostingResponse(response, ltiSettings, project, launchId)
   }
 
-  private fun notifyPostingResponse(response: PostTaskSolvedStatus, lmsDescription: String?, project: Project, launchId: String) {
+  private fun notifyPostingResponse(response: PostTaskSolvedStatus, ltiSettings: LTISettingsDTO, project: Project, launchId: String) {
+
     when (response) {
-      is ConnectionError -> errorNotification(project, lmsDescription, response.error, launchId)
-      ServerError -> errorNotification(project, lmsDescription, "server error", launchId)
-      UnknownLaunchId -> errorNotification(project, lmsDescription, "unknown launch id", launchId)
+      is ConnectionError -> errorNotification(project, ltiSettings, response.error, launchId)
+
+      UnknownLaunchId -> errorNotification(project, ltiSettings, "unknown launch id", launchId)
+
+      ServerError -> errorNotification(project, ltiSettings, null, launchId, suggestOpeningCourseOnline = true)
 
       NoLineItem -> {} //do nothing
       Success -> {
+        val lmsDescription = ltiSettings.lmsDescription
+
         EduNotificationManager.create(
           NotificationType.INFORMATION,
           EduCoreBundle.message("lti.grades.post.status.sent.title"),
@@ -65,18 +71,43 @@ class LTICheckListener : CheckListener {
     }
   }
 
-  private fun errorNotification(project: Project, lmsDescription: String?, error: String, launchId: String) {
+  private fun errorNotification(
+    project: Project,
+    ltiSettings: LTISettingsDTO,
+    error: String?,
+    launchId: String,
+    suggestOpeningCourseOnline: Boolean = false
+  ) {
     logger<LTICheckListener>().warn("error during posting completion status launchId=$launchId, error=$error")
+
+    val errorMessage = buildString {
+      append(EduCoreBundle.message("lti.grades.post.error.text"))
+
+      if (error != null) {
+        append("<br>")
+        append(EduCoreBundle.message("lti.grades.post.error.text.error", error))
+      }
+
+      if (suggestOpeningCourseOnline) {
+        val platformName = ApplicationNamesInfo.getInstance().fullProductName
+        append("<br>")
+        append(EduCoreBundle.message("lti.grades.post.error.text.try.reopen", platformName))
+      }
+
+      val lmsDescription = ltiSettings.lmsDescription
+      val linkToCourse = ltiSettings.returnLink
+      val linkText = if (lmsDescription.isNullOrEmpty()) { linkToCourse } else { lmsDescription }
+      val yourCourseText = if (linkToCourse.isNullOrEmpty()) linkText else """<a href="$linkToCourse">$linkText</a>"""
+      if (yourCourseText != null) {
+        append("<br>")
+        append(EduCoreBundle.message("lti.grades.post.error.text.link") + " " + yourCourseText)
+      }
+    }
 
     EduNotificationManager.create(
       ERROR,
       EduCoreBundle.message("lti.grades.post.error.title"),
-      if (lmsDescription.isNullOrEmpty()) {
-        EduCoreBundle.message("lti.grades.post.error.text", error)
-      }
-      else {
-        EduCoreBundle.message("lti.grades.post.error.text.with.lms", lmsDescription, error)
-      }
+      errorMessage
     ).notify(project)
   }
 }
