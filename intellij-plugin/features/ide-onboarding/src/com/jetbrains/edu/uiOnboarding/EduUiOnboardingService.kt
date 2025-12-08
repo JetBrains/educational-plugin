@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
-import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaGraph
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaMainGraph
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,23 +23,14 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   val tourInProgress: Boolean
     get() = myTourInProgress.get()
 
-  fun startOnboarding() {
+  fun executeZhaba(initialStepId: String) {
     val graph = ZhabaMainGraph.create()
-    executeZhaba(graph, ZhabaMainGraph.STEP_ID_START_ONBOARDING_JUMP_OUT)
-  }
-
-  fun promoteStudentPack() {
-    val graph = ZhabaMainGraph.create()
-    executeZhaba(graph, ZhabaMainGraph.STEP_ID_START_PROMOTE_STUDENT_PACK_JUMP_OUT)
-  }
-
-  private fun executeZhaba(graph: ZhabaGraph, initialStep: String) {
     val alreadyInProgress = myTourInProgress.getAndSet(true)
     if (alreadyInProgress) return
 
-    val initialStep = graph.findStep(initialStep)
+    val initialStep = graph.findStep(initialStepId)
     if (initialStep == null) {
-      thisLogger().error("Step $initialStep not found")
+      thisLogger().error("Step $initialStepId not found")
       return
     }
 

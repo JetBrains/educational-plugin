@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaMainGraph
 
 class EduUiOnboardingProjectActivity : ProjectActivity {
   override suspend fun execute(project: Project) {
@@ -18,7 +19,7 @@ class EduUiOnboardingProjectActivity : ProjectActivity {
     if (shown) return
     propertiesComponent.setValue(EDU_UI_ONBOARDING_TOUR_SHOWN, true)
 
-    EduUiOnboardingService.getInstance(project).startOnboarding()
+    EduUiOnboardingService.getInstance(project).executeZhaba(ZhabaMainGraph.STEP_ID_START_ONBOARDING_JUMP_OUT)
   }
 }
 
