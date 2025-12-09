@@ -13,6 +13,12 @@ import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRAN
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.STEP_UNAVAILABLE_TRANSITION
 import kotlinx.coroutines.CoroutineScope
+import java.awt.Component
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.awt.event.HierarchyBoundsAdapter
+import java.awt.event.HierarchyEvent
+import java.awt.event.HierarchyListener
 import javax.swing.JLayeredPane
 
 class ZhabaExecutor(
@@ -84,7 +90,7 @@ class ZhabaExecutor(
         null
       }
       else {
-        executeAnimation(transitionAnimation)
+        executeAnimation(transitionAnimation, nextData)
       }
 
       currentStep = nextStep
@@ -96,7 +102,7 @@ class ZhabaExecutor(
     return Disposer.newDisposable(this).use { stepDisposable ->
       if (data is ZhabaDataWithComponent) {
         thisLogger().info("Installing ZhabaComponent for regular step ${data.zhaba.hashCode()}")
-        installComponent(data.zhaba, stepDisposable)
+        installComponent(data.zhaba, data, stepDisposable)
       }
 
       val typedStep = step.typed()
@@ -105,24 +111,54 @@ class ZhabaExecutor(
     }
   }
 
-  private suspend fun executeAnimation(animation: EduUiOnboardingAnimation): String? {
+  private suspend fun executeAnimation(animation: EduUiOnboardingAnimation, nextData: ZhabaData): String? {
     val zhaba = ZhabaComponent(project)
     zhaba.animation = animation
 
     Disposer.newDisposable(this).use { transitionDisposable ->
       thisLogger().info("Installing ZhabaComponent for animation ${zhaba.hashCode()}")
-      installComponent(zhaba, transitionDisposable)
+      installComponent(zhaba, nextData, transitionDisposable)
       val success = zhaba.start(cs)
       return if (success) null else RERUN_TRANSITION
     }
   }
 
-  private fun installComponent(zhaba: ZhabaComponent, disposable: Disposable) {
+  private fun installComponent(zhaba: ZhabaComponent, data: ZhabaData, disposable: Disposable) {
     val frame = WindowManager.getInstance().getFrame(project) ?: return
     Disposer.register(disposable, zhaba)
     frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER, -1)
     zhaba.setBounds(0, 0, frame.width, frame.height)
 
+    if (data is ZhabaDataWithComponent) {
+      zhaba.trackComponent(data.component)
+    }
+
     currentZhabaComponent = zhaba
+  }
+
+  /**
+   * The Toad is interrupted if the tracked component is moved or resized or its visibility changed.
+   */
+  private fun ZhabaComponent.trackComponent(component: Component) {
+    val componentListener = object : ComponentAdapter() {
+      override fun componentHidden(e: ComponentEvent?) { stop() }
+      override fun componentShown(e: ComponentEvent?) { stop() }
+      override fun componentMoved(e: ComponentEvent?) { stop() }
+      override fun componentResized(e: ComponentEvent?) { stop() }
+    }
+    val hierarchyListener = HierarchyListener { stop() }
+    val hierarchyBoundsListener = object : HierarchyBoundsAdapter() {
+      override fun ancestorMoved(e: HierarchyEvent?) { stop() }
+      override fun ancestorResized(e: HierarchyEvent?) { stop() }
+    }
+
+    Disposer.register(this) {
+      component.removeComponentListener(componentListener)
+      component.removeHierarchyListener(hierarchyListener)
+      component.removeHierarchyBoundsListener(hierarchyBoundsListener)
+    }
+    component.addComponentListener(componentListener)
+    component.addHierarchyListener(hierarchyListener)
+    component.addHierarchyBoundsListener(hierarchyBoundsListener)
   }
 }
