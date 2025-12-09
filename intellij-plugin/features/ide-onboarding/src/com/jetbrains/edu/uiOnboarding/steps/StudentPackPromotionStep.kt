@@ -51,7 +51,6 @@ class StudentPackPromotionStep internal constructor() : GotItBalloonStepBase<Got
     val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
     val zhabaComponent = ZhabaComponent(project)
     zhabaComponent.animation = buildAnimation(data, relativeZhabaPoint)
-    zhabaComponent.trackComponent(component)
 
     // Position the balloon at the bottom of the project view component
     val point = Point(zhabaPoint.x + EYE_SHIFT, component.height - data.scholarWinking.screenSize.height - SMALL_SHIFT)

@@ -2,13 +2,16 @@ package com.jetbrains.edu.uiOnboarding
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
 import kotlinx.coroutines.*
 import java.awt.Component
 import java.awt.Graphics2D
+import java.awt.Point
 import java.awt.RenderingHints
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -18,18 +21,16 @@ import java.awt.event.HierarchyListener
 import java.awt.event.MouseEvent
 import java.awt.event.MouseWheelEvent
 import javax.swing.JComponent
+import javax.swing.SwingUtilities
 
 class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
   var animation: EduUiOnboardingAnimation? = null
 
-  var interruptionReason: String? = null
-    private set
-
   private var stepIndex: Int = 0
   private var stepStartTime: Long = 0 // nano time of step start
 
-  private var interrupted: Boolean = false
+  private var interruptionReason: String? = null
   private var animationJob: Job? = null
 
   override fun contains(x: Int, y: Int): Boolean = false
@@ -92,9 +93,9 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
    *    If [animation]'s `mayBeInterruptedInsideCycle == true`, the interruption is immediate.
    *    Otherwise, the animation continues until the end of the current cycle.
    *
-   * @return false if animation has stopped because of the interrupt.
+   * @return null if animation was not interrupted or the interruption reason, if the animation was interrupted.
    */
-  suspend fun start(cs: CoroutineScope): Boolean {
+  suspend fun start(cs: CoroutineScope): String? {
     val animationJob = cs.launch(Dispatchers.EDT) {
       runAnimation()
     }
@@ -103,7 +104,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
     animationJob.join()
 
-    return !animationJob.isCancelled
+    return interruptionReason
   }
 
   private suspend fun runAnimation() {
@@ -115,7 +116,8 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
       index++
       if (index > animation.steps.lastIndex) {
-        if (interrupted) {
+        if (interruptionReason != null) {
+          thisLogger().info("Toad interrupted at the end of cycle: $interruptionReason")
           throw CancellationException()
         }
 
@@ -136,12 +138,15 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
    * This call makes method [start] return false.
    * * [reason] contains some arbitrary string, it will be available to the caller of the [start] method after it returns.
    */
-  fun stop(reason: String? = null) {
-    interrupted = true
+  fun stop(reason: String) {
     interruptionReason = reason
 
     if (animation?.mayBeInterruptedInsideCycle == true) {
       animationJob?.cancel()
+      thisLogger().info("Toad will be interrupted immediately: $reason animation=$animation component=${this.hashCode()}")
+    }
+    else {
+      thisLogger().info("Toad will be interrupted at the end of cycle: $reason")
     }
   }
 
@@ -149,6 +154,27 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
    * The Toad is interrupted if the tracked component is moved or resized or its visibility changed.
    */
   fun trackComponent(component: Component) {
+    val layeredPane = WindowManager.getInstance().getFrame(project)?.layeredPane ?: return
+
+    fun position(): Point = SwingUtilities.convertPoint(component, 0, 0, layeredPane)
+    var currentPosition = position()
+    var currentSize = component.size
+
+    fun stop() {
+      stop(RERUN_TRANSITION)
+    }
+
+    fun stopIfNeeded() {
+      val newPosition = position()
+      val newSize = component.size
+      if (currentPosition != newPosition || currentSize != newSize) {
+        stop()
+
+        currentPosition = newPosition
+        currentSize = newSize
+      }
+    }
+
     val componentListener = object : ComponentAdapter() {
       override fun componentHidden(e: ComponentEvent?) { stop() }
       override fun componentShown(e: ComponentEvent?) { stop() }
@@ -157,11 +183,12 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
     }
     val hierarchyListener = HierarchyListener { stop() }
     val hierarchyBoundsListener = object : HierarchyBoundsAdapter() {
-      override fun ancestorMoved(e: HierarchyEvent?) { stop() }
-      override fun ancestorResized(e: HierarchyEvent?) { stop() }
+      override fun ancestorMoved(e: HierarchyEvent?) { stopIfNeeded() }
+      override fun ancestorResized(e: HierarchyEvent?) { stopIfNeeded() }
     }
 
     Disposer.register(this) {
+      thisLogger().info("Disposing ZhabaComponent for component=${this.hashCode()}")
       component.removeComponentListener(componentListener)
       component.removeHierarchyListener(hierarchyListener)
       component.removeHierarchyBoundsListener(hierarchyBoundsListener)

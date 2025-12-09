@@ -54,10 +54,8 @@ class ZhabaExecutor(
   }
 
   suspend fun start(step: ZhabaStepBase) {
-    val animationData = this.animationData ?: return
-
     var currentStep = step
-    var currentData = step.typed().performStep(project, animationData) ?: return
+    var currentData = step.typed().performStep(project, (animationData ?: return)) ?: return
     var currentTransition: String? = null
 
     while (true) {
@@ -74,19 +72,19 @@ class ZhabaExecutor(
         return
       }
 
-      val nextData = nextStep.typed().performStep(project, animationData)
+      val nextData = nextStep.typed().performStep(project, (animationData ?: return))
       if (nextData == null) {
         currentStep = nextStep
         currentTransition = STEP_UNAVAILABLE_TRANSITION
         continue
       }
 
-      val transitionAnimation = TransitionAnimator.animateTransition(project, animationData, currentData, nextData)
+      val transitionAnimation = TransitionAnimator.animateTransition(project, (animationData ?: return), currentData, nextData)
       currentTransition = if (transitionAnimation == null) {
         null
       }
       else {
-        executeAnimation(transitionAnimation)
+        executeAnimation(transitionAnimation, nextData)
       }
 
       currentStep = nextStep
@@ -97,7 +95,8 @@ class ZhabaExecutor(
   private suspend fun runStep(step: ZhabaStepBase, data: ZhabaData): String {
     return Disposer.newDisposable(this).use { stepDisposable ->
       if (data is ZhabaDataWithComponent) {
-        installComponent(data.zhaba, stepDisposable)
+        thisLogger().info("Installing ZhabaComponent for regular step ${data.zhaba.hashCode()}")
+        installComponent(data.zhaba, data, stepDisposable)
       }
 
       val typedStep = step.typed()
@@ -106,26 +105,26 @@ class ZhabaExecutor(
     }
   }
 
-  suspend fun executeAnimation(animation: EduUiOnboardingAnimation): String? {
+  suspend fun executeAnimation(animation: EduUiOnboardingAnimation, nextData: ZhabaData): String? {
     val zhaba = ZhabaComponent(project)
     zhaba.animation = animation
 
     Disposer.newDisposable(this).use { transitionDisposable ->
-      installComponent(zhaba, transitionDisposable)
-      if (zhaba.start(cs)) {
-        return null
-      }
-      else {
-        return zhaba.interruptionReason
-      }
+      thisLogger().info("Installing ZhabaComponent for animation ${zhaba.hashCode()}")
+      installComponent(zhaba, nextData, transitionDisposable)
+      return zhaba.start(cs)
     }
   }
 
-  fun installComponent(zhaba: ZhabaComponent, disposable: Disposable) {
+  fun installComponent(zhaba: ZhabaComponent, data: ZhabaData, disposable: Disposable) {
     val frame = WindowManager.getInstance().getFrame(project) ?: return
     Disposer.register(disposable, zhaba)
     frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER, -1)
     zhaba.setBounds(0, 0, frame.width, frame.height)
+
+    if (data is ZhabaDataWithComponent) {
+      zhaba.trackComponent(data.component)
+    }
 
     currentZhabaComponent = zhaba
   }

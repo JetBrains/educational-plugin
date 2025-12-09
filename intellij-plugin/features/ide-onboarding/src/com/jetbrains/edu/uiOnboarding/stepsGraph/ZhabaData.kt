@@ -2,6 +2,7 @@ package com.jetbrains.edu.uiOnboarding.stepsGraph
 
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.ZhabaComponent
+import java.awt.Component
 
 /**
  * See [ZhabaStep] for the explanation of the data.
@@ -14,4 +15,6 @@ interface ZhabaData
 interface ZhabaDataWithComponent: ZhabaData {
   val zhabaPoint: RelativePoint
   val zhaba: ZhabaComponent
+  val component: Component
+    get() = zhabaPoint.originalComponent
 }
