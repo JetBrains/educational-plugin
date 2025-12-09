@@ -10,6 +10,8 @@ import com.intellij.openapi.util.use
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.stepsGraph.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.STEP_UNAVAILABLE_TRANSITION
 import kotlinx.coroutines.CoroutineScope
 import javax.swing.JLayeredPane
 
@@ -51,24 +53,49 @@ class ZhabaExecutor(
     currentZhabaComponent?.stop()
   }
 
-
   suspend fun start(step: ZhabaStepBase) {
-    val animationData = this.animationData ?: return
-
     var currentStep = step
-    var currentData = step.typed().performStep(project, animationData) ?: return
+    var currentData = step.typed().performStep(project, (animationData ?: return)) ?: return
+    var currentTransition: String? = null
 
     while (true) {
-      val (nextStep, nextData) = runStep(currentStep, currentData) ?: return
+      if (currentTransition == null) {
+        currentTransition = runStep(currentStep, currentData)
+      }
+
+      val nextStep = graph.move(currentStep, currentTransition)
+
+      if (nextStep == null) {
+        if (currentTransition != FINISH_TRANSITION) {
+          thisLogger().error("No next step for ${step.stepId} with transition $currentTransition")
+        }
+        return
+      }
+
+      val nextData = nextStep.typed().performStep(project, (animationData ?: return))
+      if (nextData == null) {
+        currentStep = nextStep
+        currentTransition = STEP_UNAVAILABLE_TRANSITION
+        continue
+      }
+
+      val transitionAnimation = TransitionAnimator.animateTransition(project, (animationData ?: return), currentData, nextData)
+      currentTransition = if (transitionAnimation == null) {
+        null
+      }
+      else {
+        executeAnimation(transitionAnimation)
+      }
 
       currentStep = nextStep
       currentData = nextData
     }
   }
 
-  suspend fun runStep(step: ZhabaStepBase, data: ZhabaData): Pair<ZhabaStepBase, ZhabaData>? {
-    val transition = Disposer.newDisposable(this).use { stepDisposable ->
+  private suspend fun runStep(step: ZhabaStepBase, data: ZhabaData): String {
+    return Disposer.newDisposable(this).use { stepDisposable ->
       if (data is ZhabaDataWithComponent) {
+        thisLogger().info("Installing ZhabaComponent for regular step ${data.zhaba.hashCode()}")
         installComponent(data.zhaba, stepDisposable)
       }
 
@@ -76,57 +103,21 @@ class ZhabaExecutor(
       val graphData = graph.additionalStepData(typedStep)
       typedStep.executeStep(data, graphData, cs, stepDisposable)
     }
-
-    var nextStep = graph.move(step, transition)
-
-    while (true) {
-      if (nextStep == null) {
-        if (transition != FINISH_TRANSITION) {
-          thisLogger().error("No next step for ${step.stepId} with transition $transition")
-        }
-        return null
-      }
-
-      val dataForNextStep = dataForNextStep(data, nextStep)
-      if (dataForNextStep != null) {
-        return nextStep to dataForNextStep
-      }
-      nextStep = graph.move(nextStep, ZhabaStep.STEP_UNAVAILABLE_TRANSITION) ?: return null
-    }
   }
 
-  private suspend fun dataForNextStep(data: ZhabaData, nextStep: ZhabaStepBase): ZhabaData? {
-    var currentData = data
-
-    while (true) {
-      val animationData = this.animationData ?: return null
-      val nextData = nextStep.typed().performStep(project, animationData) ?: return null
-
-      val transitionAnimation = TransitionAnimator.animateTransition(project, animationData, currentData, nextData)
-      val transitionAnimationCompleted = if (transitionAnimation == null) {
-        true
-      }
-      else {
-        executeAnimation(transitionAnimation)
-      }
-
-      if (transitionAnimationCompleted) return nextData
-
-      currentData = nextData
-    }
-  }
-
-  suspend fun executeAnimation(animation: EduUiOnboardingAnimation): Boolean {
+  private suspend fun executeAnimation(animation: EduUiOnboardingAnimation): String? {
     val zhaba = ZhabaComponent(project)
     zhaba.animation = animation
 
     Disposer.newDisposable(this).use { transitionDisposable ->
+      thisLogger().info("Installing ZhabaComponent for animation ${zhaba.hashCode()}")
       installComponent(zhaba, transitionDisposable)
-      return zhaba.start(cs)
+      val success = zhaba.start(cs)
+      return if (success) null else RERUN_TRANSITION
     }
   }
 
-  fun installComponent(zhaba: ZhabaComponent, disposable: Disposable) {
+  private fun installComponent(zhaba: ZhabaComponent, disposable: Disposable) {
     val frame = WindowManager.getInstance().getFrame(project) ?: return
     Disposer.register(disposable, zhaba)
     frame.layeredPane.add(zhaba, JLayeredPane.PALETTE_LAYER, -1)
