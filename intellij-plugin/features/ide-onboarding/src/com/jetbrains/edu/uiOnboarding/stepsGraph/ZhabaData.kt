@@ -7,7 +7,9 @@ import java.awt.Component
 /**
  * See [ZhabaStep] for the explanation of the data.
  */
-interface ZhabaData
+interface ZhabaData {
+  companion object EMPTY : ZhabaData
+}
 
 /**
  * Contains [ZhabaComponent], its position, and the component it is attached to.
