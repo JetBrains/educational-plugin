@@ -9,5 +9,6 @@ dependencies {
 
   implementation(project(":intellij-plugin:educational-core"))
 
+  testImplementation(libs.kotlinx.coroutine.test)
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
 }
