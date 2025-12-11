@@ -24,6 +24,8 @@ interface ZhabaGraph {
    * Each [ZhabaStep] must have some additional data associated with it, see [ZhabaStep] for the information about this data.
    */
   fun <GD: GraphData> additionalStepData(step: ZhabaStep<*, GD>): GD
+
+  fun findStep(stepId: String): ZhabaStepBase?
 }
 
 /**
@@ -48,19 +50,25 @@ class ZhabaMainGraph private constructor(
   }
 
   private data class Edge(
-    val fromStep: ZhabaStepBase,
+    val fromStepId: String,
     val transition: String,
-    val toStep: ZhabaStepBase
-  )
+    val toStepId: String
+  ) {
+    constructor(step: ZhabaStepBase, transition: String, toStep: ZhabaStepBase) : this(step.stepId, transition, toStep.stepId)
+  }
 
   override fun move(step: ZhabaStepBase, transition: String): ZhabaStepBase? {
-    val edge = edges.firstOrNull { it.fromStep == step && it.transition == transition } ?: return null
-    return edge.toStep
+    val edge = edges.firstOrNull { it.fromStepId == step.stepId && it.transition == transition } ?: return null
+    return findStep(edge.toStepId)
   }
 
   override fun <GD: GraphData> additionalStepData(step: ZhabaStep<*, GD>): GD {
     @Suppress("UNCHECKED_CAST")
     return stepsData[step] as? GD ?: error("No data for step $step")
+  }
+
+  override fun findStep(stepId: String): ZhabaStepBase? {
+    return stepsData.keys.firstOrNull { it.stepId == stepId }
   }
 
   private fun fillOnboardingGraph(): ZhabaStepBase {
