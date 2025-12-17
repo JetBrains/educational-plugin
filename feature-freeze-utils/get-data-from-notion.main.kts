@@ -131,9 +131,8 @@ if (results == null || results.size() == 0) {
 
     if (currentReleaseRow != null) {
         val row = parseRow(currentReleaseRow)
-        row[RESPONSIBLE_SLACK_COLUMN]?.let {
-            println("##teamcity[setParameter name='responsible.slack.id' value='$it']")
-        } ?: println("##teamcity[setParameter name='responsible.slack.id' value='']")
+        val slackId = row[RESPONSIBLE_SLACK_COLUMN].orEmpty()
+        println("##teamcity[setParameter name='responsible.slack.id' value='$slackId']")
     } else {
         println("⚠️ No non-skipped current release row found!")
     }
