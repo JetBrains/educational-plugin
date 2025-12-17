@@ -113,8 +113,8 @@ if (results == null || results.size() == 0) {
     var nextReleaseRow: JsonObject? = null
     var foundCurrent = false
 
-    for (i in 0 until results.size()) {
-        val row = results[i].asJsonObject
+    for (result in results) {
+        val row = result.asJsonObject
         val properties = row.getAsJsonObject("properties")
         val releaseValue = getPropertyValue(properties, NUMBER_COLUMN)
 
