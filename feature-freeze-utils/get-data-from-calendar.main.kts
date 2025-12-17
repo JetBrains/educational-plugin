@@ -32,7 +32,7 @@ fun capitalizeDayOfWeek(date: LocalDate?): String = date?.dayOfWeek.toString()
 
 val featureFreezeDate = getEventDate("Feature Freeze")
 
-if (featureFreezeDate != null && featureFreezeDate.isEqual(LocalDate.now())) {
+if (featureFreezeDate != null && featureFreezeDate.isEqual(today)) {
     println(
         "##teamcity[setParameter name='feature.freeze.date' value='$featureFreezeDate (${
             capitalizeDayOfWeek(
