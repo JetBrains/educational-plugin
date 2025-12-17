@@ -47,20 +47,8 @@ if (featureFreezeDate != null && featureFreezeDate.isEqual(LocalDate.now())) {
     val releaseDate = getEventDate("JetBrains Academy Plugin Release")
 
     println("##teamcity[setParameter name='current.date' value='$today (Today)']")
-    println(
-        "##teamcity[setParameter name='feature.freeze.date' value='$featureFreezeDate (${
-            capitalizeDayOfWeek(
-                featureFreezeDate
-            )
-        })']"
-    )
-    println(
-        "##teamcity[setParameter name='release.builds.date' value='$releaseBuildsDate (${
-            capitalizeDayOfWeek(
-                releaseBuildsDate
-            )
-        })']"
-    )
+    println("##teamcity[setParameter name='feature.freeze.date' value='$featureFreezeDate (${capitalizeDayOfWeek(featureFreezeDate)})']")
+    println("##teamcity[setParameter name='release.builds.date' value='$releaseBuildsDate (${capitalizeDayOfWeek(releaseBuildsDate)})']")
     println("##teamcity[setParameter name='plugin.release.date' value='$releaseDate (${capitalizeDayOfWeek(releaseDate)})']")
 
     println("Feature freeze incoming")
