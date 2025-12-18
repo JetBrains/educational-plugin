@@ -34,16 +34,15 @@ interface ZhabaGraph {
 class ZhabaMainGraph private constructor(
   private val edges: MutableList<Edge> = mutableListOf(),
   private val stepsData: MutableMap<ZhabaStepBase, GraphData> = mutableMapOf(),
-
-  val initialOnboardingStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(".start.onboarding", NEXT_TRANSITION, StartOnboardingZhabaData),
-  val initialStudentPackPromotionStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(".start.student.pack", NEXT_TRANSITION, StartStudentPackPromotionZhabaData),
 ): ZhabaGraph {
 
   init {
+    val initialOnboardingStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(STEP_ID_START_ONBOARDING, NEXT_TRANSITION, StartOnboardingZhabaData)
     stepsData[initialOnboardingStep] = GraphData.EMPTY
     val firstOnboardingStep = fillOnboardingGraph()
     edges.add(Edge(initialOnboardingStep, NEXT_TRANSITION, firstOnboardingStep))
 
+    val initialStudentPackPromotionStep: ZhabaStepBase = ZhabaStepFactory.noOpStep(STEP_ID_PROMOTE_STUDENT_PACK, NEXT_TRANSITION, StartStudentPackPromotionZhabaData)
     stepsData[initialStudentPackPromotionStep] = GraphData.EMPTY
     val studentPackPromotionStep = fillStudentPackPromotionGraph()
     edges.add(Edge(initialStudentPackPromotionStep, NEXT_TRANSITION, studentPackPromotionStep))
@@ -122,6 +121,9 @@ class ZhabaMainGraph private constructor(
   }
 
   companion object {
+
+    const val STEP_ID_START_ONBOARDING = ".start.onboarding"
+    const val STEP_ID_PROMOTE_STUDENT_PACK = ".promote.student.pack"
 
     fun create(): ZhabaMainGraph = ZhabaMainGraph()
 
