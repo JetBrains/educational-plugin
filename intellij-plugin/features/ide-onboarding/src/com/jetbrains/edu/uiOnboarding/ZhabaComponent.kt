@@ -2,6 +2,7 @@ package com.jetbrains.edu.uiOnboarding
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.FRAME_DURATION
@@ -19,7 +20,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
   private var stepIndex: Int = 0
   private var stepStartTime: Long = 0 // nano time of step start
 
-  private var interrupted: Boolean = false
+  private var interruptionReason: String? = null
   private var animationJob: Job? = null
 
   override fun contains(x: Int, y: Int): Boolean = false
@@ -82,9 +83,9 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
    *    If [animation]'s [EduUiOnboardingAnimation.mayBeInterruptedInsideAnimation] == true`, the interruption is immediate.
    *    Otherwise, the animation continues until the end of the current cycle.
    *
-   * @return false if animation has stopped because of the interrupt.
+   * @return null if animation was not interrupted or the interruption reason, if the animation was interrupted.
    */
-  suspend fun start(cs: CoroutineScope): Boolean {
+  suspend fun start(cs: CoroutineScope): String? {
     val animationJob = cs.launch(Dispatchers.EDT) {
       runAnimation()
     }
@@ -93,7 +94,7 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
     animationJob.join()
 
-    return !animationJob.isCancelled
+    return interruptionReason
   }
 
   private suspend fun runAnimation() {
@@ -105,7 +106,8 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
 
       index++
       if (index > animation.steps.lastIndex) {
-        if (interrupted) {
+        if (interruptionReason != null) {
+          thisLogger().debug("Toad interrupted at the end of cycle: $interruptionReason")
           throw CancellationException()
         }
 
@@ -120,16 +122,21 @@ class ZhabaComponent(private val project: Project) : JComponent(), Disposable {
   }
 
   /**
-   * Interrupt Zhaba after. If [animation]'s `mayBeInterruptedInsideCycle == true`, the interruption is immediate.
-   * Otherwise the interruption is after the animation finishes the animation cycle.
+   * Interrupt Zhaba. If [animation]'s `mayBeInterruptedInsideCycle == true`, the interruption is immediate.
+   * Otherwise, the interruption is after the animation finishes the animation cycle.
    *
    * This call makes method [start] return false.
+   * [reason] contains some arbitrary string, it will be available to the caller of the [start] method after it returns.
    */
-  fun stop() {
-    interrupted = true
+  fun stop(reason: String) {
+    interruptionReason = reason
 
     if (animation?.mayBeInterruptedInsideAnimation == true) {
       animationJob?.cancel()
+      thisLogger().debug("Toad will be interrupted immediately: $reason")
+    }
+    else {
+      thisLogger().debug("Toad will be interrupted at the end of cycle: $reason")
     }
   }
 

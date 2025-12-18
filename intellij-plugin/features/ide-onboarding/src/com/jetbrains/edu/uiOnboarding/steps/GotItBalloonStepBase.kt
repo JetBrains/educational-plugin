@@ -7,7 +7,6 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
 import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
-import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,9 +53,9 @@ abstract class GotItBalloonStepBase<GD: GotItBalloonGraphData>: ZhabaStep<GotItB
     }
 
     cs.launch(Dispatchers.EDT) {
-      val success = stepData.zhaba.start(cs)
-      if (!success) {
-        resume(RERUN_TRANSITION)
+      val interruption = stepData.zhaba.start(cs)
+      if (interruption != null) {
+        resume(interruption)
       }
     }
 

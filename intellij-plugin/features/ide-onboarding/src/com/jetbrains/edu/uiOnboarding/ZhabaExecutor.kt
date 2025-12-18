@@ -56,7 +56,7 @@ class ZhabaExecutor(
    * Notify zhaba that it has to change its location because of movements of UI components.
    */
   private fun changeZhabaLocation() {
-    currentZhabaComponent?.stop()
+    currentZhabaComponent?.stop(RERUN_TRANSITION)
   }
 
   suspend fun start(step: ZhabaStepBase) {
@@ -118,8 +118,7 @@ class ZhabaExecutor(
     Disposer.newDisposable(this).use { transitionDisposable ->
       thisLogger().info("Installing ZhabaComponent for animation ${zhaba.hashCode()}")
       installComponent(zhaba, nextData, transitionDisposable)
-      val success = zhaba.start(cs)
-      return if (success) null else RERUN_TRANSITION
+      return zhaba.start(cs)
     }
   }
 
@@ -140,16 +139,19 @@ class ZhabaExecutor(
    * The Toad is interrupted if the tracked component is moved or resized or its visibility changed.
    */
   private fun ZhabaComponent.trackComponent(component: Component) {
+
+    fun rerun() = stop(RERUN_TRANSITION)
+
     val componentListener = object : ComponentAdapter() {
-      override fun componentHidden(e: ComponentEvent?) { stop() }
-      override fun componentShown(e: ComponentEvent?) { stop() }
-      override fun componentMoved(e: ComponentEvent?) { stop() }
-      override fun componentResized(e: ComponentEvent?) { stop() }
+      override fun componentHidden(e: ComponentEvent?) { rerun() }
+      override fun componentShown(e: ComponentEvent?) { rerun() }
+      override fun componentMoved(e: ComponentEvent?) { rerun() }
+      override fun componentResized(e: ComponentEvent?) { rerun() }
     }
-    val hierarchyListener = HierarchyListener { stop() }
+    val hierarchyListener = HierarchyListener { rerun() }
     val hierarchyBoundsListener = object : HierarchyBoundsAdapter() {
-      override fun ancestorMoved(e: HierarchyEvent?) { stop() }
-      override fun ancestorResized(e: HierarchyEvent?) { stop() }
+      override fun ancestorMoved(e: HierarchyEvent?) { rerun() }
+      override fun ancestorResized(e: HierarchyEvent?) { rerun() }
     }
 
     Disposer.register(this) {
