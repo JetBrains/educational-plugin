@@ -36,7 +36,7 @@ enum class CourseStorageServiceHost(
 ) : ServiceHostEnum {
   PRODUCTION(COURSE_STORAGE_PRODUCTION_URL, "change.service.host.production"),
   STAGING(COURSE_STORAGE_STAGING_URL, "change.service.host.staging"),
-  OTHER("http://localhost:8080", "change.service.host.other");
+  OTHER("http://localhost:8084", "change.service.host.other");
 
   override fun visibleName(): @ListItem String = EduCoreBundle.message(visibleNameKey)
 

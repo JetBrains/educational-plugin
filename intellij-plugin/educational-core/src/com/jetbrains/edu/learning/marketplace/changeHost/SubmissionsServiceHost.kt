@@ -20,7 +20,7 @@ enum class SubmissionsServiceHost(
 ) : ServiceHostEnum {
   PRODUCTION(SUBMISSIONS_SERVICE_PRODUCTION_URL, "change.service.host.production"),
   STAGING(SUBMISSIONS_SERVICE_STAGING_URL, "change.service.host.staging"),
-  OTHER("http://localhost:8080", "change.service.host.other");
+  OTHER("http://localhost:8081", "change.service.host.other");
 
   override fun visibleName(): @NlsContexts.ListItem String = EduCoreBundle.message(visibleNameKey)
 
