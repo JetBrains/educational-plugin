@@ -1,9 +1,10 @@
-package com.jetbrains.edu.uiOnboarding
+package com.jetbrains.edu.uiOnboarding.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingService
 
 abstract class ZhabaActionBase : DumbAwareAction() {
 

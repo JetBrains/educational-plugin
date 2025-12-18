@@ -12,11 +12,15 @@
   </extensionPoints>
 
   <actions>
-    <action id="StartNewUiOnboardingAction"
-            class="com.jetbrains.edu.uiOnboarding.StartEduUiOnboardingAction"
+    <action id="Educational.CallTodeAction"
+            class="com.jetbrains.edu.uiOnboarding.actions.CallTodeAction"
             icon="com.jetbrains.edu.uiOnboarding.EduUiOnboardingIcons.ToadIcon">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
+    <action id="Educational.StartNewUiOnboardingAction"
+            class="com.jetbrains.edu.uiOnboarding.actions.StartEduUiOnboardingAction"/>
+    <action id="Educational.PromoteStudentPackAction"
+            class="com.jetbrains.edu.uiOnboarding.actions.PromoteStudentPackAction"/>
   </actions>
   <resource-bundle>messages.EduUiOnboardingTourBundle</resource-bundle>
 
