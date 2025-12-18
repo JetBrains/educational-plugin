@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.uiOnboarding.stepsGraph.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
@@ -23,7 +24,7 @@ import javax.swing.JLayeredPane
 
 class ZhabaExecutor(
   private val project: Project,
-  private val graph: ZhabaGraph,
+  val graph: ZhabaGraph,
   private val cs: CoroutineScope,
   parentDisposable: Disposable
 ) : Disposable.Default {
@@ -59,6 +60,7 @@ class ZhabaExecutor(
     currentZhabaComponent?.stop(RERUN_TRANSITION)
   }
 
+  @RequiresEdt
   suspend fun start(step: ZhabaStepBase) {
     var currentStep = step
     var currentData = step.typed().performStep(project, (animationData ?: return)) ?: return
@@ -96,6 +98,10 @@ class ZhabaExecutor(
       currentStep = nextStep
       currentData = nextData
     }
+  }
+
+  fun interrupt(reason: String) {
+    currentZhabaComponent?.stop(reason)
   }
 
   private suspend fun runStep(step: ZhabaStepBase, data: ZhabaData): String {
