@@ -10,6 +10,7 @@ import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.NEXT_TRANSI
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.SAD_FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.STEP_UNAVAILABLE_TRANSITION
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.parseTransitionToSpecificStep
 
 /**
  * Represents a graph of [ZhabaStep]s.
@@ -57,6 +58,12 @@ class ZhabaMainGraph private constructor(
   }
 
   override fun move(step: ZhabaStepBase, transition: String): ZhabaStepBase? {
+    // first, tests predefined transitions
+    if (transition == RERUN_TRANSITION) return step
+    val specificStep = parseTransitionToSpecificStep(transition)
+    if (specificStep != null) return findStep(specificStep)
+
+    // second, find transition in the graph
     val edge = edges.firstOrNull { it.fromStepId == step.stepId && it.transition == transition } ?: return null
     return findStep(edge.toStepId)
   }
@@ -99,7 +106,6 @@ class ZhabaMainGraph private constructor(
         edges.add(Edge(step, STEP_UNAVAILABLE_TRANSITION, nextStep))
       }
 
-      edges.add(Edge(step, RERUN_TRANSITION, step))
       edges.add(Edge(step, HAPPY_FINISH_TRANSITION, happyEnding))
       edges.add(Edge(step, SAD_FINISH_TRANSITION, sadEnding))
     }
@@ -114,7 +120,6 @@ class ZhabaMainGraph private constructor(
     val sadEnding = ZhabaStepFactory.noOpStep(".end.sad.scholar", FINISH_TRANSITION) { JumpingAwayZhabaData(it.scholarSad) }
     stepsData[sadEnding] = GraphData.EMPTY
 
-    edges.add(Edge(studentPackPromotionStep, RERUN_TRANSITION, studentPackPromotionStep))
     edges.add(Edge(studentPackPromotionStep, SAD_FINISH_TRANSITION, sadEnding))
 
     return studentPackPromotionStep

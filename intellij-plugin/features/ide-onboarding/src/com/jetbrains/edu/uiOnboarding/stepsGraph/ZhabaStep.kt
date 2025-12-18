@@ -73,5 +73,19 @@ interface ZhabaStep<StepData : ZhabaData, StepGraphData: GraphData>: ZhabaStepBa
      * If [ZhabaGraph.move] returns null for some other transition, it is a signal of a graph error.
      */
     const val FINISH_TRANSITION = "finish"
+
+    const val STEP_ID_PREFIX_TO_SPECIFIC_STEP = ".move.to."
+
+    fun transitionToSpecificStep(targetStepId: String): String {
+      return "$STEP_ID_PREFIX_TO_SPECIFIC_STEP$targetStepId"
+    }
+
+    fun parseTransitionToSpecificStep(transition: String): String? =
+      if (transition.startsWith(STEP_ID_PREFIX_TO_SPECIFIC_STEP)) {
+        transition.removePrefix(STEP_ID_PREFIX_TO_SPECIFIC_STEP)
+      }
+      else {
+        null
+      }
   }
 }
