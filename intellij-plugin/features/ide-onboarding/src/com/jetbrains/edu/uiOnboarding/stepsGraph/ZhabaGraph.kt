@@ -47,6 +47,9 @@ class ZhabaMainGraph private constructor(
     stepsData[initialStudentPackPromotionStep] = GraphData.EMPTY
     val studentPackPromotionStep = fillStudentPackPromotionGraph()
     edges.add(Edge(initialStudentPackPromotionStep, NEXT_TRANSITION, studentPackPromotionStep))
+
+    val hideStep = ZhabaStepFactory.noOpStep(STEP_ID_HIDE, FINISH_TRANSITION) { JumpingAwayZhabaData(it.winking) }
+    stepsData[hideStep] = GraphData.EMPTY
   }
 
   private data class Edge(
@@ -129,6 +132,7 @@ class ZhabaMainGraph private constructor(
 
     const val STEP_ID_START_ONBOARDING = ".start.onboarding"
     const val STEP_ID_PROMOTE_STUDENT_PACK = ".promote.student.pack"
+    const val STEP_ID_HIDE = ".hide"
 
     fun create(): ZhabaMainGraph = ZhabaMainGraph()
 

@@ -35,6 +35,11 @@ internal class EduUiOnboardingService(private val project: Project, private val 
     inProgressStepId = StudentPackPromotionStep.STEP_ID
   )
 
+  fun hideTode() = executeZhaba(
+    launchStepId = ZhabaMainGraph.STEP_ID_HIDE,
+    inProgressStepId = ZhabaMainGraph.STEP_ID_HIDE
+  )
+
   /**
    * @param launchStepId step from which Zhaba appears on the screen
    * @param inProgressStepId step that Zhaba should move to if it is already on the screen
@@ -74,7 +79,7 @@ internal class EduUiOnboardingService(private val project: Project, private val 
     }
   }
 
-  fun onboardingFinished() {
+  private fun onboardingFinished() {
     currentExecutor.set(null)
   }
 

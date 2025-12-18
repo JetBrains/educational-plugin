@@ -21,6 +21,8 @@
             class="com.jetbrains.edu.uiOnboarding.actions.StartEduUiOnboardingAction"/>
     <action id="Educational.PromoteStudentPackAction"
             class="com.jetbrains.edu.uiOnboarding.actions.PromoteStudentPackAction"/>
+    <action id="Educational.HideTodeAction"
+            class="com.jetbrains.edu.uiOnboarding.actions.HideTodeAction"/>
   </actions>
   <resource-bundle>messages.EduUiOnboardingTourBundle</resource-bundle>
 
