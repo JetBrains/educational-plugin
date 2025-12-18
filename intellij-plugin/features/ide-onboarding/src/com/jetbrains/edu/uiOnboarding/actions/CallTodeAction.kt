@@ -1,12 +1,14 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.jetbrains.edu.uiOnboarding
+package com.jetbrains.edu.uiOnboarding.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.util.SystemInfo
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UiOnboardingRelaunchLocation
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingService
 
-class StartEduUiOnboardingAction : ZhabaActionBase() {
+class CallTodeAction : ZhabaActionBase() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -20,7 +22,7 @@ class StartEduUiOnboardingAction : ZhabaActionBase() {
   }
 
   fun actionName(): String {
-    val actionTitle = EduUiOnboardingBundle.message("action.StartNewUiOnboardingAction.text")
+    val actionTitle = EduUiOnboardingBundle.message("action.Educational.CallTodeAction.text")
 
     return when {
       SystemInfo.isMac -> {
@@ -33,6 +35,6 @@ class StartEduUiOnboardingAction : ZhabaActionBase() {
   }
 
   companion object {
-    const val ACTION_ID: String = "StartNewUiOnboardingAction"
+    const val ACTION_ID: String = "Educational.CallTodeAction"
   }
 }
