@@ -85,5 +85,9 @@ class StudentPackPromotionStep internal constructor() : GotItBalloonStepBase<Got
   }
 
   override val stepId: String
-    get() = "promote.student.pack"
+    get() = STEP_ID
+
+  companion object {
+    const val STEP_ID: String = "student.pack.promotion"
+  }
 }

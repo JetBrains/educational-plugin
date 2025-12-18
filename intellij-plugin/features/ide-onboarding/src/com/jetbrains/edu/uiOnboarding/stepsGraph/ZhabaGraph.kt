@@ -132,7 +132,7 @@ class ZhabaMainGraph private constructor(
 
     fun create(): ZhabaMainGraph = ZhabaMainGraph()
 
-    private fun getDefaultOnboardingStepsOrder(): List<String> {
+    fun getDefaultOnboardingStepsOrder(): List<String> {
       return listOf(
         WelcomeStep.STEP_KEY,
         TaskDescriptionStep.STEP_KEY,

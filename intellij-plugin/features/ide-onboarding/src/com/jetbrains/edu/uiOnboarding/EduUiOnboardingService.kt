@@ -9,46 +9,73 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
+import com.jetbrains.edu.uiOnboarding.steps.StudentPackPromotionStep
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaMainGraph
+import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.transitionToSpecificStep
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
-// copy-pasted from mono-repo
 @Service(Service.Level.PROJECT)
 internal class EduUiOnboardingService(private val project: Project, private val cs: CoroutineScope) : Disposable {
 
-  private val myTourInProgress = AtomicBoolean(false)
+  private val currentExecutor = AtomicReference<ZhabaExecutor?>(null)
+
   val tourInProgress: Boolean
-    get() = myTourInProgress.get()
+    get() = currentExecutor.get() != null
 
-  fun startOnboarding() = executeZhaba(ZhabaMainGraph.STEP_ID_START_ONBOARDING)
+  fun startOnboarding() = executeZhaba(
+    launchStepId = ZhabaMainGraph.STEP_ID_START_ONBOARDING,
+    inProgressStepId = ZhabaMainGraph.getDefaultOnboardingStepsOrder().first()
+  )
 
-  fun promoteStudentPack() = executeZhaba(ZhabaMainGraph.STEP_ID_PROMOTE_STUDENT_PACK)
+  fun promoteStudentPack() = executeZhaba(
+    launchStepId = ZhabaMainGraph.STEP_ID_PROMOTE_STUDENT_PACK,
+    inProgressStepId = StudentPackPromotionStep.STEP_ID
+  )
 
-  fun executeZhaba(initialStepId: String) {
-    val alreadyInProgress = myTourInProgress.getAndSet(true)
-    if (alreadyInProgress) return
+  /**
+   * @param launchStepId step from which Zhaba appears on the screen
+   * @param inProgressStepId step that Zhaba should move to if it is already on the screen
+   */
+  private fun executeZhaba(launchStepId: String, inProgressStepId: String) {
+    var newExecutorCreated = false
+    val executor = currentExecutor.updateAndGet { existing ->
+      if (existing == null) {
+        newExecutorCreated = true
+        ZhabaExecutor(project, ZhabaMainGraph.create(), cs, parentDisposable = this@EduUiOnboardingService)
+      }
+      else {
+        existing
+      }
+    } ?: return
 
-    val graph = ZhabaMainGraph.create()
-    val initialStep = graph.findStep(initialStepId)
-    if (initialStep == null) {
-      thisLogger().error("Step $initialStepId not found")
+    if (!newExecutorCreated) {
+      executor.interrupt(transitionToSpecificStep(inProgressStepId))
       return
     }
 
+    // launch new executor
     cs.launch(Dispatchers.EDT) {
-      val executor = ZhabaExecutor(project, graph, cs, parentDisposable = this@EduUiOnboardingService)
       Disposer.register(executor) {
         onboardingFinished()
       }
-      executor.use { it.start(initialStep) }
+
+      executor.use {
+        val initialStep = executor.graph.findStep(launchStepId)
+        if (initialStep == null) {
+          thisLogger().error("Step $launchStepId not found")
+          return@launch
+        }
+
+        it.start(initialStep)
+      }
     }
   }
 
   fun onboardingFinished() {
-    myTourInProgress.set(false)
+    currentExecutor.set(null)
   }
 
   override fun dispose() {}
