@@ -5,12 +5,11 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
-import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaGraph
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaMainGraph
-import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStepBase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,19 +23,20 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   val tourInProgress: Boolean
     get() = myTourInProgress.get()
 
-  fun startOnboarding() {
-    val graph = ZhabaMainGraph.create()
-    executeZhaba(graph, graph.initialOnboardingStep)
-  }
+  fun startOnboarding() = executeZhaba(ZhabaMainGraph.STEP_ID_START_ONBOARDING)
 
-  fun promoteStudentPack() {
-    val graph = ZhabaMainGraph.create()
-    executeZhaba(graph, graph.initialStudentPackPromotionStep)
-  }
+  fun promoteStudentPack() = executeZhaba(ZhabaMainGraph.STEP_ID_PROMOTE_STUDENT_PACK)
 
-  private fun executeZhaba(graph: ZhabaGraph, initialStep: ZhabaStepBase) {
+  fun executeZhaba(initialStepId: String) {
     val alreadyInProgress = myTourInProgress.getAndSet(true)
     if (alreadyInProgress) return
+
+    val graph = ZhabaMainGraph.create()
+    val initialStep = graph.findStep(initialStepId)
+    if (initialStep == null) {
+      thisLogger().error("Step $initialStepId not found")
+      return
+    }
 
     cs.launch(Dispatchers.EDT) {
       val executor = ZhabaExecutor(project, graph, cs, parentDisposable = this@EduUiOnboardingService)
