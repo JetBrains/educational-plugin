@@ -1,5 +1,4 @@
-@file:Repository("https://repo.maven.apache.org/maven2/")
-@file:Import("shared-gradle-utils.main.kts")
+@file:Repository("https://repo.maven.apache.org/maven2/") @file:Import("shared-gradle-utils.main.kts")
 
 import kotlin.system.exitProcess
 
@@ -12,10 +11,11 @@ val versionParam = args.firstOrNull() ?: run {
 val version = getPluginVersion()
 
 if (version != null) {
-    // Set TeamCity parameter using service message
-    println("##teamcity[setParameter name='$versionParam' value='$version']")
-    println("Plugin version: $version")
-} else {
-    System.err.println("Could not determine project version")
+  // Set TeamCity parameter using service message
+  println("##teamcity[setParameter name='$versionParam' value='$version']")
+  println("Plugin version: $version")
+}
+else {
+  System.err.println("Could not determine project version")
   exitProcess(1)
 }
