@@ -22,7 +22,7 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.time.Instant
 import java.util.*
 
-private val mapper = ObjectMapper().registerKotlinModule().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+private val mapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 
 val client = OkHttpClient()
