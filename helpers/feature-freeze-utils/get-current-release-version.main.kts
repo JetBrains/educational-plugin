@@ -1,4 +1,5 @@
-@file:Repository("https://repo.maven.apache.org/maven2/") @file:Import("shared-gradle-utils.main.kts")
+@file:Repository("https://repo.maven.apache.org/maven2/")
+@file:Import("shared-gradle-utils.main.kts")
 
 import kotlin.system.exitProcess
 
