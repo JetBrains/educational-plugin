@@ -2,6 +2,7 @@
 @file:DependsOn("com.squareup.okhttp3:okhttp:4.12.0")
 @file:DependsOn("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 @file:DependsOn("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+@file:Import("shared-utils.main.kts")
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -90,16 +91,12 @@ fun queryDatabase(databaseId: String): List<Page> {
     .addHeader("Content-Type", "application/json")
     .build()
 
-  client.newCall(request).execute().use { response ->
-    if (!response.isSuccessful) {
-      println("❌ Error: ${response.code} - ${response.body?.string()}")
-      return emptyList()
-    }
-    val body = response.body?.string()
-    val json = mapper.readValue(body, QueryResponse::class.java)
-    return json.results
-  }
+  val responseBody = sendRequest(client, request)
+  val json = mapper.readValue(responseBody, QueryResponse::class.java)
+  return json.results
 }
+
+
 
 fun getPropertyValue(properties: Map<String, Property>, propertyName: String): String {
   val property = properties[propertyName] ?: return ""

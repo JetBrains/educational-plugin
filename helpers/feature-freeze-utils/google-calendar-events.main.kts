@@ -1,6 +1,9 @@
-@file:Repository("https://repo.maven.apache.org/maven2/") @file:DependsOn("com.auth0:java-jwt:4.4.0") @file:DependsOn("com.squareup.okhttp3:okhttp:4.12.0") @file:DependsOn(
-  "com.fasterxml.jackson.core:jackson-databind:2.17.2"
-) @file:DependsOn("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+@file:Repository("https://repo.maven.apache.org/maven2/")
+@file:DependsOn("com.auth0:java-jwt:4.4.0")
+@file:DependsOn("com.squareup.okhttp3:okhttp:4.12.0")
+@file:DependsOn("com.fasterxml.jackson.core:jackson-databind:2.17.2")
+@file:DependsOn("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+@file:Import("shared-utils.main.kts")
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -76,14 +79,8 @@ fun getCalendarEvents(calendarId: String, serviceAccountKeyJson: String, startTi
     """https://www.googleapis.com/calendar/v3/calendars/$encodedCalendarId/events?singleEvents=true&orderBy=startTime&timeMin=$minTime&timeMax=$maxTime"""
 
   val request = Request.Builder().url(eventsUrl).get().addHeader("Authorization", "Bearer $accessToken").build()
-  client.newCall(request).execute().use { response ->
-    val responseBody = response.body?.string()
 
-    if (!response.isSuccessful) {
-      println("❌ Error: ${response.code} - $responseBody")
-      error("Failed to fetch events (HTTP ${response.code}): $responseBody")
-    }
-    val json = mapper.readValue(responseBody, Events::class.java)
-    return json.items
-  }
+  val responseBody = sendRequest(client, request)
+  val json = mapper.readValue(responseBody, Events::class.java)
+  return json.items
 }
