@@ -23,5 +23,5 @@ fun updatePluginVersion(version: String) {
     lines.add("pluginVersion=$version")
   }
 
-  gradlePropertiesFile.writeText(lines.joinToString(System.lineSeparator()))
+  gradlePropertiesFile.writeText(lines.joinToString("\n"))
 }
