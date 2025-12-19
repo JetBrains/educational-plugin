@@ -6,51 +6,33 @@
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import kotlin.system.exitProcess
 
-val NOTION_API_KEY = System.getenv("NOTION_API_KEY")
-val NOTION_DB_ID = System.getenv("NOTION_DB_ID")
+val notionApiKey: String = System.getenv("NOTION_API_KEY") ?: error("Missing NOTION_API_KEY environment variable")
+val notionDbId: String = System.getenv("NOTION_DB_ID") ?: error("Missing NOTION_DB_ID environment variable")
 
 val releaseVersion: String = args.firstOrNull() ?: run {
   println("Error: RELEASE_VERSION is required. Pass it as the first argument.\nUsage: kotlinc -script update-plugin-version-info.main.kts <RELEASE_VERSION>")
   exitProcess(1)
 }
 
-val NUMBER_COLUMN = "Release"
-val RESPONSIBLE_SLACK_COLUMN = "Slack ID"
-val SKIP_COLUMN = "Note"
+val numberColumn = "Release"
+val responsibleSlackColumn = "Slack ID"
+val skipColumn = "Note"
 
-
-if (NOTION_API_KEY.isNullOrEmpty() || NOTION_DB_ID.isNullOrEmpty()) {
-  System.err.println("Set NOTION_API_KEY and NOTION_DB_ID first")
-  exitProcess(1)
-}
-
-val client = OkHttpClient()
-private val mapper = ObjectMapper()
-  .registerKotlinModule()
-  .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class QueryResponse(val results: List<Page> = emptyList())
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Page(val properties: Map<String, Property> = emptyMap())
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Property(
   val type: String? = null,
   val title: List<RichText>? = null,
-  @JsonProperty("rich_text") val richText: List<RichText>? = null,
+  @param:JsonProperty("rich_text") val richText: List<RichText>? = null,
   val select: SelectOption? = null,
-  @JsonProperty("multi_select") val multiSelect: List<SelectOption>? = null,
+  @param:JsonProperty("multi_select") val multiSelect: List<SelectOption>? = null,
   val number: Double? = null,
   val checkbox: Boolean? = null,
   val date: DateValue? = null,
@@ -58,7 +40,7 @@ data class Property(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class RichText(@JsonProperty("plain_text") val plainText: String? = null)
+data class RichText(@param:JsonProperty("plain_text") val plainText: String? = null)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SelectOption(val name: String? = null)
@@ -72,7 +54,7 @@ fun queryDatabase(databaseId: String): List<Page> {
     {
         "sorts": [
             {
-                "property": "$NUMBER_COLUMN",
+                "property": "$numberColumn",
                 "direction": "ascending"
             },
             {
@@ -86,14 +68,12 @@ fun queryDatabase(databaseId: String): List<Page> {
   val request = Request.Builder()
     .url("https://api.notion.com/v1/databases/$databaseId/query")
     .post(filterBody.toRequestBody("application/json".toMediaType()))
-    .addHeader("Authorization", "Bearer $NOTION_API_KEY")
+    .addHeader("Authorization", "Bearer $notionApiKey")
     .addHeader("Notion-Version", "2022-06-28")
     .addHeader("Content-Type", "application/json")
     .build()
 
-  val responseBody = sendRequest(client, request)
-  val json = mapper.readValue(responseBody, QueryResponse::class.java)
-  return json.results
+  return request.sendRequest<QueryResponse>()?.results ?: emptyList()
 }
 
 
@@ -130,7 +110,7 @@ fun containsKeyword(result: Page, propertyName: String, keyword: String): Boolea
 
 // Main execution
 
-val results = queryDatabase(NOTION_DB_ID)  // Get all rows, sorted by Release
+val results = queryDatabase(notionDbId)  // Get all rows, sorted by Release
 if (results.isEmpty()) {
   println("⚠️ No rows found in database")
 }
@@ -141,14 +121,14 @@ else {
 
   for (row in results) {
     val properties = row.properties
-    val releaseValue = getPropertyValue(properties, NUMBER_COLUMN)
+    val releaseValue = getPropertyValue(properties, numberColumn)
 
     if (releaseValue == releaseVersion) {
       currentReleaseRow = row
       foundCurrent = true
       continue
     }
-    if (foundCurrent && !containsKeyword(row, SKIP_COLUMN, "skip")) {
+    if (foundCurrent && !containsKeyword(row, skipColumn, "skip")) {
       nextReleaseRow = row
       break
     }
@@ -156,7 +136,7 @@ else {
 
   if (currentReleaseRow != null) {
     val row = parseRow(currentReleaseRow)
-    val slackId = row[RESPONSIBLE_SLACK_COLUMN].orEmpty()
+    val slackId = row[responsibleSlackColumn].orEmpty()
     println("##teamcity[setParameter name='responsible.slack.id' value='$slackId']")
   }
   else {
@@ -165,7 +145,7 @@ else {
 
   if (nextReleaseRow != null) {
     val nextRow = parseRow(nextReleaseRow)
-    val releaseNumber = nextRow[NUMBER_COLUMN].orEmpty()
+    val releaseNumber = nextRow[numberColumn].orEmpty()
     println("##teamcity[setParameter name='next.version' value='$releaseNumber']")
   }
   else {

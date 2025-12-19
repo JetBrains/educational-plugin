@@ -9,10 +9,8 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URLEncoder
@@ -24,9 +22,6 @@ import java.util.*
 
 private val mapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-
-val client = OkHttpClient()
-
 private fun parsePrivateKey(pem: String): RSAPrivateKey {
   val stripped = pem.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replace("\\s".toRegex(), "")
   val keyBytes = Base64.getDecoder().decode(stripped)
@@ -34,7 +29,7 @@ private fun parsePrivateKey(pem: String): RSAPrivateKey {
   return KeyFactory.getInstance("RSA").generatePrivate(spec) as RSAPrivateKey
 }
 
-data class AccessToken(@JsonProperty("access_token") val accessToken: String)
+data class AccessToken(@param:JsonProperty("access_token") val accessToken: String)
 
 private fun getAccessToken(assertion: String): String {
   val requestBody =
@@ -42,23 +37,15 @@ private fun getAccessToken(assertion: String): String {
 
   val request = Request.Builder().url("https://oauth2.googleapis.com/token").post(requestBody).build()
 
-  client.newCall(request).execute().use { response ->
-    val responseBody = response.body?.string()
-    if (!response.isSuccessful) {
-      println("❌ Error: ${response.code} - $responseBody")
-      error("Failed to get access token: $responseBody")
-    }
-    val json = mapper.readValue(responseBody, AccessToken::class.java)
-    return json.accessToken
-  }
+  return request.sendRequest<AccessToken>()?.accessToken ?: error("Failed to get access token")
 }
 
-data class ServiceAccountKey(@JsonProperty("private_key") val privateKey: String, @JsonProperty("client_email") val clientEmail: String)
-data class EventDateTime(@JsonProperty("date") val date: String?)
-data class Event(@JsonProperty("summary") val summary: String?, @JsonProperty("start") val start: EventDateTime?)
-data class Events(@JsonProperty("items") val items: List<Event?>?)
+data class ServiceAccountKey(@param:JsonProperty("private_key") val privateKey: String, @param:JsonProperty("client_email") val clientEmail: String)
+data class EventDateTime(@param:JsonProperty("date") val date: String?)
+data class Event(@param:JsonProperty("summary") val summary: String?, @param:JsonProperty("start") val start: EventDateTime?)
+data class Events(@param:JsonProperty("items") val items: List<Event>?)
 
-fun getCalendarEvents(calendarId: String, serviceAccountKeyJson: String, startTime: Instant, endTime: Instant): List<Event?>? {
+fun getCalendarEvents(calendarId: String, serviceAccountKeyJson: String, startTime: Instant, endTime: Instant): List<Event>? {
   val keyData = mapper.readValue(serviceAccountKeyJson, ServiceAccountKey::class.java)
   val clientEmail = keyData.clientEmail
   val privateKeyPem = keyData.privateKey
@@ -80,7 +67,5 @@ fun getCalendarEvents(calendarId: String, serviceAccountKeyJson: String, startTi
 
   val request = Request.Builder().url(eventsUrl).get().addHeader("Authorization", "Bearer $accessToken").build()
 
-  val responseBody = sendRequest(client, request)
-  val json = mapper.readValue(responseBody, Events::class.java)
-  return json.items
+  return request.sendRequest<Events>()?.items
 }
