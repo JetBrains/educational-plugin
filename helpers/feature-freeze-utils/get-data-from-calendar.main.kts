@@ -27,12 +27,8 @@ fun getEventDate(eventsList: List<Event?>?, keyword: String): LocalDate? = event
 
 private fun toWeekDay(date: LocalDate?): String? = date?.dayOfWeek?.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
 
-val featureFreezeDate = getEventDate(events, "Feature Freeze")
-
-if (featureFreezeDate == null) {
-  // No feature freeze events found
-  exitProcess(0)
-}
+// No feature freeze if the corresponding events are not found
+val featureFreezeDate = getEventDate(events, "Feature Freeze") ?: exitProcess(0)
 
 if (featureFreezeDate!!.isEqual(today)) {
   println("##teamcity[setParameter name='feature.freeze.date' value='$featureFreezeDate (${toWeekDay(featureFreezeDate)})']")
