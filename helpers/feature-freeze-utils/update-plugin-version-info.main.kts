@@ -1,7 +1,6 @@
 import java.io.File
 import kotlin.system.exitProcess
 
-// Prefer command line argument for RELEASE_VERSION; fall back to environment variable for compatibility
 val releaseVersion: String = args.firstOrNull() ?: run {
         println("Error: RELEASE_VERSION is required. Pass it as the first argument.\nUsage: kotlinc -script update-plugin-version-info.main.kts <RELEASE_VERSION>")
         exitProcess(1)
@@ -64,7 +63,7 @@ fun addVersionToTable(
     val lines = tableSection.lines().toMutableList()
 
     // Check if pluginVersion already exists in the table
-    if (lines.any { it.contains("| $pluginVersion") || it.contains("| ${pluginVersion.padEnd(9)}") }) {
+    if (lines.any { it.contains("| $pluginVersion") }) {
         println("Version $pluginVersion already exists in the table. Skipping.")
         return
     }
@@ -76,7 +75,17 @@ fun addVersionToTable(
         return
     }
 
-    val newRow = "| ${pluginVersion.padEnd(9)} | ${jsonVersion.padEnd(4)} | ${yamlVersion.padEnd(4)} |"
+    // Expects row in format: | 2025.11   | 22   | 5    |
+    val columns = lines[insertIndex].split("|").drop(1)
+    var releasePadEnd = 10
+    var jsonPadEnd = 5
+    var yamlPadEnd = 5
+    if (columns.size == 3) {
+        releasePadEnd = columns[0].length - 1
+        jsonPadEnd = columns[1].length - 1
+        yamlPadEnd = columns[2].length - 1
+    }
+    val newRow = "| ${pluginVersion.padEnd(releasePadEnd)}| ${jsonVersion.padEnd(jsonPadEnd)}| ${yamlVersion.padEnd(yamlPadEnd)}|"
 
     lines.add(insertIndex + 1, newRow)
 
