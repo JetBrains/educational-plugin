@@ -1,8 +1,9 @@
 #!/usr/bin/env kotlin
 
-@file:Repository("https://repo.maven.apache.org/maven2/") @file:DependsOn("com.auth0:java-jwt:4.4.0") @file:DependsOn("com.google.code.gson:gson:2.10.1") @file:Import(
-  "google-calendar-events.main.kts"
-)
+@file:Repository("https://repo.maven.apache.org/maven2/")
+@file:DependsOn("com.auth0:java-jwt:4.4.0")
+@file:DependsOn("com.google.code.gson:gson:2.10.1")
+@file:Import("google-calendar-events.main.kts")
 
 import java.time.Instant
 import java.time.LocalDate
