@@ -137,7 +137,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
     // given
     val course = course {}
 
-    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties(NOT_SHOWN, NOT_SHOWN, isChangedByUser = false))
+    UserAgreementSettings.getInstance().updatePluginAgreementState(UserAgreementProperties())
     val userAgreementManager = mockService<UserAgreementManager>(application)
     justRun { userAgreementManager.showUserAgreement(any()) }
     coEvery { submissionsConnector.getUserAgreement() } returns Ok(UserAgreement(ACCEPTED, DECLINED))
@@ -147,7 +147,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
     PlatformTestUtil.waitWhileBusy { !activityFinished }
 
     // then
-    coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
-    verify(exactly = 0) { userAgreementManager.showUserAgreement(any()) }
+    coVerify(exactly = 0) { submissionsConnector.getUserAgreement() }
+    verify(exactly = 1) { userAgreementManager.showUserAgreement(any()) }
   }
 }
