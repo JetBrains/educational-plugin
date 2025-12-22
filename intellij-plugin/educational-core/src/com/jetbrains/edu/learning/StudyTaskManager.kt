@@ -10,6 +10,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.agreement.isPluginAllowed
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillProject
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader.loadCourse

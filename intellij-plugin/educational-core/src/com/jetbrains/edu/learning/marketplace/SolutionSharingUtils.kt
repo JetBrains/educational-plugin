@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.util.registry.Registry
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.agreement.solutionSharing
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.jetbrains.annotations.NonNls
 
