@@ -16,21 +16,6 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
   private val _userAgreementProperties = MutableStateFlow(UserAgreementProperties(isChangedByUser = false))
   val userAgreementProperties: StateFlow<UserAgreementProperties> = _userAgreementProperties.asStateFlow()
 
-  val isPluginAllowed: Boolean
-    get() {
-      val pluginAgreement = _userAgreementProperties.value.pluginAgreement
-      return pluginAgreement == UserAgreementState.ACCEPTED || pluginAgreement == UserAgreementState.NOT_SHOWN
-    }
-
-  val pluginAgreement: Boolean
-    get() = _userAgreementProperties.value.pluginAgreement == UserAgreementState.ACCEPTED
-
-  val aiServiceAgreement: Boolean
-    get() = _userAgreementProperties.value.aiServiceAgreement == UserAgreementState.ACCEPTED
-
-  val solutionSharing: Boolean
-    get() = _userAgreementProperties.value.solutionSharingPreference == SolutionSharingPreference.ALWAYS
-
   fun setSolutionSharing(solutionSharingPreference: SolutionSharingPreference = SolutionSharingPreference.ALWAYS) {
     _userAgreementProperties.value = _userAgreementProperties.value.copy(solutionSharingPreference = solutionSharingPreference)
   }
@@ -105,3 +90,21 @@ class UserAgreementSettings : PersistentStateComponent<UserAgreementSettings.Sta
     fun getInstance(): UserAgreementSettings = service()
   }
 }
+
+// The following properties extracted to external properties not to use private fields of `UserAgreementSettings`
+// and simplify mocking in tests
+
+val UserAgreementSettings.isPluginAllowed: Boolean
+  get() {
+    val pluginAgreement = userAgreementProperties.value.pluginAgreement
+    return pluginAgreement == UserAgreementState.ACCEPTED || pluginAgreement == UserAgreementState.NOT_SHOWN
+  }
+
+val UserAgreementSettings.pluginAgreement: Boolean
+  get() = userAgreementProperties.value.pluginAgreement == UserAgreementState.ACCEPTED
+
+val UserAgreementSettings.aiServiceAgreement: Boolean
+  get() = userAgreementProperties.value.aiServiceAgreement == UserAgreementState.ACCEPTED
+
+val UserAgreementSettings.solutionSharing: Boolean
+  get() = userAgreementProperties.value.solutionSharingPreference == SolutionSharingPreference.ALWAYS

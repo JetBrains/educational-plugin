@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.edu.learning.agreement.UserAgreementSettings
+import com.jetbrains.edu.learning.agreement.solutionSharing
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
