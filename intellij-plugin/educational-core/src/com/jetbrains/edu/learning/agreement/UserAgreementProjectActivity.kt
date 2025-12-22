@@ -43,24 +43,39 @@ class UserAgreementProjectActivity : ProjectActivity {
       changeProjectView(project)
       return
     }
-    val currentLocalAgreementState = UserAgreementSettings.getInstance().userAgreementProperties.value
-    // If user agreement was shown before or suppressed by system properties, do nothing
-    if (currentLocalAgreementState.pluginAgreement != UserAgreementState.NOT_SHOWN ||
-        System.getProperty(DISABLE_USER_AGREEMENT)?.toBoolean() == true) return
 
-    // Load the remote agreement state only if the current state is not caused by direct user action.
-    // Important for `Reset User Agreement` action
-    if (!currentLocalAgreementState.isChangedByUser) {
-      val remoteAgreementState = withContext(Dispatchers.IO) {
-        MarketplaceSubmissionsConnector.getInstance().getUserAgreement().onError {
-          UserAgreement(UserAgreementState.NOT_SHOWN, UserAgreementState.NOT_SHOWN)
+    // If user agreement is suppressed by system properties, do nothing
+    if (System.getProperty(DISABLE_USER_AGREEMENT)?.toBoolean() == true) return
+
+    val currentLocalAgreementState = UserAgreementSettings.getInstance().userAgreementProperties.value
+    val (remotePluginAgreement, remoteAiTermsOfService) = withContext(Dispatchers.IO) {
+      MarketplaceSubmissionsConnector.getInstance().getUserAgreement().onError {
+        UserAgreement(UserAgreementState.NOT_SHOWN, UserAgreementState.NOT_SHOWN)
+      }
+    }
+
+    // If user agreement was shown before, ensure that the remote state is the same.
+    // Otherwise, try to update it
+    if (currentLocalAgreementState.pluginAgreement != UserAgreementState.NOT_SHOWN) {
+      if (remotePluginAgreement != currentLocalAgreementState.pluginAgreement ||
+          remoteAiTermsOfService != currentLocalAgreementState.aiServiceAgreement) {
+        withContext(Dispatchers.IO) {
+          MarketplaceSubmissionsConnector.getInstance().updateUserAgreements(
+            currentLocalAgreementState.pluginAgreement,
+            currentLocalAgreementState.aiServiceAgreement
+          )
         }
       }
+      return
+    }
 
-      if (remoteAgreementState.pluginAgreement != UserAgreementState.NOT_SHOWN) {
+    // Sync the local agreement state with the remote one only if the current state is not caused by direct user action.
+    // Important for `Reset User Agreement` action
+    if (!currentLocalAgreementState.isChangedByUser) {
+      if (remotePluginAgreement != UserAgreementState.NOT_SHOWN) {
         val newLocalAgreementState = UserAgreementSettings.UserAgreementProperties(
-          remoteAgreementState.pluginAgreement,
-          remoteAgreementState.aiTermsOfService,
+          remotePluginAgreement,
+          remoteAiTermsOfService,
           isChangedByUser = false
         )
         // Apply remote agreement state for local settings and don't show the agreement dialog

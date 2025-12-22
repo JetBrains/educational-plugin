@@ -30,6 +30,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
   override fun setUp() {
     super.setUp()
     submissionsConnector = mockService<MarketplaceSubmissionsConnector>(application)
+    coEvery { submissionsConnector.updateUserAgreements(any(), any()) } returns Ok(Unit)
 
     userAgreementSettings = mockService<UserAgreementSettings>(application)
     every { userAgreementSettings.updatePluginAgreementState(any(), any()) } returns Unit
@@ -56,6 +57,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
 
     // then
     coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
     verify(exactly = 1) { userAgreementManager.showUserAgreement(any()) }
     // Since we mock showing the user agreement dialog, nothing should update the local agreement state
     verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
@@ -75,6 +77,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
 
     // then
     coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
     verify(exactly = 0) { userAgreementManager.showUserAgreement(any()) }
     verify(exactly = 1) { userAgreementSettings.updatePluginAgreementState(UserAgreementProperties(ACCEPTED, DECLINED, isChangedByUser = false), any()) }
   }
@@ -93,6 +96,7 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
 
     // then
     coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
     verify(exactly = 1) { userAgreementManager.showUserAgreement(any()) }
     // Since we mock showing the user agreement dialog, nothing should update the local agreement state
     verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
@@ -104,14 +108,15 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
     val course = course {}
 
     every { userAgreementSettings.userAgreementProperties } returns MutableStateFlow(UserAgreementProperties.fullyAccepted())
-    coEvery { submissionsConnector.getUserAgreement() } returns Ok(UserAgreement(ACCEPTED, DECLINED))
+    coEvery { submissionsConnector.getUserAgreement() } returns Ok(UserAgreement(ACCEPTED, ACCEPTED))
 
     // when
     createCourseStructure(course)
     PlatformTestUtil.waitWhileBusy { !activityFinished }
 
     // then
-    coVerify(exactly = 0) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
     verify(exactly = 0) { userAgreementManager.showUserAgreement(any()) }
     verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
   }
@@ -130,12 +135,13 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
 
     // then
     coVerify(exactly = 0) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
     verify(exactly = 0) { userAgreementManager.showUserAgreement(any()) }
     verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
   }
 
   @Test
-  fun `do not load remote state if it was reset`() {
+  fun `do not apply remote state if it was reset`() {
     // given
     val course = course {}
 
@@ -147,9 +153,48 @@ class UserAgreementProjectActivityTest : CourseGenerationTestBase<EmptyProjectSe
     PlatformTestUtil.waitWhileBusy { !activityFinished }
 
     // then
-    coVerify(exactly = 0) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 0) { submissionsConnector.updateUserAgreements(any(), any()) }
     verify(exactly = 1) { userAgreementManager.showUserAgreement(any()) }
     // Since we mock showing the user agreement dialog, nothing should update the local agreement state
+    verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
+  }
+
+  @Test
+  fun `update remote state if local is accepted and unsynced with remote`() {
+    // given
+    val course = course {}
+
+    every { userAgreementSettings.userAgreementProperties } returns MutableStateFlow(UserAgreementProperties.fullyAccepted())
+    coEvery { submissionsConnector.getUserAgreement() } returns Ok(UserAgreement(NOT_SHOWN, NOT_SHOWN))
+
+    // when
+    createCourseStructure(course)
+    PlatformTestUtil.waitWhileBusy { !activityFinished }
+
+    // then
+    coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(ACCEPTED, ACCEPTED) }
+    verify(exactly = 0) { userAgreementManager.showUserAgreement(any()) }
+    verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
+  }
+
+  @Test
+  fun `update remote state if local is accepted and remote state is unknown`() {
+    // given
+    val course = course {}
+
+    every { userAgreementSettings.userAgreementProperties } returns MutableStateFlow(UserAgreementProperties.fullyAccepted())
+    coEvery { submissionsConnector.getUserAgreement() } returns Err("Unexpected IO error")
+
+    // when
+    createCourseStructure(course)
+    PlatformTestUtil.waitWhileBusy { !activityFinished }
+
+    // then
+    coVerify(exactly = 1) { submissionsConnector.getUserAgreement() }
+    coVerify(exactly = 1) { submissionsConnector.updateUserAgreements(ACCEPTED, ACCEPTED) }
+    verify(exactly = 0) { userAgreementManager.showUserAgreement(any()) }
     verify(exactly = 0) { userAgreementSettings.updatePluginAgreementState(any(), any()) }
   }
 }
