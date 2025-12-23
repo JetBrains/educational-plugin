@@ -70,7 +70,7 @@ class MarketplaceSubmissionsConnector {
   private fun submissionsService(): SubmissionsService {
     val uidToken = JBAccountInfoService.getInstance()?.userData?.id ?: error("Nullable JB account ID token in user data")
 
-    val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, "u.$uidToken")
+    val retrofit = createRetrofitBuilder(submissionsServiceUrl, connectionPool, "u.$uidToken", customInterceptor = UserAgreementInterceptor())
       .addConverterFactory(converterFactory)
       .build()
 
