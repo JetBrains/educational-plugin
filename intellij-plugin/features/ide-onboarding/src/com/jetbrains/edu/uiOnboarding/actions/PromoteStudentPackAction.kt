@@ -2,9 +2,12 @@
 package com.jetbrains.edu.uiOnboarding.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingService
 
 class PromoteStudentPackAction : ZhabaActionBase() {
+
+  override val textToSay: String = EduUiOnboardingBundle.message("action.Educational.PromoteStudentPackAction.zhaba.text")
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
