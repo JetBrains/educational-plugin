@@ -24,23 +24,13 @@ class CourseViewStep : EduUiOnboardingStep {
     project: Project,
     data: EduUiOnboardingAnimationData
   ): GotItBalloonStepData? {
-    val projectViewToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
-                                  .getToolWindow("Project") ?: return null
-
-    projectViewToolWindow.show()
-
-    val component = projectViewToolWindow.component
-    if (!component.isShowing) return null
+    val relativeZhabaPoint = locateZhabaInProjectToolWindow(project) ?: return null
+    val zhabaPoint = relativeZhabaPoint.originalPoint
+    val component = relativeZhabaPoint.originalComponent
 
     val builder = GotItComponentBuilder { EduUiOnboardingBundle.message("course.view.step.text") }
       .withHeader(EduUiOnboardingBundle.message("course.view.step.header"))
 
-    val zhabaPoint = Point(
-      (component.width - ZHABA_DIMENSION.width) / 2,
-      component.height - ZHABA_DIMENSION.height
-    )
-
-    val relativeZhabaPoint = RelativePoint(component, zhabaPoint)
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
 
     // Position the balloon a bit to the right from the middle of the project view
