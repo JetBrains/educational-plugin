@@ -48,6 +48,12 @@ class ZhabaMainGraph private constructor(
     val studentPackPromotionStep = fillStudentPackPromotionGraph()
     edges.add(Edge(initialStudentPackPromotionStep, NEXT_TRANSITION, studentPackPromotionStep))
 
+    val initialMenuStep = ZhabaStepFactory.noOpStep(STEP_ID_MAIN_MENU, NEXT_TRANSITION, StartOnboardingZhabaData)
+    stepsData[initialMenuStep] = GraphData.EMPTY
+    val menuStep: ZhabaStepBase = ZhabaStepFactory.menuStep()
+    stepsData[menuStep] = GraphData.EMPTY
+    edges.add(Edge(initialMenuStep, NEXT_TRANSITION, menuStep))
+
     val hideStep = ZhabaStepFactory.noOpStep(STEP_ID_HIDE, FINISH_TRANSITION) { JumpingAwayZhabaData(it.winking) }
     stepsData[hideStep] = GraphData.EMPTY
   }
@@ -130,6 +136,7 @@ class ZhabaMainGraph private constructor(
 
   companion object {
 
+    const val STEP_ID_MAIN_MENU = ".start.main.menu"
     const val STEP_ID_START_ONBOARDING = ".start.onboarding"
     const val STEP_ID_PROMOTE_STUDENT_PACK = ".promote.student.pack"
     const val STEP_ID_HIDE = ".hide"

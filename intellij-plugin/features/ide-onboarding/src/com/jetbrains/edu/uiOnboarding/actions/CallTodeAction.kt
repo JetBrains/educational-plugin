@@ -3,8 +3,6 @@ package com.jetbrains.edu.uiOnboarding.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.util.SystemInfo
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.UiOnboardingRelaunchLocation
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingService
 
@@ -12,8 +10,7 @@ class CallTodeAction : ZhabaActionBase() {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    EduCounterUsageCollector.uiOnboardingRelaunched(UiOnboardingRelaunchLocation.MENU_OR_ACTION)
-    EduUiOnboardingService.getInstance(project).startOnboarding()
+    EduUiOnboardingService.getInstance(project).showMenu()
   }
 
   override fun update(e: AnActionEvent) {
