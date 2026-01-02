@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.use
 import com.jetbrains.edu.uiOnboarding.steps.StudentPackPromotionStep
+import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaMainGraph
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.transitionToSpecificStep
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +34,11 @@ internal class EduUiOnboardingService(private val project: Project, private val 
   fun promoteStudentPack() = executeZhaba(
     launchStepId = ZhabaMainGraph.STEP_ID_PROMOTE_STUDENT_PACK,
     inProgressStepId = StudentPackPromotionStep.STEP_ID
+  )
+
+  fun showMenu() = executeZhaba(
+    ZhabaMainGraph.STEP_ID_MAIN_MENU,
+    ZhabaStepFactory.MENU_STEP_ID
   )
 
   fun hideTode() = executeZhaba(
