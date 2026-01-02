@@ -1,9 +1,12 @@
 package com.jetbrains.edu.uiOnboarding.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingService
 
 class HideTodeAction : ZhabaActionBase() {
+
+  override val textToSay: String = EduUiOnboardingBundle.message("action.Educational.HideTodeAction.zhaba.text")
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return

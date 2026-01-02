@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.NlsActions
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 
 /**
@@ -15,12 +16,19 @@ const val ZHABA_SAYS_ACTION_PLACE = "ZhabaSaysPlace"
 
 abstract class ZhabaActionBase : DumbAwareAction() {
 
+  /**
+   * Text shown inside the Zhaba balloon.
+   */
+  protected open val textToSay: String
+    @NlsActions.ActionText get() = templateText
+
   override fun update(e: AnActionEvent) {
     val project = e.project
 
     e.presentation.isEnabledAndVisible = project != null && project.isEduProject()
 
     if (e.place == ZHABA_SAYS_ACTION_PLACE) {
+      e.presentation.text = textToSay
       e.presentation.setupCustomComponent()
     }
   }
