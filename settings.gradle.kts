@@ -157,6 +157,13 @@ pluginManagement {
     mavenCentral()
     gradlePluginPortal()
     maven("https://central.sonatype.com/repository/maven-snapshots/")
+
+    // These repositories already exist in the educational-core module, but we need them here to make
+    // IDE see platform sources during development. This is a workaround and should be removed after
+    // the intelliJ Platform Gradle Plugin fixes source download.
+    maven("https://www.jetbrains.com/intellij-repository/releases")
+    maven("https://www.jetbrains.com/intellij-repository/snapshots")
+
     if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
       maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
       maven("https://packages.jetbrains.team/maven/p/teamcity-rest-client/teamcity-rest-client")
