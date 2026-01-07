@@ -8,7 +8,6 @@
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.system.exitProcess
@@ -39,6 +38,7 @@ else if (featureFreezeDate.isBefore(today.plus(7, ChronoUnit.DAYS))) {
   val releaseDate = getEventDate(events, "JetBrains Academy Plugin Release")
 
   println("##teamcity[setParameter name='current.date' value='$today (Today)']")
+  println("##teamcity[setParameter name='current.dayOfWeek' value='${toWeekDay(today)}']")
   println("##teamcity[setParameter name='feature.freeze.date' value='$featureFreezeDate (${toWeekDay(featureFreezeDate)})']")
   println("##teamcity[setParameter name='release.builds.date' value='$releaseBuildsDate (${toWeekDay(releaseBuildsDate)})']")
   println("##teamcity[setParameter name='plugin.release.date' value='$releaseDate (${toWeekDay(releaseDate)})']")
