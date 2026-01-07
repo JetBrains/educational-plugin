@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace.lti
+package com.jetbrains.edu.lti
 
 import com.jetbrains.edu.learning.marketplace.BaseMarketplaceRestService.Companion.STUDY_ITEM_ID
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost

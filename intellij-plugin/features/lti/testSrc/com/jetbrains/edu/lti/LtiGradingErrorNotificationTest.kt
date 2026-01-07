@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace.lti
+package com.jetbrains.edu.lti
 
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationNamesInfo

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace.lti
+package com.jetbrains.edu.lti
 
 import com.jetbrains.edu.learning.messages.EduPropertiesBundle
 import org.jetbrains.annotations.PropertyKey

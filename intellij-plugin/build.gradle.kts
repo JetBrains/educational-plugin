@@ -90,6 +90,7 @@ dependencies {
     pluginComposedModule(implementation(project("features:ai-test-generation")))
     pluginComposedModule(implementation(project("features:ide-onboarding")))
     pluginComposedModule(implementation(project("features:social-media")))
+    pluginComposedModule(implementation(project("features:lti")))
     pluginComposedModule(implementation(project("localization")))
 
     testFramework(TestFrameworkType.Bundled)

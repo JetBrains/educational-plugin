@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace.lti
+package com.jetbrains.edu.lti
 
 data class LTISettingsDTO(
   val launchId: String,

@@ -1,10 +1,8 @@
-package com.jetbrains.edu.learning.lti
+package com.jetbrains.edu.lti
 
 import com.intellij.openapi.Disposable
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
-import com.jetbrains.edu.learning.marketplace.lti.LTIConnectorImpl
-import com.jetbrains.edu.learning.marketplace.lti.LTIOnlineService
 
 class MockLTIConnector : LTIConnectorImpl(), Disposable {
 

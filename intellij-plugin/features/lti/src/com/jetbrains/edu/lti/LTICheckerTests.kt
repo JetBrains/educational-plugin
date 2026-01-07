@@ -1,8 +1,9 @@
-package com.jetbrains.edu.learning.lti
+package com.jetbrains.edu.lti
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.marketplace.lti.LTIConnector
 import com.jetbrains.edu.learning.marketplace.lti.LTIOnlineService
@@ -84,7 +85,7 @@ class LTICheckerTests : EduTestCase() {
           })
         }
       }
-    }.apply { isMarketplace = true }
+    }.apply { Course.isMarketplace = true }
 
     var callPath: String? = null
     var body: String? = null

@@ -1,9 +1,9 @@
-package com.jetbrains.edu.learning.marketplace.lti
+package com.jetbrains.edu.lti
 
-import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_COURSERA_COURSE
-import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_LAUNCH_ID
-import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_LMS_DESCRIPTION
-import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_STUDY_ITEM_ID
+import com.jetbrains.edu.lti.LtiCourseMetadataProcessor.Companion.LTI_COURSERA_COURSE
+import com.jetbrains.edu.lti.LtiCourseMetadataProcessor.Companion.LTI_LAUNCH_ID
+import com.jetbrains.edu.lti.LtiCourseMetadataProcessor.Companion.LTI_LMS_DESCRIPTION
+import com.jetbrains.edu.lti.LtiCourseMetadataProcessor.Companion.LTI_STUDY_ITEM_ID
 import com.jetbrains.edu.learning.navigation.NavigationProperties
 import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessorTestBase

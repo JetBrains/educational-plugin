@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.marketplace.lti
+package com.jetbrains.edu.lti
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.CourseSetListener
