@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace.lti
 
 import com.jetbrains.edu.learning.marketplace.BaseMarketplaceRestService.Companion.STUDY_ITEM_ID
 import com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceHost
+import com.jetbrains.edu.learning.marketplace.lti.changeHost.LTIServiceHost
 import io.netty.handler.codec.http.QueryStringDecoder
 
 /**
@@ -15,7 +16,8 @@ enum class LTIOnlineService {
    * Implementation as a standalone service.
    */
   STANDALONE {
-    override val serviceURL = getHost()
+    override val serviceURL
+      get() = LTIServiceHost.selectedHost.url
   },
 
   /**
@@ -41,24 +43,5 @@ enum class LTIOnlineService {
     else {
       STANDALONE
     }
-  }
-}
-
-private const val LTI_HOST_SYSTEM_PROPERTY = "edu.lti.service.host"
-private const val LTI_PRODUCTION_HOST = "https://lti-tool-production.labs.jb.gg/"
-private const val LTI_STAGING_HOST = "https://lti-tool-staging.labs.jb.gg/"
-
-// TODO In EDU-7851 the logic of getting host will be rewritten.
-// A user will be able to change it with UI the same way it is done for Submission Service URL
-private fun getHost(): String {
-  val urlString = System.getProperty(
-    LTI_HOST_SYSTEM_PROPERTY,
-    LTI_PRODUCTION_HOST
-  )
-
-  return when (urlString) {
-    "production" -> LTI_PRODUCTION_HOST
-    "staging" -> LTI_STAGING_HOST
-    else -> urlString
   }
 }
