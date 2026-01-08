@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Com
 import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_LAUNCH_ID
 import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_LMS_DESCRIPTION
 import com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor.Companion.LTI_STUDY_ITEM_ID
-import com.jetbrains.edu.learning.navigation.NavigationProperties
 import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessorTestBase
 import org.junit.Test
@@ -25,7 +24,7 @@ class LtiCourseMetadataProcessorTest : CourseMetadataProcessorTestBase() {
       LTISettingsDTO("id", "description", LTIOnlineService.STANDALONE, null),
       LTISettingsManager.getInstance(project).settings
     )
-    assertEquals(NavigationProperties(-1), StudyItemSelectionService.getInstance(project).studyItemSettings.value)
+    assertEquals(-1, StudyItemSelectionService.getInstance(project).lastStudyItemId())
   }
 
   @Test
@@ -43,7 +42,7 @@ class LtiCourseMetadataProcessorTest : CourseMetadataProcessorTestBase() {
       LTISettingsDTO("id", "description", LTIOnlineService.STANDALONE, null),
       LTISettingsManager.getInstance(project).settings
     )
-    assertEquals(NavigationProperties(12345), StudyItemSelectionService.getInstance(project).studyItemSettings.value)
+    assertEquals(12345, StudyItemSelectionService.getInstance(project).lastStudyItemId())
   }
 
   @Test
@@ -57,7 +56,7 @@ class LtiCourseMetadataProcessorTest : CourseMetadataProcessorTestBase() {
     createCourseWithMetadata(metadata)
     // then
     assertNull(LTISettingsManager.getInstance(project).settings)
-    assertNull(StudyItemSelectionService.getInstance(project).studyItemSettings.value)
+    assertNull(StudyItemSelectionService.getInstance(project).lastStudyItemId())
   }
 
   @Test

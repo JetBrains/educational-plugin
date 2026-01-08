@@ -8,22 +8,21 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 
 @Service(Service.Level.PROJECT)
-class StudyItemSelectionService(private val project: Project, scope: CoroutineScope) {
-  private val _studyItemSettings = MutableStateFlow<NavigationProperties?>(null)
-  val studyItemSettings = _studyItemSettings.asStateFlow()
+class StudyItemSelectionService(private val project: Project, private val scope: CoroutineScope) {
+  private val studyItemSettings = MutableSharedFlow<Int>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   init {
     scope.launch {
-      studyItemSettings.collectLatest { currentStudyItem ->
+      studyItemSettings.collectLatest { studyItemId ->
         val course = project.course ?: return@collectLatest
-        val studyItemId = currentStudyItem?.currentStudyItem ?: return@collectLatest
         if (studyItemId == -1) return@collectLatest
 
         course.allTasks.firstOrNull {
@@ -39,13 +38,16 @@ class StudyItemSelectionService(private val project: Project, scope: CoroutineSc
     }
   }
 
-  fun setCurrentStudyItem(currentStudyItem: Int) {
-    _studyItemSettings.value = NavigationProperties(currentStudyItem)
+  fun setCurrentStudyItem(currentStudyItemId: Int) {
+    scope.launch {
+      studyItemSettings.emit(currentStudyItemId)
+    }
   }
+
+  @TestOnly
+  fun lastStudyItemId(): Int? = studyItemSettings.replayCache.lastOrNull()
 
   companion object {
     fun getInstance(project: Project): StudyItemSelectionService = project.service()
   }
 }
-
-data class NavigationProperties(val currentStudyItem: Int)
