@@ -31,7 +31,12 @@ class StudyItemSelectionService(private val project: Project, private val scope:
           || it.lesson.section?.id == studyItemId
         }?.let {
           withContext(Dispatchers.EDT) {
-            NavigationUtils.navigateToTask(project, it, forceSpecificTaskInFrameworkLesson = true)
+            // If studyItemId corresponds to a task, we must navigate specifically to that task.
+            // Otherwise, if studyItemId corresponds to a lesson or a section, we navigate to the first task of that study item,
+            // and for framework lessons that means that we navigate to the current task of that lesson.
+            val studyItemIsATask = it.id == studyItemId
+
+            NavigationUtils.navigateToTask(project, it, forceSpecificTaskInFrameworkLesson = studyItemIsATask)
           }
         }
       }
