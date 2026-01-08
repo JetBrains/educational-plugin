@@ -31,7 +31,7 @@ class StudyItemSelectionService(private val project: Project, private val scope:
           || it.lesson.section?.id == studyItemId
         }?.let {
           withContext(Dispatchers.EDT) {
-            NavigationUtils.navigateToTask(project, it)
+            NavigationUtils.navigateToTask(project, it, forceSpecificTaskInFrameworkLesson = true)
           }
         }
       }

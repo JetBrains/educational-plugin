@@ -688,6 +688,66 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     fileTree.assertEquals(rootDir, myFixture)
   }
 
+  @Test
+  fun `navigation inside framework lesson from outside if specific task is not forced must navigate to the first task`() =
+    testNavigateToFrameworkLessonFromOutside(
+      forceSpecificTaskInFrameworkLesson = false,
+      expectedTask = "task3"
+    )
+
+  @Test
+  fun `navigation inside framework lesson from outside if specific task is forced must navigate to that task`() =
+    testNavigateToFrameworkLessonFromOutside(
+      forceSpecificTaskInFrameworkLesson = true,
+      expectedTask = "task4"
+    )
+
+  private fun testNavigateToFrameworkLessonFromOutside(forceSpecificTaskInFrameworkLesson: Boolean, expectedTask: String) {
+    // Given
+    val course = courseWithFiles {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("task.txt", "text")
+        }
+        eduTask("task2") {
+          taskFile("task.txt", "text")
+        }
+      }
+      frameworkLesson("lesson2") {
+        eduTask("task3") {
+          taskFile("task.txt", "text")
+        }
+        eduTask("task4") {
+          taskFile("task.txt", "text")
+        }
+      }
+    }
+
+    NavigationUtils.navigateToTask(project, course.findTask("lesson1", "task1"))
+
+    assertEquals(
+      "In the beginning, the current task must be the first task",
+      "task1",
+      project.requireCurrentTask().name
+    )
+
+    // When
+
+    NavigationUtils.navigateToTask(
+      project,
+      course.findTask("lesson2", "task4"),
+      forceSpecificTaskInFrameworkLesson = forceSpecificTaskInFrameworkLesson
+    )
+
+    // Then
+
+    assertEquals(
+      "The navigated task is forced, so we must navigate to the the specified task",
+      expectedTask,
+      project.requireCurrentTask().name
+    )
+  }
+
   private inline fun doTest(actionId: String, expectedTask: Task, init: () -> Unit) {
     init()
     testAction(actionId)

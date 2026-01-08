@@ -23,6 +23,7 @@ import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
@@ -232,3 +233,5 @@ fun simpleDiffRequestChain(
     )
   )
 }
+
+fun Project.requireCurrentTask(): Task = getCurrentTask() ?: error("No current task found")
