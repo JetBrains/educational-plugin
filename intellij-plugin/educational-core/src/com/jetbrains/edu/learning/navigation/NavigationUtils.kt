@@ -200,11 +200,12 @@ object NavigationUtils {
     fromTask: Task? = null,
     showDialogIfConflict: Boolean = true,
     closeOpenedFiles: Boolean = true,
-    fileToActivate: VirtualFile? = null
+    fileToActivate: VirtualFile? = null,
+    forceSpecificTaskInFrameworkLesson: Boolean = false
   ) {
     runInEdt {
       WriteIntentReadAction.run {
-        navigateToTaskInternal(project, task, fromTask, showDialogIfConflict, closeOpenedFiles, fileToActivate)
+        navigateToTaskInternal(project, task, fromTask, showDialogIfConflict, closeOpenedFiles, fileToActivate, forceSpecificTaskInFrameworkLesson)
       }
       TaskNavigationExtension.EP.forEachExtensionSafe {
         it.onTaskNavigation(project, task, fromTask)
@@ -219,7 +220,8 @@ object NavigationUtils {
     fromTask: Task?,
     showDialogIfConflict: Boolean,
     closeOpenedFiles: Boolean,
-    fileToActivate: VirtualFile?
+    fileToActivate: VirtualFile?,
+    forceSpecificTaskInFrameworkLesson: Boolean
   ) {
     if (closeOpenedFiles) {
       for (file in FileEditorManager.getInstance(project).openFiles) {
@@ -235,10 +237,8 @@ object NavigationUtils {
     val lesson = task.lesson
 
     // We should save student answers and apply diffs only in student mode
-    if (lesson is FrameworkLesson && lesson.course.isStudy && fromTask != null && fromTask.lesson == lesson) {
-      fromTask.saveStudentAnswersIfNeeded(project)
-      prepareFilesForTargetTask(project, lesson, fromTask, task, showDialogIfConflict)
-      project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
+    if (lesson is FrameworkLesson && lesson.course.isStudy) {
+      navigateInsideFrameworkLesson(fromTask, lesson, forceSpecificTaskInFrameworkLesson, project, task, showDialogIfConflict)
     }
 
     val taskDir = task.getDir(project.courseDir) ?: return
@@ -286,6 +286,30 @@ object NavigationUtils {
         }
       }
     }
+  }
+
+  private fun navigateInsideFrameworkLesson(
+    fromTask: Task?,
+    lesson: FrameworkLesson,
+    forceSpecificTaskInFrameworkLesson: Boolean,
+    project: Project,
+    task: Task,
+    showDialogIfConflict: Boolean
+  ) {
+    val navigationInsideTheSameFrameworkLesson = fromTask != null && fromTask.lesson == lesson
+
+    if (!navigationInsideTheSameFrameworkLesson && !forceSpecificTaskInFrameworkLesson) return
+
+    val currentFrameworkLessonTask = if (navigationInsideTheSameFrameworkLesson) {
+      fromTask
+    }
+    else {
+      lesson.currentTask() ?: return
+    }
+
+    currentFrameworkLessonTask.saveStudentAnswersIfNeeded(project)
+    prepareFilesForTargetTask(project, lesson, currentFrameworkLessonTask, task, showDialogIfConflict)
+    project.course?.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
   }
 
   fun setHighlightLevelForFilesInTask(task: Task, project: Project) {
