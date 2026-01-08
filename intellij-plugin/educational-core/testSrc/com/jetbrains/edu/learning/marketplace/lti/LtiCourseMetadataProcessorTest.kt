@@ -49,7 +49,7 @@ class LtiCourseMetadataProcessorTest : CourseMetadataProcessorTestBase() {
   fun `missing required parameters`() {
     // given
     val metadata = mapOf(
-      LTI_LAUNCH_ID to "id",
+      LTI_LMS_DESCRIPTION to "description",
       LTI_STUDY_ITEM_ID to "12345"
     )
     // when

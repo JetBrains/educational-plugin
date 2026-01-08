@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectState
 
 data class LtiCourseParams(
   val launchId: String,
-  val lmsDescription: String,
+  val lmsDescription: String?,
   val studyItemId: Int?,
   val ltiCourseraCourse: String?
 )
@@ -17,7 +17,7 @@ class LtiCourseMetadataProcessor : CourseMetadataProcessor<LtiCourseParams> {
   override fun findApplicableMetadata(rawMetadata: Map<String, String>): LtiCourseParams? {
     val studyItem = rawMetadata[LTI_STUDY_ITEM_ID]?.toIntOrNull()
     val ltiLaunchId = rawMetadata[LTI_LAUNCH_ID] ?: return null
-    val lmsDescription = rawMetadata[LTI_LMS_DESCRIPTION] ?: return null
+    val lmsDescription = rawMetadata[LTI_LMS_DESCRIPTION]
     val ltiCourseraCourse = rawMetadata[LTI_COURSERA_COURSE]
     return LtiCourseParams(ltiLaunchId, lmsDescription, studyItem, ltiCourseraCourse)
   }
