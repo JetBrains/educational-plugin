@@ -8,16 +8,16 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.VisibleForTesting
 
 @Service(Service.Level.PROJECT)
-class StudyItemSelectionService(private val project: Project, scope: CoroutineScope) {
-  private val _studyItemSettings = MutableStateFlow<NavigationProperties?>(null)
-  val studyItemSettings = _studyItemSettings.asStateFlow()
+class StudyItemSelectionService(private val project: Project, private val scope: CoroutineScope) {
+  private val studyItemSettings = MutableSharedFlow<NavigationProperties?>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   init {
     scope.launch {
@@ -40,12 +40,17 @@ class StudyItemSelectionService(private val project: Project, scope: CoroutineSc
   }
 
   fun setCurrentStudyItem(currentStudyItem: Int) {
-    _studyItemSettings.value = NavigationProperties(currentStudyItem)
+    scope.launch {
+      studyItemSettings.emit(NavigationProperties(currentStudyItem))
+    }
   }
+
+  @VisibleForTesting
+  fun lastSetCurrentStudyItem(): Int? = studyItemSettings.replayCache.lastOrNull()?.currentStudyItem
 
   companion object {
     fun getInstance(project: Project): StudyItemSelectionService = project.service()
   }
 }
 
-data class NavigationProperties(val currentStudyItem: Int)
+private data class NavigationProperties(val currentStudyItem: Int)
