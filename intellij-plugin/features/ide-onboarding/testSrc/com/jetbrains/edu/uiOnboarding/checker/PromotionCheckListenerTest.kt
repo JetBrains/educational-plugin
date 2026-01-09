@@ -5,6 +5,7 @@ import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
 import com.jetbrains.edu.uiOnboarding.TransitionAnimator
@@ -105,6 +106,34 @@ class PromotionCheckListenerTest : EduTestCase() {
 
     // then
     assertEquals(null, EduBrowser.getInstance().asSafely<MockEduBrowser>()!!.lastVisitedUrl)
+  }
+
+  @Test
+  fun `do not show promotion notification for the preview course`() {
+    // given
+
+    // mocks for ZhabaGraph from the setUp() method
+
+    val course = courseWithFiles {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("foo.txt")
+        }
+      }
+    } as EduCourse
+    course.isPreview = true
+
+    val properties = mockService<PropertiesComponent>(application)
+    every { properties.updateValue(PROPERTY_KEY, any()) } returns true
+    justRun { properties.setValue(PROPERTY_KEY, any<Boolean>()) }
+
+    // when
+    val task = course.findTask("lesson1", "task1")
+    task.openTaskFileInEditor("foo.txt")
+    testAction(CheckAction(task.getUICheckLabel()))
+
+    // then
+    assertEquals(null, EduBrowser.getInstance().asSafely<MockEduBrowser>()?.lastVisitedUrl)
   }
 
   companion object {
