@@ -73,12 +73,16 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   private val lessonHeader: LessonHeader = LessonHeader()
   private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
   private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
-  private val tabManager: TabManager = TabManager(project)
   private val checkPanel: CheckPanel = CheckPanel(project, this)
 
-  init {
-    Disposer.register(this, tabManager)
+  private var tabManager: TabManager? = null
+    set(value) {
+      field?.let { Disposer.dispose(it) }
+      field = value
+      value?.let { Disposer.register(this, it) }
+    }
 
+  init {
     scope.launch {
       TranslationProjectSettings.getInstance(project).translationProperties.collectLatest {
         withContext(Dispatchers.EDT) {
@@ -105,7 +109,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     // TODO: move it in some separate method
     set(value) {
       if (currentTask !== null && currentTask === value) return
-      tabManager.updateTaskDescription(value)
+      tabManager?.updateTaskDescription(value)
       checkPanel.isVisible = value != null
       updateCheckPanel(value)
       updateNavigationPanel(value)
@@ -117,20 +121,20 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   override fun updateTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
-    tabManager.updateTabs(taskToUpdate)
+    tabManager?.updateTabs(taskToUpdate)
   }
 
   override fun updateTab(tabType: TabType) {
     if (isHeadlessEnvironment) return
     val task = currentTask ?: return
-    tabManager.updateTab(tabType, task)
+    tabManager?.updateTab(tabType, task)
   }
 
   override fun selectTab(tabType: TabType) {
-    tabManager.selectTab(tabType)
+    tabManager?.selectTab(tabType)
   }
 
-  override fun isSelectedTab(tabType: TabType): Boolean = tabManager.isSelectedTab(tabType)
+  override fun isSelectedTab(tabType: TabType): Boolean = tabManager?.isSelectedTab(tabType) ?: false
 
   override fun showLoadingSubmissionsPanel(platformName: String) {
     if (currentTask == null) return
@@ -175,7 +179,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   private fun getSubmissionTab(): SubmissionsTab? = getTab(SUBMISSIONS_TAB) as? SubmissionsTab
 
-  override fun getTab(tabType: TabType): TaskToolWindowTab? = tabManager.getTab(tabType)
+  override fun getTab(tabType: TabType): TaskToolWindowTab? = tabManager?.getTab(tabType)
 
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return
@@ -184,7 +188,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   }
 
   override fun updateTaskSpecificPanel() {
-    tabManager.updateTaskSpecificPanel(currentTask)
+    tabManager?.updateTaskSpecificPanel(currentTask)
   }
 
   override fun updateNavigationPanel(task: Task?) {
@@ -208,7 +212,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   override fun updateNavigationPanel() = updateNavigationPanel(currentTask)
 
   override fun updateTaskDescriptionTab(task: Task?) {
-    tabManager.updateTaskDescription(task)
+    tabManager?.updateTaskDescription(task)
   }
 
   private fun updateHeaders(task: Task? = currentTask) {
@@ -251,7 +255,9 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
       border = JBUI.Borders.empty(0, 16, 12, 16)
     }
-    Disposer.register(toolWindow.contentManager, tabManager)
+
+    // Recreate tabManager to use the current UI library (JCEF or Swing)
+    tabManager = TabManager(project)
 
     mainPanel.add(lessonHeader)
 
@@ -291,7 +297,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
     mainPanel.add(taskNameBox)
 
-    mainPanel.add(tabManager.tabbedPane)
+    mainPanel.add(tabManager?.tabbedPane)
 
     mainPanel.add(checkPanel)
 
@@ -334,7 +340,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
       updateCheckPanel(task)
     }
     if (checkResult.status == CheckStatus.Failed) {
-      tabManager.updateTaskSpecificPanel(task)
+      tabManager?.updateTaskSpecificPanel(task)
     }
   }
 
@@ -346,7 +352,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   }
 
   override fun addInlineBanner(inlineBanner: InlineBanner) {
-    tabManager.descriptionTab.addInlineBanner(inlineBanner)
+    tabManager?.descriptionTab?.addInlineBanner(inlineBanner)
   }
 
   override fun addInlineBannerToCheckPanel(inlineBanner: InlineBannerBase) {
