@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
@@ -40,8 +41,9 @@ class StyleManager {
   }
 
   private fun codeBackground(): Color {
-    return if (!JBColor.isBright()) Color((TaskToolWindowBundle.value("darcula.code.background")))
-    else Color(TaskToolWindowBundle.value("code.background"))
+    // The code is highlighted using the current editor color scheem. So the background should be also taken from the current editor scheme.
+    val editorColorsScheme = EditorColorsManager.getInstance().globalScheme
+    return editorColorsScheme.defaultBackground.asCssColor()
   }
 
   fun typographyAndColorStylesheet(): String {
