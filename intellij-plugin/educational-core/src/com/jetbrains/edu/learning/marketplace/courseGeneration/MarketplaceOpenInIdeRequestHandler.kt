@@ -12,16 +12,15 @@ import com.jetbrains.edu.learning.courseGeneration.OpenInIdeRequestHandler
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.checkForUpdates
-import com.jetbrains.edu.learning.marketplace.lti.LTISettingsManager
 import com.jetbrains.edu.learning.marketplace.updateFeaturedStatus
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.StudyItemSelectionService
 
-object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceOpenCourseRequest>() {
+object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceOpenCourseRequestBase>() {
   override val courseLoadingProcessTitle: String get() = EduCoreBundle.message("action.get.course.loading")
 
   override fun openInExistingProject(
-    request: MarketplaceOpenCourseRequest,
+    request: MarketplaceOpenCourseRequestBase,
     findProject: ((Course) -> Boolean) -> Pair<Project, Course>?
   ): Project? {
     val (project, course) = findProject { it.isMarketplace && it.id == request.courseId } ?: return null
@@ -30,7 +29,7 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     return project
   }
 
-  override fun getCourse(request: MarketplaceOpenCourseRequest, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {
+  override fun getCourse(request: MarketplaceOpenCourseRequestBase, indicator: ProgressIndicator): Result<Course, CourseValidationResult> {
     val course = MarketplaceConnector.getInstance().searchCourse(request.courseId)
     if (course == null) {
       return Err(ValidationErrorMessage(EduCoreBundle.message("marketplace.course.loading.failed")))
@@ -46,13 +45,9 @@ object MarketplaceOpenInIdeRequestHandler : OpenInIdeRequestHandler<MarketplaceO
     return Ok(course)
   }
 
-  override fun afterProjectOpened(request: MarketplaceOpenCourseRequest, project: Project) {
+  override fun afterProjectOpened(request: MarketplaceOpenCourseRequestBase, project: Project) {
     openStudyItem(request.studyItemId, project)
-
-    val ltiSettings = request.ltiSettingsDTO
-    if (ltiSettings != null) {
-      LTISettingsManager.getInstance(project).settings = ltiSettings
-    }
+    request.afterProjectOpened(project)
   }
 
   private fun openStudyItem(studyItemId: Int, project: Project) {

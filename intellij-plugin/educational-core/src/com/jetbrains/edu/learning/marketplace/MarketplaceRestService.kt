@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import io.netty.handler.codec.http.QueryStringDecoder
 
-class MarketplaceRestService : BaseMarketplaceRestService(MARKETPLACE) {
+class MarketplaceRestService : MarketplaceRestServiceBase<MarketplaceOpenCourseRequest>(MARKETPLACE) {
   override fun getServiceName(): String = MarketplaceConnector.getInstance().serviceName
 
   override fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): Result<MarketplaceOpenCourseRequest, String> {
