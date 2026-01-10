@@ -1,14 +1,14 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.authUtils.hasOpenDialogs
 import com.jetbrains.edu.learning.authUtils.sendPluginInfoResponse
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
-import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
+import com.jetbrains.edu.learning.marketplace.courseGeneration.BaseMarketplaceOpenCourseRequest
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.showNotificationFromCourseValidation
@@ -20,7 +20,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.netty.handler.codec.http.QueryStringDecoder
 import java.util.regex.Pattern
 
-abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestService(platformName) {
+abstract class BaseMarketplaceRestService<Request: BaseMarketplaceOpenCourseRequest>(platformName: String) : OAuthRestService(platformName) {
 
   override fun execute(urlDecoder: QueryStringDecoder, request: FullHttpRequest, context: ChannelHandlerContext): String? {
     if (urlDecoder.path().contains(INFO)) {
@@ -35,9 +35,9 @@ abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestServi
 
     createMarketplaceOpenCourseRequest(urlDecoder).map { marketplaceRequest ->
       openInIDE(marketplaceRequest, request, context)
-      logger<BaseMarketplaceRestService>().info("Received marketplace request: courseId=${marketplaceRequest.courseId}, studyItemId=${marketplaceRequest.studyItemId}, ltiSettings=${marketplaceRequest.ltiSettingsDTO}")
+      thisLogger().info("Received marketplace request: $marketplaceRequest")
     }.onError { error ->
-      logger<BaseMarketplaceRestService>().warn(error)
+      thisLogger().warn(error)
       EduNotificationManager.create(
         NotificationType.ERROR,
         EduCoreBundle.message("lti.request.error"),
@@ -49,10 +49,10 @@ abstract class BaseMarketplaceRestService(platformName: String) : OAuthRestServi
     return "Unknown command: ${urlDecoder.uri()}"
   }
 
-  protected abstract fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): Result<MarketplaceOpenCourseRequest, String>
+  protected abstract fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): Result<Request, String>
 
   private fun openInIDE(
-    openCourseRequest: MarketplaceOpenCourseRequest,
+    openCourseRequest: BaseMarketplaceOpenCourseRequest,
     request: FullHttpRequest,
     context: ChannelHandlerContext
   ): String? {

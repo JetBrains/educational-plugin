@@ -5,11 +5,10 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.marketplace.BaseMarketplaceRestService
 import com.jetbrains.edu.learning.marketplace.LTI
-import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import io.netty.handler.codec.http.QueryStringDecoder
 
-class LTIRestService : BaseMarketplaceRestService(LTI) {
-  override fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): Result<MarketplaceOpenCourseRequest, String> {
+class LTIRestService : BaseMarketplaceRestService<LTIOpenCourseRequest>(LTI) {
+  override fun createMarketplaceOpenCourseRequest(urlDecoder: QueryStringDecoder): Result<LTIOpenCourseRequest, String> {
     val courseId = getIntParameter(COURSE_ID, urlDecoder)
     if (courseId == -1) {
       return Err("LTI request has no course id.")
@@ -35,7 +34,7 @@ class LTIRestService : BaseMarketplaceRestService(LTI) {
 
     val courseraCourse = getStringParameter(COURSERA_COURSE, urlDecoder)
 
-    return Ok(MarketplaceOpenCourseRequest(courseId, studyItemId, LTISettingsDTO(
+    return Ok(LTIOpenCourseRequest(courseId, studyItemId, LTISettingsDTO(
       launchId,
       lmsDescription,
       onlineService,
