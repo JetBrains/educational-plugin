@@ -12,7 +12,6 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.csharp.CSharpConfigurator
 import com.jetbrains.edu.csharp.getTestName
-import com.jetbrains.edu.csharp.testResultData
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
 import com.jetbrains.edu.learning.checker.CheckUtils.removeAttributes
@@ -28,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo
 import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.rd.util.reactive.IProperty
 import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.adviseWithPrev
 import com.jetbrains.rd.util.reactive.fire
@@ -205,6 +205,10 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     testInfoWithNodes[firstFailedNode] = newInfo
     return true
   }
+
+  private val RdUnitTestSession.testResultData: IProperty<RdUnitTestResultData?>?
+    get() = sessionOutput.valueOrNull?.resultData
+
 
   private fun RdUnitTestSessionNodeDescriptor.getEduTestInfo(data: RdUnitTestResultData? = null): EduTestInfo {
     val (diff, infoLines) = if (data != null) {
