@@ -7,9 +7,6 @@ dependencies {
     intellijIde(ideaVersion)
 
     intellijPlugins(goPlugin)
-    if (!isAtLeast253) {
-      intellijPlugins(intelliLangPlugin)
-    }
 
     bundledModule("com.intellij.modules.ultimate")
   }

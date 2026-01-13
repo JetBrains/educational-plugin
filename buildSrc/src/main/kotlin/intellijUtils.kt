@@ -7,8 +7,6 @@ import kotlin.reflect.KProperty
 const val VERIFY_CLASSES_TASK_NAME = "verifyClasses"
 
 val Project.environmentName: String by Properties
-// BACKCOMPAT: 2025.2
-val Project.isAtLeast253: Boolean get() = environmentName.toInt() >= 253
 
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -172,35 +170,10 @@ fun JavaForkOptions.setClionSystemProperties(project: Project, withRadler: Boole
 }
 
 private val Project.clionRadlerSuppressedPlugins: List<String>
-  get() {
-    return if (isAtLeast253) {
-      listOf("com.intellij.cidr.lang")
-    }
-    else {
-      listOf(
-        "com.intellij.cidr.lang",
-        "com.intellij.cidr.lang.clangdBridge",
-        "com.intellij.c.performanceTesting",
-        "org.jetbrains.plugins.cidr-intelliLang",
-        "com.intellij.cidr.grazie",
-        "com.intellij.cidr.markdown",
-      )
-    }
-  }
+  get() = listOf("com.intellij.cidr.lang")
 
 private val Project.clionClassicSuppressedPlugins: List<String>
-  get() {
-    return if (isAtLeast253) {
-      listOf("org.jetbrains.plugins.clion.radler")
-    }
-    else {
-      listOf(
-        "org.jetbrains.plugins.clion.radler",
-        "intellij.rider.cpp.debugger",
-        "intellij.rider.plugins.clion.radler.cwm"
-      )
-    }
-  }
+  get() = listOf("org.jetbrains.plugins.clion.radler")
 
 // There isn't an implicit `project` object here, so
 // this is a minor workaround to use delegation for properties almost like in a regular plugin
