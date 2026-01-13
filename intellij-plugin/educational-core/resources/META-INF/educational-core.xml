@@ -560,6 +560,7 @@
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.EntryPointMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.metadata.OpenOnSiteLinkMetadataProcessor"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.metadata.LicenseLinkMetadataProcessor"/>
   </extensions>
 
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
