@@ -39,6 +39,7 @@ import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.marketplace.license.LicenseChecker
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.navigation.NavigationUtils.setHighlightLevelForFilesInTask
@@ -99,6 +100,8 @@ class EduProjectActivity : ProjectActivity {
     }
 
     SyncChangesStateManager.getInstance(project).updateSyncChangesState(course)
+
+    LicenseChecker.getInstance(project).scheduleLicenseCheck()
 
     writeAction {
       if (project.isStudentProject()) {

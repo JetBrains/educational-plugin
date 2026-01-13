@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showL
 import com.jetbrains.edu.learning.marketplace.MarketplaceSolutionLoader
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.isRemoteUpdateFormatVersionCompatible
+import com.jetbrains.edu.learning.marketplace.license.LicenseChecker
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.runInBackground
@@ -39,6 +40,7 @@ class SyncMarketplaceCourseAction : SyncCourseAction(
     MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync { isLoggedIn ->
       if (isLoggedIn) {
         MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
+        LicenseChecker.getInstance(project).scheduleLicenseCheck()
       }
       else {
         showLoginToUseSubmissionsNotification(project)
