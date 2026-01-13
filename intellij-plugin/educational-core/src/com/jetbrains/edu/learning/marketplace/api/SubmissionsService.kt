@@ -77,6 +77,9 @@ interface SubmissionsService {
 
   @GET("/api/v2/agreement")
   suspend fun getUserAgreement(): Response<UserAgreement>
+
+  @GET("/api/user/issue-jwt")
+  suspend fun issueJWT(): Response<String>
 }
 
 /**
