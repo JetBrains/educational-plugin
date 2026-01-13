@@ -1,9 +1,0 @@
-<!-- BACKCOMPAT: 2025.2. Inline it -->
-<idea-plugin>
-  <dependencies>
-    <plugin id="org.jetbrains.plugins.clion.radler"/>
-    <!--suppress PluginXmlValidity -->
-    <module name="Edu-Cpp"/>
-    <module name="intellij.clion.radler.core"/>
-  </dependencies>
-</idea-plugin>

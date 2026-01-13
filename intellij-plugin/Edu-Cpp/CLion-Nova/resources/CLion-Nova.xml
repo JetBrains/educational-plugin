@@ -1,6 +1,10 @@
 <idea-plugin package="com.jetbrains.edu.cpp.radler" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress PluginXmlValidity -->
-  <xi:include href="/META-INF/CLion-Nova-dependencies.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <dependencies>
+    <plugin id="org.jetbrains.plugins.clion.radler"/>
+    <!--suppress PluginXmlValidity -->
+    <module name="Edu-Cpp"/>
+    <module name="intellij.clion.radler.core"/>
+  </dependencies>
 
   <extensions defaultExtensionNs="Educational">
     <cppRunConfigurationHelper implementation="com.jetbrains.edu.cpp.radler.checker.RadlerCppRunConfigurationHelper"/>

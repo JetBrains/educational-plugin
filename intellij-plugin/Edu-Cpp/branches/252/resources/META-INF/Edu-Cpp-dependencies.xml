@@ -1,9 +1,0 @@
-<idea-plugin>
-  <dependencies>
-    <plugin id="com.intellij.clion"/>
-    <!--suppress PluginXmlValidity -->
-    <module name="intellij.clion.runFile"/>
-    <plugin id="org.jetbrains.plugins.clion.test.catch"/>
-    <plugin id="org.jetbrains.plugins.clion.test.google"/>
-  </dependencies>
-</idea-plugin>
