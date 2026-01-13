@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings.Companion.TRUSTED_OPEN_ON_SITE_HOSTS
+import com.jetbrains.edu.learning.marketplace.metadata.TRUSTED_METADATA_HOSTS
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -199,7 +199,7 @@ fun addActionLinks(project: Project, linkPanel: JPanel, topMargin: Int, leftMarg
   // TODO move to toolbar (EDU-7584)
   val link = EduActionUtils.getOpenOnSiteActionInfo(project) ?: return
   val host = URI(link).host
-  val linkMessageSupplier = TRUSTED_OPEN_ON_SITE_HOSTS[host] ?: return
+  val linkMessageSupplier = TRUSTED_METADATA_HOSTS[host] ?: return
   linkPanel.add(
     createActionLink(
       linkMessageSupplier.get(),
