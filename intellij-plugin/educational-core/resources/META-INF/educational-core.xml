@@ -432,6 +432,10 @@
                  description="Sets is course up to date check interval in seconds"
                  defaultValue="18000"/>
 
+    <registryKey key="edu.license.check.interval"
+                 description="Sets the course license check interval in seconds"
+                 defaultValue="18000"/>
+
     <!--for educators-->
     <xml.xmlSuppressionProvider
         implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
