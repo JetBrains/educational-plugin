@@ -17,6 +17,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.platform.util.progress.SequentialProgressReporter
 import com.intellij.platform.util.progress.reportSequentialProgress
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
@@ -30,7 +31,10 @@ import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
 import com.jetbrains.python.packaging.PyPackageUtil
+import com.jetbrains.python.packaging.PyRequirement
 import com.jetbrains.python.packaging.management.PythonPackageManager
+import com.jetbrains.python.packaging.management.findPackageSpecification
+import com.jetbrains.python.packaging.management.toInstallRequest
 import com.jetbrains.python.psi.LanguageLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,6 +113,21 @@ fun getSupportedVersions(): List<String> {
   return pythonVersions
 }
 
+internal suspend fun installRequiredPackages(
+  @Suppress("unused") reporter: SequentialProgressReporter,
+  packageManager: PythonPackageManager,
+  requirements: List<PyRequirement>
+) {
+  for (pyRequirement in requirements) {
+    reporter.itemStep(pyRequirement.name) {
+      val packageSpecification = packageManager.findPackageSpecification(
+        packageName = pyRequirement.name,
+        versionSpec = pyRequirement.versionSpecs.firstOrNull()
+      ) ?: return@itemStep
+      packageManager.installPackage(packageSpecification.toInstallRequest())
+    }
+  }
+}
 
 private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDependentName(path)
 
