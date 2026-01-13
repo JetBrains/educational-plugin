@@ -2,13 +2,13 @@ package com.jetbrains.edu.learning.marketplace.metadata
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings
+import com.jetbrains.edu.learning.marketplace.settings.LicenseLinkSettings
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
 import com.jetbrains.edu.learning.newproject.CourseProjectState
 
-class OpenOnSiteLinkMetadataProcessor : CourseMetadataProcessor<String> {
+class LicenseLinkMetadataProcessor : CourseMetadataProcessor<String> {
   override fun findApplicableMetadata(rawMetadata: Map<String, String>): String? {
-    val link = rawMetadata[OPEN_ON_SITE_URL_PARAMETER_NAME] ?: return null
+    val link = rawMetadata[LICENSE_URL_PARAMETER_NAME] ?: return null
     if (!link.isValidAndAllowedUrl()) {
       return null
     }
@@ -21,10 +21,10 @@ class OpenOnSiteLinkMetadataProcessor : CourseMetadataProcessor<String> {
     metadata: String,
     courseProjectState: CourseProjectState
   ) {
-    OpenOnSiteLinkSettings.getInstance(project).link = metadata
+    LicenseLinkSettings.getInstance(project).link = metadata
   }
 
   companion object {
-    const val OPEN_ON_SITE_URL_PARAMETER_NAME = "link"
+    const val LICENSE_URL_PARAMETER_NAME = "license_url"
   }
 }
