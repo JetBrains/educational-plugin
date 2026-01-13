@@ -60,7 +60,4 @@ class RsEduTaskChecker(project: Project, envChecker: EnvironmentChecker, task: E
     val taskDir = task.getDir(project.courseDir) ?: error("Failed to find directory of `${task.name}` task")
     return runReadAction { project.cargoProjects.findPackageForFile(taskDir) }
   }
-
-  // BACKCOMPAT: 2025.2. Do not override this method
-  override fun createTestResultCollector(): TestResultCollector = RsTestResultCollector()
 }
