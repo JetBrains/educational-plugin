@@ -140,6 +140,7 @@
             class="com.jetbrains.edu.learning.actions.LeaveFeedbackAction"
             icon="com.jetbrains.edu.EducationalCoreIcons.Actions.CommentTask"/>
     <action id="Educational.OpenTaskOnSiteAction" class="com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction"/>
+    <action id="Educational.Student.CheckLicenseAction" class="com.jetbrains.edu.learning.actions.CheckLicenseAction"/>
     <action id="Educational.CompareWithAnswer"
             class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
             icon="AllIcons.Actions.Diff"/>
@@ -415,6 +416,7 @@
     <editorNotificationProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.SyncChangesEditorNotificationsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.agreement.UserAgreementEditorNotificationsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.InstallHyperskillPluginEditorNotificationsProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.marketplace.license.CourseLicenseEditorNotificationProvider"/>
 
     <!-- com.jetbrains.edu.learning.notification.EduNotificationManager.JETBRAINS_ACADEMY_GROUP_ID -->
     <notificationGroup id="JetBrains Academy" displayType="BALLOON"
