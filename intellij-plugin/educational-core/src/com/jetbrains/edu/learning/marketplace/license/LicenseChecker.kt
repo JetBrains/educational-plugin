@@ -6,10 +6,12 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.marketplace.license.api.LicenseConnector
 import com.jetbrains.edu.learning.marketplace.settings.LicenseLinkSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -28,7 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class)
 @Service(Service.Level.PROJECT)
-class LicenseChecker(private val project: Project, scope: CoroutineScope) {
+class LicenseChecker(private val project: Project, scope: CoroutineScope) : EduTestAware {
   private val checkRequests = MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
   private val _licenseState = MutableStateFlow<LicenseState?>(null)
   val licenseState: StateFlow<LicenseState?> = _licenseState.asStateFlow()
@@ -68,6 +70,12 @@ class LicenseChecker(private val project: Project, scope: CoroutineScope) {
   fun scheduleLicenseCheck(): Boolean {
     if (!LicenseLinkSettings.isLicenseRequired(project)) return false
     return checkRequests.tryEmit(Unit)
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  override fun cleanUpState() {
+    _licenseState.update { null }
+    checkRequests.resetReplayCache()
   }
 
   private suspend fun doCheckLicense() {
