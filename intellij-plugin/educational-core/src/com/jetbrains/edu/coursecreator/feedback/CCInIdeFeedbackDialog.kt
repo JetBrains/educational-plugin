@@ -9,7 +9,7 @@ class CCInIdeFeedbackDialog(
   private val courseFeedbackInfoData: CourseFeedbackInfoData
 ) : InIdeFeedbackDialog<JbAcademyCCFeedbackSystemInfoData>(false, null) {
 
-  override fun computeSystemInfoDataInternal(): JbAcademyCCFeedbackSystemInfoData {
+  override suspend fun computeSystemInfoData(): JbAcademyCCFeedbackSystemInfoData {
     return createJbAcademyFeedbackSystemInfoData(courseFeedbackInfoData)
   }
 

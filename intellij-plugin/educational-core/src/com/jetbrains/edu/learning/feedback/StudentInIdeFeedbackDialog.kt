@@ -10,7 +10,7 @@ class StudentInIdeFeedbackDialog(
   val task: Task
 ) : InIdeFeedbackDialog<JbAcademyStudentFeedbackSystemInfoData>(true, project) {
 
-  override fun computeSystemInfoDataInternal(): JbAcademyStudentFeedbackSystemInfoData {
+  override suspend fun computeSystemInfoData(): JbAcademyStudentFeedbackSystemInfoData {
     return JbAcademyStudentFeedbackSystemInfoData(
       CommonFeedbackSystemData.getCurrentData(),
       CourseFeedbackInfoData.from(task.course),

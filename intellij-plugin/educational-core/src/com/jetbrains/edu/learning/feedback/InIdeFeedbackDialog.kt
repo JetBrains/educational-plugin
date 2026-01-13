@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.feedback
 
 import com.intellij.openapi.project.Project
+import com.intellij.platform.feedback.dialog.BlockBasedFeedbackDialogWithEmail
 import com.intellij.platform.feedback.dialog.showFeedbackSystemInfoDialog
 import com.intellij.platform.feedback.dialog.uiBlocks.*
 import com.intellij.ui.dsl.builder.Panel
@@ -11,7 +12,7 @@ abstract class InIdeFeedbackDialog<T : JbAcademyFeedbackSystemInfoData>(
   private val isStudent: Boolean,
   private val project: Project?,
   forTest: Boolean = false
-) : BlockBasedFeedbackDialogWithEmailInternal<T>(project, forTest) {
+) : BlockBasedFeedbackDialogWithEmail<T>(project, forTest) {
 
   override val myFeedbackJsonVersion: Int = super.myFeedbackJsonVersion + 1
 
@@ -24,7 +25,7 @@ abstract class InIdeFeedbackDialog<T : JbAcademyFeedbackSystemInfoData>(
 
   override val myFeedbackReportId: String = "academy_feedback"
 
-  override fun showFeedbackDialogInternal(systemInfoData: T) {
+  override fun showFeedbackSystemInfoDialog(systemInfoData: T) {
     showJbAcademyFeedbackSystemInfoDialog(project, systemInfoData)
   }
 
