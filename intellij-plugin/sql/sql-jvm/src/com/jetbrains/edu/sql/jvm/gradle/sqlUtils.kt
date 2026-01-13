@@ -11,6 +11,7 @@ import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigura
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigurationOptions
 import com.intellij.database.console.session.DatabaseSessionManager
 import com.intellij.database.dataSource.*
+import com.intellij.database.dataSource.artifacts.DatabaseArtifactContext
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactList
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactLoader
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactManager
@@ -193,7 +194,7 @@ private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<Data
       version.version == artifact.artifactVersion -> artifact
       else -> DatabaseDriverImpl.createArtifactRef(artifact.id, version.version, artifact.channel)!!
     }
-    if (version != null && !isValid(loader, version)) {
+    if (version != null && !loader.isValid(version, DatabaseArtifactContext.getDefaultContext())) {
       toDownload += version
     }
   }
@@ -208,7 +209,7 @@ private suspend fun downloadArtifact(artifact: DatabaseArtifactList.ArtifactVers
       coroutineToIndicator {
         val items = artifact.items.joinToString("\n") { "  ${it.name}: ${it.type}" }
         LOG.info("Downloading `$artifact` artifact:\n$items")
-        downloadArtifact(loader, artifact)
+        loader.downloadArtifact(artifact, DatabaseArtifactContext.getDefaultContext())
       }
     }
   }

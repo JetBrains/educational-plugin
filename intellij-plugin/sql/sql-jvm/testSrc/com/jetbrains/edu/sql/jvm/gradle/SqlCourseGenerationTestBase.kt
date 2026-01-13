@@ -121,7 +121,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
   private fun waitFsSynchronizationFinished() {
     ApplicationManager.getApplication().assertIsDispatchThread()
     UIUtil.dispatchAllInvocationEvents()
-    while (RefreshQueueImpl.isRefreshInProgress()) {
+    while (RefreshQueueImpl.isRefreshInProgress) {
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
     }
   }
