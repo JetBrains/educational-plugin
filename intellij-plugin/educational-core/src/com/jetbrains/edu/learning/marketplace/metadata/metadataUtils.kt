@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.metadata
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_HOST
+import org.jetbrains.annotations.TestOnly
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.function.Supplier
@@ -25,3 +26,6 @@ fun String.isValidAndAllowedUrl(): Boolean = try {
 catch (_: URISyntaxException) {
   false
 }
+
+@TestOnly
+fun getRandomTrustedUrl(): String = "https://${TRUSTED_METADATA_HOSTS.keys.shuffled().first()}"

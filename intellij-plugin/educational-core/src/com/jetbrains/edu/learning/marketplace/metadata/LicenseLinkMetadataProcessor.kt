@@ -1,0 +1,30 @@
+package com.jetbrains.edu.learning.marketplace.metadata
+
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.marketplace.settings.LicenseLinkSettings
+import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
+import com.jetbrains.edu.learning.newproject.CourseProjectState
+
+class LicenseLinkMetadataProcessor : CourseMetadataProcessor<String> {
+  override fun findApplicableMetadata(rawMetadata: Map<String, String>): String? {
+    val link = rawMetadata[LICENSE_URL] ?: return null
+    if (!link.isValidAndAllowedUrl()) {
+      return null
+    }
+    return link
+  }
+
+  override fun processMetadata(
+    project: Project,
+    course: Course,
+    metadata: String,
+    courseProjectState: CourseProjectState
+  ) {
+    LicenseLinkSettings.getInstance(project).link = metadata
+  }
+
+  companion object {
+    private const val LICENSE_URL = "license_url"
+  }
+}
