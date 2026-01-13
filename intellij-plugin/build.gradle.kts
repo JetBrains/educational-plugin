@@ -109,8 +109,6 @@ val ideaPlugins = listOfNotNull(
 )
 
 val ideToPlugins = mapOf(
-  // BACKCOMPAT: 2025.2. Drop `IntellijIdeaUltimate` usage
-  IntellijIdeaUltimate to ideaPlugins,
   IntellijIdea to ideaPlugins,
   CLion to listOf(rustPlugin),
   AndroidStudio to listOf(pythonCommunityPlugin),
@@ -201,7 +199,7 @@ tasks {
       }
     }
 
-    customRunIdeTask(IntellijIdeaUltimate, ideaVersion, baseTaskName = "Idea")
+    customRunIdeTask(IntellijIdea, ideaVersion, baseTaskName = "Idea")
     customRunIdeTask(CLion, clionVersion) {
       setClionSystemProperties(project, withRadler = false)
     }
