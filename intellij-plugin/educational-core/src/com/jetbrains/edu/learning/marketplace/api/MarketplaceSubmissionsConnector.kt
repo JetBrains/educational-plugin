@@ -34,6 +34,8 @@ import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
 import com.jetbrains.edu.learning.submissions.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
 import okhttp3.ResponseBody
 import org.jetbrains.annotations.VisibleForTesting
@@ -455,6 +457,35 @@ class MarketplaceSubmissionsConnector {
     }
     catch (e: Exception) {
       LOG.warn("Error occurred while fetching plugin agreement for user $loginName", e)
+      Err(e.message ?: "Unknown error")
+    }
+  }
+
+  suspend fun getLicenseJWT(): Result<String, String> {
+    if (!isJBALoggedIn()) {
+      return Err("User is not logged in")
+    }
+
+    val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
+    LOG.info("Fetching JWT for user $loginName")
+
+    return try {
+      val response = withContext(Dispatchers.IO) {
+        submissionsService.issueJWT()
+      }
+      val jwt = response.body()
+      if (response.isSuccessful && jwt != null) {
+        LOG.info("Successfully fetched JWT")
+        Ok(jwt)
+      }
+      else {
+        val message = "Failed to fetch JWT: ${response.errorBody()}. Response code: ${response.code()}"
+        LOG.warn(message)
+        Err(message)
+      }
+    }
+    catch (e: Exception) {
+      LOG.warn("Error occurred while fetching JWT for user $loginName", e)
       Err(e.message ?: "Unknown error")
     }
   }
