@@ -29,7 +29,7 @@ abstract class ZhabaActionBase : DumbAwareAction() {
 
     if (e.place == ZHABA_SAYS_ACTION_PLACE) {
       e.presentation.text = textToSay
-      e.presentation.setupCustomComponent()
+      configureComponentForZhabaBalloon(e.presentation)
     }
   }
 
@@ -38,8 +38,8 @@ abstract class ZhabaActionBase : DumbAwareAction() {
   /**
    * We use custom components because we want action buttons to look like buttons in the "GotIt" tooltip.
    */
-  private fun Presentation.setupCustomComponent() {
-    putClientProperty(ActionUtil.COMPONENT_PROVIDER, ZhabaCustomComponentAction())
-    putClientProperty(CustomComponentAction.ACTION_KEY, this@ZhabaActionBase)
+  open fun configureComponentForZhabaBalloon(presentation: Presentation) {
+    presentation.putClientProperty(ActionUtil.COMPONENT_PROVIDER, PrimaryButtonZhabaAction())
+    presentation.putClientProperty(CustomComponentAction.ACTION_KEY, this@ZhabaActionBase)
   }
 }

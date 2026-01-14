@@ -8,22 +8,47 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction
 import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.components.ActionLink
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import java.awt.Color
 import javax.swing.JButton
 import javax.swing.JComponent
 
-class ZhabaCustomComponentAction : CustomComponentAction {
+class PrimaryButtonZhabaAction : ZhabaCustomComponentAction() {
+  override fun createButton(): JButton = JButton().apply {
+    isFocusable = false
+    isOpaque = false
+    toolTipText = null
+
+    // This makes the button look exactly like the button inside the GotIt tooltip
+    putClientProperty("gotItButton", true)
+  }
+
+  override fun isBold() = true
+  override fun textColor() = JBUI.CurrentTheme.GotItTooltip.buttonForeground()
+}
+
+class SecondaryButtonZhabaAction : ZhabaCustomComponentAction() {
+  override fun createButton(): JButton = ActionLink().apply {
+    isFocusable = false
+    isOpaque = false
+    foreground = JBUI.CurrentTheme.GotItTooltip.secondaryActionForeground(false)
+  }
+
+  override fun isBold(): Boolean = false
+
+  override fun textColor(): Color = JBUI.CurrentTheme.GotItTooltip.secondaryActionForeground(false)
+}
+
+abstract class ZhabaCustomComponentAction : CustomComponentAction {
+
+  abstract fun createButton(): JButton
+  abstract fun isBold(): Boolean
+  abstract fun textColor(): Color
 
   override fun createCustomComponent(presentation: Presentation, place: String): JButton {
-    val button = JButton().apply {
-      isFocusable = false
-      isOpaque = false
-      toolTipText = null
-
-      // This makes the button look exactly like the button inside the GotIt tooltip
-      putClientProperty("gotItButton", true)
-    }
+    val button = createButton()
 
     button.addActionListener { e ->
       val action = presentation.getClientProperty(CustomComponentAction.ACTION_KEY) ?: return@addActionListener
@@ -51,8 +76,8 @@ class ZhabaCustomComponentAction : CustomComponentAction {
     val button = component as? JButton ?: return
 
     button.text = HtmlChunk.raw(presentation.text)
-      .bold()
-      .wrapWith(HtmlChunk.font(ColorUtil.toHtmlColor(JBUI.CurrentTheme.GotItTooltip.buttonForeground())))
+      .let { if (isBold()) it.bold() else it }
+      .wrapWith(HtmlChunk.font(ColorUtil.toHtmlColor(textColor())))
       .wrapWith(HtmlChunk.html())
       .toString()
   }
