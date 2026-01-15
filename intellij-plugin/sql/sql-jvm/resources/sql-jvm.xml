@@ -1,5 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.sql.jvm">
-  <!--suppress PluginXmlValidity -->
+<idea-plugin>
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="sql-core"/>

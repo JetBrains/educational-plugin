@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.cpp.radler" xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.plugins.clion.radler"/>
     <!--suppress PluginXmlValidity -->

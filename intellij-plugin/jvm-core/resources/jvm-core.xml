@@ -1,5 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.jvm">
-  <!--suppress PluginXmlValidity -->
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.java"/>
     <plugin id="org.jetbrains.plugins.gradle"/>

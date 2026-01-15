@@ -1,5 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.scala">
-  <!--suppress PluginXmlValidity -->
+<idea-plugin>
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>

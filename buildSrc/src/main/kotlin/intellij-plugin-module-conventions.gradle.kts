@@ -19,6 +19,13 @@ intellijPlatform {
 
 tasks {
   prepareSandbox { enabled = false }
+  composedJar {
+    archiveVersion = ""
+    // default name is ${project.rootProject.name}.${project.name}
+    // but jar file name should be the same as module name defined in plugin.xml
+    // Currently, we use the name of gradle subproject for plugin module
+    archiveBaseName = project.name
+  }
   test {
     failOnNoDiscoveredTests = false
     // Needed for both `:intellij-plugin:features:ai-hints-kotlin` and `:intellij-plugin:Edu-Kotlin`

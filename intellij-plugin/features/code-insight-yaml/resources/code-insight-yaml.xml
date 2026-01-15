@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.yaml">
+<idea-plugin>
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="code-insight-core"/>

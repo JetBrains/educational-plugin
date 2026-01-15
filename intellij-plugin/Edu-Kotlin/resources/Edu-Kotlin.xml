@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.kotlin">
+<idea-plugin>
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="jvm-core"/>

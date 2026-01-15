@@ -1,5 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.rust">
-  <!--suppress PluginXmlValidity -->
+<idea-plugin>
   <dependencies>
     <plugin id="com.jetbrains.rust"/>
     <plugin id="org.toml.lang"/>

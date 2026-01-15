@@ -1,5 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.github">
-  <!--suppress PluginXmlValidity -->
+<idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.plugins.github"/>
   </dependencies>

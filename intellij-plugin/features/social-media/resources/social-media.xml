@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.socialMedia">
+<idea-plugin>
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.xPluginConfigurator"
                     interface="com.jetbrains.edu.socialMedia.x.XPluginConfigurator"

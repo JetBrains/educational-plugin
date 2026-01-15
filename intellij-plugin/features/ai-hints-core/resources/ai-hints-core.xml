@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.aiHints.core">
+<idea-plugin>
   <resource-bundle>messages.EduAIHintsCoreBundle</resource-bundle>
 
   <dependencies>

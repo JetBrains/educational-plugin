@@ -1,5 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.csharp">
-  <!--suppress PluginXmlValidity -->
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.rider"/>
     <plugin id="com.intellij.resharper.unity"/>

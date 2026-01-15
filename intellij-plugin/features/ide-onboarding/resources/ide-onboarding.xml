@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.uiOnboarding">
+<idea-plugin>
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.ide.eduUiOnboarding.step"
                     beanClass="com.intellij.util.KeyedLazyInstanceEP"

@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.ai">
+<idea-plugin>
   <resource-bundle>messages.EduAIBundle</resource-bundle>
 
   <actions>

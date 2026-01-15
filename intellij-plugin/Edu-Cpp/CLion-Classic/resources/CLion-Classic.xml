@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.cpp.classic">
+<idea-plugin>
   <dependencies>
     <plugin id="com.intellij.cidr.lang"/>
     <!--suppress PluginXmlValidity -->

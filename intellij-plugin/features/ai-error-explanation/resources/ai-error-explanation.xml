@@ -1,5 +1,4 @@
-<!--suppress PluginXmlValidity -->
-<idea-plugin package="com.jetbrains.edu.ai.error.explanation">
+<idea-plugin>
   <resource-bundle>messages.EduAIErrorExplanationBundle</resource-bundle>
 
   <extensions defaultExtensionNs="Educational">

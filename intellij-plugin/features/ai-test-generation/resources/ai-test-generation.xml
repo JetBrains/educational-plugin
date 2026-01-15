@@ -1,4 +1,4 @@
-<idea-plugin package="com.jetbrains.edu.ai.tests">
+<idea-plugin>
   <resource-bundle>messages.EduAITestGenerationCoreBundle</resource-bundle>
   <dependencies>
     <module name="AI"/>
