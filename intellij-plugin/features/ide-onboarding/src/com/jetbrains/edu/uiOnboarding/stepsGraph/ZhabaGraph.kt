@@ -152,6 +152,7 @@ class ZhabaMainGraph private constructor(
         WelcomeStep.STEP_KEY,
         TaskDescriptionStep.STEP_KEY,
         CodeEditorStep.STEP_KEY,
+        "translation",
         CheckSolutionStep.STEP_KEY,
         CourseViewStep.STEP_KEY
       )

@@ -9,6 +9,7 @@ dependencies {
   }
 
   implementation(project(":intellij-plugin:educational-core"))
+  implementation(project(":intellij-plugin:features:ide-onboarding"))
 
   compileOnly(libs.kotlinx.serialization)
 

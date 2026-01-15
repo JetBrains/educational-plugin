@@ -1,4 +1,8 @@
 <idea-plugin>
+  <dependencies>
+    <module name="ide-onboarding"/>
+  </dependencies>
+
   <resource-bundle>messages.EduAIBundle</resource-bundle>
 
   <actions>
@@ -61,6 +65,10 @@
     <AIOptionsProvider instance="com.jetbrains.edu.ai.translation.settings.TranslationOptions"/>
     <AIOptionsProvider instance="com.jetbrains.edu.ai.terms.settings.TheoryLookupOptions"/>
     <taskNavigationExtension implementation="com.jetbrains.edu.ai.terms.ui.TermsTaskNavigationExtension"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij.ide.eduUiOnboarding">
+    <step key="translation" implementationClass="com.jetbrains.edu.ai.translation.TranslationOnboardingStep"/>
   </extensions>
 
   <projectListeners>
