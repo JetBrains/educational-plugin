@@ -4,7 +4,7 @@
 
   <!--suppress PluginXmlValidity -->
   <content>
-    <module name="sql-core"/>
+    <module name="sql"/>
     <module name="sql-jvm"/>
     <module name="jvm-core"/>
   </content>
