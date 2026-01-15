@@ -17,5 +17,8 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
+git config user.email "teamcity@jetbrains.com"
+git config user.name "TeamCity"
+
 git commit -m "$COMMIT_MESSAGE"
 git push origin "$BRANCH"
