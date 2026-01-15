@@ -173,7 +173,8 @@ class ActionGroupZhabaStep(
     // Here we delegate the layout to the existing layout strategy but modify its layout adding gaps over each button.
     actionToolbar.layoutStrategy = addGapsInLayoutStrategy(
       actionToolbar.layoutStrategy,
-      JBUI.scale(16)
+      JBUI.scale(6),
+      JBUI.scale(12)
     )
 
     actionToolbar.setMiniMode(false)
@@ -182,27 +183,45 @@ class ActionGroupZhabaStep(
     return actionToolbar
   }
 
+  // We suppose here that all buttons have primary padding, except the last one, which has secondary padding.
   private fun addGapsInLayoutStrategy(
     existingLayoutStrategy: ToolbarLayoutStrategy,
-    gap: Int
+    primaryPadding: Int,
+    secondaryPadding: Int
   ): ToolbarLayoutStrategy = object : ToolbarLayoutStrategy {
     override fun calculateBounds(toolbar: ActionToolbar): List<Rectangle?>? {
       val result = existingLayoutStrategy.calculateBounds(toolbar) ?: return null
+
       return result.mapIndexed { index, rectangle ->
-        Rectangle(rectangle.x, rectangle.y + (index + 1) * gap, rectangle.width, rectangle.height)
+        val y = if (index < result.lastIndex) {
+          (2 * index + 1) * primaryPadding
+        }
+        else {
+          2 * index * primaryPadding + secondaryPadding
+        }
+
+        Rectangle(
+          rectangle.x,
+          rectangle.y + y,
+          rectangle.width,
+          rectangle.height
+        )
       }
     }
 
     override fun calcPreferredSize(toolbar: ActionToolbar): Dimension? {
       val actions = toolbar.actions.size
       val result = existingLayoutStrategy.calcPreferredSize(toolbar) ?: return null
-      return Dimension(result.width, result.height + actions * gap)
+      return Dimension(result.width, result.height + addY(actions) )
     }
 
     override fun calcMinimumSize(toolbar: ActionToolbar): Dimension? {
       val actions = toolbar.actions.size
-      val result = existingLayoutStrategy.calcPreferredSize(toolbar) ?: return null
-      return Dimension(result.width, result.height + actions * gap)
+      val result = existingLayoutStrategy.calcMinimumSize(toolbar) ?: return null
+      return Dimension(result.width, result.height + addY(actions))
     }
+
+    private fun addY(actions: Int) =
+      (actions - 1) * 2 * primaryPadding + 2 * secondaryPadding
   }
 }
