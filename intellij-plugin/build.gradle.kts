@@ -164,7 +164,6 @@ tasks {
   buildPlugin {
     dependsOn(":edu-format:jar")
     dependsOn(":edu-format:sourcesJar")
-    dependsOn(*subprojects.mapNotNull { it.tasks.findByName(VERIFY_CLASSES_TASK_NAME) }.toTypedArray())
     doLast {
       copyFormatJars()
     }

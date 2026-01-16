@@ -4,8 +4,6 @@ import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
 import kotlin.reflect.KProperty
 
-const val VERIFY_CLASSES_TASK_NAME = "verifyClasses"
-
 val Project.environmentName: String by Properties
 
 val Project.pluginVersion: String by Properties
