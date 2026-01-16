@@ -60,10 +60,12 @@ class StyleManager {
         fontFamily = codeFont
         backgroundColor = codeBackground
         fontSize = if (isJCEF()) codeFontSize.px else codeFontSize.pt
-        padding = Padding(4.px)
-        // For unknown reason Swing panel fails to start when
-        // it is kotlinx.css.StyledElement.borderRadius
-        "border-radius" to 5.px
+        padding = Padding(2.px, 6.px)
+        margin = Margin(0.px, 3.px)
+        // Swing CSS does not support "border-radius" and fails
+        if (isJCEF()) {
+          borderRadius = 5.px
+        }
       }
 
       ".code-block" {
@@ -71,6 +73,11 @@ class StyleManager {
         fontSize = if (isJCEF()) bodyFontSize.px else bodyFontSize.pt
         lineHeight = codeLineHeight.px.lh
         display = Display.block
+        padding = Padding(1.px, 4.px)
+        margin = Margin(0.px, 2.px)
+        if (isJCEF()) {
+          borderRadius = 3.px
+        }
       }
 
       a {
