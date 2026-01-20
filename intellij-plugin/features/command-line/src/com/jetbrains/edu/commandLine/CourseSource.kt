@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
@@ -82,7 +83,7 @@ enum class CourseSource(val option: String, val description: String) {
   LOCAL("local", "Path to local educator course project") {
     // TODO: can we just open project here and use its own course instead of creating a new one?
     override suspend fun loadCourse(projectPath: String): Result<Course, String> {
-      val projectPath = Paths.get(projectPath)
+      val projectPath = Paths.get(projectPath).absolute()
       if (!projectPath.exists()) return Err("$projectPath does not exist")
       val project = ProjectManagerEx.getInstanceEx().openProjectAsync(projectPath, OpenProjectTask {
         isNewProject = false
