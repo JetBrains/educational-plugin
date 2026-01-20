@@ -18,8 +18,7 @@ sealed interface LicenseCheckResponse {
 
 class LicenseCheckResponseDeserializer : JsonDeserializer<LicenseCheckResponse>() {
   override fun deserialize(p: JsonParser, ctxt: DeserializationContext): LicenseCheckResponse {
-    val node: JsonNode = p.codec.readTree(p)
-
+    val node = p.readValueAsTree<JsonNode>()
     return if (node.has("trackType")) {
       val nodeValue = node.get("trackType").asText()
       val trackType = LicenseCheckResponse.Error.TrackType.valueOf(nodeValue)
