@@ -91,6 +91,28 @@ class LicenseChecker(private val project: Project, scope: CoroutineScope) : EduT
   }
 }
 
+/**
+ * Represents the state of a license for a course.
+ *
+ * The available states are:
+ * - `VALID`   : Indicates that the license is active.
+ * - `EXPIRED` : Indicates that the license has expired.
+ * - `ERROR`   : Indicates that an error occurred while checking the license,
+ *               such as an inability to connect to the learning center.
+ */
 enum class LicenseState {
-  VALID, INVALID, ERROR
+  /**
+   * Indicates that the license is active.
+   */
+  VALID,
+
+  /**
+   * Indicates that the license has expired.
+   */
+  EXPIRED,
+
+  /**
+   * Indicates that an error occurred while checking the license, such as an inability to connect to the learning center.
+   */
+  ERROR
 }

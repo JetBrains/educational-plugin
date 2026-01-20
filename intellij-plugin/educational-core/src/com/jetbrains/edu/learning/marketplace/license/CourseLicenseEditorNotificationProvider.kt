@@ -21,21 +21,24 @@ class CourseLicenseEditorNotificationProvider : EditorNotificationProvider, Dumb
     if (!LicenseLinkSettings.isLicenseRequired(project)) return null
     val licenseState = LicenseChecker.getInstance(project).licenseState.value ?: return null
 
+    val notificationText = when (licenseState) {
+      // license is valid -> no notification
+      LicenseState.VALID -> return null
+      LicenseState.EXPIRED -> EduCoreBundle.message("license.notification.invalid.text")
+      LicenseState.ERROR -> EduCoreBundle.message("license.notification.error.text")
+    }
     return Function {
-      val notificationText = when (licenseState) {
-        LicenseState.VALID -> return@Function null
-        LicenseState.INVALID -> EduCoreBundle.message("license.notification.invalid.text")
-        LicenseState.ERROR -> EduCoreBundle.message("license.notification.error.text")
-      }
       EditorNotificationPanel(EditorNotificationPanel.Status.Error).apply {
         text = notificationText
         when (licenseState) {
-          LicenseState.INVALID -> {
+          // if the license is expired -> show a link to a learning center
+          LicenseState.EXPIRED -> {
             val link = OpenOnSiteLinkSettings.getInstance(project).link ?: return@apply
             createActionLabel(EduCoreBundle.message("course.dialog.learn.more")) {
               EduBrowser.getInstance().browse(link)
             }
           }
+          // if there was an error during license check -> add a link to a retry license check action
           LicenseState.ERROR -> {
             createActionLabel(EduCoreBundle.message("retry"), CheckLicenseAction.ACTION_ID)
           }

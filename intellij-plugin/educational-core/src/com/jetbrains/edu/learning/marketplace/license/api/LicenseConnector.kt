@@ -51,7 +51,7 @@ class LicenseConnector {
           LicenseState.VALID
         }
         else {
-          LicenseState.INVALID
+          LicenseState.EXPIRED
         }
       }
       else {

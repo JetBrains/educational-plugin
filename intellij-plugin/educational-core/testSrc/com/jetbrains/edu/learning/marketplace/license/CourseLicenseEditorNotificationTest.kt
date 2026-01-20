@@ -26,26 +26,41 @@ class CourseLicenseEditorNotificationTest : NotificationsTestBase() {
 
   @Test
   fun `test no editor notification is shown if active license is present`() = runTest {
+    // given
     LicenseLinkSettings.getInstance(project).link = getRandomTrustedUrl()
     val connector = mockService<LicenseConnector>(application)
     coEvery { connector.checkLicense(any()) } returns LicenseState.VALID
-    checkLicenseAndWait()
+
+    // when
+    val wasCheckScheduled = checkLicenseAndWait()
+
+    // then
+    assertTrue(wasCheckScheduled)
     checkNoEditorNotification<CourseLicenseEditorNotificationProvider>(findFile("lesson/task/task.txt"))
   }
 
   @Test
-  fun `test no editor notification is shown if course does not require license`() {
-    // license check should not be scheduled
-    assertFalse(LicenseChecker.getInstance(project).scheduleLicenseCheck())
+  fun `test no editor notification is shown if course does not require license`() = runTest {
+    // when
+    val wasCheckScheduled = checkLicenseAndWait()
+
+    // then
+    assertFalse(wasCheckScheduled)
     checkNoEditorNotification<CourseLicenseEditorNotificationProvider>(findFile("lesson/task/task.txt"))
   }
 
   @Test
   fun `test editor notification is shown if license is expired`() = runTest {
+    // given
     LicenseLinkSettings.getInstance(project).link = getRandomTrustedUrl()
     val connector = mockService<LicenseConnector>(application)
-    coEvery { connector.checkLicense(any()) } returns LicenseState.INVALID
-    checkLicenseAndWait()
+    coEvery { connector.checkLicense(any()) } returns LicenseState.EXPIRED
+
+    // when
+    val wasCheckScheduled = checkLicenseAndWait()
+
+    // then
+    assertTrue(wasCheckScheduled)
     checkEditorNotification<CourseLicenseEditorNotificationProvider>(
       findFile("lesson/task/task.txt"),
       EduCoreBundle.message("license.notification.invalid.text")
@@ -54,20 +69,32 @@ class CourseLicenseEditorNotificationTest : NotificationsTestBase() {
 
   @Test
   fun `test editor notification with error message is shown if license could not be obtained`() = runTest {
+    // given
     LicenseLinkSettings.getInstance(project).link = getRandomTrustedUrl()
     val connector = mockService<LicenseConnector>(application)
     coEvery { connector.checkLicense(any()) } returns LicenseState.ERROR
-    checkLicenseAndWait()
+
+    // when
+    val wasCheckScheduled = checkLicenseAndWait()
+
+    // then
+    assertTrue(wasCheckScheduled)
     checkEditorNotification<CourseLicenseEditorNotificationProvider>(
       findFile("lesson/task/task.txt"),
       EduCoreBundle.message("license.notification.error.text")
     )
   }
 
-  private suspend fun checkLicenseAndWait() {
+  /**
+   * @return true if a license check was scheduled, false otherwise
+   */
+  private suspend fun checkLicenseAndWait(): Boolean {
     val licenseChecker = LicenseChecker.getInstance(project)
-    licenseChecker.scheduleLicenseCheck()
-    // wait for licenseState to update with a non-null value
-    licenseChecker.licenseState.first { it != null }
+    val wasCheckScheduled = licenseChecker.scheduleLicenseCheck()
+    if (wasCheckScheduled) {
+      // wait for licenseState to update with a non-null value
+      licenseChecker.licenseState.first { it != null }
+    }
+    return wasCheckScheduled
   }
 }
