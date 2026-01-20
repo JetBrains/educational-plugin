@@ -94,11 +94,13 @@ class ZhabaMainGraph private constructor(
 
     // create the loop 0 -> 1 -> 2 -> ... -> stepCount -> 1 with the NEXT_TRANSITION transition
 
-    val happyEnding = ZhabaStepFactory.noOpStep(".end.happy", FINISH_TRANSITION) { JumpingAwayZhabaData(it.winking) }
-    val sadEnding = ZhabaStepFactory.noOpStep(".end.sad", FINISH_TRANSITION) { JumpingAwayZhabaData(it.sad) }
+    val happyEnding = ZhabaStepFactory.noOpStep(".end.happy", NEXT_TRANSITION) { JumpingAwayZhabaData(it.winking) }
+    val sadEnding = ZhabaStepFactory.noOpStep(".end.sad", NEXT_TRANSITION) { JumpingAwayZhabaData(it.sad) }
+    val notifyStap = ZhabaStepFactory.onboardingLastStep(".onboarding.finished")
 
     stepsData[happyEnding] = GraphData.EMPTY
     stepsData[sadEnding] = GraphData.EMPTY
+    stepsData[notifyStap] = GraphData.EMPTY
 
     val uiOnboardingSteps = uiOnboardingStepsIds.map { ZhabaStepFactory.onboardingStep(it) }
     val firstOnboardingStep = uiOnboardingSteps.first()
@@ -118,6 +120,8 @@ class ZhabaMainGraph private constructor(
       edges.add(Edge(step, HAPPY_FINISH_TRANSITION, happyEnding))
       edges.add(Edge(step, SAD_FINISH_TRANSITION, sadEnding))
     }
+    edges.add(Edge(happyEnding, NEXT_TRANSITION, notifyStap))
+    edges.add(Edge(sadEnding, NEXT_TRANSITION, notifyStap))
 
     return firstOnboardingStep
   }

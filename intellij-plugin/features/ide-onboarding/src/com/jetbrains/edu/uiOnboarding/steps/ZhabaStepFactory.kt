@@ -12,6 +12,8 @@ object ZhabaStepFactory {
 
   fun onboardingStep(id: String): EduUiOnboardingStepAsZhabaStep = EduUiOnboardingStepAsZhabaStep(id)
 
+  fun onboardingLastStep(id: String): OnboardingLastStep = OnboardingLastStep(id)
+
   fun studentPackPromotionStep(): StudentPackPromotionStep = StudentPackPromotionStep()
 
   fun menuStep(): ActionGroupZhabaStep = ActionGroupZhabaStep(
