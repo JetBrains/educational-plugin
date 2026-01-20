@@ -79,7 +79,7 @@ interface SubmissionsService {
   suspend fun getUserAgreement(): Response<UserAgreement>
 
   @GET("/api/user/issue-jwt")
-  suspend fun issueJWT(): Response<String>
+  suspend fun issueJWT(): Response<ResponseBody>
 }
 
 /**

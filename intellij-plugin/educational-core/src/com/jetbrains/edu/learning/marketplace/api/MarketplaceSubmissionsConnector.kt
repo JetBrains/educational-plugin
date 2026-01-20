@@ -473,7 +473,7 @@ class MarketplaceSubmissionsConnector {
       val response = withContext(Dispatchers.IO) {
         submissionsService.issueJWT()
       }
-      val jwt = response.body()
+      val jwt = response.body()?.string()
       if (response.isSuccessful && jwt != null) {
         LOG.info("Successfully fetched JWT")
         Ok(jwt)
