@@ -1,13 +1,11 @@
 package com.jetbrains.edu.learning.marketplace.license.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
-import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.license.LicenseState
 import com.jetbrains.edu.learning.network.createRetrofitBuilder
@@ -17,14 +15,12 @@ import kotlinx.coroutines.withContext
 import okhttp3.ConnectionPool
 import retrofit2.converter.jackson.JacksonConverterFactory
 import retrofit2.create
+import java.net.URI
 
 @Service(Service.Level.APP)
 class LicenseConnector {
-  val objectMapper: ObjectMapper by lazy {
-    ConnectorUtils.createRegisteredMapper(SimpleModule()).apply {
-      registerModule(kotlinModule())
-    }
-  }
+  private val objectMapper: ObjectMapper = jacksonObjectMapper()
+  private val connectionPool: ConnectionPool = ConnectionPool()
 
   /**
    * @return Result with a boolean value indicating whether the license is active or an error message
@@ -33,16 +29,18 @@ class LicenseConnector {
     val jwtToken = MarketplaceSubmissionsConnector.getInstance().getLicenseJWT().onError {
       return LicenseState.ERROR
     }
-    val connectionPool = ConnectionPool()
     val converterFactory: JacksonConverterFactory = JacksonConverterFactory.create(objectMapper)
-    val service = createRetrofitBuilder(link, connectionPool, jwtToken)
+
+    val (baseUrl, apiPath) = retrieveBaseUrl(link) ?: return LicenseState.ERROR
+
+    val service = createRetrofitBuilder(baseUrl, connectionPool, jwtToken)
       .addConverterFactory(converterFactory)
       .build()
       .create<LicenseEndpoints>()
 
     return try {
       val response = withContext(Dispatchers.IO) {
-        service.checkLicense()
+        service.checkLicense(apiPath)
       }
       val licenseCheck = response.body()
       if (response.isSuccessful && licenseCheck != null) {
@@ -65,6 +63,26 @@ class LicenseConnector {
       LicenseState.ERROR
     }
   }
+
+  private fun retrieveBaseUrl(link: String): UrlParts? {
+    val uri = try {
+      URI(link)
+    }
+    catch (e: Exception) {
+      LOG.warn("Failed to parse link: $link", e)
+      return null
+    }
+    val baseUrl = if (uri.port == -1) {
+      "${uri.scheme}://${uri.host}/"
+    }
+    else {
+      "${uri.scheme}://${uri.host}:${uri.port}/"
+    }
+    val apiPath = link.substringAfter(baseUrl)
+    return UrlParts(baseUrl, apiPath)
+  }
+
+  private data class UrlParts(val baseUrl: String, val apiPath: String)
 
   companion object {
     fun getInstance(): LicenseConnector = service()
