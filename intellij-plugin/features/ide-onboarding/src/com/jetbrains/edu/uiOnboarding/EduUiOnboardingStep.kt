@@ -18,6 +18,12 @@ interface EduUiOnboardingStep {
     return zhabaComponent
   }
 
+  /**
+   * Specifies the order of onboarding steps.
+   */
+  val showAfterStep: String?
+    get() = null
+
   companion object {
     val EP_NAME: ExtensionPointName<KeyedLazyInstanceEP<EduUiOnboardingStep>> = ExtensionPointName.Companion.create("com.intellij.ide.eduUiOnboarding.step")
 

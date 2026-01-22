@@ -1,5 +1,6 @@
 package com.jetbrains.edu.uiOnboarding.stepsGraph
 
+import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
 import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
 import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory
@@ -11,6 +12,7 @@ import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.RERUN_TRANS
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.SAD_FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.STEP_UNAVAILABLE_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.parseTransitionToSpecificStep
+import fleet.util.indexOfOrNull
 
 /**
  * Represents a graph of [ZhabaStep]s.
@@ -147,15 +149,39 @@ class ZhabaMainGraph private constructor(
 
     fun create(): ZhabaMainGraph = ZhabaMainGraph()
 
+    /**
+     * The order of steps is predefined for steps of the IDE-Onboarding module,
+     * and steps from other modules are added in accordance to their preferred order.
+     */
     fun getDefaultOnboardingStepsOrder(): List<String> {
-      return listOf(
+      val baseSteps = listOf(
         WelcomeStep.STEP_KEY,
         TaskDescriptionStep.STEP_KEY,
         CodeEditorStep.STEP_KEY,
-        "translation",
         CheckSolutionStep.STEP_KEY,
         CourseViewStep.STEP_KEY
       )
+
+      val allSteps = baseSteps.toMutableList()
+
+      // add all non-base steps in their preferred order
+      EduUiOnboardingStep.EP_NAME.forEachExtensionSafe { step ->
+        // skip base steps
+        if (baseSteps.contains(step.key)) return@forEachExtensionSafe
+
+        val index = step.instance.showAfterStep.let { insertAfterKey ->
+          allSteps.indexOfOrNull(insertAfterKey)
+        }
+
+        if (index != null) {
+          allSteps.add(index + 1, step.key)
+        }
+        else {
+          allSteps.add(step.key)
+        }
+      }
+
+      return allSteps
     }
   }
 }

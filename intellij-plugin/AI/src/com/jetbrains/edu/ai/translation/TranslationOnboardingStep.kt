@@ -16,6 +16,7 @@ import com.jetbrains.edu.ai.translation.action.AITranslation
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory.Companion.STUDY_TOOL_WINDOW
 import com.jetbrains.edu.uiOnboarding.*
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
+import com.jetbrains.edu.uiOnboarding.steps.CodeEditorStep
 import java.awt.Component
 import java.awt.Point
 import javax.swing.JComponent
@@ -44,6 +45,9 @@ class TranslationOnboardingStep : EduUiOnboardingStep {
 
     return GotItBalloonStepData(gotItTooltipBuilder(), componentPoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
+
+  override val showAfterStep: String
+    get() = CodeEditorStep.STEP_KEY
 
   private fun findActionButtonRecursively(component: Component?, targetAction: AnAction): ActionButton? {
     if (component == null) return null
