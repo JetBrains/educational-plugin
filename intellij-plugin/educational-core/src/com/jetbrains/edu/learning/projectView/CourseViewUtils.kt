@@ -285,12 +285,17 @@ object CourseViewUtils {
 
     val nodePath = nodeDirectory.pathInCourse(project) ?: return null
 
-    return if (course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null) {
+    return if (course.additionalFiles.find { it.isVisible && nodePath.isInsideFolderOf(it) } != null) {
       directoryNodeBuilder(nodePsiElement)
     }
     else {
       null
     }
+  }
+
+  private fun String.isInsideFolderOf(file: EduFile): Boolean {
+    val fileFolder = file.name.substringBeforeLast('/') + '/'
+    return "$this/".startsWith(fileFolder)
   }
 
   fun AbstractTreeNode<*>.courseViewVisibilityAttribute(project: Project, course: Course): CourseViewVisibility {
