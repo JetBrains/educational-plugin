@@ -5,6 +5,14 @@ plugins {
   id("common-conventions")
 }
 
+// These repositories already exist in the educational-core module, but we need them here to make
+// IDE see platform sources during development. This is a workaround and should be removed after
+// the intelliJ Platform Gradle Plugin fixes source download.
+repositories {
+  maven("https://www.jetbrains.com/intellij-repository/releases")
+  maven("https://www.jetbrains.com/intellij-repository/snapshots")
+}
+
 idea {
   project {
     jdkName = "21"
