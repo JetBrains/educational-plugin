@@ -141,7 +141,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private val GROUP = EventLogGroup(
       "educational.counters",
       "The metric is reported in case a user has called the corresponding JetBrains Academy features.",
-      26,
+      27,
     )
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
@@ -352,7 +352,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       """Track when a user clicks "Skip" button. The index and the step key are recorded""",
       EventFields.Int(UI_ONBOARDING_STEP_INDEX),
       // the list of step keys is taken from com.jetbrains.edu.uiOnboarding.EduUiOnboardingService.getDefaultStepsOrder
-      EventFields.String(UI_ONBOARDING_STEP_KEY, listOf("welcome", "taskDescription", "codeEditor", "checkSolution"))
+      EventFields.String(UI_ONBOARDING_STEP_KEY, listOf("welcome", "taskDescription", "codeEditor", "translation", "checkSolution", "courseView"))
     )
     private val UI_ONBOARDING_FINISHED = GROUP.registerEvent(
       "ui.onboarding.finished",
