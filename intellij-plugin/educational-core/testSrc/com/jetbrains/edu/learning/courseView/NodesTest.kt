@@ -2,6 +2,7 @@
 package com.jetbrains.edu.learning.courseView
 
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.vfs.findOrCreateDirectory
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.LightPlatformTestCase
@@ -890,6 +891,64 @@ class NodesTest : CourseViewTestBase() {
         |   visible.txt
         |  CCStudentInvisibleFileNode invisible.txt
         |  visible.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `all subdirectories of a visible directory must be visible`() {
+    // Given
+
+    courseWithFiles {
+      additionalFile("dir/visible.txt") {
+        withVisibility(true)
+      }
+    }
+
+    // When
+    // Create some files and directories inside the visible directory "dir"
+
+    nonAdditionalFile("dir/visible2.txt")
+    nonAdditionalFile("dir/subdir/visible3.txt")
+    runWriteAction {
+      project.courseDir.findOrCreateDirectory("dir/empty-subdir")
+    }
+
+    // Then
+
+    assertCourseView("""
+        |-Project
+        | -CourseNode Test Course  0/0
+        |  -DirectoryNode dir
+        |   DirectoryNode empty-subdir
+        |   -DirectoryNode subdir
+        |    visible3.txt
+        |   visible.txt
+        |   visible2.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `visible additional file inside a bunch of subdirectories should be shown in Course View`() {
+    // Given
+
+    courseWithFiles {
+      additionalFile("dir/subdir/visible.txt") {
+        withVisibility(true)
+      }
+    }
+
+    // When
+
+    // Then
+
+    assertCourseView("""
+        |-Project
+        | -CourseNode Test Course  0/0
+        |  -DirectoryNode dir
+        |   -DirectoryNode subdir
+        |    visible.txt
       """.trimMargin()
     )
   }
