@@ -1,7 +1,7 @@
 [versions]
 educational-ml-library = "1.0.38"
 jackson = "2.17.2"
-kotlin = "2.2.20"
+kotlin = "2.3.0"
 okhttp = "4.12.0"
 retrofit = "2.9.0"
 

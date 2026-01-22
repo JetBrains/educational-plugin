@@ -50,7 +50,6 @@ inline fun <T: EduTestDialogBase<*>> withEduTestDialog(dialog: T, action: () -> 
     is EduTestInputDialog -> {
       withTestDialog(dialog, action)
     }
-    else -> error("Unexpected dialog type: `${dialog.javaClass.canonicalName}`")
   }
 
   return dialog
