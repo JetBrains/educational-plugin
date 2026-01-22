@@ -7,13 +7,14 @@ import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.rd.util.ConcurrentHashMap
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.TestOnly
 
 @Service(Service.Level.PROJECT)
-class TaskHintsDataHolder : EduTestAware {
+class TaskHintsDataHolder(private val project: Project) : EduTestAware {
   private val data = ConcurrentHashMap<Task, TaskHintData>()
 
-  private fun getOrCreate(project: Project, task: Task): TaskHintData = data.getOrPut(task) {
+  suspend fun getOrCreate(task: Task): TaskHintData = data.getOrPut(task) {
     TaskHintData(authorSolutionContext = AuthorSolutionContext.create(project, task))
   }
 
@@ -30,7 +31,11 @@ class TaskHintsDataHolder : EduTestAware {
     val Task.hintData: TaskHintData
       get() {
         val project = project ?: error("No project for task $name")
-        return getInstance(project).getOrCreate(project, this)
+        // TODO(refactor to get task hint data using coroutines, see EDU-8720)
+        @Suppress("RAW_RUN_BLOCKING")
+        return runBlocking {
+          getInstance(project).getOrCreate(this@hintData)
+        }
       }
   }
 

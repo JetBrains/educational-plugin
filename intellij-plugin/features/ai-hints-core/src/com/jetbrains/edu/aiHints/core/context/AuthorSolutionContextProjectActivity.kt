@@ -16,7 +16,9 @@ class AuthorSolutionContextProjectActivity : ProjectActivity {
     if (!course.isStudy || !course.isMarketplace || EduAIHintsProcessor.forCourse(course) == null) return
     val eduTasks = course.allTasks.filterIsInstance<EduTask>() // AI Hints available only for EduTasks
     for (task in eduTasks) {
-      task.authorSolutionContext = AuthorSolutionContext.create(project, task)
+      // Calculate the task hint data cache on project startup
+      // GetHint uses this pre-calculated data and does not calculate it when called
+      TaskHintsDataHolder.getInstance(project).getOrCreate(task)
     }
   }
 }
