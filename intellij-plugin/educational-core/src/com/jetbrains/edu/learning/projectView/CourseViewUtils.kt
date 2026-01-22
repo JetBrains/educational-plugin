@@ -239,7 +239,7 @@ object CourseViewUtils {
   ): AbstractTreeNode<*>? {
     return when (this) {
       is PsiFileNode -> modifyAdditionalFile(project, course, showUserCreatedFiles)
-      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course) {
+      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course, showUserCreatedFiles) {
         DirectoryNode(project, it, settings, null)
       }
       else -> null
@@ -249,7 +249,7 @@ object CourseViewUtils {
   private fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectoryForTeacher(project: Project, course: Course): AbstractTreeNode<*>? {
     return when (this) {
       is PsiFileNode -> modifyAdditionalFile(project, course, showUserCreatedFiles = false)
-      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course) {
+      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course, showUserCreatedFiles = false) {
         CCNode(project, it, settings, null)
       }
       else -> null
@@ -276,6 +276,7 @@ object CourseViewUtils {
   private fun PsiDirectoryNode.modifyAdditionalDirectory(
     project: Project,
     course: Course,
+    showUserCreatedFiles: Boolean,
     directoryNodeBuilder: (PsiDirectory) -> DirectoryNode
   ): AbstractTreeNode<*>? {
     val nodePsiElement = value ?: return null
@@ -285,12 +286,24 @@ object CourseViewUtils {
 
     val nodePath = nodeDirectory.pathInCourse(project) ?: return null
 
-    return if (course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null) {
+    val containsVisibleAdditionalFile = course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null
+
+    // condition is lazy because it is slow and we expect `showUserCreatedFiles = false` most of the time
+    val lazyIsUnderVisibleAdditionalFile: () -> Boolean = {
+      course.additionalFiles.find { it.isVisible && nodePath.isInsideFolderOf(it) } != null
+    }
+
+    return if (containsVisibleAdditionalFile || showUserCreatedFiles && lazyIsUnderVisibleAdditionalFile()) {
       directoryNodeBuilder(nodePsiElement)
     }
     else {
       null
     }
+  }
+
+  private fun String.isInsideFolderOf(file: EduFile): Boolean {
+    val fileFolder = file.name.substringBeforeLast('/') + '/'
+    return "$this/".startsWith(fileFolder)
   }
 
   fun AbstractTreeNode<*>.courseViewVisibilityAttribute(project: Project, course: Course): CourseViewVisibility {
