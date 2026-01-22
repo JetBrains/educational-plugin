@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.pathRelativeToTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.TestOnly
+import java.nio.file.Path
 import javax.swing.Icon
 
 object CourseViewUtils {
@@ -239,7 +240,7 @@ object CourseViewUtils {
   ): AbstractTreeNode<*>? {
     return when (this) {
       is PsiFileNode -> modifyAdditionalFile(project, course, showUserCreatedFiles)
-      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course) {
+      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course, showUserCreatedFiles) {
         DirectoryNode(project, it, settings, null)
       }
       else -> null
@@ -249,7 +250,7 @@ object CourseViewUtils {
   private fun AbstractTreeNode<*>.modifyAdditionalFileOrDirectoryForTeacher(project: Project, course: Course): AbstractTreeNode<*>? {
     return when (this) {
       is PsiFileNode -> modifyAdditionalFile(project, course, showUserCreatedFiles = false)
-      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course) {
+      is PsiDirectoryNode -> modifyAdditionalDirectory(project, course, showUserCreatedFiles = false) {
         CCNode(project, it, settings, null)
       }
       else -> null
@@ -276,6 +277,7 @@ object CourseViewUtils {
   private fun PsiDirectoryNode.modifyAdditionalDirectory(
     project: Project,
     course: Course,
+    showUserCreatedFiles: Boolean,
     directoryNodeBuilder: (PsiDirectory) -> DirectoryNode
   ): AbstractTreeNode<*>? {
     val nodePsiElement = value ?: return null
@@ -285,12 +287,33 @@ object CourseViewUtils {
 
     val nodePath = nodeDirectory.pathInCourse(project) ?: return null
 
-    return if (course.additionalFiles.find { it.isVisible && it.name.startsWith("$nodePath/") } != null) {
+    return if (shouldShowDirectory(course, nodePath, showUserCreatedFiles)) {
       directoryNodeBuilder(nodePsiElement)
     }
     else {
       null
     }
+  }
+
+  private fun shouldShowDirectory(course: Course, nodePath: String, showUserCreatedFiles: Boolean): Boolean {
+    val containsVisibleAdditionalFile = course.additionalFiles.any { it.isVisible && it.name.startsWith("$nodePath/") }
+
+    if (containsVisibleAdditionalFile) return true
+    if (!showUserCreatedFiles) return false
+
+    // In case we show user-created files and directories (see CourseViewUtils.modifyAdditionalFileOrDirectory), determine whether this
+    // directory is inside some visible additional-directory, i.e., a directory with a visible additional file.
+
+    val isUnderVisibleAdditionalFile = course.additionalFiles.any {
+      it.isVisible && nodePath.isInsideDirectoryOf(it)
+    }
+
+    return isUnderVisibleAdditionalFile
+  }
+
+  private fun String.isInsideDirectoryOf(file: EduFile): Boolean {
+    val parentDir = Path.of(file.name).parent ?: return true
+    return Path.of(this).startsWith(parentDir)
   }
 
   fun AbstractTreeNode<*>.courseViewVisibilityAttribute(project: Project, course: Course): CourseViewVisibility {
