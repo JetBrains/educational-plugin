@@ -4,5 +4,6 @@
 
     <content>
         <module name="AI"/>
+        <module name="ide-onboarding"/>
     </content>
 </idea-plugin>
