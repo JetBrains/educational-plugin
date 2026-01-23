@@ -60,7 +60,6 @@
   <extensions defaultExtensionNs="Educational">
     <AIOptionsProvider instance="com.jetbrains.edu.ai.translation.settings.TranslationOptions"/>
     <AIOptionsProvider instance="com.jetbrains.edu.ai.terms.settings.TheoryLookupOptions"/>
-    <taskNavigationExtension implementation="com.jetbrains.edu.ai.terms.ui.TermsTaskNavigationExtension"/>
   </extensions>
 
   <projectListeners>
