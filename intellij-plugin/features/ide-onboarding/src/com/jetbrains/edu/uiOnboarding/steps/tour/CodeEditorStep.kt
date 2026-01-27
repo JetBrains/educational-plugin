@@ -13,7 +13,7 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHA
 import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepData
 import java.awt.Point
 
-class CodeEditorStep : EduUiOnboardingStep(STEP_KEY) {
+class CodeEditorStep : EduUiOnboardingStep(stepId) {
 
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
@@ -50,7 +50,8 @@ class CodeEditorStep : EduUiOnboardingStep(STEP_KEY) {
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.below, zhabaComponent)
   }
 
-  companion object {
-    const val STEP_KEY: String = "codeEditor"
+  companion object : EduUiOnboardingStepFactory {
+    override val stepId: String = "codeEditor"
+    override fun create(): EduUiOnboardingStep = CodeEditorStep()
   }
 }

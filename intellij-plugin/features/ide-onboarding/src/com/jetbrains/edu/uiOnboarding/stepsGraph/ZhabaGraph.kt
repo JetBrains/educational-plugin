@@ -6,6 +6,7 @@ import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory
 import com.jetbrains.edu.uiOnboarding.steps.tour.CheckSolutionStep
 import com.jetbrains.edu.uiOnboarding.steps.tour.CodeEditorStep
 import com.jetbrains.edu.uiOnboarding.steps.tour.CourseViewStep
+import com.jetbrains.edu.uiOnboarding.steps.tour.EduUiOnboardingStepFactory
 import com.jetbrains.edu.uiOnboarding.steps.tour.TaskDescriptionStep
 import com.jetbrains.edu.uiOnboarding.steps.tour.WelcomeStep
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
@@ -91,7 +92,7 @@ class ZhabaMainGraph private constructor(
   }
 
   private fun fillOnboardingGraph(): ZhabaStepBase {
-    val uiOnboardingStepsIds = getDefaultOnboardingStepsOrder()
+    val uiOnboardingStepsIds = getOrderedListOfOnboardingStepFactories()
 
     val stepCount = uiOnboardingStepsIds.size - 1
     if (stepCount <= 0) error("Not enough onboarding steps found")
@@ -151,13 +152,13 @@ class ZhabaMainGraph private constructor(
 
     fun create(): ZhabaMainGraph = ZhabaMainGraph()
 
-    fun getDefaultOnboardingStepsOrder(): List<String> {
+    fun getOrderedListOfOnboardingStepFactories(): List<EduUiOnboardingStepFactory> {
       return listOf(
-        WelcomeStep.STEP_KEY,
-        TaskDescriptionStep.STEP_KEY,
-        CodeEditorStep.STEP_KEY,
-        CheckSolutionStep.STEP_KEY,
-        CourseViewStep.STEP_KEY
+        WelcomeStep,
+        TaskDescriptionStep,
+        CodeEditorStep,
+        CheckSolutionStep,
+        CourseViewStep
       )
     }
   }

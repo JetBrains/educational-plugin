@@ -16,7 +16,7 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
 import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepData
 import java.awt.Point
 
-class TaskDescriptionStep : EduUiOnboardingStep(STEP_KEY) {
+class TaskDescriptionStep : EduUiOnboardingStep(stepId) {
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
       override val steps: List<EduUiOnboardingAnimationStep> = listOf(
@@ -52,7 +52,8 @@ class TaskDescriptionStep : EduUiOnboardingStep(STEP_KEY) {
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
 
-  companion object {
-    const val STEP_KEY = "taskDescription"
+  companion object : EduUiOnboardingStepFactory {
+    override val stepId: String = "taskDescription"
+    override fun create(): EduUiOnboardingStep = TaskDescriptionStep()
   }
 }

@@ -15,7 +15,7 @@ import java.awt.Component
 import java.awt.Container
 import java.awt.Point
 
-class CheckSolutionStep : EduUiOnboardingStep(STEP_KEY) {
+class CheckSolutionStep : EduUiOnboardingStep(stepId) {
 
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
@@ -54,8 +54,9 @@ class CheckSolutionStep : EduUiOnboardingStep(STEP_KEY) {
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
 
-  companion object {
-    const val STEP_KEY: String = "checkSolution"
+  companion object : EduUiOnboardingStepFactory {
+    override val stepId: String = "checkSolution"
+    override fun create(): EduUiOnboardingStep = CheckSolutionStep()
   }
 }
 

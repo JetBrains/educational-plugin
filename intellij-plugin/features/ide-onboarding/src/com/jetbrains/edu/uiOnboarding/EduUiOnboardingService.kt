@@ -28,7 +28,7 @@ internal class EduUiOnboardingService(private val project: Project, private val 
 
   fun startOnboarding() = executeZhaba(
     launchStepId = ZhabaMainGraph.STEP_ID_START_ONBOARDING,
-    inProgressStepId = ZhabaMainGraph.getDefaultOnboardingStepsOrder().first()
+    inProgressStepId = ZhabaMainGraph.getOrderedListOfOnboardingStepFactories().first().stepId
   )
 
   fun promoteStudentPack() = executeZhaba(

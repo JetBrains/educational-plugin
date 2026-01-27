@@ -15,7 +15,7 @@ import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.steps.locateZhabaInProjectToolWindow
 import java.awt.Point
 
-class WelcomeStep : EduUiOnboardingStep(STEP_KEY) {
+class WelcomeStep : EduUiOnboardingStep(stepId) {
 
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
@@ -47,7 +47,8 @@ class WelcomeStep : EduUiOnboardingStep(STEP_KEY) {
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
 
-  companion object {
-    const val STEP_KEY = "welcome"
+  companion object : EduUiOnboardingStepFactory {
+    override val stepId: String = "welcome"
+    override fun create(): EduUiOnboardingStep = WelcomeStep()
   }
 }
