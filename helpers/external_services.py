@@ -6,9 +6,11 @@ from urllib.parse import quote, urlencode
 
 
 def commit_changes_to_educational_plugin(space_token: str, branch_name: str, commit_massage: str, changes: List[Dict]):
+    branch = branch_name if branch_name.startswith("refs/heads/") else f"refs/heads/{branch_name}"
+
     data = {
         "baseCommit": "master",
-        "targetBranch": branch_name,
+        "targetBranch": branch,
         "commitMessage": commit_massage,
         "files": changes
     }
