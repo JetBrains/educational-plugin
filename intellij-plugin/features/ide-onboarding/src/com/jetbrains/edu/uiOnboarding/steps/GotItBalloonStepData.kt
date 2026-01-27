@@ -1,8 +1,9 @@
-package com.jetbrains.edu.uiOnboarding
+package com.jetbrains.edu.uiOnboarding.steps
 
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
+import com.jetbrains.edu.uiOnboarding.ZhabaComponent
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaDataWithComponent
 
 class GotItBalloonStepData(

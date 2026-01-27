@@ -1,4 +1,6 @@
-package com.jetbrains.edu.uiOnboarding
+package com.jetbrains.edu.uiOnboarding.steps.tour
+
+import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonGraphData
 
 class EduUiOnboardingStepGraphData(
   val isLast: Boolean,

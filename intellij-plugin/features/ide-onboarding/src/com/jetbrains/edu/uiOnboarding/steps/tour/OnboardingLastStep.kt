@@ -1,4 +1,4 @@
-package com.jetbrains.edu.uiOnboarding.steps
+package com.jetbrains.edu.uiOnboarding.steps.tour
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.openapi.Disposable

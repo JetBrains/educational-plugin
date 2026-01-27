@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.jetbrains.edu.uiOnboarding.steps
+package com.jetbrains.edu.uiOnboarding.steps.tour
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
@@ -10,6 +10,9 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.uiOnboarding.*
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
+import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepData
+import java.awt.Component
+import java.awt.Container
 import java.awt.Point
 
 class CheckSolutionStep : EduUiOnboardingStep(STEP_KEY) {
@@ -56,9 +59,9 @@ class CheckSolutionStep : EduUiOnboardingStep(STEP_KEY) {
   }
 }
 
-private fun <T : Any> java.awt.Component.findComponentOfType(clazz: Class<T>): T? {
+private fun <T : Any> Component.findComponentOfType(clazz: Class<T>): T? {
   if (clazz.isInstance(this)) return clazz.cast(this)
-  if (this is java.awt.Container) {
+  if (this is Container) {
     for (i in 0 until componentCount) {
       val component = getComponent(i)
       val result = component.findComponentOfType(clazz)

@@ -1,9 +1,10 @@
-package com.jetbrains.edu.uiOnboarding.steps
+package com.jetbrains.edu.uiOnboarding.steps.tour
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.uiOnboarding.*
+import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepBase
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
 
 /**

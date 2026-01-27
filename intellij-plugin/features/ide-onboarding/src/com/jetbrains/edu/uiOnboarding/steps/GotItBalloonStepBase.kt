@@ -4,8 +4,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

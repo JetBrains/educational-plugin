@@ -15,8 +15,6 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMA
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import com.jetbrains.edu.uiOnboarding.ZhabaComponent
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.SAD_FINISH_TRANSITION
