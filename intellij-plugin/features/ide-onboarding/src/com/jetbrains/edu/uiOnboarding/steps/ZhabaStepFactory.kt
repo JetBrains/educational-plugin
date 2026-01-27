@@ -10,7 +10,14 @@ object ZhabaStepFactory {
 
   const val MENU_STEP_ID = ".tode.menu"
 
-  fun onboardingStep(id: String): EduUiOnboardingStepAsZhabaStep = EduUiOnboardingStepAsZhabaStep(id)
+  fun onboardingStep(id: String): EduUiOnboardingStep = when (id) {
+    WelcomeStep.STEP_KEY -> WelcomeStep()
+    TaskDescriptionStep.STEP_KEY -> TaskDescriptionStep()
+    CodeEditorStep.STEP_KEY -> CodeEditorStep()
+    CheckSolutionStep.STEP_KEY -> CheckSolutionStep()
+    CourseViewStep.STEP_KEY -> CourseViewStep()
+    else -> throw IllegalArgumentException("Unknown step id: $id")
+  }
 
   fun onboardingLastStep(id: String): OnboardingLastStep = OnboardingLastStep(id)
 

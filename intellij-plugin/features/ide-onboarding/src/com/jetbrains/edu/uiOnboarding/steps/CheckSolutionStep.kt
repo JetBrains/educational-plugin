@@ -12,7 +12,7 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMA
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import java.awt.Point
 
-class CheckSolutionStep : EduUiOnboardingStep {
+class CheckSolutionStep : EduUiOnboardingStep(STEP_KEY) {
 
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
@@ -50,8 +50,6 @@ class CheckSolutionStep : EduUiOnboardingStep {
     val relativePoint = RelativePoint(checkActionsPanel, point)
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
-
-  override fun isAvailable(): Boolean = true
 
   companion object {
     const val STEP_KEY: String = "checkSolution"

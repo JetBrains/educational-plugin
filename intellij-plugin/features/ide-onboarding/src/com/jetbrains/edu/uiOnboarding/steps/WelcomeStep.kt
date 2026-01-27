@@ -11,11 +11,10 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
 import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import java.awt.Point
 
-class WelcomeStep : EduUiOnboardingStep {
+class WelcomeStep : EduUiOnboardingStep(STEP_KEY) {
 
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
@@ -46,8 +45,6 @@ class WelcomeStep : EduUiOnboardingStep {
 
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
-
-  override fun isAvailable(): Boolean = true
 
   companion object {
     const val STEP_KEY = "welcome"
