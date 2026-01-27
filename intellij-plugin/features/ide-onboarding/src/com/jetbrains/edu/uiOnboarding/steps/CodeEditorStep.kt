@@ -11,7 +11,7 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMA
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import java.awt.Point
 
-class CodeEditorStep : EduUiOnboardingStep {
+class CodeEditorStep : EduUiOnboardingStep(STEP_KEY) {
 
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
@@ -47,8 +47,6 @@ class CodeEditorStep : EduUiOnboardingStep {
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.below, zhabaComponent)
   }
-
-  override fun isAvailable(): Boolean = true
 
   companion object {
     const val STEP_KEY: String = "codeEditor"

@@ -12,11 +12,10 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMA
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
 import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
 import java.awt.Point
 
-class TaskDescriptionStep : EduUiOnboardingStep {
+class TaskDescriptionStep : EduUiOnboardingStep(STEP_KEY) {
   override fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation =
     object : EduUiOnboardingAnimation {
       override val steps: List<EduUiOnboardingAnimationStep> = listOf(
@@ -51,8 +50,6 @@ class TaskDescriptionStep : EduUiOnboardingStep {
     val zhabaComponent = createZhaba(project, data, relativeZhabaPoint)
     return GotItBalloonStepData(builder, relativePoint, relativeZhabaPoint, Balloon.Position.above, zhabaComponent)
   }
-
-  override fun isAvailable(): Boolean = true
 
   companion object {
     const val STEP_KEY = "taskDescription"

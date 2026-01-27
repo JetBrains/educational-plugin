@@ -1,25 +1,22 @@
 package com.jetbrains.edu.uiOnboarding.steps
 
 import com.intellij.openapi.project.Project
+import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep
-import com.jetbrains.edu.uiOnboarding.EduUiOnboardingStepGraphData
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
+import com.jetbrains.edu.uiOnboarding.*
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep
 
 /**
- * The implementations of [performStep] is taken from the [com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep] extension point.
- * Only the stepId of the [com.jetbrains.edu.uiOnboarding.EduUiOnboardingStep] is stored to avoid storing an instance managed by the platform.
+ * Represents a step for the onboarding tour
  */
-class EduUiOnboardingStepAsZhabaStep internal constructor(override val stepId: String): GotItBalloonStepBase<EduUiOnboardingStepGraphData>() {
+abstract class EduUiOnboardingStep internal constructor(override val stepId: String): GotItBalloonStepBase<EduUiOnboardingStepGraphData>() {
 
-  private val wrappedStep: EduUiOnboardingStep?
-    get() = EduUiOnboardingStep.getIfAvailable(stepId)
+  abstract fun buildAnimation(data: EduUiOnboardingAnimationData, point: RelativePoint): EduUiOnboardingAnimation
 
-  override fun performStep(project: Project, data: EduUiOnboardingAnimationData): GotItBalloonStepData? {
-    return wrappedStep?.performStep(project, data)
+  protected fun createZhaba(project: Project, data: EduUiOnboardingAnimationData, point: RelativePoint): ZhabaComponent {
+    val zhabaComponent = ZhabaComponent(project)
+    zhabaComponent.animation = buildAnimation(data, point)
+    return zhabaComponent
   }
 
   override fun isContrastButton(graphData: EduUiOnboardingStepGraphData): Boolean = graphData.isLast
