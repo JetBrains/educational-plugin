@@ -34,7 +34,6 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.rd.util.lifetime.Lifetime
-import com.jetbrains.rd.util.reactive.IProperty
 import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.adviseWithPrev
 import com.jetbrains.rd.util.reactive.fire
@@ -298,22 +297,22 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
   ): Boolean {
     val result = CompletableDeferred<RdUnitTestResultData>()
     withContext(Dispatchers.EDT) {
-      rdSession.testResultData?.advise(project.lifetime) { resultData ->
-        if (resultData != null && resultData.nodeId == firstFailedNode.id) {
-          result.complete(resultData)
+      rdSession.sessionOutput.view(project.lifetime) { lt, sessionOutput ->
+        sessionOutput.resultData.view(lt) { _, resultData ->
+          if (resultData != null && resultData.nodeId == firstFailedNode.id) {
+            result.complete(resultData)
+          }
         }
       }
       rdSession.treeDescriptor.selectNode.fire(RdUnitTestNavigateArgs(firstFailedNode.id, true))
     }
-    val resultData = result.await()
+    val resultData = withTimeout(5000.milliseconds) {
+      result.await()
+    }
     val newInfo = (firstFailedNode.descriptor as RdUnitTestSessionNodeDescriptor).getEduTestInfo(resultData)
     testInfoWithNodes[firstFailedNode] = newInfo
     return true
   }
-
-  private val RdUnitTestSession.testResultData: IProperty<RdUnitTestResultData?>?
-    get() = sessionOutput.valueOrNull?.resultData
-
 
   private fun RdUnitTestSessionNodeDescriptor.getEduTestInfo(data: RdUnitTestResultData? = null): EduTestInfo {
     val (diff, infoLines) = if (data != null) {
