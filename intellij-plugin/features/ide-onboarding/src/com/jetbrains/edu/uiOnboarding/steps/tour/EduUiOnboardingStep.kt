@@ -66,3 +66,8 @@ abstract class EduUiOnboardingStep internal constructor(override val stepId: Str
     ZhabaStep.NEXT_TRANSITION
   }
 }
+
+interface EduUiOnboardingStepFactory {
+  val stepId: String
+  fun create(): EduUiOnboardingStep
+}
