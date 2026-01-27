@@ -1,5 +1,5 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.jetbrains.edu.uiOnboarding.steps
+package com.jetbrains.edu.uiOnboarding.steps.tour
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
@@ -11,7 +11,8 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.EYE
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMALL_SHIFT
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
+import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepData
+import com.jetbrains.edu.uiOnboarding.steps.locateZhabaInProjectToolWindow
 import java.awt.Point
 
 class WelcomeStep : EduUiOnboardingStep(STEP_KEY) {

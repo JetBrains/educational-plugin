@@ -1,4 +1,4 @@
-package com.jetbrains.edu.uiOnboarding
+package com.jetbrains.edu.uiOnboarding.steps
 
 import com.jetbrains.edu.uiOnboarding.stepsGraph.GraphData
 

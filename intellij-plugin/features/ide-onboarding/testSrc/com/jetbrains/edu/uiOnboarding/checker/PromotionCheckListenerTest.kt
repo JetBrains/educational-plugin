@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.getUICheckLabel
-import com.jetbrains.edu.uiOnboarding.GotItBalloonGraphData
+import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonGraphData
 import com.jetbrains.edu.uiOnboarding.TransitionAnimator
 import com.jetbrains.edu.uiOnboarding.steps.ZhabaStepFactory
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION

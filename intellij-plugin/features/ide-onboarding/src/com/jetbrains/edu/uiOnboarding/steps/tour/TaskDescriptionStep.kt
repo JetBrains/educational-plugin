@@ -1,8 +1,9 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
-package com.jetbrains.edu.uiOnboarding.steps
+package com.jetbrains.edu.uiOnboarding.steps.tour
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.GotItComponentBuilder
 import com.intellij.ui.awt.RelativePoint
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimation
@@ -12,7 +13,7 @@ import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.SMA
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationData.Companion.ZHABA_DIMENSION
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingAnimationStep
 import com.jetbrains.edu.uiOnboarding.EduUiOnboardingBundle
-import com.jetbrains.edu.uiOnboarding.GotItBalloonStepData
+import com.jetbrains.edu.uiOnboarding.steps.GotItBalloonStepData
 import java.awt.Point
 
 class TaskDescriptionStep : EduUiOnboardingStep(STEP_KEY) {
@@ -30,7 +31,7 @@ class TaskDescriptionStep : EduUiOnboardingStep(STEP_KEY) {
     project: Project,
     data: EduUiOnboardingAnimationData
   ): GotItBalloonStepData? {
-    val taskToolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
+    val taskToolWindow = ToolWindowManager.getInstance(project)
                            .getToolWindow("Task") ?: return null
 
     taskToolWindow.show()
