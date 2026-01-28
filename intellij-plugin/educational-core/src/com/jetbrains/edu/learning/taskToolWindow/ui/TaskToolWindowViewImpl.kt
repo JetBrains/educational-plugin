@@ -70,15 +70,13 @@ import java.awt.event.ComponentEvent
 import javax.swing.*
 
 class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskToolWindowView(project), DataProvider, Disposable {
-  private val lessonHeader: LessonHeader = LessonHeader()
-  private val navigationMapToolbar: NavigationMapToolbar = NavigationMapToolbar()
-  private val taskName: JLabel = JLabel(EduCoreBundle.message("item.task.title"))
-  private val tabManager: TabManager = TabManager(project)
-  private val checkPanel: CheckPanel = CheckPanel(project, this)
+  private var lessonHeader: LessonHeader? = null
+  private var navigationMapToolbar: NavigationMapToolbar? = null
+  private var taskName: JLabel? = null
+  private var tabManager: TabManager? = null
+  private var checkPanel: CheckPanel? = null
 
   init {
-    Disposer.register(this, tabManager)
-
     scope.launch {
       TranslationProjectSettings.getInstance(project).translationProperties.collectLatest {
         withContext(Dispatchers.EDT) {
@@ -105,8 +103,8 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     // TODO: move it in some separate method
     set(value) {
       if (currentTask !== null && currentTask === value) return
-      tabManager.updateTaskDescription(value)
-      checkPanel.isVisible = value != null
+      tabManager?.updateTaskDescription(value)
+      checkPanel?.isVisible = value != null
       updateCheckPanel(value)
       updateNavigationPanel(value)
       updateHeaders(value)
@@ -117,20 +115,20 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   override fun updateTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
-    tabManager.updateTabs(taskToUpdate)
+    tabManager?.updateTabs(taskToUpdate)
   }
 
   override fun updateTab(tabType: TabType) {
     if (isHeadlessEnvironment) return
     val task = currentTask ?: return
-    tabManager.updateTab(tabType, task)
+    tabManager?.updateTab(tabType, task)
   }
 
   override fun selectTab(tabType: TabType) {
-    tabManager.selectTab(tabType)
+    tabManager?.selectTab(tabType)
   }
 
-  override fun isSelectedTab(tabType: TabType): Boolean = tabManager.isSelectedTab(tabType)
+  override fun isSelectedTab(tabType: TabType): Boolean = tabManager?.isSelectedTab(tabType) ?: false
 
   override fun showLoadingSubmissionsPanel(platformName: String) {
     if (currentTask == null) return
@@ -175,32 +173,32 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   private fun getSubmissionTab(): SubmissionsTab? = getTab(SUBMISSIONS_TAB) as? SubmissionsTab
 
-  override fun getTab(tabType: TabType): TaskToolWindowTab? = tabManager.getTab(tabType)
+  override fun getTab(tabType: TabType): TaskToolWindowTab? = tabManager?.getTab(tabType)
 
   override fun updateCheckPanel(task: Task?) {
     if (task == null) return
     readyToCheck()
-    checkPanel.updateCheckPanel(task)
+    checkPanel?.updateCheckPanel(task)
   }
 
   override fun updateTaskSpecificPanel() {
-    tabManager.updateTaskSpecificPanel(currentTask)
+    tabManager?.updateTaskSpecificPanel(currentTask)
   }
 
   override fun updateNavigationPanel(task: Task?) {
     task ?: return
 
-    lessonHeader.setHeaderText(task.lesson.presentableName)
+    lessonHeader?.setHeaderText(task.lesson.presentableName)
     val course = StudyTaskManager.getInstance(project).course
     var index = 1
     val actions = task.lesson.taskList.map {
       val currentIndex = if (it is TheoryTask && course is HyperskillCourse) index else index++
       NavigationMapAction(it, task, currentIndex)
     }
-    navigationMapToolbar.replaceActions(actions)
+    navigationMapToolbar?.replaceActions(actions)
 
     if (course is HyperskillCourse) {
-      lessonHeader.updateTopPanelForProblems(project, course, task)
+      lessonHeader?.updateTopPanelForProblems(project, course, task)
     }
     scrollNavMap(task)
   }
@@ -208,23 +206,23 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   override fun updateNavigationPanel() = updateNavigationPanel(currentTask)
 
   override fun updateTaskDescriptionTab(task: Task?) {
-    tabManager.updateTaskDescription(task)
+    tabManager?.updateTaskDescription(task)
   }
 
   private fun updateHeaders(task: Task? = currentTask) {
     if (task == null) {
-      taskName.text = EduCoreBundle.message("item.task.title")
+      taskName?.text = EduCoreBundle.message("item.task.title")
       return
     }
 
     val translationSettings = TranslationProjectSettings.getInstance(project)
 
     val translatedTaskName = translationSettings.getStudyItemTranslatedName(task)
-    taskName.text = translatedTaskName ?: task.presentableName
+    taskName?.text = translatedTaskName ?: task.presentableName
 
     val lesson = task.lesson
     val translatedLessonName = translationSettings.getStudyItemTranslatedName(lesson)
-    lessonHeader.setHeaderText(translatedLessonName ?: lesson.presentableName)
+    lessonHeader?.setHeaderText(translatedLessonName ?: lesson.presentableName)
   }
 
   override fun updateTaskDescription() {
@@ -235,28 +233,37 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   override fun scrollNavMap(task: Task?) {
     task ?: return
-    val selectedTask = navigationMapToolbar.components
+    val selectedTask = navigationMapToolbar?.components
                          ?.filterIsInstance<ActionButton>()
                          ?.find { (it.action as? NavigationMapAction)?.task == task } ?: return
-    navigationMapToolbar.scrollRectToVisible(selectedTask.bounds)
+    navigationMapToolbar?.scrollRectToVisible(selectedTask.bounds)
   }
 
   override fun readyToCheck() {
-    checkPanel.readyToCheck()
+    checkPanel?.readyToCheck()
   }
 
   override fun init(toolWindow: ToolWindow) {
+    val contentDisposable = Disposer.newDisposable()
+
+    lessonHeader = LessonHeader()
+    navigationMapToolbar = NavigationMapToolbar()
+    taskName = JLabel(EduCoreBundle.message("item.task.title"))
+    tabManager = TabManager(project).apply {
+      Disposer.register(contentDisposable, this)
+    }
+    checkPanel = CheckPanel(project, this)
+
     //create main panel
     val mainPanel = JPanel().apply {
       layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
       border = JBUI.Borders.empty(0, 16, 12, 16)
     }
-    Disposer.register(toolWindow.contentManager, tabManager)
 
     mainPanel.add(lessonHeader)
 
     // setup navigationMapToolbar
-    navigationMapToolbar.targetComponent = mainPanel
+    navigationMapToolbar?.targetComponent = mainPanel
 
     val navMapPanel = JBScrollPane(
       navigationMapToolbar,
@@ -283,15 +290,15 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
     // setup task name
     val taskNameBox = Box.createHorizontalBox()
-    taskName.font = JBFont.h1()
-    taskName.alignmentX = Component.LEFT_ALIGNMENT
+    taskName?.font = JBFont.h1()
+    taskName?.alignmentX = Component.LEFT_ALIGNMENT
     taskNameBox.add(taskName)
     taskNameBox.add(Box.createHorizontalGlue())
     taskNameBox.border = JBEmptyBorder(0, 0, 4, 0)
 
     mainPanel.add(taskNameBox)
 
-    mainPanel.add(tabManager.tabbedPane)
+    mainPanel.add(tabManager?.tabbedPane)
 
     mainPanel.add(checkPanel)
 
@@ -299,7 +306,11 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
     val content = ContentFactory.getInstance()
       .createContent(mainPanel, EduCoreBundle.message("item.task.title"), false)
-      .apply { isCloseable = false }
+      .apply {
+        isCloseable = false
+        // Make [contentDisposable] be disposed when the [content] is disposed
+        setDisposer(contentDisposable)
+      }
     toolWindow.contentManager.addContent(content)
 
     val notificationsPanel = TaskToolWindowNotificationsPanel()
@@ -308,7 +319,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     currentTask = project.getCurrentTask()
     updateTabs(currentTask)
 
-    val connection = project.messageBus.connect()
+    val connection = project.messageBus.connect(contentDisposable)
     connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
       UIUtil.setBackgroundRecursively(mainPanel, getTaskDescriptionBackgroundColor())
     })
@@ -324,17 +335,17 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
 
   override fun checkStarted(task: Task, startSpinner: Boolean) {
     if (task != currentTask) return
-    checkPanel.checkStarted(startSpinner)
+    checkPanel?.checkStarted(startSpinner)
   }
 
   override fun checkFinished(task: Task, checkResult: CheckResult) {
     if (task != currentTask) return
-    checkPanel.updateCheckDetails(task, checkResult)
+    checkPanel?.updateCheckDetails(task, checkResult)
     if (task is DataTask || task.isChangedOnFailed) {
       updateCheckPanel(task)
     }
     if (checkResult.status == CheckStatus.Failed) {
-      tabManager.updateTaskSpecificPanel(task)
+      tabManager?.updateTaskSpecificPanel(task)
     }
   }
 
@@ -346,12 +357,12 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
   }
 
   override fun addInlineBanner(inlineBanner: InlineBanner) {
-    tabManager.descriptionTab.addInlineBanner(inlineBanner)
+    tabManager?.descriptionTab?.addInlineBanner(inlineBanner)
   }
 
   override fun addInlineBannerToCheckPanel(inlineBanner: InlineBannerBase) {
-    checkPanel.addHint(inlineBanner)
-    checkPanel.revalidate()
+    checkPanel?.addHint(inlineBanner)
+    checkPanel?.revalidate()
   }
 
   override fun showTaskDescriptionNotification(

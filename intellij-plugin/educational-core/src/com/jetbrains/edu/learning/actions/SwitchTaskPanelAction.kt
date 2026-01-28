@@ -27,7 +27,7 @@ class SwitchTaskPanelAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.
     val result = MyDialog(project).showAndGet()
     if (result && project != null) {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW) ?: return
-      toolWindow.contentManager.removeAllContents(false)
+      toolWindow.contentManager.removeAllContents(true)
       TaskToolWindowFactory().createToolWindowContent(project, toolWindow)
       TaskToolWindowView.getInstance(project).updateNavigationPanel()
       TaskToolWindowView.getInstance(project).updateTaskDescription()
