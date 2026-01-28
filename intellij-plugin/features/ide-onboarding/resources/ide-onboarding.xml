@@ -1,4 +1,9 @@
 <idea-plugin>
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="AI"/>
+  </dependencies>
+
   <actions>
     <action id="Educational.CallTodeAction"
             class="com.jetbrains.edu.uiOnboarding.actions.CallTodeAction"

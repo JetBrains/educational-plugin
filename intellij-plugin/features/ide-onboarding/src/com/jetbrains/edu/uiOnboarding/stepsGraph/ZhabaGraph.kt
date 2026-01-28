@@ -8,6 +8,7 @@ import com.jetbrains.edu.uiOnboarding.steps.tour.CodeEditorStep
 import com.jetbrains.edu.uiOnboarding.steps.tour.CourseViewStep
 import com.jetbrains.edu.uiOnboarding.steps.tour.EduUiOnboardingStepFactory
 import com.jetbrains.edu.uiOnboarding.steps.tour.TaskDescriptionStep
+import com.jetbrains.edu.uiOnboarding.steps.tour.TranslationStep
 import com.jetbrains.edu.uiOnboarding.steps.tour.WelcomeStep
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.FINISH_TRANSITION
 import com.jetbrains.edu.uiOnboarding.stepsGraph.ZhabaStep.Companion.HAPPY_FINISH_TRANSITION
@@ -157,6 +158,7 @@ class ZhabaMainGraph private constructor(
         WelcomeStep,
         TaskDescriptionStep,
         CodeEditorStep,
+        TranslationStep,
         CheckSolutionStep,
         CourseViewStep
       )
