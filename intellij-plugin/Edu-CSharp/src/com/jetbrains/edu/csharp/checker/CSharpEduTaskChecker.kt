@@ -109,7 +109,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
         withContext(Dispatchers.EDT) {
           project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
         }
-        noTestsRun
+        return@usingNested noTestsRun
       }
 
       collectTestResults(rdUnitTestSession)
@@ -309,7 +309,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
       }
       rdSession.treeDescriptor.selectNode.fire(RdUnitTestNavigateArgs(firstFailedNode.id, true))
     }
-    val resultData = withTimeout(5000.milliseconds) {
+    val resultData = withTimeout(500.milliseconds) {
       result.await()
     }
     val newInfo = (firstFailedNode.descriptor as RdUnitTestSessionNodeDescriptor).getEduTestInfo(resultData)
