@@ -34,7 +34,6 @@ import com.jetbrains.edu.learning.courseFormat.EduTestInfo.Companion.firstFailed
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.rd.util.lifetime.Lifetime
-import com.jetbrains.rd.util.reactive.IProperty
 import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.adviseWithPrev
 import com.jetbrains.rd.util.reactive.fire
@@ -94,26 +93,27 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
       rdUnitTestSession.run.fire()
     }
 
-    withContext(Dispatchers.EDT) {
-      rdUnitTestSession.state.adviseWithPrev(project.lifetime) { prev, cur ->
-        if (isRunningState(prev.asNullable?.status) && isNotRunningState(cur.status)) {
-          isReady.complete(Unit)
+    return project.lifetime.usingNested { lt ->
+      withContext(Dispatchers.EDT) {
+        rdUnitTestSession.state.adviseWithPrev(lt) { prev, cur ->
+          if (isRunningState(prev.asNullable?.status) && isNotRunningState(cur.status)) {
+            isReady.complete(Unit)
+          }
         }
       }
-    }
 
-    try {
-      isReady.await()
-    }
-    catch (_: CancellationException) {
-      withContext(Dispatchers.EDT) {
-        project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
+      try {
+        isReady.await()
       }
-      return noTestsRun
-    }
+      catch (_: CancellationException) {
+        withContext(Dispatchers.EDT) {
+          project.solution.rdUnitTestHost.sessionManager.closeSession.fire(rdUnitTestSession.sessionId)
+        }
+        return@usingNested noTestsRun
+      }
 
-    val checkResult = collectTestResults(rdUnitTestSession)
-    return checkResult
+      collectTestResults(rdUnitTestSession)
+    }
   }
 
   private suspend fun tryBuildTaskProject(): CheckResult? = project.lifetime.usingNested { buildLifetime ->
@@ -203,10 +203,10 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     return createUnitTestSession(name)
   }
 
-  private suspend fun RdUnitTestSession.close() {
+  private suspend fun RdUnitTestSession.close() = project.lifetime.usingNested { lt ->
     val sessionClosed = CompletableDeferred<Unit>()
     withContext(Dispatchers.EDT) {
-      project.solution.rdUnitTestHost.sessions.advise(project.lifetime) { entry ->
+      project.solution.rdUnitTestHost.sessions.advise(lt) { entry ->
         if (entry.key == sessionId && entry.newValueOpt == null) {
           // wait for the session to be closed
           sessionClosed.complete(Unit)
@@ -220,7 +220,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
       }
     }
     catch (_: TimeoutCancellationException) {
-      LOG.warn("Timeout waiting for session to close: ${sessionId}")
+      LOG.warn("Timeout waiting for session to close: $sessionId")
     }
   }
 
@@ -244,26 +244,28 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
   }
 
   private suspend fun createUnitTestSession(name: String): RdUnitTestSession? = coroutineScope {
-    val unitTestCriterion = getRdUnitTestCriterion() ?: return@coroutineScope null
-    try {
-      val rdSession = CompletableDeferred<RdUnitTestSession>()
-      withContext(Dispatchers.EDT) {
-        val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(
-          unitTestCriterion, project.protocol
-        ) ?: return@withContext null
-        project.solution.rdUnitTestHost.sessions.advise(project.lifetime) { entry ->
-          val session = entry.newValueOpt ?: return@advise
-          if (session.sessionId == createdSessionId) {
-            session.options.title.set(name)
-            rdSession.complete(session)
+    project.lifetime.usingNested { lt ->
+      val unitTestCriterion = getRdUnitTestCriterion() ?: return@coroutineScope null
+      try {
+        val rdSession = CompletableDeferred<RdUnitTestSession>()
+        withContext(Dispatchers.EDT) {
+          val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(
+            unitTestCriterion, project.protocol
+          ) ?: return@withContext null
+          project.solution.rdUnitTestHost.sessions.advise(lt) { entry ->
+            val session = entry.newValueOpt ?: return@advise
+            if (session.sessionId == createdSessionId) {
+              session.options.title.set(name)
+              rdSession.complete(session)
+            }
           }
         }
+        return@coroutineScope rdSession.await()
       }
-      return@coroutineScope rdSession.await()
-    }
-    catch (e: RdFault) {
-      LOG.error(e.message)
-      return@coroutineScope null
+      catch (e: RdFault) {
+        LOG.error(e.message)
+        return@coroutineScope null
+      }
     }
   }
 
@@ -295,25 +297,25 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     rdSession: RdUnitTestSession,
     testInfoWithNodes: HashMap<RdUnitTestTreeNode, EduTestInfo>,
     firstFailedNode: RdUnitTestTreeNode
-  ): Boolean {
+  ): Boolean = project.lifetime.usingNested { lt ->
     val result = CompletableDeferred<RdUnitTestResultData>()
     withContext(Dispatchers.EDT) {
-      rdSession.testResultData?.advise(project.lifetime) { resultData ->
-        if (resultData != null && resultData.nodeId == firstFailedNode.id) {
-          result.complete(resultData)
+      rdSession.sessionOutput.advise(lt) { sessionOutput ->
+        sessionOutput.resultData.advise(lt) { resultData ->
+          if (resultData != null && resultData.nodeId == firstFailedNode.id) {
+            result.complete(resultData)
+          }
         }
       }
       rdSession.treeDescriptor.selectNode.fire(RdUnitTestNavigateArgs(firstFailedNode.id, true))
     }
-    val resultData = result.await()
+    val resultData = withTimeout(500.milliseconds) {
+      result.await()
+    }
     val newInfo = (firstFailedNode.descriptor as RdUnitTestSessionNodeDescriptor).getEduTestInfo(resultData)
     testInfoWithNodes[firstFailedNode] = newInfo
-    return true
+    true
   }
-
-  private val RdUnitTestSession.testResultData: IProperty<RdUnitTestResultData?>?
-    get() = sessionOutput.valueOrNull?.resultData
-
 
   private fun RdUnitTestSessionNodeDescriptor.getEduTestInfo(data: RdUnitTestResultData? = null): EduTestInfo {
     val (diff, infoLines) = if (data != null) {
