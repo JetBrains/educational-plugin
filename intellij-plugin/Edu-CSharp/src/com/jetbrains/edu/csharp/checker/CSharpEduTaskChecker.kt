@@ -247,11 +247,15 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     project.lifetime.usingNested { lt ->
       val unitTestCriterion = getRdUnitTestCriterion() ?: return@coroutineScope null
       try {
-        val rdSession = CompletableDeferred<RdUnitTestSession>()
+        val rdSession = CompletableDeferred<RdUnitTestSession?>()
+
         withContext(Dispatchers.EDT) {
-          val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(
-            unitTestCriterion, project.protocol
-          ) ?: return@withContext null
+          val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(unitTestCriterion, project.protocol)
+          if (createdSessionId == null) {
+            rdSession.complete(null)
+            return@withContext
+          }
+
           project.solution.rdUnitTestHost.sessions.advise(lt) { entry ->
             val session = entry.newValueOpt ?: return@advise
             if (session.sessionId == createdSessionId) {
