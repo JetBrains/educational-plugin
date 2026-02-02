@@ -243,33 +243,31 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     return@withContext RdProjectFolderCriterion(projectModelId)
   }
 
-  private suspend fun createUnitTestSession(name: String): RdUnitTestSession? = coroutineScope {
-    project.lifetime.usingNested { lt ->
-      val unitTestCriterion = getRdUnitTestCriterion() ?: return@coroutineScope null
-      try {
-        val rdSession = CompletableDeferred<RdUnitTestSession?>()
+  private suspend fun createUnitTestSession(name: String): RdUnitTestSession? = project.lifetime.usingNested { lt ->
+    val unitTestCriterion = getRdUnitTestCriterion() ?: return@usingNested null
+    try {
+      val rdSession = CompletableDeferred<RdUnitTestSession?>()
 
-        withContext(Dispatchers.EDT) {
-          val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(unitTestCriterion, project.protocol)
-          if (createdSessionId == null) {
-            rdSession.complete(null)
-            return@withContext
-          }
+      withContext(Dispatchers.EDT) {
+        val createdSessionId = project.solution.rdUnitTestHost.createSession.callSynchronously(unitTestCriterion, project.protocol)
+        if (createdSessionId == null) {
+          rdSession.complete(null)
+          return@withContext
+        }
 
-          project.solution.rdUnitTestHost.sessions.advise(lt) { entry ->
-            val session = entry.newValueOpt ?: return@advise
-            if (session.sessionId == createdSessionId) {
-              session.options.title.set(name)
-              rdSession.complete(session)
-            }
+        project.solution.rdUnitTestHost.sessions.advise(lt) { entry ->
+          val session = entry.newValueOpt ?: return@advise
+          if (session.sessionId == createdSessionId) {
+            session.options.title.set(name)
+            rdSession.complete(session)
           }
         }
-        return@coroutineScope rdSession.await()
       }
-      catch (e: RdFault) {
-        LOG.error(e)
-        return@coroutineScope null
-      }
+      rdSession.await()
+    }
+    catch (e: RdFault) {
+      LOG.error(e)
+      null
     }
   }
 
