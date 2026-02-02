@@ -267,7 +267,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
         return@coroutineScope rdSession.await()
       }
       catch (e: RdFault) {
-        LOG.error(e.message)
+        LOG.error(e)
         return@coroutineScope null
       }
     }
