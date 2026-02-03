@@ -43,7 +43,6 @@ import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.generateEduId
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
@@ -342,13 +341,19 @@ object CCUtils {
     return "${updateText}/${uploadText}"
   }
 
-  fun EduCourse.prepareForUpload(project: Project): Boolean = runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
-    val result = doPrepareForUpload(project)
+  fun EduCourse.prepareForUpload(
+    project: Project,
+    processCourseVendor: suspend EduCourse.() -> VendorError? = { processVendor() }
+  ): Boolean = runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
+    val result = doPrepareForUpload(project, processCourseVendor)
     YamlFormatSynchronizer.saveRemoteInfo(this@prepareForUpload)
     result
   }
 
-  private fun EduCourse.doPrepareForUpload(project: Project): Boolean {
+  private suspend fun EduCourse.doPrepareForUpload(
+    project: Project,
+    processCourseVendor: suspend EduCourse.() -> VendorError?
+  ): Boolean {
     if (isMarketplaceRemote) {
       setRemoteMarketplaceCourseVersion()
     }
@@ -368,15 +373,12 @@ object CCUtils {
       marketplaceCourseVersion = 1
     }
 
-    if (vendor == null) {
-      if (!addVendor()) {
-        EduNotificationManager.showErrorNotification(
-          project,
-          EduCoreBundle.message("error.failed.to.create.course.archive.notification.title"),
-          EduCoreBundle.message("marketplace.vendor.empty")
-        )
-        return false
-      }
+    val vendorError = processCourseVendor()
+    if (vendorError != null) {
+      vendorError
+        .notification(EduCoreBundle.message("error.failed.to.create.course.archive.notification.title"))
+        .notify(project)
+      return false
     }
 
     if (!isMarketplaceRemote && generatedEduId == null) {
@@ -385,6 +387,16 @@ object CCUtils {
 
     YamlFormatSynchronizer.saveItem(course)
     return true
+  }
+
+  private fun EduCourse.processVendor(): VendorError? {
+    if (vendor == null) {
+      if (!addVendor()) {
+        return VendorError(EduCoreBundle.message("marketplace.vendor.empty"))
+      }
+    }
+
+    return null
   }
 
   @Suppress("DialogTitleCapitalization")
