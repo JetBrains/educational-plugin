@@ -55,7 +55,9 @@ class CourseStoragePushCourse : DumbAwareAction(addGluingSlash(uploadCourseActio
     val course = project.course as? EduCourse ?: return
     if (!isActionVisible(project, course)) return
 
-    course.prepareForUpload(project)
+    val preparedSuccessfully = course.prepareForUpload(project)
+    if (!preparedSuccessfully) return
+
     uploadCourse(project, course)
   }
 

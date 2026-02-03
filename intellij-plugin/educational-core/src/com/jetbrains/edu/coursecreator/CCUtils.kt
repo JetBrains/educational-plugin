@@ -342,14 +342,13 @@ object CCUtils {
     return "${updateText}/${uploadText}"
   }
 
-  fun EduCourse.prepareForUpload(project: Project) {
-    runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
-      doPrepareForUpload(project)
-      YamlFormatSynchronizer.saveRemoteInfo(this@prepareForUpload)
-    }
+  fun EduCourse.prepareForUpload(project: Project): Boolean = runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
+    val result = doPrepareForUpload(project)
+    YamlFormatSynchronizer.saveRemoteInfo(this@prepareForUpload)
+    result
   }
 
-  private fun EduCourse.doPrepareForUpload(project: Project) {
+  private fun EduCourse.doPrepareForUpload(project: Project): Boolean {
     if (isMarketplaceRemote) {
       setRemoteMarketplaceCourseVersion()
     }
@@ -376,7 +375,7 @@ object CCUtils {
           EduCoreBundle.message("error.failed.to.create.course.archive.notification.title"),
           EduCoreBundle.message("marketplace.vendor.empty")
         )
-        return
+        return false
       }
     }
 
@@ -385,6 +384,7 @@ object CCUtils {
     }
 
     YamlFormatSynchronizer.saveItem(course)
+    return true
   }
 
   @Suppress("DialogTitleCapitalization")

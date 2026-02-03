@@ -99,7 +99,8 @@ class MarketplacePushCourse(
   }
 
   private fun prepareAndPush(project: Project, course: EduCourse, connector: MarketplaceConnector, actionName: String, hubToken: String) {
-    course.prepareForUpload(project)
+    val preparedSuccessfully = course.prepareForUpload(project)
+    if (!preparedSuccessfully) return
 
     val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
     val error = CourseArchiveCreator(project, tempFile.toPath()).createArchive(course)
