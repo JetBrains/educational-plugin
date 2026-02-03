@@ -16,7 +16,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -344,12 +343,9 @@ object CCUtils {
   }
 
   fun EduCourse.prepareForUpload(project: Project) {
-    val course = this
     runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
-      runBlockingCancellable {
-        doPrepareForUpload(project)
-        YamlFormatSynchronizer.saveRemoteInfo(course)
-      }
+      doPrepareForUpload(project)
+      YamlFormatSynchronizer.saveRemoteInfo(this@prepareForUpload)
     }
   }
 
