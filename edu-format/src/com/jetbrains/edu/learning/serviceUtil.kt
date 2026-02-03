@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning
 
 import java.util.*
 
-fun <S> findService(service: Class<S>): S {
+internal fun <S> findService(service: Class<S>): S {
   //https://plugins.jetbrains.com/docs/intellij/plugin-class-loaders.html#using-serviceloader
 
   val currentThread = Thread.currentThread()

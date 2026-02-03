@@ -6,9 +6,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.intellij.openapi.application.ex.ApplicationUtil
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.util.PlatformUtils
+import com.intellij.util.net.*
+import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
+import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -19,7 +27,12 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.File
+import java.io.IOException
+import java.io.InterruptedIOException
 import java.net.HttpURLConnection.*
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 
@@ -85,13 +98,61 @@ private fun createOkHttpClient(
 }
 
 fun OkHttpClient.Builder.customizeClient(baseUrl: String) : OkHttpClient.Builder {
-  val executor = findService(RetrofitHelper::class.java)
-  return executor.customizeClient(this, baseUrl)
+  return addProxy(baseUrl)
+    .addEdtAssertions()
+    .addHostAssertions()
+}
+
+private val proxyAuthenticator: Authenticator
+  get() = Authenticator { _, response ->
+    val provider = ProxyCredentialStore.getInstance().asProxyCredentialProvider()
+    val ideProxyCredentials = ProxySettings.getInstance().getStaticProxyCredentials(provider) ?: return@Authenticator null
+    val login = ideProxyCredentials.userName ?: return@Authenticator null
+    val password = ideProxyCredentials.getPasswordAsString() ?: return@Authenticator null
+
+    val credentials = Credentials.basic(login, password)
+    response.request.newBuilder()
+      .header("Proxy-Authorization", credentials)
+      .build()
+  }
+
+private fun OkHttpClient.Builder.addProxy(baseUrl: String): OkHttpClient.Builder {
+  val proxies = JdkProxyCustomizer.getInstance().originalProxySelector.select(URI.create(baseUrl))
+  val address = proxies.firstOrNull()?.address() as? InetSocketAddress
+  if (address != null) {
+    proxy(Proxy(Proxy.Type.HTTP, address))
+    proxyAuthenticator(proxyAuthenticator)
+  }
+  val trustManager = CertificateManager.getInstance().trustManager
+  val sslContext = CertificateManager.getInstance().sslContext
+  return sslSocketFactory(sslContext.socketFactory, trustManager)
+}
+
+private fun OkHttpClient.Builder.addEdtAssertions(): OkHttpClient.Builder {
+  return addInterceptor { chain ->
+    NetworkRequestEDTAssertionPolicy.assertIsDispatchThread()
+    val request = chain.request()
+    chain.proceed(request)
+  }
+}
+
+private fun OkHttpClient.Builder.addHostAssertions(): OkHttpClient.Builder {
+  if (!isUnitTestMode) return this
+
+  return addInterceptor { chain ->
+    val request = chain.request()
+    val host = request.url.host
+
+    TestNetworkRequestManager.getInstance().checkHostIsAllowed(host)
+
+    chain.proceed(request)
+  }
 }
 
 val eduToolsUserAgent: String
   get() {
-    return findService(RetrofitHelper::class.java).eduToolsUserAgent
+    val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
+    return "${StepikNames.PLUGIN_NAME}/version($version)/${System.getProperty("os.name")}/${PlatformUtils.getPlatformPrefix()}"
   }
 
 fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response<T>? {
@@ -102,8 +163,46 @@ fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response
 }
 
 fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, String> {
-  val executor = findService(RetrofitHelper::class.java)
-  return executor.executeCall(this, omitErrors)
+  fun log(title: String, message: String?, optional: Boolean) {
+    val fullText = "$title. $message"
+    if (optional) LOG.warn(fullText) else LOG.error(fullText)
+  }
+
+  return try {
+    val progressIndicator = ProgressManager.getInstance().progressIndicator
+
+    val response = if (progressIndicator != null) {
+      ApplicationUtil.runWithCheckCanceled({ execute() }, progressIndicator)
+    }
+    else {
+      execute()
+    }
+
+    ProgressManager.checkCanceled()
+    Ok(response)
+  }
+  catch (e: InterruptedIOException) {
+    log("Connection to server was interrupted", e.message, omitErrors)
+    Err("${EduFormatBundle.message("error.connection.interrupted")}\n\n${e.message}")
+  }
+  catch (e: CoursesDownloadingException) {
+    log("Failed to connect to server", e.message, true)
+    throw e
+  }
+  catch (e: IOException) {
+    log("Failed to connect to server", e.message, omitErrors)
+    Err("${EduFormatBundle.message("error.failed.to.connect")} \n\n${e.message}")
+  }
+  catch (e: ProcessCanceledException) {
+    // We don't have to LOG.log or throw ProcessCanceledException:
+    // 'Control-flow exceptions (like ProcessCanceledException) should never be LOG.logged: ignore for explicitly started processes or...'
+    cancel()
+    Err("Process canceled by user")
+  }
+  catch (e: RuntimeException) {
+    log("Failed to connect to server", e.message, omitErrors)
+    Err("${EduFormatBundle.message("error.failed.to.connect")}\n\n${e.message}")
+  }
 }
 
 fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
