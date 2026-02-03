@@ -305,7 +305,7 @@ class MarketplaceSubmissionsConnector {
 
   fun reportSolution(submissionId: Int): Boolean {
     LOG.info("Reporting solution with id $submissionId")
-    submissionsService.reportSolution(submissionId).executeParsingErrors().onError {
+    submissionsService.reportSolution(submissionId).executeParsingErrors(omitErrors = true).onError {
       LOG.info("Failed to report solution with id $submissionId")
       return false
     }

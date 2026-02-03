@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.network
 
-import com.jetbrains.edu.learning.courseFormat.logger
+import com.intellij.openapi.diagnostic.logger
 import okhttp3.Interceptor
 import okhttp3.Response
 import kotlin.math.pow
@@ -37,6 +37,6 @@ class RetryInterceptor(private val retryPolicy: RetryPolicy) : Interceptor {
   }
 
   companion object {
-    private val LOG = logger("com.jetbrains.edu.learning.network.RetryInterceptor")
+    private val LOG = logger<RetryInterceptor>()
   }
 }

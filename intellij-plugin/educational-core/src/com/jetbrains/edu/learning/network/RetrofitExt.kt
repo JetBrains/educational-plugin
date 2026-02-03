@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.logger
-import com.jetbrains.edu.learning.courseFormat.message
+import com.jetbrains.edu.learning.messages.EduFormatBundle
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -23,7 +23,7 @@ import java.net.HttpURLConnection.*
 import java.util.concurrent.TimeUnit
 
 
-private val LOG = logger("com.jetbrains.edu.learning.RetrofitExt")
+private val LOG = Logger.getInstance("com.jetbrains.edu.learning.RetrofitExt")
 const val USER_AGENT = "User-Agent"
 
 fun createRetrofitBuilder(
@@ -115,34 +115,34 @@ fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Re
   val error = errorBody()?.string() ?: return Ok(this)
   val code = code()
   val fullErrorText = "$error. Code $code"
-  if (omitErrors) LOG.warning(fullErrorText) else LOG.severe(fullErrorText)
+  if (omitErrors) LOG.warn(fullErrorText) else LOG.error(fullErrorText)
 
   return when (code) {
     HTTP_OK, HTTP_CREATED, HTTP_ACCEPTED, HTTP_NO_CONTENT -> Ok(this) // 200, 201, 202, 204
     HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY ->
-      Err("${message("error.service.maintenance")}\n\n$error") // 502, 503
+      Err("${EduFormatBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
     in HTTP_INTERNAL_ERROR..HTTP_VERSION ->
-      Err("${message("error.service.down")}\n\n$error") // 500x
+      Err("${EduFormatBundle.message("error.service.down")}\n\n$error") // 500x
     HTTP_FORBIDDEN, HTTP_UNAUTHORIZED -> {
-      val errorMessage = processForbiddenErrorMessage(error) ?: message("error.access.denied")
+      val errorMessage = processForbiddenErrorMessage(error) ?: EduFormatBundle.message("error.access.denied")
       Err(errorMessage)
     }
     HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> { // 451
-      LOG.warning(message("error.agreement.not.accepted"))
+      LOG.warn(EduFormatBundle.message("error.agreement.not.accepted"))
       Err(fullErrorText)
     }
     in HTTP_BAD_REQUEST..HTTP_UNSUPPORTED_TYPE ->
-      Err(message("error.unexpected.error", error)) // 400x
+      Err(EduFormatBundle.message("error.unexpected.error", error)) // 400x
     else -> {
-      LOG.warning("Code $code is not handled")
-      Err(message("error.unexpected.error", error))
+      LOG.warn("Code $code is not handled")
+      Err(EduFormatBundle.message("error.unexpected.error", error))
     }
   }
 }
 
 fun <T> Response<T>.checkStatusCode(): Response<T>? {
   if (isSuccessful) return this
-  LOG.severe("Response is returned with ${this.code()} status code")
+  LOG.error("Response is returned with ${this.code()} status code")
   return null
 }
 
