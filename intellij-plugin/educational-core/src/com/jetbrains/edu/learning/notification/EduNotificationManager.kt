@@ -1,11 +1,14 @@
 package com.jetbrains.edu.learning.notification
 
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.notification.NotificationType.*
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts.NotificationContent
 import com.intellij.openapi.util.NlsContexts.NotificationTitle
+import com.jetbrains.edu.learning.EduBrowser
 
 object EduNotificationManager {
   const val JETBRAINS_ACADEMY_GROUP_ID = "JetBrains Academy"
@@ -29,5 +32,15 @@ object EduNotificationManager {
 
   fun showErrorNotification(project: Project? = null, @NotificationTitle title: String = "", @NotificationContent content: String) {
     create(ERROR, title, content).notify(project)
+  }
+
+  /**
+   * Creates an action that opens a link when clicked.
+   * The result is supposed to be passed to [Notification.addAction]
+   */
+  fun openLinkAction(@NotificationContent text: String, link: String): AnAction {
+    return NotificationAction.createSimple(text) {
+      EduBrowser.getInstance().browse(link)
+    }
   }
 }
