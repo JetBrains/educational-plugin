@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.marketplace.newProjectUI
 import com.intellij.openapi.Disposable
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.marketplace.JB_VENDOR_NAME
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -19,7 +21,7 @@ class MarketplaceCoursePanel(
   disposable: Disposable,
   private val downloadCourseContext: DownloadCourseContext = IDE_UI,
   private val openCourseParams: Map<String, String> = emptyMap()
-): CoursePanel(disposable, true) {
+) : CoursePanel(disposable, true) {
 
   init {
     courseDetailsPanel.border = JBUI.Borders.empty(10, HORIZONTAL_MARGIN, 0, 0)
@@ -44,7 +46,7 @@ class MarketplaceCoursePanel(
 
   override fun openCourseMetadata(): Map<String, String> = openCourseParams
 
-  private class LegalTermsPanel: NonOpaquePanel(), CourseSelectionListener {
+  private class LegalTermsPanel : NonOpaquePanel(), CourseSelectionListener {
 
     private val textPanel = GrayTextHtmlPanel("text")
 
@@ -63,8 +65,19 @@ class MarketplaceCoursePanel(
         return
       }
       isVisible = true
-      val text = EduCoreBundle.message("marketplace.course.selection.legal.note", authors, license, PLUGIN_MARKETPLACE_AGREEMENT)
+
+      val text = if (course.isJetBrainsCourse()) {
+        EduCoreBundle.message("marketplace.course.selection.legal.note.jetbrains", PLUGIN_MARKETPLACE_AGREEMENT, license)
+      }
+      else {
+        EduCoreBundle.message("marketplace.course.selection.legal.note.3rd.party", PLUGIN_MARKETPLACE_AGREEMENT, license)
+      }
+      @Suppress("UsePropertyAccessSyntax")
       textPanel.setBody(text)
+    }
+
+    private fun Course.isJetBrainsCourse(): Boolean {
+      return organization == JB_VENDOR_NAME
     }
 
     companion object {
