@@ -59,7 +59,10 @@ tasks {
       // BACKCOMPAT: 2025.3. Check the minimal required API version.
       // Update this message and api version value if needed
       apiVersion = KotlinVersion.KOTLIN_2_2
-      freeCompilerArgs = listOf("-Xjvm-default=all")
+      freeCompilerArgs = listOf(
+        "-Xjvm-default=all",
+        "-Xannotation-default-target=param-property"
+      )
     }
   }
 

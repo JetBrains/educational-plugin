@@ -931,11 +931,11 @@ class YamlSerializationTest : YamlTestCase() {
 
   @Test
   fun `test course with Vendor`() {
-    val vendor = Vendor().apply {
-      name = "Vendor name"
-      email = "email@gmail.com"
+    val vendor = Vendor(
+      name = "Vendor name",
+      email = "email@gmail.com",
       url = "https://vendor.com/"
-    }
+    )
 
     val course = course(courseMode = CourseMode.EDUCATOR, description = "This is a course about string theory.\nWhy not?") {
       lesson("the first lesson")

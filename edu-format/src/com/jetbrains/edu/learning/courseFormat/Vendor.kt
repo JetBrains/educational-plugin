@@ -7,24 +7,15 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.NAME
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.URL
 
 
-class Vendor {
-
-  constructor()
-
-  constructor(vendorName: String) {
-    name = vendorName
-  }
-
+data class Vendor(
   @JsonProperty(NAME)
-  var name: String = ""
-
+  val name: String = "",
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   @JsonProperty(EMAIL)
+  val email: String? = null,
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  var email: String? = null
-
   @JsonProperty(URL)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  var url: String? = null
-
+  val url: String? = null
+) {
   override fun toString(): String = name
 }
