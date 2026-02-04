@@ -56,7 +56,9 @@ tasks {
       jvmTarget = JvmTarget.JVM_21
       languageVersion = KotlinVersion.DEFAULT
       // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-      apiVersion = KotlinVersion.KOTLIN_2_1
+      // BACKCOMPAT: 2025.3. Check the minimal required API version.
+      // Update this message and api version value if needed
+      apiVersion = KotlinVersion.KOTLIN_2_2
       freeCompilerArgs = listOf("-Xjvm-default=all")
     }
   }
