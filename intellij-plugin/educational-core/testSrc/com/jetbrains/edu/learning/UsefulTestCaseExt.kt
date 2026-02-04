@@ -3,16 +3,22 @@ package com.jetbrains.edu.learning
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.lang.Language
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ComponentManager
+import com.intellij.openapi.project.Project
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.replaceService
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import io.mockk.justRun
 import io.mockk.spyk
+import java.util.concurrent.atomic.AtomicReference
 
 // It's intentionally made as an extension property of `UsefulTestCase` to reduce the probability of incorrect usage
 // since a plugin descriptor doesn't make sense in some tests
@@ -54,3 +60,26 @@ inline fun <reified T : Any> UsefulTestCase.mockService(
     componentManager.replaceService(T::class.java, this, disposable)
   }
 }
+
+/**
+ * Executes [action] and waits until a notification with [EduNotificationManager.JETBRAINS_ACADEMY_GROUP_ID] group id is shown.
+ */
+fun UsefulTestCase.runAndWaitForNotification(project: Project, action: () -> Unit): Notification {
+  val shownNotification = AtomicReference<Notification>()
+  val connection = project.messageBus.connect(testRootDisposable)
+  connection.subscribe(Notifications.TOPIC, object : Notifications {
+    override fun notify(notification: Notification) {
+      if (notification.groupId == EduNotificationManager.JETBRAINS_ACADEMY_GROUP_ID) {
+        shownNotification.set(notification)
+        connection.disconnect()
+      }
+    }
+  })
+
+  action()
+
+  PlatformTestUtil.waitWhileBusy { shownNotification.get() == null }
+
+  return shownNotification.get()
+}
+
