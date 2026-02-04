@@ -62,7 +62,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test vendor with email`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com" }
+    val vendor = Vendor(name = "Jetbrains s.r.o", email = "academy@jetbrains.com")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -75,7 +75,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test vendor with url`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o"; url = "jetbrains.com"}
+    val vendor = Vendor(name = "Jetbrains s.r.o", url = "jetbrains.com")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -102,7 +102,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test plugin version`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o"; email = "academy@jetbrains.com"}
+    val vendor = Vendor(name = "Jetbrains s.r.o", email = "academy@jetbrains.com")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -115,7 +115,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test course version`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    val vendor = Vendor(name = "Jetbrains s.r.o")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -131,7 +131,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test course link`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    val vendor = Vendor(name = "Jetbrains s.r.o")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -148,7 +148,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test course programming language ID and version`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    val vendor = Vendor(name = "Jetbrains s.r.o")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}
@@ -166,7 +166,7 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
 
   @Test
   fun `test task feedback link`() {
-    val vendor = Vendor().apply { name = "Jetbrains s.r.o" }
+    val vendor = Vendor(name = "Jetbrains s.r.o")
     val course = courseWithFiles(courseMode = CourseMode.EDUCATOR, language = FakeGradleBasedLanguage, courseVendor = vendor) {
       lesson("lesson1") {
         eduTask("task1") {}

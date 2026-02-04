@@ -152,34 +152,30 @@ class UpdatesList {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class UpdateInfo {
+data class UpdateInfo(
   @JsonProperty(ID)
-  var updateId: Int = -1
-
+  var updateId: Int = -1,
   @JsonProperty(PLUGIN_ID)
-  var pluginId: Int = -1
-
+  var pluginId: Int = -1,
   @JsonProperty(VERSION)
-  var version: Int = -1
-
+  var version: Int = -1,
   @JsonProperty(COMPATIBILITY)
   var compatibility: Compatibility = Compatibility()
-}
+)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Compatibility {
+data class Compatibility(
   @JsonProperty(GTE)
   var gte: Int = -1
-}
+)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class CourseBean {
+data class CourseBean(
   @JsonProperty(ID)
-  var id: Int = -1
-
+  val id: Int = -1,
   @JsonProperty(NAME)
   var name: String = ""
-}
+)
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 sealed class UploadResponse
