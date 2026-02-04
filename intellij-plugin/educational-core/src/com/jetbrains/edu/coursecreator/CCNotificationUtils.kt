@@ -34,7 +34,8 @@ object CCNotificationUtils {
     @NotificationContent message: String? = null,
     action: AnAction? = null
   ) {
-    LOG.error(message)
+    // TODO: do we really need this log?
+    LOG.warn(message)
     EduNotificationManager
       .create(ERROR, title, message.orEmpty())
       .apply { action?.let { addAction(it) } }
