@@ -7,7 +7,6 @@ import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.components.service
@@ -40,6 +39,7 @@ import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.network.toPlainTextRequestBody
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.serialization.SerializationException
@@ -283,11 +283,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
   private fun EduCourse.getMarketplaceUrl() = "$MARKETPLACE_PLUGIN_URL/${this.id}"
 
   private fun openOnMarketplaceAction(link: String): AnAction {
-    return object : AnAction(message("action.open.on.text", MARKETPLACE)) {
-      override fun actionPerformed(e: AnActionEvent) {
-        EduBrowser.getInstance().browse(link)
-      }
-    }
+    return EduNotificationManager.openLinkAction(message("action.open.on.text", MARKETPLACE), link)
   }
 
   fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File, hubToken: String) {
