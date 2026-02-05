@@ -47,17 +47,21 @@ class CSharpBackendService(private val project: Project, private val scope: Coro
 
   init {
     WorkspaceModelEvents.getInstance(project).synced.whenTrue(serviceLifetime) {
-      project.solution.riderSolutionLifecycle.isProjectModelReady.whenTrue(serviceLifetime) {
-        active.value = true
-      }
-      project.solution.riderSolutionLifecycle.isProjectModelReady.whenFalse(serviceLifetime) {
-        active.value = false
+      scope.launch(Dispatchers.EDT) {
+        project.solution.riderSolutionLifecycle.isProjectModelReady.whenTrue(serviceLifetime) {
+          active.value = true
+        }
+        project.solution.riderSolutionLifecycle.isProjectModelReady.whenFalse(serviceLifetime) {
+          active.value = false
+        }
       }
     }
 
     WorkspaceModelEvents.getInstance(project).synced.whenFalse(serviceLifetime) {
-      project.solution.riderSolutionLifecycle.isProjectModelReady.whenFalse(serviceLifetime) {
-        active.value = false
+      scope.launch(Dispatchers.EDT) {
+        project.solution.riderSolutionLifecycle.isProjectModelReady.whenFalse(serviceLifetime) {
+          active.value = false
+        }
       }
     }
 
