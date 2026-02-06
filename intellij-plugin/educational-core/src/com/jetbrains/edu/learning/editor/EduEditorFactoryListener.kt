@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils.getPlaceholderOffse
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstAnswerPlaceholder
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.showPlaceholders
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
-import com.jetbrains.edu.learning.statistics.EduLaunchesReporter.sendStats
+import com.jetbrains.edu.learning.statistics.EduLaunchesReporter
 import com.jetbrains.edu.learning.stepik.hyperskill.markHyperskillTheoryTaskAsCompleted
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 
@@ -60,7 +60,7 @@ class EduEditorFactoryListener : EditorFactoryListener {
         editor.addEditorMouseListener(AnswerPlaceholderSelectionListener(taskFile))
       }
     }
-    sendStats(course)
+    EduLaunchesReporter.getInstance().sendStats(course)
   }
 
   override fun editorReleased(event: EditorFactoryEvent) = event.editor.selectionModel.removeSelection()
