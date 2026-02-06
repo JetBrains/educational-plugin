@@ -44,9 +44,16 @@ fun EduCourse.setRemoteMarketplaceCourseVersion() {
 
 fun EduCourse.generateEduId() = "${name}_${vendor?.name}_$languageId"
 
+/**
+ * Creates a new course vendor based on the current marketplace user
+ */
+fun defaultVendor(): Vendor? {
+  val currentUser = MarketplaceSettings.INSTANCE.getMarketplaceAccount() ?: return null
+  return Vendor(currentUser.userInfo.getFullName())
+}
+
 fun Course.addVendor(): Boolean {
-  val currentUser = MarketplaceSettings.INSTANCE.getMarketplaceAccount() ?: return false
-  vendor = Vendor(currentUser.userInfo.getFullName())
+  vendor = defaultVendor() ?: return false
   return true
 }
 
