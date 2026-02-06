@@ -187,13 +187,15 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
         }
       }, message, true, null)
 
-  fun uploadNewCourseUnderProgress(project: Project, course: EduCourse, file: File, hubToken: String) {
+  fun uploadNewCourseUnderProgress(project: Project, hubToken: String, courseUploadingData: CourseUploadingData) {
     uploadUnderProgress(message("action.push.course")) {
-      uploadNewCourse(project, course, file, hubToken)
+      uploadNewCourse(project, hubToken, courseUploadingData)
     }
   }
 
-  private fun uploadNewCourse(project: Project, course: EduCourse, file: File, hubToken: String) {
+  private fun uploadNewCourse(project: Project, hubToken: String, courseUploadingData: CourseUploadingData) {
+    val (course, file) = courseUploadingData
+
     LOG.info("Uploading new course from ${file.absolutePath}")
 
     val response = getRepositoryEndpoints(hubToken).uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toPlainTextRequestBody())
@@ -286,14 +288,19 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
     return EduNotificationManager.openLinkAction(message("action.open.on.text", MARKETPLACE), link)
   }
 
-  fun uploadCourseUpdateUnderProgress(project: Project, course: EduCourse, file: File, hubToken: String) {
+  fun uploadCourseUpdateUnderProgress(
+    project: Project,
+    hubToken: String,
+    courseUploadingData: CourseUploadingData
+  ) {
     var courseVersionMismatch = false
     invokeAndWaitIfNeeded {
       uploadUnderProgress(message("push.course.updating.progress.title")) {
-        courseVersionMismatch = uploadCourseUpdate(project, course, file, hubToken)
+        courseVersionMismatch = uploadCourseUpdate(project, hubToken, courseUploadingData)
       }
     }
     if (courseVersionMismatch) {
+      val course = courseUploadingData.course
       val updateActionTitle = message("item.update.on.0.course.title", MARKETPLACE)
       val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, updateActionTitle)
                                   ?: return
@@ -305,12 +312,16 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
     }
   }
 
-  private fun uploadCourseUpdate(project: Project, course: EduCourse, file: File, hubToken: String): Boolean {
+  private fun uploadCourseUpdate(
+    project: Project,
+    hubToken: String,
+    courseUploadingData: CourseUploadingData
+  ): Boolean {
+    val (course, file) = courseUploadingData
     LOG.info("Uploading course update from ${file.absolutePath}")
-    val uploadAsNewCourseAction: AnAction = NotificationAction.createSimpleExpiring(
-      message("notification.course.creator.access.denied.action")) {
+    val uploadAsNewCourseAction = NotificationAction.createSimpleExpiring(message("notification.course.creator.access.denied.action")) {
       course.convertToLocal()
-      uploadNewCourseUnderProgress(project, course, file, hubToken)
+      uploadNewCourseUnderProgress(project, hubToken, courseUploadingData)
     }
 
     getRepositoryEndpoints(hubToken).uploadCourseUpdate(file.toMultipartBody(), course.id).executeUploadParsingErrors(project,
@@ -402,6 +413,14 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
 
     fun getInstance(): MarketplaceConnector = service()
   }
+
+  /**
+   * Represents data needed to upload a course archive to Marketplace
+   */
+  data class CourseUploadingData(
+    val course: EduCourse,
+    val courseArchiveFile: File
+  )
 }
 
 private data class LoadedCourses(val courses: List<EduCourse>, val total: Int)

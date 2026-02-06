@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.marketplace.*
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector.CourseUploadingData
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -102,8 +103,8 @@ class MarketplacePushCourse(
     val preparedSuccessfully = course.prepareForUpload(project)
     if (!preparedSuccessfully) return
 
-    val tempFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
-    val error = CourseArchiveCreator(project, tempFile.toPath()).createArchive(course)
+    val courseArchiveFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
+    val error = CourseArchiveCreator(project, courseArchiveFile.toPath()).createArchive(course)
     if (error != null) {
       error.showNotification(project, message("error.failed.to.create.course.archive.notification.title"))
       return
@@ -114,16 +115,16 @@ class MarketplacePushCourse(
       if (result != Messages.OK) return
     }
 
-    doPush(project, connector, course, tempFile, hubToken)
+    doPush(project, connector, hubToken, CourseUploadingData(course, courseArchiveFile))
   }
 
-  private fun doPush(project: Project, connector: MarketplaceConnector, course: EduCourse, tempFile: File, hubToken: String) {
-    if (course.isMarketplaceRemote) {
-      connector.uploadCourseUpdateUnderProgress(project, course, tempFile, hubToken)
+  private fun doPush(project: Project, connector: MarketplaceConnector, hubToken: String, courseUploadingData: CourseUploadingData) {
+    if (courseUploadingData.course.isMarketplaceRemote) {
+      connector.uploadCourseUpdateUnderProgress(project, hubToken, courseUploadingData)
       EduCounterUsageCollector.updateCourse()
     }
     else {
-      connector.uploadNewCourseUnderProgress(project, course, tempFile, hubToken)
+      connector.uploadNewCourseUnderProgress(project, hubToken, courseUploadingData)
       EduCounterUsageCollector.uploadCourse()
     }
   }
