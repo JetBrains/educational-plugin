@@ -3,10 +3,11 @@ package com.jetbrains.edu.learning.statistics
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.PermanentInstallationID
+import com.intellij.openapi.application.JetBrainsPermanentInstallationID
 import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.HttpRequests
@@ -56,13 +57,15 @@ object EduLaunchesReporter {
     }
   }
 
+  @OptIn(IntellijInternalApi::class)
   private fun getUpdateUrl(course: Course): String {
     val applicationInfo = ApplicationInfoEx.getInstanceEx()
     val buildNumber = applicationInfo.build.asString()
     val plugin = PluginManagerCore.getPlugin(PluginId.getId(PLUGIN_ID))!!
     val pluginId = plugin.pluginId.idString
-    val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8.name())
-    val uid = PermanentInstallationID.get()
+    @Suppress("UsagesOfObsoleteApi")
+    val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8)
+    val uid = JetBrainsPermanentInstallationID.get()
     val baseUrl = "https://plugins.jetbrains.com/plugins/list"
     val projectType = course.itemType
     val role = if (course.isStudy) "student" else "teacher"
