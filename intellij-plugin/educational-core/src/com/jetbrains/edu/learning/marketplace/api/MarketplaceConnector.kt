@@ -38,6 +38,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
+import com.jetbrains.edu.learning.network.executeParsingErrors
 import com.jetbrains.edu.learning.network.toMultipartBody
 import com.jetbrains.edu.learning.network.toPlainTextRequestBody
 import com.jetbrains.edu.learning.notification.EduNotificationManager
@@ -195,14 +196,19 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
   }
 
   private fun uploadNewCourse(project: Project, hubToken: String, courseUploadingData: CourseUploadingData) {
-    val (course, file) = courseUploadingData
+    val (course, file, organization) = courseUploadingData
 
     LOG.info("Uploading new course from ${file.absolutePath}")
 
-    val response = getRepositoryEndpoints(hubToken).uploadNewCourse(file.toMultipartBody(), LICENSE_URL.toPlainTextRequestBody())
+    val response = getRepositoryEndpoints(hubToken)
+      .uploadNewCourse(
+        file.toMultipartBody(),
+        LICENSE_URL.toPlainTextRequestBody(),
+        organization.name.toPlainTextRequestBody()
+      )
       .executeUploadParsingErrors(project, message("notification.course.creator.failed.to.upload.course.title"), showLogAction)
       .onError {
-        LOG.error("Failed to upload course ${course.name}: $it")
+        LOG.warn("Failed to upload course ${course.name}: $it")
         return
       }
 
@@ -223,6 +229,19 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
       openOnMarketplaceAction(course.getMarketplaceUrl())
     )
     LOG.info("Course ${courseBean.name} has been uploaded with id ${courseBean.id}")
+  }
+
+  suspend fun loadUserOrganizations(hubToken: String): List<UserOrganization>? {
+    val repositoryEndpoints = getRepositoryEndpoints(hubToken)
+    return try {
+      repositoryEndpoints.userOrganizations()
+        .executeParsingErrors(omitErrors = true)
+        .onError { null }
+        ?.body()
+    } catch (e: Exception) {
+      LOG.warn(e)
+      null
+    }
   }
 
   private fun onAuthFailedActions(project: Project, failedActionTitle: String) {
@@ -420,7 +439,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
    */
   data class CourseUploadingData(
     val course: EduCourse,
-    val courseArchiveFile: File
+    val courseArchiveFile: File,
+    val organization: UserOrganization
   )
 }
 

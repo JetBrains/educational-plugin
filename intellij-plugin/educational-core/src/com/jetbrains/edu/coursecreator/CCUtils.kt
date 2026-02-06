@@ -43,6 +43,7 @@ import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.generateEduId
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.Nls
@@ -389,10 +390,19 @@ object CCUtils {
     return true
   }
 
+  fun emptyVendorError(): VendorError {
+    return VendorError(
+      EduCoreBundle.message("marketplace.push.course.error.vendor.empty"), EduNotificationManager.openLinkAction(
+        EduCoreBundle.message("marketplace.push.course.error.notification.action.open.documentation"),
+        "https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/courses-at-marketplace.html#editing_course_info"
+      )
+    )
+  }
+
   private fun EduCourse.processVendor(): VendorError? {
     if (vendor == null) {
       if (!addVendor()) {
-        return VendorError(EduCoreBundle.message("marketplace.vendor.empty"))
+        return emptyVendorError()
       }
     }
 

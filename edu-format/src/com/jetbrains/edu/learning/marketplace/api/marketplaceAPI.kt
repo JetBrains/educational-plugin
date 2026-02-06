@@ -287,3 +287,12 @@ class MarketplaceStateOnClosePost(id: Int, solutionText: String, format: Int = J
   @JsonProperty(FORMAT_VERSION)
   val formatVersion: Int = format
 }
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class UserOrganization(
+  @JsonProperty("name") val name: String,
+  @JsonProperty("publicName") val publicName: String,
+  @JsonProperty("email") val email: String,
+  @JsonProperty("showEmail") val showEmail: Boolean,
+  @JsonProperty("url") val url: String?
+)
