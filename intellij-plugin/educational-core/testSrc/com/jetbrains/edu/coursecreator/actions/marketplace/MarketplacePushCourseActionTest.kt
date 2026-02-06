@@ -54,7 +54,7 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
     assertEquals(Vendor(FULL_USER_NAME), course.vendor)
 
     verify(exactly = 1) { mockConnector.loadHubToken() }
-    verify(exactly = 1) { mockConnector.uploadNewCourseUnderProgress(project, course, any(), HUB_TOKEN) }
+    verify(exactly = 1) { mockConnector.uploadNewCourseUnderProgress(project, HUB_TOKEN, match { it.course == course }) }
   }
 
   @Test
@@ -80,7 +80,7 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
     assertEquals(Vendor(FULL_USER_NAME), course.vendor)
 
     verify(exactly = 1) { mockConnector.loadHubToken() }
-    verify(exactly = 1) { mockConnector.uploadNewCourseUnderProgress(project, course, any(), HUB_TOKEN) }
+    verify(exactly = 1) { mockConnector.uploadNewCourseUnderProgress(project, HUB_TOKEN, match { it.course == course }) }
   }
 
   private fun createEduCourse(): EduCourse {
