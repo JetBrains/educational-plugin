@@ -1,10 +1,14 @@
 import org.gradle.api.Project
 import org.gradle.process.JavaForkOptions
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
 import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
+
+// BACKCOMPAT: 2025.3. Drop it
+val Project.isAtLeast261: Boolean get() = environmentName.toInt() >= 261
 
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -60,6 +64,15 @@ val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 
+val Project.intellijTestFrameworkType: TestFrameworkType
+  get() {
+    return if (isAtLeast261) {
+      TestFrameworkType.Platform
+    }
+    else {
+      TestFrameworkType.Bundled
+    }
+  }
 
 val Project.jvmPlugins: List<String> get() = listOf(
   javaPlugin,
