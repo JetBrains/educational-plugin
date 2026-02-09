@@ -7,6 +7,10 @@ dependencies {
     intellijIde(ideaVersion)
 
     intellijPlugins(jvmPlugins)
+
+    if (isAtLeast261) {
+      testFramework(javaTestFrameworkType)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

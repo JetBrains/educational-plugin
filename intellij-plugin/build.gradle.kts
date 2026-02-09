@@ -92,7 +92,7 @@ dependencies {
     pluginModule(implementation(project("features:ide-onboarding")))
     pluginModule(implementation(project("features:social-media")))
 
-    testFramework(TestFrameworkType.Bundled)
+    testFramework(intellijTestFrameworkType)
   }
 }
 
