@@ -97,7 +97,8 @@ val Project.cppPlugins: List<String> get() = listOfNotNull(
   "com.intellij.clion",
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
-  "org.jetbrains.plugins.clion.test.catch"
+  "org.jetbrains.plugins.clion.test.catch",
+  if (isAtLeast261) "com.intellij.cmake" else null
 )
 
 val Project.sqlPlugins: List<String> get() = listOfNotNull(
