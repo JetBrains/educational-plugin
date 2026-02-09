@@ -132,8 +132,8 @@ fun testAction(
     error(message)
   }
 
-  if (ActionUtil.lastUpdateAndCheckDumb(action, e, true) && runAction) {
-    ActionUtil.performActionDumbAwareWithCallbacks(action, e)
+  if (runAction) {
+    ActionUtil.performAction(action, e)
   }
 
   return presentation
