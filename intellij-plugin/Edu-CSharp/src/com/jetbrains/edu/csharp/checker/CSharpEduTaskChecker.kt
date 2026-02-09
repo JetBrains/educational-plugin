@@ -127,7 +127,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
     withContext(Dispatchers.EDT) {
       buildEventsService.getEventsAndSubscribe(buildLifetime) { events ->
         val errorMessages = events.joinToString("\n") { eventRef ->
-          val buildEvent = buildEventsService.getEvent(eventRef.offset)
+          val buildEvent = buildEventsService.getBuildEvent(eventRef.offset)
           val sourceFile = buildEvent.filePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
           val taskProjectId = task.toProjectModelEntity(project)?.getId(project)
 
