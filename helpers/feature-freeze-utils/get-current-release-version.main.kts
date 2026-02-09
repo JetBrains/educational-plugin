@@ -1,6 +1,6 @@
 @file:Repository("https://repo.maven.apache.org/maven2/")
-@file:Import("shared-utils.main.kts")
 
+import java.io.File
 import kotlin.system.exitProcess
 
 val versionParam = args.firstOrNull() ?: run {
@@ -8,8 +8,9 @@ val versionParam = args.firstOrNull() ?: run {
   exitProcess(1)
 }
 
-
-val version = getPluginVersion()
+// Read current version from gradle.properties
+val gradlePropertiesFile = File("gradle.properties")
+val version = gradlePropertiesFile.readLines().firstOrNull { it.trim().startsWith("pluginVersion=") }?.substringAfter("=")?.trim()
 
 if (version != null) {
   // Set TeamCity parameter using service message
