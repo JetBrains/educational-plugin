@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
   id("intellij-plugin-module-conventions")
 }
@@ -7,6 +9,10 @@ dependencies {
     intellijIde(ideaVersion)
 
     intellijPlugins(jvmPlugins)
+
+    if (isAtLeast261) {
+      testFramework(TestFrameworkType.Plugin.Java)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))
