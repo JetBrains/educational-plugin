@@ -31,7 +31,7 @@ class CppCodeExecutor : DefaultCodeExecutor() {
       return null
     }
 
-    val mainElement = CppRunConfigurationHelper.getInstance()?.prepareEntryPointForRunConfiguration(entryPoint)
+    val mainElement = CppRunConfigurationHelper.getInstance()?.prepareEntryPointForRunConfiguration(project, entryPoint)
     if (mainElement == null) {
       LOG.warn("Failed to get wrapper for main psi element for file '${entryPoint.containingFile.name}'")
       return null

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.cpp.checker
 
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 
 interface CppRunConfigurationHelper {
@@ -9,7 +10,7 @@ interface CppRunConfigurationHelper {
    *
    * In CLion-Nova, to create a run configuration using an entry point element, you need to use a specific `RadMainPsiElement`.
    */
-  fun prepareEntryPointForRunConfiguration(entryPoint: PsiElement): PsiElement
+  fun prepareEntryPointForRunConfiguration(project: Project, entryPoint: PsiElement): PsiElement?
 
   companion object {
     private val EP_NAME: ExtensionPointName<CppRunConfigurationHelper> = ExtensionPointName.create("Educational.cppRunConfigurationHelper")
