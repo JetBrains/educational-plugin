@@ -193,12 +193,6 @@ private fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): R
     }
 }
 
-fun <T> Response<T>.checkStatusCode(): Response<T>? {
-  if (isSuccessful) return this
-  LOG.error("Response is returned with ${this.code()} status code")
-  return null
-}
-
 fun File.toMultipartBody(name: String = "file"): MultipartBody.Part {
   val body = asRequestBody("application/octet-stream".toMediaTypeOrNull())
   return MultipartBody.Part.createFormData(name, this.name, body)
@@ -216,9 +210,10 @@ private fun processForbiddenErrorMessage(jsonText: String): String? {
     val courseNode = mapper.readTree(jsonText) as ObjectNode
     courseNode.get("message")?.asText()
   }
-  catch (e: ClassCastException) {
+  catch (_: ClassCastException) {
     null
-  } catch (e: JsonParseException) {
+  }
+  catch (_: JsonParseException) {
     null
   }
 }
