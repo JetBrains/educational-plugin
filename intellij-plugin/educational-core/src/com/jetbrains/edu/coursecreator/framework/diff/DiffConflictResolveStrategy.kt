@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.diff.comparison.ComparisonMergeUtil
-import com.intellij.diff.merge.MergeModelBase
 import com.intellij.diff.tools.util.base.HighlightPolicy
 import com.intellij.diff.tools.util.base.IgnorePolicy
 import com.intellij.diff.tools.util.base.TextDiffSettingsHolder
@@ -178,12 +177,10 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     project: Project,
     document: Document,
     private val initialRanges: List<LineRange>,
-  ) : MergeModelBase<MergeModelBase.State>(project, document) {
+  ) : MyMergeModelBase(project, document) {
     init {
       setChanges(initialRanges)
     }
-
-    override fun reinstallHighlighters(index: Int) {}
 
     override fun storeChangeState(index: Int): State {
       return State(index, initialRanges[index].start, initialRanges[index].end)
