@@ -298,7 +298,7 @@ object HyperskillCheckConnector {
   }
 
   private fun showErrorDetails(project: Project, error: String) {
-    if (error == EduFormatBundle.message("error.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
+    if (error == EduCoreBundle.message("error.network.access.denied") || error == EduCoreBundle.message("error.failed.to.refresh.tokens")) {
       EduNotificationManager
         .create(ERROR, EduCoreBundle.message("error.failed.to.post.solution"), EduCoreBundle.message("error.access.denied.with.link"))
         .apply {
@@ -342,7 +342,7 @@ object HyperskillCheckConnector {
   }
 
   private fun String.toCheckResult(): CheckResult {
-    return if (this == EduFormatBundle.message("error.access.denied")) {
+    return if (this == EduCoreBundle.message("error.network.access.denied")) {
       CheckResult(CheckStatus.Unchecked,
         EduCoreBundle.message("error.access.denied.with.link"),
         hyperlinkAction = { loginListener.doLogin() }

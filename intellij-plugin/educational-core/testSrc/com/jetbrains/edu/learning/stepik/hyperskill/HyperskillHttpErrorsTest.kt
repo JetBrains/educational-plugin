@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.api.StepikBasedSubmission
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.api.MockHyperskillConnector
@@ -14,13 +14,13 @@ class HyperskillHttpErrorsTest : EduTestCase() {
   private val mockConnector: MockHyperskillConnector get() = HyperskillConnector.getInstance() as MockHyperskillConnector
 
   @Test
-  fun `test service is under maintenance`() = doTest(HTTP_BAD_GATEWAY, EduFormatBundle.message("error.service.maintenance"))
+  fun `test service is under maintenance`() = doTest(HTTP_BAD_GATEWAY, EduCoreBundle.message("error.network.service.maintenance"))
   @Test
-  fun `test service is down`() = doTest(HTTP_GATEWAY_TIMEOUT, EduFormatBundle.message("error.service.down"))
+  fun `test service is down`() = doTest(HTTP_GATEWAY_TIMEOUT, EduCoreBundle.message("error.network.service.down"))
   @Test
-  fun `test unexpected error occurred`() = doTest(HTTP_BAD_REQUEST, EduFormatBundle.message("error.unexpected.error", ""))
+  fun `test unexpected error occurred`() = doTest(HTTP_BAD_REQUEST, EduCoreBundle.message("error.network.unexpected.error", ""))
   @Test
-  fun `test forbidden`() = doTest(HTTP_FORBIDDEN, EduFormatBundle.message("error.access.denied"))
+  fun `test forbidden`() = doTest(HTTP_FORBIDDEN, EduCoreBundle.message("error.network.access.denied"))
 
   private fun doTest(code: Int, expectedError: String) {
     mockConnector.withResponseHandler(testRootDisposable) { _, _ -> MockResponse().setResponseCode(code) }

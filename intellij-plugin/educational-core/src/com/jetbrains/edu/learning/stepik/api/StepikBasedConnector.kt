@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
-import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 
 interface StepikBasedConnector {
@@ -48,7 +48,7 @@ interface StepikBasedConnector {
   fun <T> withTokenRefreshIfFailed(call: () -> Result<T, String>): Result<T, String> {
     val result = call()
     if (!isUnitTestMode && !ApplicationManager.getApplication().isInternal
-        && result is Err && result.error == EduFormatBundle.message("error.access.denied")) {
+        && result is Err && result.error == EduCoreBundle.message("error.network.access.denied")) {
       doRefreshTokens()
       return call()
     }

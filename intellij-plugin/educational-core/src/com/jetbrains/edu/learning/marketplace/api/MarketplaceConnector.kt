@@ -36,7 +36,6 @@ import com.jetbrains.edu.learning.marketplace.downloadEduCourseFromLink
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.network.executeCall
 import com.jetbrains.edu.learning.network.executeHandlingExceptions
 import com.jetbrains.edu.learning.network.toMultipartBody
@@ -267,16 +266,16 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
         }
       HttpURLConnection.HTTP_UNAVAILABLE, HttpURLConnection.HTTP_BAD_GATEWAY -> {
         showErrorNotification(project, failedActionTitle, action = onErrorAction)
-        Err("${EduFormatBundle.message("error.service.maintenance")}\n\n$errorMessage") // 502, 503
+        Err("${message("error.network.service.maintenance")}\n\n$errorMessage") // 502, 503
       }
       in HttpURLConnection.HTTP_INTERNAL_ERROR..HttpURLConnection.HTTP_VERSION -> {
         showErrorNotification(project, failedActionTitle, action = onErrorAction)
-        Err("${EduFormatBundle.message("error.service.down")}\n\n$errorMessage") // 500x
+        Err("${message("error.network.service.down")}\n\n$errorMessage") // 500x
       }
       else -> {
         LOG.warn("Code $responseCode is not handled")
         showErrorNotification(project, failedActionTitle, action = onErrorAction)
-        Err(EduFormatBundle.message("error.unexpected.error", errorMessage))
+        Err(message("error.network.unexpected.error", errorMessage))
       }
     }
   }

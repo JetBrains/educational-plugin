@@ -14,7 +14,7 @@ import com.intellij.util.PlatformUtils
 import com.intellij.util.net.*
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.messages.EduFormatBundle
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -254,10 +254,10 @@ fun <T> Call<T>.executeWithCheckCanceled(): Result<Response<T>, NetworkError.Exc
 
 fun Exception.toNetworkError(): NetworkError.Exception? {
   return when (this) {
-    is InterruptedIOException -> NetworkError.Exception(EduFormatBundle.message("error.connection.interrupted"), this)
-    is IOException -> NetworkError.Exception(EduFormatBundle.message("error.failed.to.connect"), this)
+    is InterruptedIOException -> NetworkError.Exception(EduCoreBundle.message("error.network.connection.interrupted"), this)
+    is IOException -> NetworkError.Exception(EduCoreBundle.message("error.network.failed.to.connect"), this)
     is ProcessCanceledException -> NetworkError.Exception("Process canceled by user")
-    is RuntimeException -> NetworkError.Exception(EduFormatBundle.message("error.failed.to.connect"), this)
+    is RuntimeException -> NetworkError.Exception(EduCoreBundle.message("error.network.failed.to.connect"), this)
     else -> null
   }
 }
@@ -272,19 +272,19 @@ fun <T, R> Response<T>.transformWithErrorCodeMapping(transform: Response<T>.() -
 
     val message = when (code) {
       HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY -> {
-        "${EduFormatBundle.message("error.service.maintenance")}\n\n$error"// 502, 503
+        "${EduCoreBundle.message("error.network.service.maintenance")}\n\n$error"// 502, 503
       }
       in HTTP_INTERNAL_ERROR..HTTP_VERSION -> {
-        "${EduFormatBundle.message("error.service.down")}\n\n$error" // 500x
+        "${EduCoreBundle.message("error.network.service.down")}\n\n$error" // 500x
       }
       HTTP_FORBIDDEN, HTTP_UNAUTHORIZED -> {
-        processForbiddenErrorMessage(error) ?: EduFormatBundle.message("error.access.denied")
+        processForbiddenErrorMessage(error) ?: EduCoreBundle.message("error.network.access.denied")
       }
       HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> { // 451
-        "${EduFormatBundle.message("error.agreement.not.accepted")}\n\n$error"
+        "${EduCoreBundle.message("error.network.agreement.not.accepted")}\n\n$error"
       }
       else -> {
-        EduFormatBundle.message("error.unexpected.error", error)
+        EduCoreBundle.message("error.network.unexpected.error", error)
       }
     }
 
