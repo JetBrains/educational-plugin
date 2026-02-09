@@ -8,8 +8,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.execution.testing.CMakeTestRunConfiguration
-import com.jetbrains.cidr.cpp.execution.testing.google.CMakeGoogleTestRunConfigurationType
-import com.jetbrains.cidr.cpp.execution.testing.tcatch.CMakeCatchTestRunConfigurationType
 import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData
 import com.jetbrains.cidr.execution.BuildTargetData
 import com.jetbrains.cidr.execution.ExecutableData
@@ -57,9 +55,9 @@ open class CppEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
 }
 
 class CppCatchEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : CppEduTaskChecker(task, envChecker, project) {
-  override fun getFactory(): ConfigurationFactory = CMakeCatchTestRunConfigurationType.getInstance().factory
+  override fun getFactory(): ConfigurationFactory = getCatchTestConfigurationFactory()
 }
 
 class CppGEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : CppEduTaskChecker(task, envChecker, project) {
-  override fun getFactory(): ConfigurationFactory = CMakeGoogleTestRunConfigurationType.getInstance().factory
+  override fun getFactory(): ConfigurationFactory = getGoogleTestConfigurationFactory()
 }
