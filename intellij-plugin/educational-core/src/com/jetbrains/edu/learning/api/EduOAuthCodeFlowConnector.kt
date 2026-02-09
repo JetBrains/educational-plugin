@@ -156,7 +156,7 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     val codeVerifierField = mapOf(codeVerifierFieldName to codeVerifier)
     val response = getEduOAuthEndpoints()
       .getTokens(baseOAuthTokenUrl, clientId, redirectUri, code, OAuthUtils.GrantType.AUTHORIZATION_CODE, codeVerifierField)
-      .executeHandlingExceptions()
+      .executeHandlingExceptions(omitErrors = true)
     return response?.body()
   }
 

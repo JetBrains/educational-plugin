@@ -15,7 +15,6 @@ import com.intellij.util.net.*
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduFormatBundle
-import com.jetbrains.edu.learning.newproject.CoursesDownloadingException
 import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -50,6 +49,7 @@ fun createRetrofitBuilder(
 ): Retrofit.Builder {
   return Retrofit.Builder()
     .client(createOkHttpClient(baseUrl, connectionPool, accessToken, authHeaderName, authHeaderValue, retryPolicy, customInterceptor))
+    .addCallAdapterFactory(NetworkResultCallAdapterFactory)
     .baseUrl(baseUrl)
 }
 
@@ -162,46 +162,21 @@ fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response
   }
 }
 
+private fun log(message: String, omitErrors: Boolean) {
+  if (omitErrors) {
+    LOG.warn(message)
+  }
+  else {
+    LOG.error(message)
+  }
+}
+
 fun <T> Call<T>.executeCall(omitErrors: Boolean = false): Result<Response<T>, String> {
-  fun log(title: String, message: String?, optional: Boolean) {
-    val fullText = "$title. $message"
-    if (optional) LOG.warn(fullText) else LOG.error(fullText)
-  }
+  val networkResult = executeWithCheckCanceled()
 
-  return try {
-    val progressIndicator = ProgressManager.getInstance().progressIndicator
-
-    val response = if (progressIndicator != null) {
-      ApplicationUtil.runWithCheckCanceled({ execute() }, progressIndicator)
-    }
-    else {
-      execute()
-    }
-
-    ProgressManager.checkCanceled()
-    Ok(response)
-  }
-  catch (e: InterruptedIOException) {
-    log("Connection to server was interrupted", e.message, omitErrors)
-    Err("${EduFormatBundle.message("error.connection.interrupted")}\n\n${e.message}")
-  }
-  catch (e: CoursesDownloadingException) {
-    log("Failed to connect to server", e.message, true)
-    throw e
-  }
-  catch (e: IOException) {
-    log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduFormatBundle.message("error.failed.to.connect")} \n\n${e.message}")
-  }
-  catch (e: ProcessCanceledException) {
-    // We don't have to LOG.log or throw ProcessCanceledException:
-    // 'Control-flow exceptions (like ProcessCanceledException) should never be LOG.logged: ignore for explicitly started processes or...'
-    cancel()
-    Err("Process canceled by user")
-  }
-  catch (e: RuntimeException) {
-    log("Failed to connect to server", e.message, omitErrors)
-    Err("${EduFormatBundle.message("error.failed.to.connect")}\n\n${e.message}")
+  return networkResult.mapErr { error ->
+    log("${error.title}. ${error.exceptionMessage}", omitErrors)
+    error.message
   }
 }
 
@@ -210,33 +185,12 @@ fun <T> Call<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Respon
   return response.executeParsingErrors(omitErrors)
 }
 
-fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
-  val error = errorBody()?.string() ?: return Ok(this)
-  val code = code()
-  val fullErrorText = "$error. Code $code"
-  if (omitErrors) LOG.warn(fullErrorText) else LOG.error(fullErrorText)
-
-  return when (code) {
-    HTTP_OK, HTTP_CREATED, HTTP_ACCEPTED, HTTP_NO_CONTENT -> Ok(this) // 200, 201, 202, 204
-    HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY ->
-      Err("${EduFormatBundle.message("error.service.maintenance")}\n\n$error") // 502, 503
-    in HTTP_INTERNAL_ERROR..HTTP_VERSION ->
-      Err("${EduFormatBundle.message("error.service.down")}\n\n$error") // 500x
-    HTTP_FORBIDDEN, HTTP_UNAUTHORIZED -> {
-      val errorMessage = processForbiddenErrorMessage(error) ?: EduFormatBundle.message("error.access.denied")
-      Err(errorMessage)
+private fun <T> Response<T>.executeParsingErrors(omitErrors: Boolean = false): Result<Response<T>, String> {
+  return transformWithErrorCodeMapping { this }
+    .mapErr { (code, error) ->
+      log("$error. Code $code", omitErrors)
+      error
     }
-    HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> { // 451
-      LOG.warn(EduFormatBundle.message("error.agreement.not.accepted"))
-      Err(fullErrorText)
-    }
-    in HTTP_BAD_REQUEST..HTTP_UNSUPPORTED_TYPE ->
-      Err(EduFormatBundle.message("error.unexpected.error", error)) // 400x
-    else -> {
-      LOG.warn("Code $code is not handled")
-      Err(EduFormatBundle.message("error.unexpected.error", error))
-    }
-  }
 }
 
 fun <T> Response<T>.checkStatusCode(): Response<T>? {
@@ -270,3 +224,70 @@ private fun processForbiddenErrorMessage(jsonText: String): String? {
 }
 
 const val HTTP_UNAVAILABLE_FOR_LEGAL_REASONS: Int = 451
+
+/**
+ * Executes call checking for cancellation if it's launched under progress
+ */
+fun <T> Call<T>.executeWithCheckCanceled(): Result<Response<T>, NetworkError.Exception> {
+  return try {
+    @Suppress("UsagesOfObsoleteApi")
+    val progressIndicator = ProgressManager.getInstance().progressIndicator
+
+    val response = if (progressIndicator != null) {
+      ApplicationUtil.runWithCheckCanceled({ execute() }, progressIndicator)
+    }
+    else {
+      execute()
+    }
+
+    ProgressManager.checkCanceled()
+    Ok(response)
+  }
+  catch (e: Exception) {
+    if (e is ProcessCanceledException) {
+      cancel()
+    }
+    val networkError = e.toNetworkError() ?: throw e
+    Err(networkError)
+  }
+}
+
+fun Exception.toNetworkError(): NetworkError.Exception? {
+  return when (this) {
+    is InterruptedIOException -> NetworkError.Exception(EduFormatBundle.message("error.connection.interrupted"), this)
+    is IOException -> NetworkError.Exception(EduFormatBundle.message("error.failed.to.connect"), this)
+    is ProcessCanceledException -> NetworkError.Exception("Process canceled by user")
+    is RuntimeException -> NetworkError.Exception(EduFormatBundle.message("error.failed.to.connect"), this)
+    else -> null
+  }
+}
+
+fun <T, R> Response<T>.transformWithErrorCodeMapping(transform: Response<T>.() -> R): Result<R, NetworkError.HttpError> {
+  return if (isSuccessful) {
+    Ok(transform())
+  }
+  else {
+    val code = code()
+    val error = errorBody()?.string().orEmpty()
+
+    val message = when (code) {
+      HTTP_UNAVAILABLE, HTTP_BAD_GATEWAY -> {
+        "${EduFormatBundle.message("error.service.maintenance")}\n\n$error"// 502, 503
+      }
+      in HTTP_INTERNAL_ERROR..HTTP_VERSION -> {
+        "${EduFormatBundle.message("error.service.down")}\n\n$error" // 500x
+      }
+      HTTP_FORBIDDEN, HTTP_UNAUTHORIZED -> {
+        processForbiddenErrorMessage(error) ?: EduFormatBundle.message("error.access.denied")
+      }
+      HTTP_UNAVAILABLE_FOR_LEGAL_REASONS -> { // 451
+        "${EduFormatBundle.message("error.agreement.not.accepted")}\n\n$error"
+      }
+      else -> {
+        EduFormatBundle.message("error.unexpected.error", error)
+      }
+    }
+
+    Err(NetworkError.HttpError(code, message))
+  }
+}
