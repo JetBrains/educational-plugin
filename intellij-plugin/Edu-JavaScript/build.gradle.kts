@@ -7,6 +7,8 @@ dependencies {
     intellijIde(ideaVersion)
 
     intellijPlugins(javaScriptPlugins)
+
+    testIntellijPlugins(cssPlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))

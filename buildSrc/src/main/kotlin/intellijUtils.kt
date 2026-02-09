@@ -59,6 +59,7 @@ val Project.phpPlugin: String by Properties
 val Project.intelliLangPlugin: String get() = "org.intellij.intelliLang"
 val Project.javaScriptPlugin: String get() = "JavaScript"
 val Project.nodeJsPlugin: String get() = "NodeJS"
+val Project.cssPlugin: String get() = "com.intellij.css"
 val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
@@ -82,7 +83,7 @@ val Project.jvmPlugins: List<String> get() = listOf(
 
 val Project.javaScriptPlugins: List<String> get() = listOf(
   javaScriptPlugin,
-  nodeJsPlugin
+  nodeJsPlugin,
 )
 
 val Project.rustPlugins: List<String> get() = listOf(
