@@ -41,6 +41,9 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
           .sortedBy { it.name }
           .let { courses -> CoursesGroup.fromCourses(courses) }
       }
+      catch (cancellationException: CancellationException) {
+        throw cancellationException
+      }
       catch (exception: Exception) {
         LOG.error("An error occurred while loading the courses", exception)
         emptyList()
