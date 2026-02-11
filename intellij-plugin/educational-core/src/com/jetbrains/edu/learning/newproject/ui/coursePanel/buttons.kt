@@ -28,7 +28,7 @@ import java.awt.event.ActionListener
 val SelectCourseBackgroundColor: Color
   get() = JBColor.namedColor(
     "SelectCourse.backgroundColor",
-    JBColor(TaskToolWindowView.getTaskDescriptionBackgroundColor(), Color(0x313335))
+    TaskToolWindowView.getTaskDescriptionBackgroundColor()
   )
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
 private val FillForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.fillForeground", JBColor(Color.white, Color(0xBBBBBB)))

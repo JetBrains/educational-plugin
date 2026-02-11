@@ -19,7 +19,7 @@ object EduColors {
   val navigationMapDisabledIconForeground: JBColor = JBColor.namedColor("NavigationMap.disabledIconForeground", 0xA8ADBD, 0x868A91)
 
   // lesson card for new course dialog colors
-  val lessonCardBackground: JBColor = JBColor.namedColor("LessonCard.Background", 0xFFFFFF, 0x2B2D30)
+  val lessonCardBackground: Color get() = UIUtil.getPanelBackground()
   val lessonCardBorderColor: JBColor = JBColor.namedColor("LessonCard.BorderColor", 0xEBECF0, 0x393B40)
   val lessonCardFocusedBorderColor: JBColor = JBColor.namedColor("LessonCard.focusedBorderColor", 0x3574F0, 0x357F0)
   val lessonCardForeground: JBColor = JBColor.namedColor("LessonCard.foreground", 0x000000, 0xDFE1E5)
