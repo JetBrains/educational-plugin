@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.coursecreator.CCTestsUtil.checkPainters
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -13,6 +14,19 @@ import com.jetbrains.edu.learning.testAction
 abstract class CCAnswerPlaceholderTestBase : EduActionTestCase() {
   companion object {
     const val DEFAULT_TASK_TEXT = "fun foo(): String = TODO()"
+  }
+
+  override fun tearDown() {
+    try {
+      // some events can be still in edt (such as yaml sync) and we need them to finish before project is disposed
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   fun doTest(
