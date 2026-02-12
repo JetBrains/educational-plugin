@@ -43,7 +43,8 @@ object CourseViewUtils {
     if (visibility == CourseViewVisibility.INVISIBLE_FOR_ALL) return null
 
     if (task == null) {
-      return childNode.modifyAdditionalFileOrDirectory(project, course, showUserCreatedFiles = true)
+      val showUserCreatedFiles = isCourseWithVisibleUserFiles(course)
+      return childNode.modifyAdditionalFileOrDirectory(project, course, showUserCreatedFiles)
     }
 
     return when (val value = childNode.value) {
@@ -311,5 +312,21 @@ object CourseViewUtils {
     val virtualFile = this.virtualFile ?: return CourseViewVisibility.INVISIBLE_FOR_ALL
     val configurator = course.configurator ?: return CourseViewVisibility.INVISIBLE_FOR_ALL
     return configurator.courseFileAttributes(project, virtualFile).visibility
+  }
+
+  private val coursesWithVisibleUserFiles = setOf(
+    28816, // Mastering Large Language Models
+    205112, // (AWS) Mastering Large Language Models
+  )
+
+  /**
+   * Normally, we should not show files created by users outside of task directories. But for some courses we do it because we have no
+   * idea on how to implement them some other way. See EDU-8717. These courses are hard-coded inside this method.
+   */
+  private fun isCourseWithVisibleUserFiles(course: Course): Boolean {
+    // TODO this Junie course is still not published, so we don't know its id by now
+    val hasJunieSubdirectory = course.additionalFiles.find { it.isVisible && it.name == ".junie/guidelines.md" } != null
+
+    return hasJunieSubdirectory || course.id in coursesWithVisibleUserFiles
   }
 }

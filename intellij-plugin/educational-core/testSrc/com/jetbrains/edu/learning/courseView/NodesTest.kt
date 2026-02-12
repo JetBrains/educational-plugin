@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.findOrCreateDirectory
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
@@ -761,7 +760,8 @@ class NodesTest : CourseViewTestBase() {
 
   @Test
   fun `test visible additional folders with user-created files`() {
-    courseWithFiles {
+    // Given
+    val course = courseWithFiles {
       section {
         lesson {
           eduTask {
@@ -778,16 +778,14 @@ class NodesTest : CourseViewTestBase() {
       }
     }
 
+    // When
     // a learner creates files ...
-    runInEdtAndWait {
-      runWriteAction {
-        // in the course root folder, it should not be visible
-        project.courseDir.findOrCreateFile("file_in_root.txt")
-        // in the 'dir' folder, it should be visible
-        project.courseDir.findOrCreateFile("dir/file_in_dir.txt")
-      }
-    }
+    nonAdditionalFile("file_in_root.txt")
+    nonAdditionalFile("dir/file_in_dir.txt")
 
+    course.id = 28816 // file is visible for some courses, see com.jetbrains.edu.learning.projectView.CourseViewUtils.coursesWithVisibleUserFiles
+
+    // Then
     assertCourseView(
       """
       |-Project
@@ -798,6 +796,23 @@ class NodesTest : CourseViewTestBase() {
       |     task.txt
       |  -DirectoryNode dir
       |   file_in_dir.txt
+      |   visible.txt
+      """.trimMargin()
+    )
+
+    // When
+    course.id = 0 // file is invisible for all other courses
+
+    // Then
+    assertCourseView(
+      """
+      |-Project
+      | -CourseNode Test Course  0/1
+      |  -SectionNode section1
+      |   -LessonNode lesson1
+      |    -TaskNode task1
+      |     task.txt
+      |  -DirectoryNode dir
       |   visible.txt
       """.trimMargin()
     )
@@ -899,7 +914,7 @@ class NodesTest : CourseViewTestBase() {
   fun `all subdirectories of a visible directory must be visible`() {
     // Given
 
-    courseWithFiles {
+    val course = courseWithFiles {
       additionalFile("dir/visible.txt") {
         withVisibility(true)
       }
@@ -914,8 +929,9 @@ class NodesTest : CourseViewTestBase() {
       project.courseDir.findOrCreateDirectory("dir/empty-subdir")
     }
 
-    // Then
+    course.id = 205112  // files and dirs are visible for some courses, see com.jetbrains.edu.learning.projectView.CourseViewUtils.coursesWithVisibleUserFiles
 
+    // Then
     assertCourseView("""
         |-Project
         | -CourseNode Test Course  0/0
@@ -925,6 +941,18 @@ class NodesTest : CourseViewTestBase() {
         |    visible3.txt
         |   visible.txt
         |   visible2.txt
+      """.trimMargin()
+    )
+
+    // When
+    course.id = 123 // files are invisible for all other courses
+
+    // Then
+    assertCourseView("""
+        |-Project
+        | -CourseNode Test Course  0/0
+        |  -DirectoryNode dir
+        |   visible.txt
       """.trimMargin()
     )
   }
