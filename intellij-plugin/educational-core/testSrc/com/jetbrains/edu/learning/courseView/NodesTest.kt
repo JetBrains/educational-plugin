@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.findOrCreateDirectory
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
+import com.jetbrains.edu.learning.projectView.CourseViewUtils.COURSES_WITH_VISIBLE_USER_FILES
 import org.junit.Test
 
 class NodesTest : CourseViewTestBase() {
@@ -760,7 +760,8 @@ class NodesTest : CourseViewTestBase() {
   }
 
   @Test
-  fun `test visible additional folders with user-created files`() {
+  fun `user-created files are invisible inside visible additional directories`() {
+    // Given
     courseWithFiles {
       section {
         lesson {
@@ -778,16 +779,50 @@ class NodesTest : CourseViewTestBase() {
       }
     }
 
-    // a learner creates files ...
-    runInEdtAndWait {
-      runWriteAction {
-        // in the course root folder, it should not be visible
-        project.courseDir.findOrCreateFile("file_in_root.txt")
-        // in the 'dir' folder, it should be visible
-        project.courseDir.findOrCreateFile("dir/file_in_dir.txt")
+    // When
+    nonAdditionalFile("file_in_root.txt")
+    nonAdditionalFile("dir/file_in_dir.txt")
+
+    // Then
+    assertCourseView(
+      """
+      |-Project
+      | -CourseNode Test Course  0/1
+      |  -SectionNode section1
+      |   -LessonNode lesson1
+      |    -TaskNode task1
+      |     task.txt
+      |  -DirectoryNode dir
+      |   visible.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `user-created files are visible inside visible additional directories (for courses with visible user files)`() {
+    // Given
+    courseWithFiles(id = COURSES_WITH_VISIBLE_USER_FILES.first()) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("task.txt")
+          }
+        }
+      }
+
+      additionalFile("dir/visible.txt") {
+        withVisibility(true)
+      }
+      additionalFile("dir/invisible.txt") {
+        withVisibility(false)
       }
     }
 
+    // When
+    nonAdditionalFile("file_in_root.txt")
+    nonAdditionalFile("dir/file_in_dir.txt")
+
+    // Then
     assertCourseView(
       """
       |-Project
@@ -802,6 +837,7 @@ class NodesTest : CourseViewTestBase() {
       """.trimMargin()
     )
   }
+
 
   @Test
   fun `test visible additional files are invisible inside framework lessons`() {
@@ -896,10 +932,39 @@ class NodesTest : CourseViewTestBase() {
   }
 
   @Test
-  fun `all subdirectories of a visible directory must be visible`() {
+  fun `all subdirectories of a visible directory must be invisible`() {
     // Given
 
     courseWithFiles {
+      additionalFile("dir/visible.txt") {
+        withVisibility(true)
+      }
+    }
+
+    // When
+    // Create some files and directories inside the visible directory "dir"
+
+    nonAdditionalFile("dir/visible2.txt")
+    nonAdditionalFile("dir/subdir/visible3.txt")
+    runWriteAction {
+      project.courseDir.findOrCreateDirectory("dir/empty-subdir")
+    }
+
+    // Then
+    assertCourseView("""
+        |-Project
+        | -CourseNode Test Course  0/0
+        |  -DirectoryNode dir
+        |   visible.txt
+      """.trimMargin()
+    )
+  }
+
+  @Test
+  fun `all subdirectories of a visible directory must be visible (for courses with visible user files)`() {
+    // Given
+
+    courseWithFiles(id = COURSES_WITH_VISIBLE_USER_FILES.first()) {
       additionalFile("dir/visible.txt") {
         withVisibility(true)
       }
