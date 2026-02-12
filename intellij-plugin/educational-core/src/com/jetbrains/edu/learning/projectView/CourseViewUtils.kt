@@ -166,9 +166,11 @@ object CourseViewUtils {
       }
     }
 
-  private fun Lesson.isSolved() = taskList.all {
-    val project = it.project ?: return false
-    it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
+  private fun Lesson.isSolved(): Boolean {
+    val project = course.project ?: return false
+    return taskList.all {
+      it.status == CheckStatus.Solved || SubmissionsManager.getInstance(project).containsCorrectSubmission(it.id)
+    }
   }
 
   val Task.icon: Icon
