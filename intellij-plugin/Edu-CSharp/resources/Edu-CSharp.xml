@@ -15,7 +15,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <experimentalFeature id="edu.course.csharp" percentOfUsers="100" internalFeature="true">
+    <experimentalFeature id="edu.course.csharp" percentOfUsers="100">
       <description>Enables support for C# courses</description>
     </experimentalFeature>
     <postStartupActivity implementation="com.jetbrains.edu.csharp.CSharpProjectActivity"/>
