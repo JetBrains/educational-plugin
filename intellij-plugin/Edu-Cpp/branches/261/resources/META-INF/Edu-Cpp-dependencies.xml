@@ -1,4 +1,4 @@
-<!--BACKCOMPAT 2025.3. Inline it-->
+<!-- BACKCOMPAT 2025.3. Inline it-->
 <idea-plugin>
   <dependencies>
     <plugin id="com.intellij.clion"/>
