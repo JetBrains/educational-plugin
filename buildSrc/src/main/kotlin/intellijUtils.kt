@@ -65,8 +65,6 @@ val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 
-val Project.javaTestFrameworkType: TestFrameworkType get() = TestFrameworkType.Plugin.Java
-
 val Project.intellijTestFrameworkType: TestFrameworkType
   get() {
     return if (isAtLeast261) {

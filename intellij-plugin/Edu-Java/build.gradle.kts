@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
   id("intellij-plugin-module-conventions")
 }
@@ -9,7 +11,7 @@ dependencies {
     intellijPlugins(jvmPlugins)
 
     if (isAtLeast261) {
-      testFramework(javaTestFrameworkType)
+      testFramework(TestFrameworkType.Plugin.Java)
     }
   }
 
