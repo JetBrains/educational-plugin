@@ -1,5 +1,11 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/Edu-Cpp-dependencies.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <dependencies>
+    <plugin id="com.intellij.clion"/>
+    <module name="intellij.clion.runFile"/>
+    <plugin id="com.intellij.cmake"/>
+    <plugin id="org.jetbrains.plugins.clion.test.catch"/>
+    <plugin id="org.jetbrains.plugins.clion.test.google"/>
+  </dependencies>
 
   <extensionPoints>
     <extensionPoint qualifiedName="Educational.cppRunConfigurationHelper"
