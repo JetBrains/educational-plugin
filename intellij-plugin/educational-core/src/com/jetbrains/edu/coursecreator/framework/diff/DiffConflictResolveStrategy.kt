@@ -173,6 +173,20 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     return changeType.type == MergeConflictType.Type.CONFLICT
   }
 
+  private class MyMergeModel(
+    project: Project,
+    document: Document,
+    private val initialRanges: List<LineRange>,
+  ) : MyMergeModelBase(project, document) {
+    init {
+      setChanges(initialRanges)
+    }
+
+    override fun storeChangeState(index: Int): State {
+      return State(index, initialRanges[index].start, initialRanges[index].end)
+    }
+  }
+
   private class ThreeSideContentInfo(
     val leftContent: String,
     val baseContent: String,
