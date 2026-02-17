@@ -45,5 +45,6 @@
     <module name="ai-test-generation"/>
     <module name="ide-onboarding"/>
     <module name="social-media"/>
+    <module name="lti"/>
   </content>
 </idea-plugin>

@@ -42,6 +42,7 @@ include(
   "intellij-plugin:features:ai-test-generation",
   "intellij-plugin:features:ide-onboarding",
   "intellij-plugin:features:social-media",
+  "intellij-plugin:features:lti",
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
