@@ -34,8 +34,6 @@
               topic="com.intellij.openapi.fileEditor.FileEditorManagerListener$Before"/>
     <listener class="com.jetbrains.edu.learning.storage.LearningObjectsPersister"
               topic="com.jetbrains.edu.learning.CourseSetListener"/>
-    <listener class="com.jetbrains.edu.learning.marketplace.lti.LTICourseSetListener"
-              topic="com.jetbrains.edu.learning.CourseSetListener"/>
   </projectListeners>
 
   <extensionPoints>
@@ -562,7 +560,6 @@
 
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
 
-    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.lti.LtiCourseMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.EntryPointMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.metadata.OpenOnSiteLinkMetadataProcessor"/>
@@ -570,7 +567,6 @@
   </extensions>
 
   <xi:include href="/META-INF/Marketplace.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/LTI.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/course-storage.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.agreement.UserAgreementOptions"/>

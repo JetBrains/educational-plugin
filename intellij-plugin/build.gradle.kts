@@ -91,6 +91,7 @@ dependencies {
     pluginModule(implementation(project("features:ai-test-generation")))
     pluginModule(implementation(project("features:ide-onboarding")))
     pluginModule(implementation(project("features:social-media")))
+    pluginModule(implementation(project("features:lti")))
 
     testFramework(intellijTestFrameworkType)
   }

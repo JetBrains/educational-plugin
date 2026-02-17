@@ -1,0 +1,24 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.jetbrains.edu.lti.LTIConnector"
+                        serviceImplementation="com.jetbrains.edu.lti.LTIConnectorImpl"
+                        testServiceImplementation="com.jetbrains.edu.learning.lti.MockLTIConnector"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.lti.LTIRestService"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <checkListener implementation="com.jetbrains.edu.lti.LTICheckListener"/>
+    <courseMetadataProcessor implementation="com.jetbrains.edu.lti.LTICourseMetadataProcessor"/>
+  </extensions>
+
+  <projectListeners>
+    <listener class="com.jetbrains.edu.lti.LTICourseSetListener"
+              topic="com.jetbrains.edu.learning.CourseSetListener"/>
+  </projectListeners>
+
+  <actions>
+    <action id="Educational.Student.LTIServiceChangeHost"
+            class="com.jetbrains.edu.lti.changeHost.LTIServiceChangeHostAction"
+            internal="true"/>
+  </actions>
+</idea-plugin>
