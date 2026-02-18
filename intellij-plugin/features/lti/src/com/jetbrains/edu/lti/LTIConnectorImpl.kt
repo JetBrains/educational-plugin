@@ -25,7 +25,7 @@ open class LTIConnectorImpl : LTIConnector {
       200 -> NoLineItem
       204 -> Success
       404 -> UnknownLaunchId
-      else -> return ServerError // 500 or other statuses
+      else -> ServerError // 500 or other statuses
     }
   }
 }

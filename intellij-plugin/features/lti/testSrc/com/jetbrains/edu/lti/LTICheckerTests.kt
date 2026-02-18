@@ -34,7 +34,7 @@ class LTICheckerTests : EduTestCase() {
   @Test
   fun `alpha test lti reports nothing on failed task`() {
     onlineService = LTIOnlineService.ALPHA_TEST_2024
-    doTest(solved = false) { urlPath, body ->
+    doTest(solved = false) { urlPath, _ ->
       if (urlPath != null) {
         error("LTI should not report anything for a failed check")
       }
@@ -44,7 +44,7 @@ class LTICheckerTests : EduTestCase() {
   @Test
   fun `alpha test lti reports something on solved task`() {
     onlineService = LTIOnlineService.ALPHA_TEST_2024
-    doTest(solved = true) { urlPath, body ->
+    doTest(solved = true) { urlPath, _ ->
       if (urlPath == null) {
         error("LTI should report something for a solved check")
       }
