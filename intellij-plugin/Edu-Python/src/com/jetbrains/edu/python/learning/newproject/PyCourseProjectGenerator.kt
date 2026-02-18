@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
-import com.jetbrains.python.packaging.PyPackageManager
 import com.jetbrains.python.sdk.*
 
 open class PyCourseProjectGenerator(
@@ -76,8 +75,7 @@ open class PyCourseProjectGenerator(
       @Throws(ExecutionException::class)
       override fun compute(indicator: ProgressIndicator): String {
         indicator.isIndeterminate = true
-        val packageManager = PyPackageManager.getInstance(baseSdk)
-        return packageManager.createVirtualEnv(virtualEnvPath, false)
+        return createVenv(baseSdk, virtualEnvPath)
       }
     }, PyConfigurableInterpreterList.getInstance(null).allPythonSdks, baseSdk, project.basePath, null)
     if (sdk == null) {
