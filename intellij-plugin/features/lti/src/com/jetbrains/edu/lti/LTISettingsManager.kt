@@ -2,7 +2,6 @@ package com.jetbrains.edu.lti
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckButtonAdditionalInformationManager
 import com.jetbrains.edu.learning.xmlEscaped
 
@@ -57,10 +56,10 @@ class LTISettingsManager(private val project: Project) : SimplePersistentStateCo
     val returnLink = settings.returnLink
 
     val message = when {
-      lmsDescription.isNullOrEmpty() && !returnLink.isNullOrEmpty() -> EduCoreBundle.message("lti.check.button.hint.link", returnLink)
-      lmsDescription.isNullOrEmpty() -> EduCoreBundle.message("lti.check.button.hint")
-      !returnLink.isNullOrEmpty() -> EduCoreBundle.message("lti.check.button.hint.with.lms.link", returnLink, lmsDescription)
-      else -> EduCoreBundle.message("lti.check.button.hint.with.lms", lmsDescription)
+      lmsDescription.isNullOrEmpty() && !returnLink.isNullOrEmpty() -> LTIBundle.message("check.button.hint.link", returnLink)
+      lmsDescription.isNullOrEmpty() -> LTIBundle.message("check.button.hint")
+      !returnLink.isNullOrEmpty() -> LTIBundle.message("check.button.hint.with.lms.link", returnLink, lmsDescription)
+      else -> LTIBundle.message("check.button.hint.with.lms", lmsDescription)
     }
 
     additionalInformationManager.setInformation(LTI_ADDITIONAL_INFORMATION_KEY, message)

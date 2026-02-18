@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,7 +34,7 @@ class LTICheckListener : CheckListener {
 
     logger<LTICheckListener>().info("Posting completion status for task ${task.name}: solved=$solved, launchId=$launchId")
 
-    val response = runWithModalProgressBlocking(project, EduCoreBundle.message("lti.posting.completion.status")) {
+    val response = runWithModalProgressBlocking(project, LTIBundle.message("posting.completion.status")) {
       withContext(Dispatchers.IO) {
         LTIConnector.getInstance().postTaskChecked(ltiSettings.onlineService, launchId, task.course.id, task.id, solved)
       }
@@ -59,12 +58,12 @@ class LTICheckListener : CheckListener {
 
         EduNotificationManager.create(
           NotificationType.INFORMATION,
-          EduCoreBundle.message("lti.grades.post.status.sent.title"),
+          LTIBundle.message("grades.post.status.sent.title"),
           if (lmsDescription.isNullOrEmpty()) {
-            EduCoreBundle.message("lti.grades.post.status.sent.text")
+            LTIBundle.message("grades.post.status.sent.text")
           }
           else {
-            EduCoreBundle.message("lti.grades.post.status.sent.text.with.lms", lmsDescription)
+            LTIBundle.message("grades.post.status.sent.text.with.lms", lmsDescription)
           }
         ).notify(project)
       }
@@ -81,17 +80,17 @@ class LTICheckListener : CheckListener {
     logger<LTICheckListener>().warn("error during posting completion status launchId=$launchId, error=$error")
 
     val errorMessage = buildString {
-      append(EduCoreBundle.message("lti.grades.post.error.text"))
+      append(LTIBundle.message("grades.post.error.text"))
 
       if (error != null) {
         append("<br>")
-        append(EduCoreBundle.message("lti.grades.post.error.text.error", error))
+        append(LTIBundle.message("grades.post.error.text.error", error))
       }
 
       if (suggestOpeningCourseOnline) {
         val platformName = ApplicationNamesInfo.getInstance().fullProductName
         append("<br>")
-        append(EduCoreBundle.message("lti.grades.post.error.text.try.reopen", platformName))
+        append(LTIBundle.message("grades.post.error.text.try.reopen", platformName))
       }
 
       val lmsDescription = ltiSettings.lmsDescription
@@ -100,13 +99,13 @@ class LTICheckListener : CheckListener {
       val yourCourseText = if (linkToCourse.isNullOrEmpty()) linkText else """<a href="$linkToCourse">$linkText</a>"""
       if (yourCourseText != null) {
         append("<br>")
-        append(EduCoreBundle.message("lti.grades.post.error.text.link") + " " + yourCourseText)
+        append(LTIBundle.message("grades.post.error.text.link") + " " + yourCourseText)
       }
     }
 
     EduNotificationManager.create(
       ERROR,
-      EduCoreBundle.message("lti.grades.post.error.title"),
+      LTIBundle.message("grades.post.error.title"),
       errorMessage
     ).notify(project)
   }

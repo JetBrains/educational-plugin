@@ -1,8 +1,11 @@
 <idea-plugin>
+
+  <resource-bundle>messages.LTIBundle</resource-bundle>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="com.jetbrains.edu.lti.LTIConnector"
                         serviceImplementation="com.jetbrains.edu.lti.LTIConnectorImpl"
-                        testServiceImplementation="com.jetbrains.edu.learning.lti.MockLTIConnector"/>
+                        testServiceImplementation="com.jetbrains.edu.lti.MockLTIConnector"/>
     <httpRequestHandler implementation="com.jetbrains.edu.lti.LTIRestService"/>
   </extensions>
 

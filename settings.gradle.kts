@@ -100,7 +100,7 @@ fun configureSecretProperties() {
     "marketplaceHubClientId"
   )
   secretProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/lti/lti-auth.properties",
+    "intellij-plugin/features/lti/resources/lti-auth.properties",
     "ltiServiceToken"
   )
 }
