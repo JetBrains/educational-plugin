@@ -17,7 +17,16 @@ enum class TranslationServiceHost(
   @param:PropertyKey(resourceBundle = BUNDLE) private val visibleNameKey: String
 ) : ServiceHostEnum {
   PRODUCTION("change.service.host.production") {
-    override val url: String = EDU_AI_SERVICE_PRODUCTION_URL
+    override val url: String
+      get() {
+        // TODO(remove this parameter after ai service split)
+        return if (RegionSettings.getRegion() == Region.CHINA) {
+          EDU_AI_SERVICE_PRODUCTION_CHINA_URL
+        }
+        else {
+          EDU_AI_SERVICE_PRODUCTION_URL
+        }
+      }
   },
   STAGING("change.service.host.staging") {
     override val url: String = EDU_AI_SERVICE_STAGING_URL
