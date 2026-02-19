@@ -4,7 +4,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.logger
 import com.jetbrains.edu.ai.error.AIServiceError
 import com.jetbrains.edu.ai.error.CommonAIServiceError
-import com.jetbrains.edu.ai.host.EduAIServiceHost
+import com.jetbrains.edu.ai.host.TranslationServiceHost
 import com.jetbrains.edu.learning.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,7 +14,7 @@ import java.io.IOException
 
 abstract class AIServiceConnector : Disposable {
   protected val aiServiceUrl: String
-    get() = EduAIServiceHost.selectedHost.url
+    get() = TranslationServiceHost.selectedHost.url
 
   protected val connectionPool = ConnectionPool()
 
