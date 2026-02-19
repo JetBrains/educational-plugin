@@ -12,6 +12,10 @@
             class="com.jetbrains.edu.ai.action.EduAIServiceChangeHostAction"
             internal="true"/>
 
+    <action id="Educational.TranslationServiceChangeHost"
+            class="com.jetbrains.edu.ai.action.TranslationServiceChangeHostAction"
+            internal="true"/>
+
     <action id="Educational.ResetCourseTranslation"
             class="com.jetbrains.edu.ai.translation.action.ResetCourseTranslation"
             internal="true"/>
