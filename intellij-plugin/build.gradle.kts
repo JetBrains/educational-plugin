@@ -1,6 +1,5 @@
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.*
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformTestingExtension
 import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
@@ -205,7 +204,7 @@ tasks {
     customRunIdeTask(CLion, clionVersion, baseTaskName = "CLion-Nova") {
       setClionSystemProperties(project, withRadler = true)
     }
-    customRunIdeTask(PyCharmCommunity, pycharmVersion, baseTaskName = "PyCharm")
+    customRunIdeTask(PyCharm, pycharmVersion)
     customRunIdeTask(WebStorm)
     customRunIdeTask(GoLand)
     customRunIdeTask(PhpStorm)
