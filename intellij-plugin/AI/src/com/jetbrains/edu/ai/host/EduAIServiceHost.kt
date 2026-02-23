@@ -9,6 +9,12 @@ import com.jetbrains.edu.learning.messages.BUNDLE
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import org.jetbrains.annotations.PropertyKey
 
+
+/**
+ * Enum representing different hosts for AI service environments.
+ * AI service is used for AI-based features (such as AI-hints and test generation)
+ * Is not being used for translations anymore, see [TranslationServiceHost])
+ */
 @Suppress("unused") // All enum values ar used in UI
 enum class EduAIServiceHost(
   override val url: String,
