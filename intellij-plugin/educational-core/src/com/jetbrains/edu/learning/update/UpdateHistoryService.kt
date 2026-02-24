@@ -6,22 +6,28 @@ import com.jetbrains.edu.learning.EduTestAware
 
 @Service(Service.Level.PROJECT)
 @State(name = "EduUpdateHistory", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
-class UpdateHistoryService : SerializablePersistentStateComponent<UpdateHistoryService.State>(State(emptyList())), EduTestAware {
-
-  data class State(var updates: List<UpdateItem> = mutableListOf())
+class UpdateHistoryService : SerializablePersistentStateComponent<UpdateHistoryService.State>(State()), EduTestAware {
+  private var updates: List<UpdateItem>
+    get() = state.updates
+    set(value) {
+      updateState {
+        it.copy(updates = value)
+      }
+    }
 
   fun updateHappened(updateItem: UpdateItem) {
-    val existingUpdates = state.updates
-    state = State(existingUpdates + updateItem)
+    updates += updateItem
   }
 
   fun updatesString(): String = state.updates.joinToString(separator = ",")
 
-  fun isEmpty(): Boolean = state.updates.isEmpty()
+  fun isEmpty(): Boolean = updates.isEmpty()
 
   override fun cleanUpState() {
-    state = State(emptyList())
+    updates = emptyList()
   }
+
+  data class State(var updates: List<UpdateItem> = mutableListOf())
 
   companion object {
     fun getInstance(project: Project): UpdateHistoryService = project.service()
