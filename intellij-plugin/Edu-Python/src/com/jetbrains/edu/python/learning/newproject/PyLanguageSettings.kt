@@ -53,6 +53,9 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       }
     }
 
+    @Suppress("DEPRECATION_ERROR")
+    // Suggested to be replaced with PythonInterpreterCombobox, but PythonInterpreterCombobox is currently internal
+    // TODO: use PythonInterpreterCombobox when instead
     addInterpretersAsync(sdkField, {
       collectPySdks(course, context ?: UserDataHolderBase())
     }) {
@@ -62,7 +65,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       notifyListeners()
     }
 
-    return listOf<LabeledComponent<JComponent>>(
+    return listOf(
       LabeledComponent.create(sdkField, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST)
     )
   }
