@@ -58,7 +58,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
     get() = listOf(EduNames.TEST)
 
   override val pluginRequirements: List<PluginId>
-    get() = listOf(PluginId.getId("org.jetbrains.plugins.gradle"), PluginId.getId("JUnit"))
+    get() = listOf(PluginId.getId("com.intellij.gradle"), PluginId.getId("JUnit"))
 
   companion object {
     private val NAMES_TO_EXCLUDE = arrayOf(

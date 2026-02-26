@@ -5,8 +5,7 @@ object PluginInfos {
   val KOTLIN: PluginInfo = PluginInfo("org.jetbrains.kotlin", "Kotlin")
   val SCALA: PluginInfo = PluginInfo("org.intellij.scala", "Scala")
 
-  // Since 193 is named `Gradle-Java`
-  val GRADLE: PluginInfo = PluginInfo("org.jetbrains.plugins.gradle", "Gradle")
+  val GRADLE: PluginInfo = PluginInfo("com.intellij.gradle", "Gradle")
   val JUNIT: PluginInfo = PluginInfo("JUnit", "JUnit")
 
   val ANDROID: PluginInfo = PluginInfo("org.jetbrains.android", "Android")

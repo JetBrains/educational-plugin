@@ -4,7 +4,7 @@
     <module name="jvm-core"/>
 
     <plugin id="com.intellij.modules.java"/>
-    <plugin id="org.jetbrains.plugins.gradle"/>
+    <module name="intellij.gradle"/>
     <plugin id="JUnit"/>
   </dependencies>
 

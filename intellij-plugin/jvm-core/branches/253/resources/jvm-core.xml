@@ -1,7 +1,7 @@
 <idea-plugin>
   <dependencies>
     <plugin id="com.intellij.modules.java"/>
-    <plugin id="org.jetbrains.plugins.gradle"/>
+    <plugin id="com.intellij.gradle"/>
     <plugin id="JUnit"/>
   </dependencies>
 

@@ -1,0 +1,18 @@
+<idea-plugin>
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="jvm-core"/>
+
+    <plugin id="org.intellij.scala"/>
+    <module name="scalaCommunity.testing-support"/>
+    <plugin id="com.intellij.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" environment="Gradle"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.sbt.ScalaSbtConfigurator" environment="sbt"/>
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaGradleConfigurator" courseType="Stepik"/>
+    <mainFileProvider language="Scala" implementationClass="com.jetbrains.edu.scala.gradle.ScalaMainFileProvider"/>
+  </extensions>
+</idea-plugin>

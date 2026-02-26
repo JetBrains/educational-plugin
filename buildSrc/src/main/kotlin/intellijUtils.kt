@@ -78,7 +78,7 @@ val Project.intellijTestFrameworkType: TestFrameworkType
 val Project.jvmPlugins: List<String> get() = listOf(
   javaPlugin,
   "JUnit",
-  "org.jetbrains.plugins.gradle"
+  "com.intellij.gradle",
 )
 
 val Project.javaScriptPlugins: List<String> get() = listOf(
