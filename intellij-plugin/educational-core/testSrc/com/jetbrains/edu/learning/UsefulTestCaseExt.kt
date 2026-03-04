@@ -11,13 +11,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.replaceService
+import com.intellij.util.application
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
+import com.jetbrains.edu.learning.marketplace.api.SubmissionsService
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.justRun
 import io.mockk.spyk
+import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
 
 // It's intentionally made as an extension property of `UsefulTestCase` to reduce the probability of incorrect usage
@@ -83,3 +89,14 @@ fun UsefulTestCase.runAndWaitForNotification(project: Project, action: () -> Uni
   return shownNotification.get()
 }
 
+/**
+ * Prevents [MarketplaceSubmissionsConnector] from calling real URLs.
+ *
+ * Sometimes code in tests unintentionally fires events that result in posting submissions or calling other endpoints of [SubmissionsService].
+ */
+fun UsefulTestCase.mockSubmissionsConnector() {
+  val connector = mockService<MarketplaceSubmissionsConnector>(application, testRootDisposable)
+
+  every { connector.postSubmission(any(), any(), any()) } returns null
+  // other methods could be added if they are called in tests
+}

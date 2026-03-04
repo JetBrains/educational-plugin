@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
+import com.jetbrains.edu.learning.mockSubmissionsConnector
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
@@ -13,6 +14,11 @@ class LTICheckerTests : EduTestCase() {
 
   private val mockLTIConnector: MockLTIConnector
     get() = LTIConnector.getInstance() as MockLTIConnector
+
+  override fun setUp() {
+    super.setUp()
+    mockSubmissionsConnector()
+  }
 
   private var ltiSettings
     get() = LTISettingsManager.getInstance(project).settings ?: LTISettingsDTO(

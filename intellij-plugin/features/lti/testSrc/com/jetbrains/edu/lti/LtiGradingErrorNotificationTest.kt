@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.mockService
+import com.jetbrains.edu.learning.mockSubmissionsConnector
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.testAction
@@ -17,6 +18,10 @@ import io.mockk.*
 import org.junit.Test
 
 class LtiGradingErrorNotificationTest : EduActionTestCase() {
+  override fun setUp() {
+    super.setUp()
+    mockSubmissionsConnector()
+  }
 
   // successful posting
 

@@ -7,11 +7,17 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.mockSubmissionsConnector
 import com.jetbrains.edu.socialMedia.SocialMediaPostActionTestBase
 import io.mockk.verify
 import org.junit.Test
 
 class MarketplacePostToSocialMediaTest : SocialMediaPostActionTestBase() {
+
+  override fun setUp() {
+    super.setUp()
+    mockSubmissionsConnector()
+  }
 
   @Test
   fun `test post to social media after last task solved`() {
