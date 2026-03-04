@@ -37,6 +37,8 @@ class MarketplaceCheckListener : CheckListener, EduTestAware {
       PostMarketplaceProjectToGitHub.promptToPostProject(project)
       SolutionSharingInlineBanners.promptToEnableSolutionSharing(project, task)
     }
+
+    futureTracker.waitForPendingFuturesInTests()
   }
 
   /**

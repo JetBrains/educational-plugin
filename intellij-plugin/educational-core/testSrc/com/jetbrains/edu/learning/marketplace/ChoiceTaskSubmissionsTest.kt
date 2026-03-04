@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.testFramework.PlatformTestUtil.waitWhileBusy
 import com.intellij.util.application
+import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
@@ -45,7 +46,11 @@ class ChoiceTaskSubmissionsTest : SubmissionsTestBase() {
 
     every {
       connector["doPostSubmission"](1, 1, capture(slot))
-    } answers { Result.success(slot.captured) }
+    } answers { Ok(slot.captured) }
+
+    every {
+      connector.getSharedSubmissionsForTask(any(), any())
+    } returns null
   }
 
   @Test

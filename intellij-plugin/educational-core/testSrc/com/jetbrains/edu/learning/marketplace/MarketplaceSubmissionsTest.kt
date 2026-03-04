@@ -324,6 +324,13 @@ class MarketplaceSubmissionsTest : SubmissionsTestBase() {
       }
       every { reportSolutionCall.execute() } returns reportCommunityResponse
 
+      every { service.getAllPublicSubmissionsForCourse(any(), any(), any()) } answers {
+        mockk<Call<MarketplaceSubmissionsList>> {
+          val submissionsList = MarketplaceSubmissionsList().apply { submissions = emptyList() }
+          every { execute() } returns Response.success(submissionsList)
+        }
+      }
+
       if (solutionsKeyTextMap.isNotEmpty()) {
         mockkObject(MarketplaceSubmissionsConnector)
 
