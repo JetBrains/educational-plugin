@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduTestAware
+import com.jetbrains.edu.learning.FutureTracker
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -15,9 +17,12 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
+import com.jetbrains.edu.learning.tracked
 import java.util.concurrent.CompletableFuture
 
-class MarketplaceCheckListener : CheckListener {
+class MarketplaceCheckListener : CheckListener, EduTestAware {
+
+  private val futureTracker: FutureTracker = FutureTracker()
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
     val course = task.lesson.course as? EduCourse ?: return
@@ -54,7 +59,7 @@ class MarketplaceCheckListener : CheckListener {
           showSubmissionNotPostedNotification(project, this, task.name)
         }
       }
-    }
+    }.tracked(futureTracker)
   }
 
   private fun SubmissionsManager.loadCommunitySubmissions(task: Task, result: CheckResult) {
@@ -62,6 +67,6 @@ class MarketplaceCheckListener : CheckListener {
 
     CompletableFuture.runAsync({
       loadCommunitySubmissions(task)
-    }, ProcessIOExecutorService.INSTANCE)
+    }, ProcessIOExecutorService.INSTANCE).tracked(futureTracker)
   }
 }
