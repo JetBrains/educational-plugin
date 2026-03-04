@@ -6,6 +6,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.EduTestAware
+import com.jetbrains.edu.learning.FutureTracker
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -20,7 +21,9 @@ import com.jetbrains.edu.learning.submissions.provider.CommunitySubmissionsProvi
 import com.jetbrains.edu.learning.submissions.provider.SubmissionsProvider
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
+import com.jetbrains.edu.learning.tracked
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
@@ -42,6 +45,9 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
 
   var course: Course? = project.course
     @TestOnly set
+
+  @VisibleForTesting
+  val futureTracker = FutureTracker()
 
   fun getSubmissionsFromMemory(taskIds: Set<Int>): List<Submission> {
     return taskIds.mapNotNull { submissions[it] }.flatten().sortedByDescending { it.time }
@@ -118,7 +124,7 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
       val loadedSubmissions = submissionsProvider.loadSubmissions(listOf(task), course.id)
       submissions.putAll(loadedSubmissions)
       notifySubmissionsChanged()
-      return loadedSubmissions[task.id] ?: emptyList()
+      loadedSubmissions[task.id] ?: emptyList()
     }
   }
 
@@ -174,7 +180,7 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
       communitySubmissionsProvider?.loadCommunityContent(course)
 
       notifySubmissionsChanged()
-    }, ProcessIOExecutorService.INSTANCE)
+    }, ProcessIOExecutorService.INSTANCE).tracked(futureTracker)
   }
 
   fun removeCommunitySubmission(taskId: Int, submissionId: Int) {
@@ -201,7 +207,7 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
       val (sharedSubmissions, hasMore) = result
       communitySubmissions[taskId] = TaskCommunitySubmissions(sharedSubmissions.toMutableList(), hasMore)
       notifySubmissionsChanged()
-    }
+    }.tracked(futureTracker)
   }
 
   fun loadMoreCommunitySubmissions(task: Task, latest: Int, oldest: Int) {
@@ -228,12 +234,12 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
         communitySubmissions[taskId] = result
       }
       notifySubmissionsChanged()
-    }
+    }.tracked(futureTracker)
   }
 
   private fun SubmissionsProvider.isLoggedInAsync(): CompletableFuture<Boolean> = CompletableFuture.supplyAsync({
     isLoggedIn()
-  }, ProcessIOExecutorService.INSTANCE)
+  }, ProcessIOExecutorService.INSTANCE).tracked(futureTracker)
 
   private fun TaskToolWindowView.updateSubmissionsTab() {
     project.invokeLater {
@@ -250,7 +256,7 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
 
   private fun getPlatformName(): String = course?.getSubmissionsProvider()?.getPlatformName() ?: error("Failed to get platform Name")
 
-  fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize(Runnable { prepareSubmissionsContentWhenLoggedIn() })
+  fun doAuthorize() = course?.getSubmissionsProvider()?.doAuthorize( { prepareSubmissionsContentWhenLoggedIn() } )
 
   private fun loadSubmissionsContent(course: Course, submissionsProvider: SubmissionsProvider, loadSolutions: () -> Unit) {
     submissions.putAll(submissionsProvider.loadAllSubmissions(course))
@@ -272,12 +278,9 @@ class SubmissionsManager(private val project: Project) : EduTestAware {
     return communitySubmissions[taskId]?.hasMore ?: false
   }
 
-  fun getLastSubmission(): Submission? {
-    return submissions.values.flatten().sortedByDescending { it.time }.firstOrNull()
-  }
-
   @TestOnly
   override fun cleanUpState() {
+    futureTracker.waitForPendingFuturesInTests()
     submissions.clear()
   }
 
