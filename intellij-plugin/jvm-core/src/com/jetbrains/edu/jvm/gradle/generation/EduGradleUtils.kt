@@ -3,6 +3,7 @@ package com.jetbrains.edu.jvm.gradle.generation
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_INTERNAL_JAVA
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
@@ -11,15 +12,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.util.lang.JavaVersion
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.GRADLE_WRAPPER_PROPERTIES_PATH
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
+import com.jetbrains.edu.jvm.lookupJdkByPath
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
@@ -28,13 +32,26 @@ import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createFromInternalTemplateOrFromDisk
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.gradle.util.GradleVersion
+import org.jetbrains.annotations.VisibleForTesting
+import org.jetbrains.plugins.gradle.jvmcompat.GradleJvmSupportMatrix
+import org.jetbrains.plugins.gradle.service.GradleInstallationManager
+import org.jetbrains.plugins.gradle.service.execution.GradleDaemonJvmCriteria
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.gradle.util.GradleUtil
+import org.jetbrains.plugins.gradle.util.toJvmCriteria
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 
 object EduGradleUtils {
+
+  private val LOG = thisLogger()
+
   fun isConfiguredWithGradle(project: Project): Boolean {
     return hasDefaultGradleScriptFile(project) || hasDefaultGradleKtsScriptFile(project)
   }
@@ -49,7 +66,7 @@ object EduGradleUtils {
 
   fun hasCourseHaveGradleKtsFiles(course: Course): Boolean =
     course.getAdditionalFile(GradleConstants.KOTLIN_DSL_SCRIPT_NAME) != null &&
-      course.getAdditionalFile(GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) != null
+    course.getAdditionalFile(GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME) != null
 
   @Throws(IOException::class)
   fun createProjectGradleFiles(
@@ -88,22 +105,128 @@ object EduGradleUtils {
     systemSettings.linkedProjectsSettings = projects
   }
 
-  private fun setUpGradleJvm(project: Project, projectSettings: GradleProjectSettings, sdk: Sdk?) {
+  @VisibleForTesting
+  fun setUpGradleJvm(project: Project, projectSettings: GradleProjectSettings, sdk: Sdk?) {
     if (sdk == null) return
-    val projectSdkVersion = sdk.javaSdkVersion
-    val internalSdkVersion = computeUnderProgress(project, EduJVMBundle.message("progress.resolving.suitable.jdk"), false) {
-      ExternalSystemJdkUtil.resolveJdkName(null as Sdk?, USE_INTERNAL_JAVA)
-    }?.javaSdkVersion
 
-    // Try to avoid incompatibility between Gradle and JDK versions
-    projectSettings.gradleJvm = when {
-      internalSdkVersion == null -> USE_PROJECT_JDK
-      projectSdkVersion == null -> USE_INTERNAL_JAVA
-      else -> if (internalSdkVersion < projectSdkVersion) USE_INTERNAL_JAVA else USE_PROJECT_JDK
+    val gradleVersion = detectGradleVersion(projectSettings)
+
+    val internalJavaVersion = runWithModalProgressBlocking(project, EduJVMBundle.message("progress.resolving.suitable.jdk")) {
+      ExternalSystemJdkUtil.resolveJdkName(null as Sdk?, USE_INTERNAL_JAVA)
+    }?.javaVersion
+
+    val projectJavaVersion = sdk.javaVersion
+
+    val projectSupported = isGradleCompatible(gradleVersion, projectJavaVersion)
+    val internalSupported = isGradleCompatible(gradleVersion, internalJavaVersion)
+
+    val useGradleJdk = when {
+      projectSupported -> {
+        LOG.info("Project JDK is compatible with gradle $gradleVersion. Will be used")
+        USE_PROJECT_JDK
+      }
+      internalSupported -> {
+        LOG.info("Internal JDK is compatible with gradle $gradleVersion. Will be used")
+        USE_INTERNAL_JAVA
+      }
+      else -> {
+        // Use available compatible JDK if there is one, otherwise download a compatible JDK
+        val availableCompatibleJdkName = findAvailableCompatibleGradleJdkName(project, gradleVersion)
+        if (availableCompatibleJdkName != null) {
+          LOG.info("Found compatible JDK $availableCompatibleJdkName for gradle $gradleVersion. Will use it.")
+          availableCompatibleJdkName
+        }
+        else {
+          downloadLatestGradleCompatibleJDK(project, gradleVersion)
+        }
+      }
+    }
+
+    if (useGradleJdk != null) {
+      projectSettings.gradleJvm = useGradleJdk
     }
   }
 
   private val Sdk.javaSdkVersion: JavaSdkVersion? get() = JavaSdk.getInstance().getVersion(this)
+  private val Sdk.javaVersion: JavaVersion? get() = javaSdkVersion?.maxLanguageLevel?.toJavaVersion()
+
+  private fun isGradleCompatible(gradleVersion: GradleVersion, javaVersion: JavaVersion?): Boolean {
+    return javaVersion != null && GradleJvmSupportMatrix.isSupported(gradleVersion, javaVersion)
+  }
+
+  private fun findAvailableCompatibleGradleJdkName(project: Project, gradleVersion: GradleVersion): String? {
+    val (existingCompatibleJdkHomePath, _) =
+      JavaSdk.getInstance().collectSdkEntries(project)
+        .asSequence()
+        .mapNotNull { e ->
+          val javaVersion = JavaVersion.tryParse(e.versionString) ?: return@mapNotNull null
+          e.homePath() to javaVersion
+        }
+        .filter { (homePath, javaVersion) ->
+          ExternalSystemJdkUtil.isValidJdk(homePath) && isGradleCompatible(gradleVersion, javaVersion)
+        }
+        .maxByOrNull { (_, javaVersion) -> javaVersion } ?: return null
+
+    val existingCompatibleJdk = lookupJdkByPath(project, existingCompatibleJdkHomePath)
+
+    return existingCompatibleJdk.name
+  }
+
+  private fun downloadLatestGradleCompatibleJDK(
+    project: Project,
+    gradleVersion: GradleVersion
+  ): String? {
+    val supportedJavaVersion = GradleJvmSupportMatrix.suggestLatestSupportedJavaVersion(gradleVersion)
+
+    if (supportedJavaVersion == null) {
+      LOG.warn("Failed to determine compatible JDK for gradle $gradleVersion")
+      return null
+    }
+
+    val criteria = GradleDaemonJvmCriteria(supportedJavaVersion.feature.toString(), null)
+
+    return runWithModalProgressBlocking(project, EduJVMBundle.message("progress.resolving.suitable.gradle.jdk")) {
+      withContext(Dispatchers.IO) {
+        findAndDownloadGradleJVM(project, criteria, gradleVersion)
+      }
+    }
+  }
+
+  private suspend fun findAndDownloadGradleJVM(
+    project: Project,
+    criteria: GradleDaemonJvmCriteria,
+    gradleVersion: GradleVersion
+  ): String? {
+    val jdkItemAndHome = JdkDownloadUtil.pickJdkItemAndPath(project) { jdkItem ->
+      jdkItem.toJvmCriteria().matches(criteria)
+    }
+
+    if (jdkItemAndHome == null) {
+      LOG.warn("Failed to find a compatible downloadable JDK for gradle $gradleVersion")
+      return null
+    }
+    val (jdkItem, jdkHome) = jdkItemAndHome
+
+    LOG.info("Found JDK $jdkItem for gradle $gradleVersion. Will be downloaded")
+
+    val downloadTask = JdkDownloadUtil.createDownloadTask(project, jdkItem, jdkHome)
+
+    if (downloadTask == null) {
+      LOG.warn("Failed to create download task for JDK $jdkItem. Need JDK for gradle $gradleVersion.")
+      return null
+    }
+
+    val sdk = JdkDownloadUtil.createDownloadSdk(ExternalSystemJdkUtil.getJavaSdkType(), downloadTask)
+
+    return if (JdkDownloadUtil.downloadSdk(sdk)) {
+      LOG.info("Successfully downloaded JDK $jdkItem for gradle $gradleVersion. Name: ${sdk.name}")
+      sdk.name
+    }
+    else {
+      LOG.warn("Failed to download SDK $jdkItem. Need JDK for gradle $gradleVersion.")
+      null
+    }
+  }
 
   fun updateGradleSettings(project: Project) {
     val projectBasePath = project.basePath ?: error("Failed to find base path for the project during gradle project setup")
@@ -147,5 +270,39 @@ object EduGradleUtils {
       }
     }
     YamlFormatSynchronizer.saveItem(course)
+  }
+
+  private fun detectGradleVersion(projectSettings: GradleProjectSettings): GradleVersion {
+    val guessedVersion = GradleInstallationManager.guessGradleVersion(projectSettings)
+
+    if (guessedVersion != null) {
+      LOG.info("Guessed Gradle version to be: $guessedVersion")
+      return guessedVersion
+    }
+
+    // If the project has DistributionType.WRAPPED, the `guessGradleVersion` always returns null.
+    // So we should manually guess the version by inspecting the wrapper properties file.
+    val versionFromGradleWrapperProperties = findVersionInsideGradleWrapperProperties(projectSettings)
+
+    if (versionFromGradleWrapperProperties != null) {
+      LOG.info("Found Gradle version in gradle-wrapper.properties: $versionFromGradleWrapperProperties")
+      return versionFromGradleWrapperProperties
+    }
+
+    val currentGradleVersion = GradleVersion.current()
+
+    LOG.warn("Failed to determine gradle version. Will use the current version $currentGradleVersion")
+
+    return currentGradleVersion
+  }
+
+  private fun findVersionInsideGradleWrapperProperties(projectSettings: GradleProjectSettings): GradleVersion? {
+    // This code repeats org.jetbrains.plugins.gradle.service.execution.LocalBuildLayoutParameters.guessGradleVersion.
+    // with the mode = DistributionType.DEFAULT_WRAPPED
+
+    val projectPath = Path.of(projectSettings.externalProjectPath)
+    val wrapperConfiguration = GradleUtil.getWrapperConfiguration(projectPath)
+    val gradleWrapperProperties = wrapperConfiguration?.distribution?.rawPath ?: return null
+    return GradleInstallationManager.parseDistributionVersion(gradleWrapperProperties)
   }
 }
