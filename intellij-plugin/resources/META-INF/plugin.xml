@@ -46,5 +46,6 @@
     <module name="ide-onboarding"/>
     <module name="social-media"/>
     <module name="lti"/>
+    <module name="full-line"/>
   </content>
 </idea-plugin>

@@ -68,7 +68,7 @@ class RemoteCourseBuilder(
   courseraSubmitManually,
   areSolutionsHidden,
   yamlContentTags,
-  pathToContent = customContentPath,
+  pathToContent = customContentPath
 ) {
 
   override fun makeCourse(): Course {

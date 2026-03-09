@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.EduTestAware
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
@@ -26,6 +27,8 @@ class YamlLoadingErrorManager : EduTestAware {
   }
 
   class Listener(private val project: Project) : YamlListener {
+    override fun itemDeserialized(item: StudyItem) {}
+
     override fun beforeYamlLoad(configFile: VirtualFile) {
       getInstance(project).errors.remove(configFile.url)
       EditorNotifications.getInstance(project).updateNotifications(configFile)

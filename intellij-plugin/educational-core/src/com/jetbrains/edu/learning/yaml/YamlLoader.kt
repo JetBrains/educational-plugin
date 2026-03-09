@@ -62,7 +62,11 @@ object YamlLoader {
       // this code is called if item wasn't loaded because of broken config
       // and now if config fixed, we'll add item to a parent
       if (deserializedItem is Course) {
-        StudyTaskManager.getInstance(project).course = YamlDeepLoader.loadCourse(project)
+        val course = YamlDeepLoader.loadCourse(project)
+        if (course != null) {
+          StudyTaskManager.getInstance(project).course = course
+          project.messageBus.syncPublisher(YAML_LOAD_TOPIC).itemDeserialized(course)
+        }
         return
       }
 
@@ -76,6 +80,7 @@ object YamlLoader {
           deserializedItem.persistEduFiles(project)
         }
         parentItem.addItemAsNew(project, deserializedItem)
+        project.messageBus.syncPublisher(YAML_LOAD_TOPIC).itemDeserialized(deserializedItem)
         reopenEditors(project)
         // new item is added at the end, so we should save parent item to update items order in config file
         saveItem(parentItem)
@@ -87,6 +92,7 @@ object YamlLoader {
     if (existingItem is Task) {
       existingItem.persistEduFiles(project)
     }
+    project.messageBus.syncPublisher(YAML_LOAD_TOPIC).itemDeserialized(existingItem)
   }
 
   inline fun <reified T : StudyItem> StudyItem.deserializeContent(

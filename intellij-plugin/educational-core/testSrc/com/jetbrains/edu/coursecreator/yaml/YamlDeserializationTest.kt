@@ -1072,7 +1072,7 @@ class YamlDeserializationTest : YamlTestCase() {
   }
 
   @Test
-  fun `test disabled features`() {
+  fun `test disabled features - ai hints`() {
     val yamlContent = """
       |title: Test Course
       |language: English
@@ -1083,6 +1083,20 @@ class YamlDeserializationTest : YamlTestCase() {
       |""".trimMargin()
     val course = basicMapper().deserializeCourse(yamlContent)
     assertContains(course.disabledFeatures, "ai-hints")
+  }
+
+  @Test
+  fun `test disabled features - ai completion`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |disabled_features:
+      |- ai-completion
+      |""".trimMargin()
+    val course = basicMapper().deserializeCourse(yamlContent)
+    assertContains(course.disabledFeatures, "ai-completion")
   }
 
   @Test

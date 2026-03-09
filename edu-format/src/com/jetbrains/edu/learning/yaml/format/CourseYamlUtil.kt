@@ -80,7 +80,8 @@ import java.util.*
   TAGS,
   ENVIRONMENT_SETTINGS,
   ADDITIONAL_FILES,
-  CUSTOM_CONTENT_PATH
+  CUSTOM_CONTENT_PATH,
+  DISABLED_FEATURES
   // YAML_VERSION is appended to the end with the @JsonAppend annotation
 )
 @JsonDeserialize(builder = CourseBuilder::class)

@@ -1,0 +1,16 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+    <plugin id="org.jetbrains.completion.full.line"/>
+    <module name="intellij.fullLine.core.completion"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.learning.fullLine.FullLineProjectActivity"/>
+  </extensions>
+
+  <projectListeners>
+    <listener class="com.jetbrains.edu.learning.fullLine.FullLineCourseYamlListener"
+              topic="com.jetbrains.edu.learning.yaml.YamlListener"/>
+  </projectListeners>
+</idea-plugin>
