@@ -61,7 +61,7 @@ object EduGradleUtils {
       createFromInternalTemplateOrFromDisk(holder.courseDir, name, templateName, templateVariables)
     }
 
-  fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
+  fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.DEFAULT_WRAPPED) {
     val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location)
     if (existingProject is GradleProjectSettings) {
