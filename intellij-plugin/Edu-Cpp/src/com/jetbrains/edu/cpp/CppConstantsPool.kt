@@ -48,7 +48,7 @@ val CMAKE_MINIMUM_REQUIRED_LINE_VALUE: String by lazy {
 }
 
 private fun makeCmakeExecutable() {
-  val cmakeFile = CMakeExecutableTool.getBundledCMakeToolBinary(false, CMakeExecutableTool.ToolKind.CMAKE)
+  val cmakeFile = getBundledCMakeToolBinary()
   if (cmakeFile.exists() && !cmakeFile.canExecute()) {
     cmakeFile.setExecutable(true)
   }
