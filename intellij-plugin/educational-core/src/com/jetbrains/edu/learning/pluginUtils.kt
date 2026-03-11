@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning
 
 import com.intellij.externalDependencies.DependencyOnPlugin
 import com.intellij.externalDependencies.ExternalDependenciesManager
+import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginEnabler
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
@@ -63,6 +64,21 @@ fun enablePlugins(pluginsId: List<PluginId>) {
   @Suppress("UnstableApiUsage")
   PluginEnabler.HEADLESS.enable(descriptors)
   restartIDE(EduCoreBundle.message("required.plugin.were.enabled"))
+}
+
+/**
+ * Finds the JetBrains Academy plugin descriptor, handling the difference between test and production plugin IDs.
+ *
+ * In unit tests, the plugin uses a slightly different ID in `plugin.xml`, so a prefix-based search
+ * over loaded plugins is used instead of a direct ID lookup.
+ */
+fun findJetBrainsAcademyPlugin(): IdeaPluginDescriptor? {
+  return if (ApplicationManager.getApplication().isUnitTestMode) {
+    PluginManagerCore.loadedPlugins.singleOrNull { it.pluginId.idString.startsWith(EduNames.PLUGIN_ID) }
+  }
+  else {
+    PluginManagerCore.getPlugin(PluginId.getId(EduNames.PLUGIN_ID))
+  }
 }
 
 val TIME_LOGGER = Logger.getInstance("JetBrainsAcademy.performance.measure")

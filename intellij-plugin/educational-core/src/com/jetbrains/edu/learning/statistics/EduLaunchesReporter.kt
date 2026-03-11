@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.statistics
 
-import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.JetBrainsPermanentInstallationID
@@ -8,12 +7,12 @@ import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.HttpRequests
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.findJetBrainsAcademyPlugin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import java.net.URLEncoder
@@ -23,7 +22,12 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @Service(Service.Level.APP)
-class EduLaunchesReporter(private val scope: CoroutineScope) {
+class EduLaunchesReporter @JvmOverloads constructor(
+  private val scope: CoroutineScope,
+  private val baseUrl: String = BASE_URL,
+  private val sendStatsInTests: Boolean = false,
+  private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
 
   /**
    * Tracks if we are currently trying to make the necessary request.
@@ -32,7 +36,7 @@ class EduLaunchesReporter(private val scope: CoroutineScope) {
   private val inProgressLock = Mutex()
 
   fun sendStats(course: Course) {
-    if (ApplicationManager.getApplication().isUnitTestMode) {
+    if (!sendStatsInTests && ApplicationManager.getApplication().isUnitTestMode) {
       return
     }
 
@@ -49,7 +53,7 @@ class EduLaunchesReporter(private val scope: CoroutineScope) {
       if (inProgressLock.tryLock()) {
         try {
           val requestSuccessful = withRetry {
-            withContext(Dispatchers.IO) {
+            withContext(ioDispatcher) {
               makeRequest(url)
             }
           }
@@ -108,12 +112,11 @@ class EduLaunchesReporter(private val scope: CoroutineScope) {
   private fun getUpdateUrl(course: Course): String {
     val applicationInfo = ApplicationInfoEx.getInstanceEx()
     val buildNumber = applicationInfo.build.asString()
-    val plugin = PluginManagerCore.getPlugin(PluginId.getId(PLUGIN_ID))!!
+    val plugin = findJetBrainsAcademyPlugin()!!
     val pluginId = plugin.pluginId.idString
     @Suppress("UsagesOfObsoleteApi")
     val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8)
     val uid = JetBrainsPermanentInstallationID.get()
-    val baseUrl = "https://plugins.jetbrains.com/plugins/list"
     val projectType = course.itemType
     val role = if (course.isStudy) "student" else "teacher"
     val id = if (course.id != 0) "&courseId=${course.id}" else ""
@@ -121,11 +124,11 @@ class EduLaunchesReporter(private val scope: CoroutineScope) {
   }
 
   companion object {
-    private const val LAST_UPDATE: String = "com.jetbrains.edu.LAST_UPDATE"
-    private const val PLUGIN_ID: String = "com.jetbrains.edu"
+    private const val BASE_URL = "https://plugins.jetbrains.com/plugins/list"
+    internal const val LAST_UPDATE: String = "com.jetbrains.edu.LAST_UPDATE"
 
     // The maximum number of requests is 6 (initial attempt + 5 retries)
-    private const val MAX_RETRY_ATTEMPTS = 5
+    internal const val MAX_RETRY_ATTEMPTS = 5
     private val BASE_DELAY = 2.seconds
 
     private val LOG = logger<EduLaunchesReporter>()

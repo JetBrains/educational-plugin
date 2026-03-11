@@ -77,9 +77,7 @@ dependencies {
   testImplementation(libs.findLibrary("kotlin.test.junit").get())
   testImplementation(libs.findLibrary("mockwebserver").get())
   testImplementation(libs.findLibrary("mockk").get())
-  if (isAtLeast261) {
-    testImplementation(libs.findLibrary("hamcrest").get())
-  }
+  testImplementation(libs.findLibrary("hamcrest").get())
 }
 
 tasks {

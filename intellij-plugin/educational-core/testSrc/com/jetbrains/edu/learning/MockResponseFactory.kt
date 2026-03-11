@@ -28,4 +28,5 @@ object MockResponseFactory {
   fun ok(): MockResponse = MockResponse().setResponseCode(HTTP_OK)
   fun badRequest(): MockResponse = MockResponse().setResponseCode(HTTP_BAD_REQUEST)
   fun notFound(): MockResponse = MockResponse().setResponseCode(HTTP_NOT_FOUND)
+  fun internalError(): MockResponse = MockResponse().setResponseCode(HTTP_INTERNAL_ERROR)
 }
