@@ -1,13 +1,17 @@
 package com.jetbrains.edu.jvm
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
+import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
@@ -15,14 +19,18 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.application.writeAction
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.computeUnderProgress
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.runInBackground
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
 import java.io.File
@@ -69,6 +77,9 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     if (jdkComboBox.selectedJdk != null) return
     runInBackground(course.project, EduJVMBundle.message("progress.setting.suitable.jdk"), false) {
       val suitableJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
+      if (suitableJdk == null) {
+        LOG.warn("Failed to find suitable JDK for course ${course.name}")
+      }
       invokeLater(ModalityState.any()) {
         jdkComboBox.selectedJdk = suitableJdk
       }
@@ -128,6 +139,8 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
 
   companion object {
+    private val LOG = logger<JdkLanguageSettings>()
+
     fun findBundledJdk(model: ProjectSdksModel): BundledJdkInfo? {
       val bundledJdkPath = PathManager.getBundledRuntimePath()
       // It's possible IDE doesn't have bundled jdk.
@@ -141,21 +154,63 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     fun findSuitableJdk(courseSdkVersion: ParsedJavaVersion, sdkModel: ProjectSdksModel): Sdk? {
       val jdks = sdkModel.sdks.filter { it.sdkType == JavaSdk.getInstance() }
 
-      if (courseSdkVersion !is JavaVersionParseSuccess) {
-        return jdks.firstOrNull()
+      val existingSdk = jdks.find {
+        val jdkVersion = ParsedJavaVersion.fromJavaSdkVersionString(it.versionString)
+
+        when {
+          // if the course does not specify the version, all SDKs fit
+          courseSdkVersion !is JavaVersionParseSuccess -> true
+          // if the SDK doesn't specify the version, it does not fit
+          jdkVersion !is JavaVersionParseSuccess -> false
+          // otherwise, the version of the SDK must be at least the version required by the course
+          else -> jdkVersion isAtLeast courseSdkVersion
+        }
       }
 
-      return jdks.find {
-        val jdkVersion = ParsedJavaVersion.fromJavaSdkVersionString(it.versionString)
-        if (jdkVersion is JavaVersionParseSuccess) {
-          jdkVersion isAtLeast courseSdkVersion
+      if (existingSdk != null) return existingSdk
+
+      val requiredJDKFeature = (courseSdkVersion as? JavaVersionParseSuccess)?.javaSdkVersion?.maxLanguageLevel?.feature()
+
+      return try {
+        computeUnderProgress(project = null, "Installing tools", canBeCancelled = false) {
+          runBlockingCancellable {
+            createDownloadableSdk(requiredJDKFeature, sdkModel)
+          }
         }
-        else {
-          false
-        }
+      }
+      catch (th: Throwable) {
+        LOG.error("Failed to create auto-downloadable JDK", th)
+        null
       }
     }
-  }
 
-  data class BundledJdkInfo(val path: String, val existingSdk: Sdk?)
+    private suspend fun createDownloadableSdk(
+      feature: Int?,
+      sdkModel: ProjectSdksModel
+    ): Sdk? {
+      val project = ProjectManager.getInstance().defaultProject
+
+      val (jdkItem, jdkHome) = JdkDownloadUtil.pickJdkItemAndPath(project) { item ->
+        feature == null || item.jdkMajorVersion == feature
+      } ?: return null
+
+      val task = JdkDownloadUtil.createDownloadTask(project, jdkItem, jdkHome) ?: error("Failed to create download task")
+
+      val sdk = try {
+        withContext(Dispatchers.EDT) {
+          writeAction {
+            sdkModel.createIncompleteSdk(JavaSdk.getInstance(), task, null)
+          }
+        }
+      }
+      catch (th: Throwable) {
+        LOG.error("Failed to create auto-downloadable JDK", th)
+        throw th
+      }
+
+      return sdk
+    }
+
+    data class BundledJdkInfo(val path: String, val existingSdk: Sdk?)
+  }
 }

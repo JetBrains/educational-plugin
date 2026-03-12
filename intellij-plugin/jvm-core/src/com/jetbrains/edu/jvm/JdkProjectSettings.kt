@@ -3,6 +3,7 @@ package com.jetbrains.edu.jvm
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -11,16 +12,19 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.DefaultSettingsUtils.propertyValue
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
+import kotlin.coroutines.cancellation.CancellationException
 
 open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {
 
@@ -30,6 +34,8 @@ open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduP
     getJdk: JdkProjectSettings.() -> Sdk? = { jdk }
   ): Sdk? {
     val jdk = getJdk()
+
+    jdk?.downloadIfNeeded()
 
     // Try to apply model, i.e. commit changes from sdk model into ProjectJdkTable
     try {
@@ -56,6 +62,22 @@ open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduP
       commitChanges()
     }
   }
+
+  private fun Sdk.downloadIfNeeded() {
+    try {
+      runBlockingCancellable {
+        // Downloads SDK only if it was prepared for download, and doesn't take any action otherwise
+        JdkDownloadUtil.downloadSdk(this@downloadIfNeeded)
+      }
+    }
+    catch (_ : CancellationException) {
+      // do nothing
+    }
+    catch (th: Throwable) {
+      LOG.warn("Failed to download JDK", th)
+    }
+  }
+
 
   companion object {
 
