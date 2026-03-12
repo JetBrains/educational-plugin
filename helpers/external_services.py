@@ -6,7 +6,7 @@ from urllib.parse import quote, urlencode
 
 
 def commit_changes_to_educational_plugin(space_token: str, branch_name: str, commit_massage: str, changes: List[Dict]):
-    branch = branch_name if branch_name.startswith("refs/heads/") else f"refs/heads/{branch_name}"
+    branch = normalize_branch_name(branch_name)
 
     data = {
         "baseCommit": "master",
@@ -19,6 +19,17 @@ def commit_changes_to_educational_plugin(space_token: str, branch_name: str, com
     if not response["success"]:
         raise Exception(response["message"])
 
+def create_branch(space_token: str, branch_name: str):
+    branch = normalize_branch_name(branch_name)
+
+    data = {
+        "head": branch,
+        "target": "master"
+    }
+
+    # When request is successful endpoint returns nothing
+    make_request("https://jetbrains.team/api/http/projects/key:EDU/repositories/educational-plugin/head",
+                            space_token, method="POST", data=data)
 
 def create_review_in_educational_plugin(space_token: str, source_branch: str, title: str, review_username: str):
     data = {
@@ -34,12 +45,17 @@ def create_review_in_educational_plugin(space_token: str, source_branch: str, ti
     make_request(f"https://jetbrains.team/api/http/projects/key:EDU/code-reviews/number:{review_number}/participants/username:{review_username}",
                  space_token, method="POST", data={"role": "Reviewer"})
 
-
 def has_branch(space_token: str, branch_name: str) -> bool:
-    encoded_branch = quote(f"refs/heads/{branch_name}")
+    branch = normalize_branch_name(branch_name)
+
+    encoded_branch = quote(branch)
     url = f"https://jetbrains.team/api/http/projects/key:EDU/repositories/educational-plugin/heads?pattern={encoded_branch}"
     response = make_request(url, space_token, method="GET", data=None)
     return len(response["data"]) != 0
+
+def normalize_branch_name(branch_name) -> str:
+    branch = branch_name if branch_name.startswith("refs/heads/") else f"refs/heads/{branch_name}"
+    return branch
 
 
 def get_youtrack_issues(youtrack_token: str, tag: str, text_query: str) -> List[Dict]:
