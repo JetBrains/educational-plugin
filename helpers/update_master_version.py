@@ -19,7 +19,7 @@ from external_services import commit_changes_to_educational_plugin
        is optional and defaults to "Updated pluginVersion".
    """
 
-PLUGIN_VERSION_PATTERN = r"^\s*pluginVersion\s*=\s*(.*)"
+PLUGIN_VERSION_PATTERN = r"^(\s*pluginVersion\s*=\s*).*$"
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Update pluginVersion in gradle.properties and commit to Space")
