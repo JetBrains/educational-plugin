@@ -118,26 +118,30 @@ object EduGradleUtils {
     val projectSupported = isGradleCompatible(gradleVersion, projectJavaVersion)
     val internalSupported = isGradleCompatible(gradleVersion, internalJavaVersion)
 
-    when {
+    val useGradleJdk = when {
       projectSupported -> {
         LOG.info("Project JDK is compatible with gradle $gradleVersion. Will be used")
-        setGradleJvmSetting(projectSettings, USE_PROJECT_JDK)
+        USE_PROJECT_JDK
       }
       internalSupported -> {
         LOG.info("Internal JDK is compatible with gradle $gradleVersion. Will be used")
-        setGradleJvmSetting(projectSettings, USE_INTERNAL_JAVA)
+        USE_INTERNAL_JAVA
       }
       else -> {
         // Use available compatible JDK if there is one, otherwise download a compatible JDK
         val availableCompatibleJdkName = findAvailableCompatibleGradleJdkName(project, gradleVersion)
         if (availableCompatibleJdkName != null) {
           LOG.info("Found compatible JDK $availableCompatibleJdkName for gradle $gradleVersion. Will use it.")
-          setGradleJvmSetting(projectSettings, availableCompatibleJdkName)
+          availableCompatibleJdkName
         }
         else {
-          downloadLatestGradleCompatibleJDK(project, projectSettings, gradleVersion)
+          downloadLatestGradleCompatibleJDK(project, gradleVersion)
         }
       }
+    }
+
+    if (useGradleJdk != null) {
+      projectSettings.gradleJvm = useGradleJdk
     }
   }
 
@@ -146,10 +150,6 @@ object EduGradleUtils {
 
   private fun isGradleCompatible(gradleVersion: GradleVersion, javaVersion: JavaVersion?): Boolean {
     return javaVersion != null && GradleJvmSupportMatrix.isSupported(gradleVersion, javaVersion)
-  }
-
-  private fun setGradleJvmSetting(projectSettings: GradleProjectSettings, gradleJvm: String) {
-    projectSettings.gradleJvm = gradleJvm
   }
 
   private fun findAvailableCompatibleGradleJdkName(project: Project, gradleVersion: GradleVersion): String? {
@@ -175,28 +175,23 @@ object EduGradleUtils {
 
   private fun downloadLatestGradleCompatibleJDK(
     project: Project,
-    projectSettings: GradleProjectSettings,
     gradleVersion: GradleVersion
-  ) {
+  ): String? {
     val supportedJavaVersion = GradleJvmSupportMatrix.suggestLatestSupportedJavaVersion(gradleVersion)
 
     if (supportedJavaVersion == null) {
       LOG.warn("Failed to determine compatible JDK for gradle $gradleVersion")
-      return
+      return null
     }
 
     val criteria = GradleDaemonJvmCriteria(supportedJavaVersion.feature.toString(), null)
 
-    val downloadedJdkName = computeUnderProgress(project, EduJVMBundle.message("progress.resolving.suitable.gradle.jdk"), canBeCancelled = false) {
+    return computeUnderProgress(project, EduJVMBundle.message("progress.resolving.suitable.gradle.jdk"), canBeCancelled = false) {
       runBlockingCancellable {
         withContext(Dispatchers.IO) {
           return@withContext findAndDownloadGradleJVM(project, criteria, gradleVersion)
         }
       }
-    }
-
-    if (downloadedJdkName != null) {
-      setGradleJvmSetting(projectSettings, downloadedJdkName)
     }
   }
 
