@@ -665,7 +665,6 @@ class YamlSerializationTest : YamlTestCase() {
       languageCode = "en"
     }
 
-
     doTest(course, """
       |type: hyperskill
       |title: Test Course

@@ -63,8 +63,8 @@ object YamlLoader {
       // and now if config fixed, we'll add item to a parent
       if (deserializedItem is Course) {
         val course = YamlDeepLoader.loadCourse(project)
+        StudyTaskManager.getInstance(project).course = course
         if (course != null) {
-          StudyTaskManager.getInstance(project).course = course
           project.messageBus.syncPublisher(YAML_LOAD_TOPIC).itemDeserialized(course)
         }
         return
