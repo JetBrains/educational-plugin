@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersionUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.jvm.gradle.GradleCourseRefresher
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.hyperskillJdkVersion
@@ -40,6 +41,7 @@ open class GradleEnvironmentChecker : EnvironmentChecker() {
   }
 
   companion object {
+    @RequiresEdt
     private fun reloadGradle(project: Project) {
       EduGradleUtils.updateGradleSettings(project)
       EduGradleUtils.setupGradleProject(project)

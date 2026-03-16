@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.lang.JavaVersion
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.GRADLE_WRAPPER_PROPERTIES_PATH
 import com.jetbrains.edu.jvm.gradle.GradleWrapperListener
@@ -78,6 +79,7 @@ object EduGradleUtils {
       createFromInternalTemplateOrFromDisk(holder.courseDir, name, templateName, templateVariables)
     }
 
+  @RequiresEdt
   fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
     val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location)
@@ -106,6 +108,7 @@ object EduGradleUtils {
   }
 
   @VisibleForTesting
+  @RequiresEdt
   fun setUpGradleJvm(project: Project, projectSettings: GradleProjectSettings, sdk: Sdk?) {
     if (sdk == null) return
 
@@ -228,6 +231,7 @@ object EduGradleUtils {
     }
   }
 
+  @RequiresEdt
   fun updateGradleSettings(project: Project) {
     val projectBasePath = project.basePath ?: error("Failed to find base path for the project during gradle project setup")
     val sdk = ProjectRootManager.getInstance(project).projectSdk
