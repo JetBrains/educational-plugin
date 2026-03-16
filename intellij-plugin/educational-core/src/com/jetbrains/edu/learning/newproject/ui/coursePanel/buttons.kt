@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.JBColor
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -21,15 +22,12 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import java.awt.Color
 import java.awt.event.ActionListener
 
 val SelectCourseBackgroundColor: Color
-  get() = JBColor.namedColor(
-    "SelectCourse.backgroundColor",
-    TaskToolWindowView.getTaskDescriptionBackgroundColor()
-  )
+  get() = JBUI.CurrentTheme.ToolWindow.background()
+
 private val GreenColor: Color = JBColor(0x5D9B47, 0x2B7B50)
 private val FillForegroundColor: Color = JBColor.namedColor("SelectCourse.Button.fillForeground", JBColor(Color.white, Color(0xBBBBBB)))
 private val FillBackgroundColor: Color = JBColor.namedColor("SelectCourse.Button.fillBackground", GreenColor)
