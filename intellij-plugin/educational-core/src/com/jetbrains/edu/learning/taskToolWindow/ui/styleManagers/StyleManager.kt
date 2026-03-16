@@ -23,21 +23,13 @@ class StyleManager {
 
   val bodyColor = bodyColor()
   private val linkColor = JBUI.CurrentTheme.Link.Foreground.ENABLED.asCssColor()
-  val bodyBackground = JBColor.background().asCssColor()
+  val bodyBackground = JBUI.CurrentTheme.ToolWindow.background().asCssColor()
   val codeBackground = if (isJCEF()) codeBackground() else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val textStyleHeader = "style=font-size:${bodyFontSize}pt"
 
   private fun bodyColor(): Color {
-    return if (!JBColor.isBright()) {
-      if (StyleResourcesManager.isHighContrast()) {
-        Color(TaskToolWindowBundle.value("high.contrast.body.color"))
-      }
-      else Color((TaskToolWindowBundle.value("darcula.body.color")))
-    }
-    else {
-      JBColor.foreground().asCssColor()
-    }
+    return JBColor.foreground().asCssColor()
   }
 
   private fun codeBackground(): Color {
