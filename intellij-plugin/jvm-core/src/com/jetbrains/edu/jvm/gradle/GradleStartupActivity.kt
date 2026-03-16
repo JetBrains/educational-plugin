@@ -9,6 +9,7 @@ import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.setupGradleProject
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.updateGradleSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.invokeLater
 
 class GradleStartupActivity : StartupActivity.DumbAware {
 
@@ -17,7 +18,9 @@ class GradleStartupActivity : StartupActivity.DumbAware {
       return
     }
     if (EduGradleUtils.isConfiguredWithGradle(project)) {
-      updateGradleSettings(project)
+      project.invokeLater {
+        updateGradleSettings(project)
+      }
     }
 
     DumbService.getInstance(project).runWhenSmart {

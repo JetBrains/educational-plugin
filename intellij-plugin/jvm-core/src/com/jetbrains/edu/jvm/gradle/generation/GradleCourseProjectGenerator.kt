@@ -5,6 +5,7 @@ import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.CourseInfoHolder
@@ -29,6 +30,7 @@ open class GradleCourseProjectGenerator(
     super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
   }
 
+  @RequiresEdt
   protected open fun setupGradleSettings(project: Project, sdk: Sdk?) {
     EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!)
   }

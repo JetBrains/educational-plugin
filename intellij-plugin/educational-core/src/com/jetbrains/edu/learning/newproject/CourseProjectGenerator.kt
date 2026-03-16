@@ -75,6 +75,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val course: Course
 ) {
 
+  @RequiresEdt
   open fun afterProjectGenerated(
     project: Project,
     projectSettings: S,
