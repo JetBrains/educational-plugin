@@ -7,7 +7,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.ui.InlineBannerBase
-import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -79,7 +79,7 @@ abstract class TaskToolWindowView(val project: Project) : EduTestAware {
     }
 
     fun getTaskDescriptionBackgroundColor(): Color {
-      return UIUtil.getListBackground()
+      return JBUI.CurrentTheme.ToolWindow.background()
     }
 
     fun updateAllTabs(project: Project) {

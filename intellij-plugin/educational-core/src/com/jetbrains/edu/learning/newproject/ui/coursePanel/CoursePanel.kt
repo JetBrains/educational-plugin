@@ -316,7 +316,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
 
   companion object {
     // default divider's color too dark in Darcula, so use the same color as in plugins dialog
-    val DIVIDER_COLOR = JBColor(0xC5C5C5, 0x515151)
+    val DIVIDER_COLOR = JBColor.border()
   }
 
   protected class ContentPanel : NonOpaquePanel() {
