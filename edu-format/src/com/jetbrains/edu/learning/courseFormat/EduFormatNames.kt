@@ -89,8 +89,10 @@ object EduFormatNames {
   const val JAVASCRIPT = "JavaScript"
   const val RUST = "Rust"
   const val SHELL = "Shell Script"
-  // Single `ObjectiveC` id is used both for `ObjectiveC` and `C/C++`
-  const val CPP = "ObjectiveC"
+  const val CPP = "C++"
+  // TODO: Drop it.
+  // See: EDU-8805 Drop support of CLion Classic Engine
+  const val OBJECTIVE_C = "ObjectiveC"
   const val GO = "go"
   const val PHP = "PHP"
   const val CSHARP = "C#"

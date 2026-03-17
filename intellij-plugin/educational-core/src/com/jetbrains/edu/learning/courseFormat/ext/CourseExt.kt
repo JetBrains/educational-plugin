@@ -17,6 +17,8 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
@@ -28,7 +30,7 @@ val Course.configurator: EduConfigurator<*>? get() {
 
 val Course.compatibilityProvider: CourseCompatibilityProvider?
   get() {
-    return CourseCompatibilityProviderEP.find(languageId, environment)
+    return CourseCompatibilityProviderEP.find(languageId.modifyIfClion(), environment)
   }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir
@@ -87,8 +89,19 @@ val Course.tags: List<Tag>
   }
 
 val Course.languageById: Language?
-  get() = Language.findLanguageByID(languageId)
+  get() = Language.findLanguageByID(languageId.modifyIfClion())
 
+
+// TODO: Drop it.
+// See: EDU-8805 Drop support of CLion Classic Engine
+private fun String.modifyIfClion(): String {
+  if (isCLionNova() && this == OBJECTIVE_C) {
+    return CPP
+  }
+  else {
+    return this
+  }
+}
 
 val Course.isPreview: Boolean
   get() = this is EduCourse && isPreview
