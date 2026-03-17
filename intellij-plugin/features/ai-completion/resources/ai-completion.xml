@@ -1,0 +1,11 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.intellij.modules.lang"/>
+    <plugin id="org.jetbrains.completion.full.line"/>
+    <module name="intellij.fullLine.core.completion"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.jetbrains.edu.learning.ai.completion.AiCompletionProjectActivity"/>
+  </extensions>
+</idea-plugin>
