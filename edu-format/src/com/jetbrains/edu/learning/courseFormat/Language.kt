@@ -1,10 +1,15 @@
 package com.jetbrains.edu.learning.courseFormat
 
+import com.jetbrains.edu.learning.findService
+
 object Language {
 
   // id to presentable name
   private val languages = mapOf(
     "Python" to "Python",
+    "C++" to "C/C++",
+    // TODO: Drop it
+    // See: EDU-8805 Drop support of CLion Classic Engine
     "ObjectiveC" to "C/C++",
     "go" to "Go",
     "JAVA" to "Java",
@@ -28,6 +33,15 @@ object Language {
   }
 
   fun findLanguageByName(name: String): String? {
+    val languageHelperService = findService(LanguageHelperService::class.java)
+    val customLanguage = languageHelperService.getCustomLanguageByNameIfAvailable(name)
+    if (customLanguage != null) return customLanguage
     return languages.filter { it.value == name }.keys.firstOrNull()
   }
+}
+
+// TODO: Drop it
+// See: EDU-8805 Drop support of CLion Classic Engine
+interface LanguageHelperService {
+  fun getCustomLanguageByNameIfAvailable(name: String): String?
 }

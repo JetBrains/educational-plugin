@@ -105,3 +105,9 @@ fun <T> measureTimeAndLog(
     throw e
   }
 }
+
+// TODO: Drop it.
+// See: EDU-8805 Drop support of CLion Classic Engine
+fun isCLionNova(): Boolean {
+  return System.getProperty("idea.suppressed.plugins.set.selector") == "radler"
+}

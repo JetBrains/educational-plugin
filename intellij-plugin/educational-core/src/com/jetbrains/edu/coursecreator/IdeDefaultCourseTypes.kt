@@ -13,6 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PHP
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.RUST
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CSHARP
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
+import com.jetbrains.edu.learning.isCLionNova
 
 fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>): CCNewCoursePanel.CourseData? =
   courses.find { it.language == Language.findLanguageByID(getDefaultLanguageId()) } ?: courses.firstOrNull()
@@ -22,12 +24,20 @@ fun getDefaultLanguageId(): String? = when {
   // `isPyCharm()` covers DataSpell case as well, so `isDataSpell()` is only for readability improvement
   PlatformUtils.isPyCharm() || PlatformUtils.isDataSpell() -> PYTHON
   PlatformUtils.isWebStorm() -> JAVASCRIPT
-  PlatformUtils.isCLion() -> CPP
+  PlatformUtils.isCLion() -> {
+    // TODO: Use CPP.
+    // See: EDU-8805 Drop support of CLion Classic Engine
+    if (isCLionNova()) {
+      CPP
+    }
+    else {
+      OBJECTIVE_C
+    }
+  }
   PlatformUtils.isGoIde() -> GO
   PlatformUtils.isPhpStorm() -> PHP
   PlatformUtils.isRustRover() -> RUST
   PlatformUtils.isRider() -> CSHARP
   else -> null
 }
-
 
