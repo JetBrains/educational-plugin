@@ -14,21 +14,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="Educational">
-    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
-                  displayName="C++ (Google Test)" environment="GoogleTest"/>
-    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppCatchConfigurator"
-                  displayName="C++ (Catch 2.0)" environment="Catch"/>
-    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"
-                  courseType="Stepik"/>
-
-    <compatibilityProvider language="C++"
-                           environment="GoogleTest"
-                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppGTestCourseCompatibilityProvider"/>
-    <compatibilityProvider language="C++"
-                           environment="Catch"
-                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppCatchCourseCompatibilityProvider"/>
-
-
     <!-- TODO: Drop ObjectiveC usages-->
     <!-- See: EDU-8805 Drop support of CLion Classic Engine -->
     <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
