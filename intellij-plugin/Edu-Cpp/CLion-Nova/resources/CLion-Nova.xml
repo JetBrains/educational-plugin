@@ -7,6 +7,21 @@
   </dependencies>
 
   <extensions defaultExtensionNs="Educational">
+    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
+                  displayName="C++ (Google Test)" environment="GoogleTest"/>
+    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppCatchConfigurator"
+                  displayName="C++ (Catch 2.0)" environment="Catch"/>
+    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"
+                  courseType="Stepik"/>
+
+    <compatibilityProvider language="C++"
+                           environment="GoogleTest"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppGTestCourseCompatibilityProvider"/>
+    <compatibilityProvider language="C++"
+                           environment="Catch"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppCatchCourseCompatibilityProvider"/>
+
+
     <cppRunConfigurationHelper implementation="com.jetbrains.edu.cpp.radler.checker.RadlerCppRunConfigurationHelper"/>
   </extensions>
 </idea-plugin>
