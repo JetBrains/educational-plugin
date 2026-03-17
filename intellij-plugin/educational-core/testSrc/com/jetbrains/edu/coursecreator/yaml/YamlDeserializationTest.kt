@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
+import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.format.doTestPlaceholderAndDependencyVisibility
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
@@ -1073,16 +1074,18 @@ class YamlDeserializationTest : YamlTestCase() {
 
   @Test
   fun `test disabled features`() {
-    val yamlContent = """
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |disabled_features:
-      |- ai-hints
-      |""".trimMargin()
-    val course = basicMapper().deserializeCourse(yamlContent)
-    assertContains(course.disabledFeatures, "ai-hints")
+    for (feature in EduManagedFeature.entries) {
+      val yamlContent = """
+        |title: Test Course
+        |language: English
+        |summary: Test Course Description
+        |programming_language: Plain text
+        |disabled_features:
+        |- ${feature.featureKey}
+        |""".trimMargin()
+      val course = basicMapper().deserializeCourse(yamlContent)
+      assertContains(course.disabledFeatures, feature.featureKey)
+    }
   }
 
   @Test

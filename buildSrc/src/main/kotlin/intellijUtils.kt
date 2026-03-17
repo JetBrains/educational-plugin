@@ -64,6 +64,7 @@ val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
+val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
 
 val Project.intellijTestFrameworkType: TestFrameworkType
   get() {
