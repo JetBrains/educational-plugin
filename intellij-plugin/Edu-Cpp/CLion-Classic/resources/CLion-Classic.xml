@@ -6,5 +6,21 @@
   </dependencies>
   <extensions defaultExtensionNs="Educational">
     <cppRunConfigurationHelper implementation="com.jetbrains.edu.cpp.classic.checker.ClassicCppRunConfigurationHelper"/>
+
+    <!-- TODO: Drop ObjectiveC usages-->
+    <!-- See: EDU-8805 Drop support of CLion Classic Engine -->
+  e  <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
+                  displayName="C++ (Google Test)" environment="GoogleTest"/>
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppCatchConfigurator"
+                  displayName="C++ (Catch 2.0)" environment="Catch"/>
+    <configurator language="ObjectiveC" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"
+                  courseType="Stepik"/>
+
+    <compatibilityProvider language="ObjectiveC"
+                           environment="GoogleTest"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppGTestCourseCompatibilityProvider"/>
+    <compatibilityProvider language="ObjectiveC"
+                           environment="Catch"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppCatchCourseCompatibilityProvider"/>
   </extensions>
 </idea-plugin>
