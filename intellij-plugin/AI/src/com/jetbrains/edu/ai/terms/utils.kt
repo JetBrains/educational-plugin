@@ -1,5 +1,7 @@
 package com.jetbrains.edu.ai.terms
 
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.ai.terms.updater.TermsUpdateChecker
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
@@ -14,9 +16,10 @@ import kotlinx.coroutines.launch
 const val TERMS_NOTIFICATION_ID = "terms"
 const val TERMS_NOTIFICATION_ENABLED_REGISTRY_ID = "edu.theory.lookup.update.notifications.enabled"
 
-// TODO(implement tests)
-fun CoroutineScope.observeAndLoadCourseTerms(project: Project) {
-  launch {
+@Service(Service.Level.PROJECT)
+class CourseTermsObserverService(private val project: Project, private val scope: CoroutineScope) {
+  // TODO(implement tests)
+  fun observeAndLoadCourseTerms() = scope.launch {
     val combinedStateFlow = combineStateFlow(
       TheoryLookupSettings.getInstance().theoryLookupProperties,
       TranslationProjectSettings.getInstance(project).translationProperties
@@ -25,5 +28,9 @@ fun CoroutineScope.observeAndLoadCourseTerms(project: Project) {
       val course = project.course as? EduCourse ?: return@collectLatest
       TermsUpdateChecker.getInstance(project).checkUpdate(course, theoryLookupProperties, translationProperties)
     }
+  }
+
+  companion object {
+    fun getInstance(project: Project): CourseTermsObserverService = project.service()
   }
 }
