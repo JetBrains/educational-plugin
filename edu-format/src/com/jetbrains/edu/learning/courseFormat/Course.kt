@@ -1,7 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat
 
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
+import com.jetbrains.edu.learning.findService
 import java.util.*
 
 /**
@@ -83,6 +86,14 @@ abstract class Course : LessonContainer() {
    * also see [com.jetbrains.edu.learning.courseFormat.ext.CourseExt.getLanguageById]
    */
   open var languageId: String = ""
+    get() {
+      // TODO: Drop it.
+      // See: EDU-8805 Drop support of CLion Classic Engine
+      if (field == OBJECTIVE_C || field == CPP) {
+        return findService(LanguageHelperService::class.java).cppLanguageId
+      }
+      return field
+    }
 
   /**
    * Programming language versions in string format
