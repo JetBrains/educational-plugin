@@ -33,9 +33,10 @@ object Language {
   }
 
   fun findLanguageByName(name: String): String? {
-    val languageHelperService = findService(LanguageHelperService::class.java)
-    val customLanguage = languageHelperService.getCustomLanguageByNameIfAvailable(name)
-    if (customLanguage != null) return customLanguage
+    if (name == "C/C++") {
+      val languageHelperService = findService(LanguageHelperService::class.java)
+      return languageHelperService.cppLanguageId
+    }
     return languages.filter { it.value == name }.keys.firstOrNull()
   }
 }
@@ -43,5 +44,5 @@ object Language {
 // TODO: Drop it
 // See: EDU-8805 Drop support of CLion Classic Engine
 interface LanguageHelperService {
-  fun getCustomLanguageByNameIfAvailable(name: String): String?
+  val cppLanguageId: String
 }
