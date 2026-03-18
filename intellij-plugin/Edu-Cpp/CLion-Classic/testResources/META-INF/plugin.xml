@@ -3,6 +3,7 @@
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <content>
+    <module name="CLion-Classic"/>
     <module name="Edu-Cpp"/>
   </content>
 </idea-plugin>
