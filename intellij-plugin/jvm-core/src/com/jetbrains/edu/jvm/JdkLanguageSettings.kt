@@ -57,12 +57,15 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> ExternalSystemJdkUtil.isValidJdk(sdk) }
     val jdkComboBox = JdkComboBox(null, sdkModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
-    preselectJdk(course, jdkComboBox, sdkModel)
-    jdk = jdkComboBox.selectedItem?.jdk
+
     jdkComboBox.addItemListener {
       jdk = jdkComboBox.selectedItem?.jdk
       notifyListeners()
     }
+
+    preselectJdk(course, jdkComboBox, sdkModel)
+    jdk = jdkComboBox.selectedItem?.jdk
+
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
   }
 
