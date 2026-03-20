@@ -34,7 +34,7 @@ object Language {
 
   fun findLanguageByName(name: String): String? {
     if (name == "C/C++") {
-      val languageHelperService = findService(LanguageHelperService::class.java)
+      val languageHelperService = findService<LanguageHelperService>()
       return languageHelperService.cppLanguageId
     }
     return languages.filter { it.value == name }.keys.firstOrNull()

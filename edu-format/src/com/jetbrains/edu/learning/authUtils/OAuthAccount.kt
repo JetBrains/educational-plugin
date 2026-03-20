@@ -45,7 +45,7 @@ abstract class OAuthAccount<UInfo : UserInfo> : Account<UInfo> {
   }
 
   open fun saveTokens(tokenInfo: TokenInfo) {
-    val passwordService = findService(PasswordService::class.java)
+    val passwordService = findService<PasswordService>()
     passwordService.saveSecret(getUserName(), serviceNameForAccessToken, tokenInfo.accessToken)
     passwordService.saveSecret(getUserName(), serviceNameForRefreshToken, tokenInfo.refreshToken)
   }

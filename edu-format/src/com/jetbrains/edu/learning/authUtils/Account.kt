@@ -15,6 +15,6 @@ abstract class Account<UInfo : UserInfo> {
   protected fun getUserName(): String = userInfo.getFullName()
 
   protected fun getSecret(userName: String, serviceNameForPasswordSafe: String): String? {
-    return findService(PasswordService::class.java).getSecret(userName, serviceNameForPasswordSafe)
+    return findService<PasswordService>().getSecret(userName, serviceNameForPasswordSafe)
   }
 }

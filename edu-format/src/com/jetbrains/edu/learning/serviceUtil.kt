@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning
 
 import java.util.*
 
-internal fun <S> findService(service: Class<S>): S {
+internal inline fun <reified S> findService(): S {
   //https://plugins.jetbrains.com/docs/intellij/plugin-class-loaders.html#using-serviceloader
 
   val currentThread = Thread.currentThread()
@@ -10,7 +10,7 @@ internal fun <S> findService(service: Class<S>): S {
   val pluginClassLoader = object{}.javaClass.enclosingClass.getClassLoader()
   try {
     currentThread.setContextClassLoader(pluginClassLoader)
-    val serviceLoader = ServiceLoader.load(service)
+    val serviceLoader = ServiceLoader.load(S::class.java)
     return serviceLoader.findFirst().get()
   }
   finally {

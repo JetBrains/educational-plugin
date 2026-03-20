@@ -90,7 +90,7 @@ abstract class Course : LessonContainer() {
       // TODO: Drop it.
       // See: EDU-8805 Drop support of CLion Classic Engine
       if (field == OBJECTIVE_C || field == CPP) {
-        return findService(LanguageHelperService::class.java).cppLanguageId
+        return findService<LanguageHelperService>().cppLanguageId
       }
       return field
     }
