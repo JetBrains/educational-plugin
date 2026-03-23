@@ -26,8 +26,8 @@ fun mimeFileType(path: String): String? {
   return try {
     Files.probeContentType(Paths.get(path))
   }
-  catch (e: IOException) {
-    LOG.log(Level.SEVERE, "Failed to determine file mimetype", e)
+  catch (th: Throwable) {
+    LOG.log(Level.SEVERE, "Failed to determine file mimetype", th)
     null
   }
 }
