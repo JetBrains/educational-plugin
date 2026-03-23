@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -82,8 +83,13 @@ object YamlFormatSynchronizer {
     if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
       return
     }
-    item.saveConfig(project, configName, mapper)
+
+//    CompletableFuture.runAsync({
+      item.saveConfig(project, configName, mapper)
+//    }, ProcessIOExecutorService.INSTANCE).tracked(futureTracker)
   }
+
+  private val futureTracker = FutureTracker()
 
   fun saveRemoteInfo(item: StudyItem) {
     when (item) {
@@ -145,10 +151,11 @@ object YamlFormatSynchronizer {
     editor.headerComponent = panel
   }
 
+  @RequiresBackgroundThread
   private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
     val dir = getConfigDir(project)
 
-    val configFile = runReadAction { dir.findChild(configName) }
+    val configFile = runReadActionBlocking { dir.findChild(configName) }
     if (configFile?.getUserData(SAVE_TO_CONFIG) == false) return
 
     if (this is Task) {
@@ -161,8 +168,11 @@ object YamlFormatSynchronizer {
       persistAdditionalFiles(project)
     }
 
+    val yamlText = mapper.writeValueAsString(this)
+    val formattedYamlText = reformatYaml(project, yamlText)
+
     project.invokeLater {
-      runWriteAction {
+      val file = runWriteAction {
         val file = dir.findOrCreateChildData(javaClass, configName)
         try {
           file.putUserData(LOAD_FROM_CONFIG, false)
@@ -174,25 +184,26 @@ object YamlFormatSynchronizer {
               file.extension ?: error(errorMessageToLog)
             )
           }
-          val yamlText = mapper.writeValueAsString(this)
-          val formattedYamlText = reformatYaml(project, file.name, yamlText)
 
           VfsUtil.saveText(file, formattedYamlText)
-          // make sure that there is no conflict between disk contents and ide in-memory document contents
-          FileDocumentManager.getInstance().reloadFiles(file)
         }
         finally {
           file.putUserData(LOAD_FROM_CONFIG, true)
         }
+
+        file
       }
+
+      // make sure that there is no conflict between disk contents and ide in-memory document contents
+      FileDocumentManager.getInstance().reloadFiles(file)
     }
   }
 
-  private fun reformatYaml(project: Project, fileName: String, text: String): String {
+  private fun reformatYaml(project: Project, text: String): String {
     // We are able to reformat YAML only if the IDE supports the YAML language
     val yamlFileType = FileTypeManager.getInstance().findFileTypeByName("YAML") ?: return text
 
-    val psiFile = PsiFileFactory.getInstance(project).createFileFromText(fileName, yamlFileType, text)
+    val psiFile = PsiFileFactory.getInstance(project).createFileFromText("temporary.yaml", yamlFileType, text)
     CodeStyleManager.getInstance(project).reformat(psiFile)
 
     return psiFile.text ?: text
