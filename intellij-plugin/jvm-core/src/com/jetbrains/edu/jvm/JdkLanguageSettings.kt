@@ -3,6 +3,7 @@ package com.jetbrains.edu.jvm
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
@@ -54,7 +55,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
-    val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
+    val sdkFilter = Condition<Sdk> { sdk -> ExternalSystemJdkUtil.isValidJdk(sdk) }
     val jdkComboBox = JdkComboBox(null, sdkModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
     preselectJdk(course, jdkComboBox, sdkModel)
     jdk = jdkComboBox.selectedItem?.jdk
