@@ -1,0 +1,1217 @@
+
+## Course contains files with Gradle version: 23048 Practical IDE Code Refactoring in Kotlin
+
+----------- <start> build.gradle.kts -----------
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id("org.jetbrains.intellij") version "1.17.4"
+    java
+    kotlin("jvm") version "1.8.20" apply true
+    application
+    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+}
+
+intellij {
+    version.set("2022.1.1")
+    plugins.set(listOf("java", "Kotlin"))
+    type.set("IC")
+}
+
+buildscript {
+    extra["kotlin_version"] = "1.8.20"
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath(kotlin("gradle-plugin", version = "1.8.20"))
+    }
+}
+
+fun printOutput(output: Any): Task {
+    return tasks.create("printOutput") {
+        println("#educational_plugin_check(er_version 1")
+        val lines = output.toString().split("(?<=\n)|(?=\n)")
+        for (line in lines) {
+            println("#educational_plugin$line")
+        }
+    }
+}
+
+allprojects {
+    apply {
+        plugin("application")
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+    }
+
+    dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20")
+        testImplementation("junit:junit:4.13.1")
+
+        val junitJupiterVersion = "5.9.0"
+        implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+        runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+        implementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+        runtimeOnly("org.junit.platform:junit-platform-console:1.9.0")
+
+        implementation("org.ini4j:ini4j:0.5.4")
+    }
+
+    tasks {
+        withType<JavaCompile> {
+            sourceCompatibility = "11"
+            targetCompatibility = "11"
+        }
+        withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "11"
+        }
+
+        withType<Test> {
+            useJUnitPlatform()
+
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("src")
+        getByName("main").kotlin.srcDirs("src")
+        getByName("test").java.srcDirs("test")
+        getByName("test").kotlin.srcDirs("test")
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = project.findProperty("gradleVersion").toString()
+    }
+}
+
+project(":util") {
+    dependencies {
+        implementation("junit:junit:4.13")
+    }
+}
+
+configure(subprojects.filter { it.name != "util" }) {
+    dependencies {
+        implementation(project(":util"))
+    }
+}
+
+configure(subprojects.filter { it.name.endsWith("Practice") || it.name.endsWith("task") }) {
+    plugins.apply("org.jetbrains.intellij")
+
+    intellij {
+        version.set("2022.1.1")
+        plugins.set(listOf("java", "Kotlin"))
+        type.set("IC")
+    }
+
+    dependencies {
+        val testSystemVersion = "2.1.1"
+        testImplementation("org.jetbrains.academy.test.system:core:$testSystemVersion")
+        testImplementation("org.jetbrains.academy.test.system:kotlin-psi:$testSystemVersion")
+        testImplementation("org.jetbrains.academy.test.system:common:$testSystemVersion")
+    }
+}
+
+configure(subprojects.filter { it.name == "CodeStyleAndFormatting-CodeSchemasAndEditorConfig-ReformatTheCodeAccordingToStyleSettingsPractice" }) {
+    apply {
+        plugin("org.jlleitschuh.gradle.ktlint")
+    }
+    tasks.withType<KotlinCompile> {
+        dependsOn("ktlintCheck")
+    }
+}
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+org.gradle.jvmargs = -XX:MaxMetaspaceSize=1g
+kotlin.incremental.useClasspathSnapshot = false
+kotlin.code.style = official
+gradleVersion = 8.10
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 25398 IDE Plugin Development Course
+
+----------- <start> build.gradle.kts -----------
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
+import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformExtension
+import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformRepositoriesExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+fun gradleProperties(key: String) = providers.gradleProperty(key)
+
+group = gradleProperties("courseGroup").get()
+version = gradleProperties("courseVersion").get()
+
+val ideaVersion: String by project
+
+plugins {
+    java
+    `java-test-fixtures`
+    val kotlinVersion = "1.9.21"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+    id("io.gitlab.arturbosch.detekt") version "1.23.1"
+    id("org.jetbrains.intellij.platform") version "2.1.0" apply false
+}
+
+val detektReportMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMergeTask::class) {
+    output.set(rootProject.buildDir.resolve("reports/detekt/merge.sarif"))
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            // To be able to use the Kotlin test framework for the tests - https://github.com/jetbrains-academy/kotlin-test-framework
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+    }
+}
+
+
+tasks {
+    wrapper {
+        gradleVersion = gradleProperties("gradleVersion").get()
+    }
+}
+
+// Configure dependencies for all gradle modules
+configure(subprojects) {
+    apply<io.gitlab.arturbosch.detekt.DetektPlugin>()
+
+    apply {
+        plugin("java")
+        plugin("kotlin")
+        plugin("java-test-fixtures")
+    }
+
+    // Configure detekt
+    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        config = rootProject.files("detekt.yml")
+        buildUponDefaultConfig = true
+        debug = true
+    }
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt> {
+        finalizedBy(detektReportMerge)
+        reports.sarif.required.set(true)
+        detektReportMerge.get().input.from(sarifReportFile)
+    }
+    tasks.getByPath("detekt").onlyIf { project.hasProperty("runDetekt") }
+
+    // Include dependencies
+    dependencies {
+        // By default, only the core module is included
+        implementation("org.jetbrains.academy.test.system:core:2.0.5")
+
+        val detektVersion = "1.22.0"
+        implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detektVersion")
+        implementation("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+    }
+
+    val jvmVersion = gradleProperties("jvmVersion").get()
+    tasks {
+        withType<KotlinCompile> {
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xjsr305=strict")
+                jvmTarget = jvmVersion
+            }
+        }
+        withType<JavaCompile> {
+            sourceCompatibility = jvmVersion
+            targetCompatibility = jvmVersion
+        }
+
+        // This part is necessary for the JetBrains Academy plugin
+        withType<Test> {
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+}
+
+// We have to store tests inside test folder directly
+configure(subprojects.filter { it.name != "common" }) {
+    apply {
+        plugin("org.jetbrains.intellij.platform")
+    }
+
+    repositories {
+        intellijPlatform {
+            defaultRepositories()
+            jetbrainsRuntime()
+        }
+    }
+
+    intellijPlatform {
+        projectName = "IDEDevelopmentCourseDemo"
+        pluginConfiguration {
+            id = "jetbrains.academy.plugin.course.dev.ui.demo"
+            name = "IDE Development Course Demo"
+        }
+        instrumentCode = false
+        buildSearchableOptions = false
+    }
+
+    val jvmVersion = gradleProperties("jvmVersion").get()
+    tasks {
+        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = jvmVersion
+            }
+        }
+
+        withType<JavaCompile> {
+            sourceCompatibility = jvmVersion
+            targetCompatibility = jvmVersion
+        }
+    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("src")
+        getByName("test").java.srcDirs("test")
+    }
+
+    dependencies {
+        intellijPlatform {
+            intellijIdeaCommunity(ideaVersion, useInstaller = false)
+            jetbrainsRuntime()
+            bundledPlugins("com.intellij.java", "org.jetbrains.kotlin")
+            testFramework(TestFrameworkType.Bundled)
+        }
+
+        implementation(project(":common"))
+        testImplementation(testFixtures(project(":common")))
+    }
+
+    tasks.register<Copy>("restoreOriginalFiles") {
+        from("${rootDir}/common/src/main/resources/backUpProjects")
+        into("${rootDir}/common/src/main/resources/projects")
+    }
+
+    tasks {
+        "runIde" {
+            dependsOn("restoreOriginalFiles")
+        }
+    }
+}
+
+// Gradle doesn't generate type-safe accessors since `org.jetbrains.intellij.platform` plugin is not applied in the root project.
+// Let's create them manually
+fun Project.intellijPlatform(configure: Action<IntelliJPlatformExtension>) =
+    (this as ExtensionAware).extensions.configure("intellijPlatform", configure)
+
+fun RepositoryHandler.intellijPlatform(configure: Action<IntelliJPlatformRepositoriesExtension>) =
+    (this as ExtensionAware).extensions.configure("intellijPlatform", configure)
+
+fun DependencyHandler.intellijPlatform(configure: Action<IntelliJPlatformDependenciesExtension>) =
+    (this as ExtensionAware).extensions.configure("intellijPlatform", configure)
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+courseGroup=org.jetbrains.academy.kotlin.template
+courseVersion=1.1.0
+
+gradleVersion=8.3
+jvmVersion=17
+ideaVersion=2023.1.2
+
+kotlin.code.style=official
+org.gradle.jvmargs=-Xmx2048m
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 25805 Data Structures and Algorithms (Java)
+
+----------- <start> build.gradle.kts -----------
+//import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+fun gradleProperties(key: String) = providers.gradleProperty(key)
+
+group = gradleProperties("courseGroup").get()
+version = gradleProperties("courseVersion").get()
+
+plugins {
+//    id("org.jetbrains.intellij.platform") version "2.1.0"
+    java
+    id("java-library")
+    val kotlinVersion = "2.0.21"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+}
+
+//dependencies {
+//    intellijPlatform {
+//        intellijIdeaCommunity("2024.2.4")
+//        pluginVerifier()
+//        zipSigner()
+//        instrumentationTools()
+//
+//        testFramework(TestFrameworkType.Platform)
+//    }
+//}
+
+allprojects {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven {
+            // To be able to use the Kotlin test framework for the tests - https://github.com/jetbrains-academy/kotlin-test-framework
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+
+//        intellijPlatform {
+//            defaultRepositories()
+//        }
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = gradleProperties("gradleVersion").get()
+    }
+}
+
+// Configure dependencies for all gradle modules
+configure(subprojects) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    // Include dependencies
+    dependencies {
+        val junit4Version = "4.13.2"
+        val junitBomVersion = "5.11.3"
+        val testSystemVersion = "2.1.3"
+
+        // JetBrains Academy Test System
+        implementation("org.jetbrains.academy.test.system:java-psi:$testSystemVersion")
+        implementation("org.jetbrains.academy.test.system:common:$testSystemVersion")
+        implementation("org.jetbrains.academy.test.system:core:$testSystemVersion")
+
+        // JUnit BOM
+        implementation(platform("org.junit:junit-bom:$junitBomVersion")) {
+            because("Platform, Jupiter, and Vintage versions should match")
+        }
+
+        // JUnit Jupiter
+        testImplementation("org.junit.jupiter:junit-jupiter")
+
+        // JUnit Vintage
+        testImplementation("junit:junit:$junit4Version")
+        testRuntimeOnly("org.junit.vintage:junit-vintage-engine") {
+            because("allows JUnit 3 and JUnit 4 tests to run")
+        }
+
+        // JUnit Suites
+        testImplementation("org.junit.platform:junit-platform-suite")
+
+        // JUnit Platform Launcher + Console
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
+            because("allows tests to run from IDEs that bundle older version of launcher")
+        }
+        testRuntimeOnly("org.junit.platform:junit-platform-console") {
+            because("needed to launch the JUnit Platform Console program")
+        }
+
+        testImplementation("org.ini4j:ini4j:0.5.4")
+    }
+
+    val jvmVersion = gradleProperties("jvmVersion").get()
+
+    tasks {
+        withType<KotlinCompile> {
+            compilerOptions {
+                // freeCompilerArgs = listOf("-Xjsr305=strict") // deprecated
+                jvmTarget = JvmTarget.fromTarget(jvmVersion)
+            }
+        }
+        withType<JavaCompile> {
+            // sourceCompatibility = jvmVersion
+            // targetCompatibility = jvmVersion
+        }
+
+        // This part is necessary for the JetBrains Academy plugin
+        withType<Test> {
+            useJUnitPlatform()
+
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+}
+
+// We have to store tests inside test folder directly
+configure(subprojects.filter { it.name != "common" }) {
+    sourceSets {
+        getByName("main").java.srcDirs("src")
+        getByName("test").java.srcDirs("test")
+    }
+
+    dependencies {
+        implementation(project(":common"))
+    }
+
+    tasks.register<Exec>("run") {
+        // Just do nothing to avoid the edu plugin errors
+    }
+}
+
+//configure(subprojects.filter { it.name.endsWith("Practice") || it.name.endsWith("task") }) {
+//    plugins.apply("org.jetbrains.intellij.platform")
+//
+//    dependencies {
+//        val testSystemVersion = "2.1.3"
+//        testImplementation("org.jetbrains.academy.test.system:java-psi:$testSystemVersion")
+//        testImplementation("org.jetbrains.academy.test.system:common:$testSystemVersion")
+//        testImplementation("org.jetbrains.academy.test.system:core:$testSystemVersion")
+//    }
+//}
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+courseGroup=th.ac.psu.computing.algorithms
+courseVersion=2.1
+
+gradleVersion=8.10.2
+jvmVersion=22
+
+kotlin.code.style=official
+org.gradle.jvmargs=-Xmx1024m
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 21913 Kotlin Onboarding: Object-Oriented programming
+
+----------- <start> build.gradle.kts -----------
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+group = "jetbrains.kotlin.course"
+version = "0.0.1-SNAPSHOT"
+
+fun properties(key: String) = project.findProperty(key).toString()
+
+@Suppress("DSL_SCOPE_VIOLATION") // "libs" produces a false-positive warning, see https://youtrack.jetbrains.com/issue/KTIJ-19369
+plugins {
+    java
+    val kotlinVersion = "2.0.0"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+    id("org.jetbrains.kotlin.multiplatform") version kotlinVersion apply false
+    id("org.springframework.boot") version "2.7.3" apply false
+    id("io.spring.dependency-management") version "1.0.13.RELEASE" apply false
+    id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion apply false
+
+    id("org.siouan.frontend-jdk11") version "6.0.0"
+}
+
+fun printOutput(output: Any): Task {
+    return tasks.create("printOutput") {
+        println("#educational_plugin_check(er_version 1")
+        val lines = output.toString().split("(?<=\n)|(?=\n)")
+        for (line in lines) {
+            println("#educational_plugin$line")
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = properties("gradleVersion")
+    }
+}
+
+val frontendSuffix = "Frontend"
+val server = "Server"
+
+configure(subprojects.filter { frontendSuffix !in it.name }) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    dependencies {
+        implementation("org.jetbrains.academy.test.system:kotlin-test-system:1.0.9")
+    }
+
+    val jvmVersion = JvmTarget.JVM_11
+
+    tasks {
+        withType<KotlinCompile> {
+            compilerOptions {
+                freeCompilerArgs.add("-Xjsr305=strict")
+                jvmTarget.set(jvmVersion)
+            }
+        }
+
+        withType<JavaCompile> {
+            sourceCompatibility = jvmVersion.target
+            targetCompatibility = jvmVersion.target
+        }
+
+        withType<Test> {
+            useJUnitPlatform()
+
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+}
+
+fun String.getGameName(suffix: String) = substring(0 until indexOf(suffix))
+
+configure(subprojects.filter { server in it.name || "utils" in it.name }) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    dependencies {
+        val junitJupiterVersion = "5.9.0"
+        implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+        testRuntimeOnly("org.junit.platform:junit-platform-console:1.9.0")
+    }
+}
+
+configure(subprojects.filter { server in it.name }) {
+    val projectName = this.name
+    val gameName = projectName.getGameName(server)
+
+    apply {
+        plugin("java")
+        plugin("kotlin")
+        plugin("org.springframework.boot")
+        plugin("io.spring.dependency-management")
+        plugin("org.jetbrains.kotlin.plugin.spring")
+    }
+
+    dependencies {
+        implementation(project(":utils"))
+
+        implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1")
+    }
+
+    // Uncomment to update clients in server resources
+//    tasks.named("processResources") {
+//        dependsOn(":$gameName$frontendSuffix:build")
+//    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("$gameName/src/main/kotlin")
+        getByName("main").resources.srcDirs("$gameName/src/main/resources")
+        getByName("test").java.srcDirs("test")
+    }
+
+    tasks.register<Exec>("run") {
+        // Just do nothing to avoid the edu plugin errors
+    }
+}
+
+configure(subprojects.filter { frontendSuffix in it.name }) {
+    val projectName = this.name
+    val gameName = projectName.getGameName(frontendSuffix)
+
+    apply {
+        plugin("org.siouan.frontend-jdk11")
+    }
+
+    frontend {
+        nodeDistributionProvided.set(false)
+        nodeVersion.set("16.17.1")
+
+        yarnEnabled.set(true)
+        yarnVersion.set("3.0.0")
+
+        installScript.set("install")
+    }
+
+    val yarnRunBuildTask = tasks.register<Exec>("yarnRunBuildTask") {
+        commandLine("yarn", "run", "build")
+    }
+
+    val serveResourcesTask = tasks.register("serveResources") {
+        dependsOn(yarnRunBuildTask)
+        val serverResources = rootProject.subprojects
+            .filter { gameName in it.name && server in it.name }
+            // the project name looks like: gameName-moduleName
+            .map { "$rootDir/$gameName$server/${it.name.split('-').last()}/src/main/resources/static/" }
+        val staticFolder = "$rootDir/$gameName$frontendSuffix/build"
+        doLast {
+            serverResources.forEach { resourcesPath ->
+                rootProject.delete(resourcesPath)
+                copy {
+                    from(staticFolder)
+                    into(resourcesPath)
+                }
+            }
+        }
+    }
+
+    serveResourcesTask {
+        mustRunAfter(":$gameName$frontendSuffix:${yarnRunBuildTask.name}")
+    }
+}
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+kotlin.code.style=official
+kotlin.js.compiler=ir
+
+gradleVersion=7.5.1
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 26571 Java practice tasks for beginners
+
+----------- <start> build.gradle.kts -----------
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+fun gradleProperties(key: String) = providers.gradleProperty(key)
+
+group = gradleProperties("courseGroup").get()
+version = gradleProperties("courseVersion").get()
+
+plugins {
+    java
+    val kotlinVersion = "1.9.0"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            // To be able to use the Kotlin test framework for the tests - https://github.com/jetbrains-academy/kotlin-test-framework
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = gradleProperties("gradleVersion").get()
+    }
+}
+
+// Configure dependencies for all gradle modules
+configure(subprojects) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    // Include dependencies
+    dependencies {
+        // By default, only the core module is included
+        implementation("org.jetbrains.academy.test.system:core:2.1.2")
+
+        val junitJupiterVersion = "5.9.0"
+        implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+        runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+        implementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+        runtimeOnly("org.junit.platform:junit-platform-console:1.9.0")
+    }
+
+    val jvmVersion = gradleProperties("jvmVersion").get()
+    tasks {
+        withType<KotlinCompile> {
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xjsr305=strict")
+                jvmTarget = jvmVersion
+            }
+        }
+        withType<JavaCompile> {
+            sourceCompatibility = jvmVersion
+            targetCompatibility = jvmVersion
+        }
+
+        // This part is necessary for the JetBrains Academy plugin
+        withType<Test> {
+            useJUnitPlatform()
+
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+}
+
+// We have to store tests inside test folder directly
+configure(subprojects.filter { it.name != "common" }) {
+    sourceSets {
+        getByName("main").java.srcDirs("src")
+        getByName("test").java.srcDirs("test")
+    }
+
+    dependencies {
+        implementation(project(":common"))
+    }
+
+    tasks.register<Exec>("run") {
+        // Just do nothing to avoid the edu plugin errors
+    }
+}
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+courseGroup=com.cydeo.java
+courseVersion=1.1.0
+
+gradleVersion=8.3
+jvmVersion=17
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 24051 Introduction to IDE Code Refactoring in Java
+
+----------- <start> build.gradle.kts -----------
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+fun gradleProperties(key: String) = providers.gradleProperty(key)
+
+group = gradleProperties("courseGroup").get()
+version = gradleProperties("courseVersion").get()
+
+plugins {
+    id("org.jetbrains.intellij") version "1.16.0"
+    java
+    val kotlinVersion = "1.9.0"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+}
+
+intellij {
+    version.set("2022.1.1")
+    plugins.set(listOf("java", "Kotlin"))
+    type.set("IC")
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            // To be able to use the Kotlin test framework for the tests - https://github.com/jetbrains-academy/kotlin-test-framework
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = gradleProperties("gradleVersion").get()
+    }
+}
+
+// Configure dependencies for all gradle modules
+configure(subprojects) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    // Include dependencies
+    dependencies {
+        val junitJupiterVersion = "5.9.0"
+        implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+        runtimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+        implementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+        runtimeOnly("org.junit.platform:junit-platform-console:1.9.0")
+
+        testImplementation("org.ini4j:ini4j:0.5.4")
+    }
+
+    val jvmVersion = gradleProperties("jvmVersion").get()
+    tasks {
+        withType<KotlinCompile> {
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xjsr305=strict")
+                jvmTarget = jvmVersion
+            }
+        }
+        withType<JavaCompile> {
+            sourceCompatibility = jvmVersion
+            targetCompatibility = jvmVersion
+        }
+
+        // This part is necessary for the JetBrains Academy plugin
+        withType<Test> {
+            useJUnitPlatform()
+
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+}
+
+// We have to store tests inside test folder directly
+configure(subprojects.filter { it.name != "common" }) {
+    sourceSets {
+        getByName("main").java.srcDirs("src")
+        getByName("test").java.srcDirs("test")
+    }
+
+    dependencies {
+        implementation(project(":common"))
+    }
+
+    tasks.register<Exec>("run") {
+        // Just do nothing to avoid the edu plugin errors
+    }
+}
+
+configure(subprojects.filter { it.name.endsWith("Practice") || it.name.endsWith("task") }) {
+    plugins.apply("org.jetbrains.intellij")
+
+    intellij {
+        version.set("2022.1.1")
+        plugins.set(listOf("java", "Kotlin"))
+        type.set("IC")
+    }
+
+    dependencies {
+        val testSystemVersion = "2.1.2"
+        testImplementation("org.jetbrains.academy.test.system:java-psi:$testSystemVersion")
+        testImplementation("org.jetbrains.academy.test.system:common:$testSystemVersion")
+        testImplementation("org.jetbrains.academy.test.system:core:$testSystemVersion")
+    }
+}
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+courseGroup=org.jetbrains.academy.java.template
+courseVersion=1.1.0
+
+gradleVersion=8.3
+jvmVersion=11
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 23369 Kotlin Onboarding: Collections
+
+----------- <start> build.gradle.kts -----------
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+group = "jetbrains.kotlin.course"
+version = "0.0.1-SNAPSHOT"
+
+fun properties(key: String) = project.findProperty(key).toString()
+
+@Suppress("DSL_SCOPE_VIOLATION") // "libs" produces a false-positive warning, see https://youtrack.jetbrains.com/issue/KTIJ-19369
+plugins {
+    java
+    val kotlinVersion = "2.0.0"
+    id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+    id("org.jetbrains.kotlin.multiplatform") version kotlinVersion apply false
+    id("org.springframework.boot") version "2.7.3" apply false
+    id("io.spring.dependency-management") version "1.0.13.RELEASE" apply false
+    id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion apply false
+
+    id("org.siouan.frontend-jdk11") version "6.0.0"
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://packages.jetbrains.team/maven/p/kotlin-test-framework/kotlin-test-framework")
+        }
+    }
+}
+
+tasks {
+    wrapper {
+        gradleVersion = properties("gradleVersion")
+    }
+}
+
+val frontendSuffix = "Frontend"
+val server = "Server"
+
+configure(subprojects.filter { frontendSuffix !in it.name }) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    dependencies {
+        implementation("org.jetbrains.academy.test.system:core:2.0.7")
+    }
+
+    val jvmVersion = "11"
+
+    tasks {
+        withType<KotlinCompile> {
+            kotlinOptions {
+                freeCompilerArgs = listOf("-Xjsr305=strict")
+                jvmTarget = jvmVersion
+            }
+        }
+
+        withType<JavaCompile> {
+            sourceCompatibility = jvmVersion
+            targetCompatibility = jvmVersion
+        }
+
+        withType<Test> {
+            useJUnitPlatform()
+
+            outputs.upToDateWhen { false }
+
+            addTestListener(object : TestListener {
+                override fun beforeSuite(suite: TestDescriptor) {}
+                override fun beforeTest(testDescriptor: TestDescriptor) {}
+                override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                    if (result.resultType == TestResult.ResultType.FAILURE) {
+                        val message = result.exception?.message ?: "Wrong answer"
+                        val lines = message.split("\n")
+                        println("#educational_plugin FAILED + ${lines[0]}")
+                        lines.subList(1, lines.size).forEach { line ->
+                            println("#educational_plugin$line")
+                        }
+                        // we need this to separate output of different tests
+                        println()
+                    }
+                }
+
+                override fun afterSuite(suite: TestDescriptor, result: TestResult) {}
+            })
+        }
+    }
+}
+
+fun String.getGameName(suffix: String) = substring(0 until indexOf(suffix))
+
+configure(subprojects.filter { server in it.name || "utils" in it.name }) {
+    apply {
+        plugin("java")
+        plugin("kotlin")
+    }
+
+    dependencies {
+        val junitJupiterVersion = "5.9.0"
+        implementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+        testRuntimeOnly("org.junit.platform:junit-platform-console:1.9.0")
+    }
+}
+
+configure(subprojects.filter { server in it.name }) {
+    val projectName = this.name
+    val gameName = projectName.getGameName(server)
+
+    apply {
+        plugin("java")
+        plugin("kotlin")
+        plugin("org.springframework.boot")
+        plugin("io.spring.dependency-management")
+        plugin("org.jetbrains.kotlin.plugin.spring")
+    }
+
+    dependencies {
+        implementation(project(":utils"))
+
+        implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.1")
+    }
+
+//    tasks.named("processResources") {
+//        dependsOn(":$gameName$frontendSuffix:build")
+//    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("$gameName/src/main/kotlin")
+        getByName("main").resources.srcDirs("$gameName/src/main/resources")
+        getByName("test").java.srcDirs("test")
+    }
+
+    tasks.register<Exec>("run") {
+        // Just do nothing to avoid the edu plugin errors
+    }
+}
+
+configure(subprojects.filter { frontendSuffix in it.name }) {
+    val projectName = this.name
+    val gameName = projectName.getGameName(frontendSuffix)
+
+    apply {
+        plugin("org.siouan.frontend-jdk11")
+    }
+
+    frontend {
+        nodeDistributionProvided.set(false)
+        nodeVersion.set("16.17.1")
+
+        yarnEnabled.set(true)
+        yarnVersion.set("3.0.0")
+
+        installScript.set("install")
+    }
+
+    val yarnRunBuildTask = tasks.register<Exec>("yarnRunBuildTask") {
+        commandLine("yarn", "run", "build")
+    }
+
+    val serveResourcesTask = tasks.register("serveResources") {
+        dependsOn(yarnRunBuildTask)
+        val serverResources = rootProject.subprojects
+            .filter { gameName in it.name && server in it.name }
+            // the project name looks like: gameName-moduleName
+            .map { "$rootDir/$gameName$server/${it.name.split('-').last()}/src/main/resources/static/" }
+        val staticFolder = "$rootDir/$gameName$frontendSuffix/build"
+        doLast {
+            serverResources.forEach { resourcesPath ->
+                rootProject.delete(resourcesPath)
+                copy {
+                    from(staticFolder)
+                    into(resourcesPath)
+                }
+            }
+        }
+    }
+
+    serveResourcesTask {
+        mustRunAfter(":$gameName$frontendSuffix:${yarnRunBuildTask.name}")
+    }
+}
+
+----------- <end> build.gradle.kts -----------
+----------- <start> gradle.properties -----------
+kotlin.code.style=official
+kotlin.js.compiler=ir
+
+gradleVersion=7.5.1
+----------- <end> gradle.properties -----------

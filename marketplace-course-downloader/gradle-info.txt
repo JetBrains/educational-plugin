@@ -1,0 +1,100 @@
+
+## Course contains files with Gradle version: 23048 Practical IDE Code Refactoring in Kotlin
+
+----------- <start> gradle.properties -----------
+org.gradle.jvmargs = -XX:MaxMetaspaceSize=1g
+kotlin.incremental.useClasspathSnapshot = false
+kotlin.code.style = official
+gradleVersion = 8.10
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 25398 IDE Plugin Development Course
+
+----------- <start> gradle.properties -----------
+courseGroup=org.jetbrains.academy.kotlin.template
+courseVersion=1.1.0
+
+gradleVersion=8.3
+jvmVersion=17
+ideaVersion=2023.1.2
+
+kotlin.code.style=official
+org.gradle.jvmargs=-Xmx2048m
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 0 Kotlin for Java Developers
+
+----------- <start> gradle/wrapper/gradle-wrapper.properties -----------
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+
+----------- <end> gradle/wrapper/gradle-wrapper.properties -----------
+
+## Course contains files with Gradle version: 25805 Data Structures and Algorithms (Java)
+
+----------- <start> gradle.properties -----------
+courseGroup=th.ac.psu.computing.algorithms
+courseVersion=2.1
+
+gradleVersion=8.10.2
+jvmVersion=22
+
+kotlin.code.style=official
+org.gradle.jvmargs=-Xmx1024m
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 21913 Kotlin Onboarding: Object-Oriented programming
+
+----------- <start> gradle.properties -----------
+kotlin.code.style=official
+kotlin.js.compiler=ir
+
+gradleVersion=7.5.1
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 26571 Java practice tasks for beginners
+
+----------- <start> gradle.properties -----------
+courseGroup=com.cydeo.java
+courseVersion=1.1.0
+
+gradleVersion=8.3
+jvmVersion=17
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 0 Java Microlearning Series
+
+----------- <start> gradle/wrapper/gradle-wrapper.properties -----------
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.0.0-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+
+----------- <end> gradle/wrapper/gradle-wrapper.properties -----------
+
+## Course contains files with Gradle version: 24051 Introduction to IDE Code Refactoring in Java
+
+----------- <start> gradle.properties -----------
+courseGroup=org.jetbrains.academy.java.template
+courseVersion=1.1.0
+
+gradleVersion=8.3
+jvmVersion=11
+----------- <end> gradle.properties -----------
+
+## Course contains files with Gradle version: 23369 Kotlin Onboarding: Collections
+
+----------- <start> gradle.properties -----------
+kotlin.code.style=official
+kotlin.js.compiler=ir
+
+gradleVersion=7.5.1
+----------- <end> gradle.properties -----------

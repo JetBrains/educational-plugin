@@ -43,7 +43,8 @@ include(
   "intellij-plugin:features:ide-onboarding",
   "intellij-plugin:features:social-media",
   "intellij-plugin:features:lti",
-  "intellij-plugin:features:ai-completion"
+  "intellij-plugin:features:ai-completion",
+  "marketplace-course-downloader"
 )
 
 if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {

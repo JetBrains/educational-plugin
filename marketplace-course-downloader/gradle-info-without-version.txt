@@ -1,0 +1,30 @@
+22972 Java Kurz - Street of Code
+23048 Practical IDE Code Refactoring in Kotlin
+21686 New Language Features in Java 9-17
+25329 KotlinFlashKards - coroutines
+21067 Kotlin Onboarding: Introduction
+25398 IDE Plugin Development Course
+19933 Liu Course Java OOP
+17708 { this is Kotlin }
+4222 Kotlin Koans
+20403 AtomicKotlin
+0 Kotlin for Java Developers
+0 Liu Course Spark
+17423 Introductory Kotlin workshop for programmers
+18905 Java for beginners
+25805 Data Structures and Algorithms (Java)
+21005 Java Programming Basics
+22499 Java Programming
+27237 Interactive Java workbook 1
+21913 Kotlin Onboarding: Object-Oriented programming
+26837 ezy-java-basics
+26571 Java practice tasks for beginners
+18397 Enchant Codelabs
+0 Java Microlearning Series
+28286 Programmazione Object Oriented in Java
+19188 APCS Keate
+24051 Introduction to IDE Code Refactoring in Java
+23312 Coroutines and Channels
+22214 Algorithmic Challenges in Kotlin
+23369 Kotlin Onboarding: Collections
+20159 Kotlin UTBM/CNAM
