@@ -83,7 +83,7 @@ class EduProjectActivity : ProjectActivity {
 
     withContext(Dispatchers.EDT) {
       val fileEditorManager = FileEditorManager.getInstance(project)
-      if (!fileEditorManager.hasOpenFiles() && !SubmissionSettings.getInstance(project).stateOnClose) {
+      if ((!fileEditorManager.hasOpenFiles() || project.isNewlyCreated()) && !SubmissionSettings.getInstance(project).stateOnClose) {
         NavigationUtils.openFirstTask(course, project)
       }
     }
