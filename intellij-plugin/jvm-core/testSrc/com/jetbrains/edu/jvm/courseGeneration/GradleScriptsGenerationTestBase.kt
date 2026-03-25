@@ -4,6 +4,7 @@ import com.intellij.openapi.vfs.readText
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase.Companion.LEGACY_TEMPLATE_PREFIX
 import com.jetbrains.edu.learning.CourseBuilder
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -27,7 +28,7 @@ abstract class GradleScriptsGenerationTestBase : JvmCourseGenerationTestBase() {
     }
     createCourseStructure(course)
 
-    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name)
+    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name, course.toHolder())
 
     val expectedBuildGradleText = BUILD_GRADLE_TEXT
     val expectedSettingsGradleText = SETTINGS_GRADLE_TEXT
@@ -47,7 +48,7 @@ abstract class GradleScriptsGenerationTestBase : JvmCourseGenerationTestBase() {
     val course = createCourse(courseMode = CourseMode.STUDENT) {}
     createCourseStructure(course)
 
-    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name)
+    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name, course.toHolder())
 
     val buildTemplateName = LEGACY_TEMPLATE_PREFIX + defaultBuildGradleTemplateName
     val expectedBuildGradleText = GeneratorUtils.getInternalTemplateText(buildTemplateName, templateVariables)
@@ -72,7 +73,7 @@ abstract class GradleScriptsGenerationTestBase : JvmCourseGenerationTestBase() {
     }
     createCourseStructure(course)
 
-    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name)
+    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name, course.toHolder())
 
     val buildTemplateName = LEGACY_TEMPLATE_PREFIX + defaultBuildGradleTemplateName
     val expectedBuildGradleText = GeneratorUtils.getInternalTemplateText(buildTemplateName, templateVariables)
@@ -95,7 +96,7 @@ abstract class GradleScriptsGenerationTestBase : JvmCourseGenerationTestBase() {
     }
     createCourseStructure(course)
 
-    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name)
+    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name, course.toHolder())
 
     val expectedBuildGradleText = BUILD_GRADLE_TEXT
     val settingsTemplateName = LEGACY_TEMPLATE_PREFIX + SETTINGS_FILE_NAME
@@ -116,7 +117,7 @@ abstract class GradleScriptsGenerationTestBase : JvmCourseGenerationTestBase() {
     val course = createCourse(courseMode = CourseMode.EDUCATOR) {}
     createCourseStructure(course)
 
-    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name)
+    val templateVariables = course.gradleCourseBuilder.templateVariables(project.courseDir.name, course.toHolder())
 
     val buildTemplateName = defaultBuildGradleTemplateName
     val expectedBuildGradleText = GeneratorUtils.getInternalTemplateText(buildTemplateName, templateVariables)
@@ -182,6 +183,23 @@ abstract class GradleScriptsGenerationTestBase : JvmCourseGenerationTestBase() {
 
     assertContains(text, "distributionUrl=.*gradle-8.14.3-bin.zip".toRegex(), "Generated gradle wrapper properties file should contain `distributionUrl` property with version 8.14.3")
   }
+
+  @Test
+  fun `gradle version specified in gradle_properties`() {
+    val course = createCourse(courseMode = CourseMode.STUDENT) {
+      additionalFile("gradle.properties", """
+        someOption=111
+        gradleVersion = 7.5.10
+        anotherOption=222
+        """.trimIndent())
+    }
+    createCourseStructure(course)
+
+    val text = findFile("gradle/wrapper/gradle-wrapper.properties").readText()
+    assertContains(text, "distributionUrl=.*gradle-7.5.10-bin.zip".toRegex(), "Generated gradle wrapper properties file should contain `distributionUrl` property with version 7.5.10")
+  }
+
+  private fun Course.toHolder(): CourseInfoHolder<Course> = CourseInfoHolder.fromCourse(this, project.courseDir)
 
   private val Course.gradleCourseBuilder: GradleCourseBuilderBase
     get() = configurator?.courseBuilder as GradleCourseBuilderBase

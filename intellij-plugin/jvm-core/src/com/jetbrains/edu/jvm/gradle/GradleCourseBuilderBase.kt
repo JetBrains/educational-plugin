@@ -8,14 +8,14 @@ import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.WRAPPER
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.VisibleForTesting
-import org.jetbrains.plugins.gradle.util.GradleConstants.DEFAULT_SCRIPT_NAME
-import org.jetbrains.plugins.gradle.util.GradleConstants.GRADLE_DIR_NAME
-import org.jetbrains.plugins.gradle.util.GradleConstants.SETTINGS_FILE_NAME
+import org.jetbrains.plugins.gradle.util.GradleConstants.*
 
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
@@ -56,10 +56,10 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     return templates
   }
 
-  open fun templateVariables(projectName: String): Map<String, Any> {
+  open fun templateVariables(projectName: String, holder: CourseInfoHolder<Course>): Map<String, Any> {
     return mapOf(
       PROJECT_NAME to GeneratorUtils.gradleSanitizeName(projectName),
-      GRADLE_VERSION_VARIABLE to LEGACY_GRADLE_VERSION,
+      GRADLE_VERSION_VARIABLE to (extractGradleVersionFromAdditionalFiles(holder.course.additionalFiles) ?: LEGACY_GRADLE_VERSION),
     ) + getKotlinTemplateVariables()
   }
 
@@ -83,6 +83,17 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
    */
   private fun Map<String, String>.applyLegacyPrefixToTemplateNames(): Map<String, String> {
     return mapValues { (_, templateName) -> LEGACY_TEMPLATE_PREFIX + templateName }
+  }
+
+  private fun extractGradleVersionFromAdditionalFiles(additionalFiles: List<EduFile>): String? {
+    // Some old courses have the Gradle version specified inside the gradle.properties file
+
+    val gradlePropertiesFile = additionalFiles.find { it.name == GRADLE_PROPERTIES } ?: return null
+    val gradlePropertiesContents = gradlePropertiesFile.contents.textualRepresentation
+    val gradleVersionPattern = Regex("""gradleVersion\s*=\s*([0-9.]+)""")
+
+    val matchResult = gradleVersionPattern.find(gradlePropertiesContents) ?: return null
+    return matchResult.groupValues[1]
   }
 
   companion object {
