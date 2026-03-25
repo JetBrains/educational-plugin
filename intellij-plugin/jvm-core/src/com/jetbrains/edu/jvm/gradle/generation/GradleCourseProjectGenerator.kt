@@ -40,7 +40,7 @@ open class GradleCourseProjectGenerator(
     return EduGradleUtils.createProjectGradleFiles(
       holder,
       gradleCourseBuilder.templates(holder.course),
-      gradleCourseBuilder.templateVariables(holder.courseDir.name)
+      gradleCourseBuilder.templateVariables(holder.courseDir.name, holder)
     )
   }
 
