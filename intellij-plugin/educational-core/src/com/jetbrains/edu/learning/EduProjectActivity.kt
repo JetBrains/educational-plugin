@@ -91,6 +91,7 @@ class EduProjectActivity : ProjectActivity {
     selectProjectView(project, true)
 
     withContext(Dispatchers.EDT) {
+      selectEduToolWindow(project)
       migrateYaml(project, course)
       setupProject(project, course)
       val coursesStorage = CoursesStorage.getInstance()
@@ -198,6 +199,15 @@ class EduProjectActivity : ProjectActivity {
       }
       toolWindow.show()
     }
+  }
+
+  private fun selectEduToolWindow(project: Project) {
+    val taskToolWindow = ToolWindowManager.getInstance(project).getToolWindow(STUDY_TOOL_WINDOW)
+    if (taskToolWindow == null) {
+      LOG.warn("Failed to show Task Tool Window because it is not initialized yet")
+      return
+    }
+    taskToolWindow.show()
   }
 
   @RequiresEdt
