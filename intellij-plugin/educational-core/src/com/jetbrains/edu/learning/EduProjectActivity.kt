@@ -47,6 +47,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory.Companion.STUDY_TOOL_WINDOW
 import com.jetbrains.edu.learning.update.UpdateHistoryService
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
@@ -83,7 +84,7 @@ class EduProjectActivity : ProjectActivity {
 
     withContext(Dispatchers.EDT) {
       val fileEditorManager = FileEditorManager.getInstance(project)
-      if ((!fileEditorManager.hasOpenFiles() || project.isNewlyCreated()) && !SubmissionSettings.getInstance(project).stateOnClose) {
+      if (!fileEditorManager.hasOpenFiles() && !SubmissionSettings.getInstance(project).stateOnClose) {
         NavigationUtils.openFirstTask(course, project)
       }
     }
