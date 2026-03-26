@@ -92,6 +92,10 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     setUpPluginDependencies(project, course)
     initializeFeatureManagement(project, course)
 
+    if (!SubmissionSettings.getInstance(project).stateOnClose) {
+      NavigationUtils.openFirstTask(course, project)
+    }
+
     CourseMetadataProcessor.applyProcessors(project, course, openCourseParams, CourseProjectState.CREATED_PROJECT)
 
     YamlFormatSynchronizer.saveAll(project)
