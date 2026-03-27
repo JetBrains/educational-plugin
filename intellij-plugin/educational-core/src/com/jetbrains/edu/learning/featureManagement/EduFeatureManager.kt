@@ -1,20 +1,27 @@
 package com.jetbrains.edu.learning.featureManagement
 
-import com.intellij.openapi.components.RoamingType
-import com.intellij.openapi.components.SerializablePersistentStateComponent
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.StoragePathMacros
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduTestAware
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 
 @Service(Service.Level.PROJECT)
 @State(name = "EduFeatureManager", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
 class EduFeatureManager : SerializablePersistentStateComponent<EduFeatureManager.CourseFeatureState>(CourseFeatureState()), EduTestAware {
+  private val _disabledFeatures = MutableStateFlow(emptySet<EduManagedFeature>())
+  val disabledFeatures: StateFlow<Set<EduManagedFeature>> = _disabledFeatures.asStateFlow()
 
   fun updateManagerState(state: Set<EduManagedFeature>) {
     updateState { CourseFeatureState(state) }
+    _disabledFeatures.value = state
+  }
+
+  override fun loadState(state: CourseFeatureState) {
+    super.loadState(state)
+    _disabledFeatures.value = state.disabledFeatures
   }
 
   fun checkDisabled(featureId: EduManagedFeature): Boolean = featureId in state.disabledFeatures
@@ -25,4 +32,7 @@ class EduFeatureManager : SerializablePersistentStateComponent<EduFeatureManager
 
   @Serializable
   data class CourseFeatureState(val disabledFeatures: Set<EduManagedFeature> = emptySet())
+  companion object {
+    fun getInstance(project: Project): EduFeatureManager = project.service()
+  }
 }

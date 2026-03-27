@@ -26,8 +26,8 @@ class AiCompletionTest : YamlTestCase() {
     }
 
     course.disabledFeatures = listOf(EduManagedFeature.AI_COMPLETION.featureKey)
-    updateAiCompletion(project, course)
-    updateAiCompletion(project, course)
+    disableAiCompletion(project, course)
+    disableAiCompletion(project, course)
 
     verify(exactly = 1) { suppressor.suppress(MLCompletionPerProjectSuppressor.Token("JetBrains Academy")) }
   }
