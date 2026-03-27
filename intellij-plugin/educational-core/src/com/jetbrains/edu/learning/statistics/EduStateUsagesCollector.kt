@@ -5,6 +5,8 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsagesCollector
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.JavaUILibrary
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 import com.jetbrains.edu.learning.statistics.EduFields.COURSE_ID_FIELD
@@ -34,7 +36,7 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
           COURSE_ID_FIELD.with(course.id),
           COURSE_MODE_FIELD.with(course.courseMode),
           PLATFORM_FIELD.with(course.itemType),
-          LANGUAGE_FIELD.with(course.languageId)
+          LANGUAGE_FIELD.with(course.languageIdForCollectors)
         )
       }
 
@@ -62,5 +64,13 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
       PLATFORM_FIELD,
       LANGUAGE_FIELD
     )
+
+    private val JBACourseFromStorage.languageIdForCollectors: String
+      get() = if (languageId == CPP) {
+        OBJECTIVE_C
+      }
+      else {
+        languageId
+      }
   }
 }

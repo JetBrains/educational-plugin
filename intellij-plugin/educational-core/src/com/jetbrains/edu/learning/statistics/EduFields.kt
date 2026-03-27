@@ -67,11 +67,7 @@ object EduFields {
 
   val LANGUAGE_FIELD = EventFields.String(LANGUAGE, listOf(
     "JAVA", "kotlin", "Python", "Scala",
-    "JavaScript", "Rust", "go", "PHP",
-    // Clion Nova since 261 uses C++ language instead of ObjectiveC
-    // TODO: Drop ObjectiveC.
-    // See: EDU-8805 Drop support of CLion Classic Engine
-    "ObjectiveC", "C++",
+    "JavaScript", "Rust", "ObjectiveC", "go", "PHP"
   ))
 
   val PLATFORM_FIELD = EventFields.String(PLATFORM, PLATFORM_NAMES)
