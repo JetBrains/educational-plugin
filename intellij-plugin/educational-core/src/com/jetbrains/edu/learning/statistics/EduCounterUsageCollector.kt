@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraPlatformProvider
@@ -383,7 +385,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     fun taskNavigation(place: TaskNavigationPlace) = TASK_NAVIGATION_EVENT.log(place)
 
-    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageId)
+    fun eduProjectCreated(course: Course) = EDU_PROJECT_CREATED_EVENT.log(course.courseMode, course.itemType, course.languageIdForCollectors)
 
     fun eduProjectOpened(course: Course) = EDU_PROJECT_OPENED_EVENT.log(course.courseMode, course.itemType)
 
@@ -443,9 +445,9 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
     fun importCourseArchive() = IMPORT_COURSE_EVENT.log()
 
-    fun xDialogShown(course: Course) = X_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
+    fun xDialogShown(course: Course) = X_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageIdForCollectors)
 
-    fun linkedInDialogShown(course: Course) = LINKEDIN_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageId)
+    fun linkedInDialogShown(course: Course) = LINKEDIN_DIALOG_SHOWN_EVENT.log(course.itemType, course.languageIdForCollectors)
 
     fun courseSelectionViewOpened(actionPlace: String) {
       COURSE_SELECTION_VIEW_OPENED_EVENT.log(CourseActionSource.fromActionPlace(actionPlace))
@@ -497,5 +499,13 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun studentPackPromotionLinkFollowed() = STUDENT_PACK_PROMOTION_LINK_FOLLOWED.log()
 
     fun studentPackPromotionRefused() = STUDENT_PACK_PROMOTION_REFUSED.log()
+
+    private val Course.languageIdForCollectors: String
+      get() = if (languageId == CPP) {
+        OBJECTIVE_C
+      }
+      else {
+        languageId
+      }
   }
 }
