@@ -16,8 +16,15 @@ import org.junit.Test
 class AiCompletionFeatureWatcherTest : EduTestCase() {
 
   override fun tearDown() {
-    super.setUp()
-    MLCompletionPerProjectSuppressor.getInstance(project).unsuppress(AI_COMPLETION_SUPPRESSOR_TOKEN)
+    try {
+      MLCompletionPerProjectSuppressor.getInstance(project).unsuppress(AI_COMPLETION_SUPPRESSOR_TOKEN)
+    }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
+    finally {
+      super.tearDown()
+    }
   }
 
   @OptIn(DelicateCoroutinesApi::class)
