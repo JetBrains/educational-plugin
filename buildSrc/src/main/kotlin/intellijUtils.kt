@@ -3,6 +3,7 @@ import org.gradle.process.JavaForkOptions
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
+import org.jetbrains.intellij.platform.gradle.utils.Version
 import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
@@ -66,16 +67,6 @@ val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
 
-val Project.intellijTestFrameworkType: TestFrameworkType
-  get() {
-    return if (isAtLeast261) {
-      TestFrameworkType.Platform
-    }
-    else {
-      TestFrameworkType.Bundled
-    }
-  }
-
 val Project.jvmPlugins: List<String> get() = listOf(
   javaPlugin,
   "JUnit",
@@ -126,6 +117,30 @@ fun String.toTypeWithVersion(): TypeWithVersion {
   return TypeWithVersion(IntelliJPlatformType.fromCode(code, version), version)
 }
 
+val BUILD_NUMBER_261: Version = Version.parse("261")
+val VERSION_261: Version = Version.parse("2026.1")
+
+// BACKCOMPAT: 2025.3
+val String.isAtLeast261: Boolean
+  get() {
+    val parsedVersion = Version.parse(this)
+    return if (parsedVersion.isBuildNumber()) {
+      parsedVersion >= BUILD_NUMBER_261
+    }
+    else {
+      parsedVersion >= VERSION_261
+    }
+  }
+
+fun testFrameworkType(type: IntelliJPlatformType, version: String): TestFrameworkType {
+  return if (version.isAtLeast261 && type != IntelliJPlatformType.Rider) {
+    TestFrameworkType.Platform
+  }
+  else {
+    TestFrameworkType.Bundled
+  }
+}
+
 fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   val (type, version) = versionWithCode.toTypeWithVersion()
   create(type, version) {
@@ -134,6 +149,8 @@ fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   }
   // JetBrains runtime is necessary not only for running IDE but for tests as well
   jetbrainsRuntime()
+  // Adds test framework depending on IDE type and version
+  testFramework(testFrameworkType(type, version))
 }
 
 fun IntelliJPlatformDependenciesExtension.intellijPlugins(vararg notations: String) {

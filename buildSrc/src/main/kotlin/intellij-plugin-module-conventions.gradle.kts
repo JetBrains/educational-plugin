@@ -46,6 +46,5 @@ dependencies {
 
   intellijPlatform {
     testIntellijPlugins(commonTestPlugins)
-    testFramework(intellijTestFrameworkType)
   }
 }
