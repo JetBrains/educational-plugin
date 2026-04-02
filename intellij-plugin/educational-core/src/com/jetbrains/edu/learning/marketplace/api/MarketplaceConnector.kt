@@ -164,6 +164,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
   override fun loadCourseStructure(course: EduCourse, downloadContext: DownloadCourseContext) {
     val unpackedCourse = loadCourse(course.id, downloadContext)
     course.items = unpackedCourse.items
+    course.disabledFeatures = unpackedCourse.disabledFeatures
     course.additionalFiles = unpackedCourse.additionalFiles
     course.marketplaceCourseVersion = unpackedCourse.marketplaceCourseVersion
   }

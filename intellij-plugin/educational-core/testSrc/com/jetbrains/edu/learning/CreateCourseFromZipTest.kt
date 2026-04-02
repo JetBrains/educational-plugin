@@ -1,10 +1,14 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.util.application
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.visitEduFiles
 import com.jetbrains.edu.learning.courseFormat.zip.ZipContents
+import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
 import com.jetbrains.edu.learning.storage.ContentsFromLearningObjectsStorage
 import com.jetbrains.edu.learning.storage.LearningObjectsStorageManager
+import io.mockk.every
 import org.junit.Test
 import kotlin.test.assertContains
 import kotlin.test.assertIs
@@ -29,6 +33,22 @@ class CreateCourseFromZipTest : EduTestCase() {
   @Test
   fun `test create pycharm typed course from encrypted new format zip archive`() {
     doTestCreateEduCourseFromZip("new format edu course.zip", 12)
+  }
+
+  @Test
+  fun `test disabled features are properly deserialized and loaded from marketplace`() {
+    val zipPath = "$testDataPath/course with disabled ai completion.zip"
+
+    val connector = mockService<MarketplaceConnector>(application)
+    every { connector.loadCourse(any(), any()) } answers {
+      EduUtilsKt.getLocalCourse(zipPath) as? EduCourse ?: error("Failed to load course from $zipPath")
+    }
+
+    val course = EduCourse().apply {
+      isMarketplace = true
+    }
+    course.loadMarketplaceCourseStructure()
+    assertEquals(listOf("ai-completion"), course.disabledFeatures)
   }
 
   private fun doTestCreateMarketplaceCourseFromZip(fileName: String, jsonVersion: Int) {
