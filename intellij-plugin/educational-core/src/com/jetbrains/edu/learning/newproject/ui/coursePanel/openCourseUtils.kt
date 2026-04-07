@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
-import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
@@ -11,6 +10,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessor
 import com.jetbrains.edu.learning.newproject.CourseProjectState
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import com.jetbrains.edu.learning.newproject.openProjectTask
 
 fun Course.openCourse(openCourseMetadata: Map<String, String>) {
   val coursesStorage = CoursesStorage.getInstance()
@@ -19,7 +19,7 @@ fun Course.openCourse(openCourseMetadata: Map<String, String>) {
 
   val pathToOpen = generator.setUpProjectLocation(coursePath)
   val beforeInitHandler = generator.beforeInitHandler(coursePath)
-  val openProjectTask = OpenProjectTask {
+  val openProjectTask = openProjectTask {
     isNewProject = false
     projectToClose = null
     forceOpenInNewFrame = true

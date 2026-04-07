@@ -1,6 +1,5 @@
 package com.jetbrains.edu.commandLine
 
-import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
@@ -11,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
+import com.jetbrains.edu.learning.newproject.openProjectTask
 import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
@@ -85,7 +85,7 @@ enum class CourseSource(val option: String, val description: String) {
     override suspend fun loadCourse(projectPath: String): Result<Course, String> {
       val projectPath = Paths.get(projectPath).absolute()
       if (!projectPath.exists()) return Err("$projectPath does not exist")
-      val project = ProjectManagerEx.getInstanceEx().openProjectAsync(projectPath, OpenProjectTask {
+      val project = ProjectManagerEx.getInstanceEx().openProjectAsync(projectPath, openProjectTask {
         isNewProject = false
       }) ?: return Err("Failed to open project at `$projectPath`")
 
