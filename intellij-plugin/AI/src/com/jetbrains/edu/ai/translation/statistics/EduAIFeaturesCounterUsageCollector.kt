@@ -20,6 +20,17 @@ import com.jetbrains.edu.learning.statistics.EduFields.COURSE_UPDATE_VERSION_FIE
 import com.jetbrains.edu.learning.statistics.EduFields.TASK_ID_FIELD
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 
+/**
+ * IMPORTANT: if you modify anything in this class, remember to increment [GROUP] version.
+ *
+ * Whitelist rule scheme is automatically generated on CI,
+ * and for any changes a new verification issue will be created in https://youtrack.jetbrains.com/projects/FUS
+ * together with a merge request with the corresponding changes in the scheme.
+ *
+ * See:
+ * - [Event scheme generator](https://buildserver.labs.intellij.net/buildConfiguration/ijplatform_master_EduStatisticsEventSchemeGenerator)
+ * - [Event scheme changes calculator](https://buildserver.labs.intellij.net/buildConfiguration/FUS_FusWhitelist_EventScheme_EduToolsChangesCalculation)
+ */
 class EduAIFeaturesCounterUsageCollector : CounterUsagesCollector() {
   override fun getGroup(): EventLogGroup = GROUP
 

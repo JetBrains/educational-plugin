@@ -27,10 +27,16 @@ import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatf
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 /**
- * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
- * provided to analytics platform team.
+ * IMPORTANT: if you modify anything in this class, remember to increment [GROUP] version.
+ *
+ * Whitelist rule scheme is automatically generated on CI,
+ * and for any changes a new verification issue will be created in https://youtrack.jetbrains.com/projects/FUS
+ * together with a merge request with the corresponding changes in the scheme.
+ *
+ * See:
+ * - [Event scheme generator](https://buildserver.labs.intellij.net/buildConfiguration/ijplatform_master_EduStatisticsEventSchemeGenerator)
+ * - [Event scheme changes calculator](https://buildserver.labs.intellij.net/buildConfiguration/FUS_FusWhitelist_EventScheme_EduToolsChangesCalculation)
  */
-@Suppress("UnstableApiUsage")
 class EduCounterUsageCollector : CounterUsagesCollector() {
 
   override fun getGroup(): EventLogGroup = GROUP
@@ -128,6 +134,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     REMOTE
   }
 
+  @Suppress("CompanionObjectInExtension")
   companion object {
     private const val SOURCE = "source"
     private const val SUCCESS = "success"

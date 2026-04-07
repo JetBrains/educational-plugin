@@ -15,10 +15,16 @@ import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.PLATFORM_FIELD
 
 /**
- * IMPORTANT: if you modify anything in this class, updated whitelist rules should be
- * provided to analytics platform team.
+ * IMPORTANT: if you modify anything in this class, remember to increment [GROUP] version.
+ *
+ * Whitelist rule scheme is automatically generated on CI,
+ * and for any changes a new verification issue will be created in https://youtrack.jetbrains.com/projects/FUS
+ * together with a merge request with the corresponding changes in the scheme.
+ *
+ * See:
+ * - [Event scheme generator](https://buildserver.labs.intellij.net/buildConfiguration/ijplatform_master_EduStatisticsEventSchemeGenerator)
+ * - [Event scheme changes calculator](https://buildserver.labs.intellij.net/buildConfiguration/FUS_FusWhitelist_EventScheme_EduToolsChangesCalculation)
  */
-@Suppress("UnstableApiUsage")
 class EduStateUsagesCollector : ApplicationUsagesCollector() {
 
   override fun getGroup(): EventLogGroup = GROUP
@@ -43,6 +49,7 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
     return metrics
   }
 
+  @Suppress("CompanionObjectInExtension")
   companion object {
     private val GROUP = EventLogGroup("educational.state", 8)
 
