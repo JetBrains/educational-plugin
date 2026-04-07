@@ -48,14 +48,20 @@ dependencies/
 secret.properties
 # old location of twitter properties
 intellij-plugin/Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties
+# old location of twitter properties
 intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties
 intellij-plugin/educational-core/resources/stepik/stepik.properties
 intellij-plugin/educational-core/resources/hyperskill/hyperskill-oauth.properties
+# old location of linkedin properties
 intellij-plugin/educational-core/resources/linkedin/linkedin-oauth.properties
 intellij-plugin/educational-core/resources/marketplace/marketplace-oauth.properties
 # old location of lti-auth properties
 intellij-plugin/educational-core/resources/lti/lti-auth.properties
+# old location of lti-auth properties
 intellij-plugin/features/lti/resources/lti-auth.properties
+intellij-plugin/features/lti/resources/lti/lti-auth.properties
+intellij-plugin/features/social-media/resources/linkedin/linkedin-oauth.properties
+intellij-plugin/features/social-media/resources/twitter/oauth_twitter.properties
 #AES key
 edu-format/resources/aes/aes.properties
 intellij-plugin/educational-core/resources/aes/aes.properties

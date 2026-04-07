@@ -82,11 +82,11 @@ fun configureSecretProperties() {
     "hyperskillClientId",
   )
   secretProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/twitter/oauth_twitter.properties",
+    "intellij-plugin/features/social-media/resources/twitter/oauth_twitter.properties",
     "xClientId"
   )
   secretProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/linkedin/linkedin-oauth.properties",
+    "intellij-plugin/features/social-media/resources/linkedin/linkedin-oauth.properties",
     "linkedInClientId",
     "linkedInClientSecret"
   )
@@ -101,7 +101,7 @@ fun configureSecretProperties() {
     "marketplaceHubClientId"
   )
   secretProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/lti/lti-auth.properties",
+    "intellij-plugin/features/lti/resources/lti/lti-auth.properties",
     "ltiServiceToken"
   )
 }
