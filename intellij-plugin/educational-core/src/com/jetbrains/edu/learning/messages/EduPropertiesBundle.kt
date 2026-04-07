@@ -19,10 +19,10 @@ abstract class EduPropertiesBundle(private val bundleName: String) {
     get() {
       var bundle = SoftReference.dereference(ourBundle)
       if (bundle == null) {
-        bundle = ResourceBundle.getBundle(bundleName)
+        bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault(), javaClass.classLoader)
         ourBundle = java.lang.ref.SoftReference(bundle)
       }
-      return bundle!!
+      return bundle
     }
 
   protected fun valueOrEmpty(key: String): String {
