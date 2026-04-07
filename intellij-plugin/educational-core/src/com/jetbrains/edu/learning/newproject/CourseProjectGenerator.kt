@@ -385,7 +385,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       prepareToOpenCallback: suspend (Project, Module) -> Unit,
       beforeInitHandler: BeforeInitHandler
     ): OpenProjectTask {
-      return OpenProjectTask {
+      return openProjectTask {
         forceOpenInNewFrame = true
         isNewProject = true
         isProjectCreatedWithWizard = true
