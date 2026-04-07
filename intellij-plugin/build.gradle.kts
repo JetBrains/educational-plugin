@@ -174,7 +174,12 @@ tasks {
       useInstaller = false
 
       task {
-        args("buildEventsScheme", "--outputFile=${buildDir()}/eventScheme.json", "--pluginId=com.jetbrains.edu")
+        args(
+          "buildEventsScheme",
+          "--outputFile=${buildDir()}/eventScheme.json",
+          "--pluginId=com.jetbrains.edu",
+          "--descriptionDir=${projectDir}/fus"
+        )
         // Force headless mode to be able to run command on CI
         systemProperty("java.awt.headless", "true")
         // BACKCOMPAT: 2025.3. Update value to 261 and this comment

@@ -44,21 +44,15 @@ class EduStateUsagesCollector : ApplicationUsagesCollector() {
   }
 
   companion object {
-    private val GROUP = EventLogGroup(
-      "educational.state",
-      "The metric is reported in case a user has JetBrains Academy plugin installed and contains data about settings related to the plugin.",
-      8
-    )
+    private val GROUP = EventLogGroup("educational.state", 8)
 
     private val TASK_PANEL_EVENT = GROUP.registerEvent(
       "task.panel",
-      "Task Panel",
       enumField<JavaUILibrary>()
     )
 
     private val COURSE_EVENT = GROUP.registerVarargEvent(
       "course",
-      "The metric shows base info about educational course opened in IDE",
       COURSE_ID_FIELD,
       COURSE_MODE_FIELD,
       PLATFORM_FIELD,
