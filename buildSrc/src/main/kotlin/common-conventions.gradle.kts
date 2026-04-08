@@ -60,7 +60,7 @@ tasks {
       // Update this message and api version value if needed
       apiVersion = KotlinVersion.KOTLIN_2_2
       freeCompilerArgs = listOf(
-        "-Xjvm-default=all",
+        "-jvm-default=no-compatibility",
         "-Xannotation-default-target=param-property"
       )
     }
