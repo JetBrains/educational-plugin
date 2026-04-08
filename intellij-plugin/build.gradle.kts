@@ -214,7 +214,6 @@ tasks {
     customRunIdeTask(GoLand)
     customRunIdeTask(PhpStorm)
     customRunIdeTask(RustRover)
-    customRunIdeTask(DataSpell)
     customRunIdeTask(Rider, riderVersion)
   }
 }
