@@ -9,8 +9,6 @@
   <resource-bundle>messages.EduCoreBundle</resource-bundle>
 
   <applicationListeners>
-    <listener class="com.jetbrains.edu.learning.EduDynamicPluginListener"
-              topic="com.intellij.ide.plugins.DynamicPluginListener"/>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.AppLifecycleListener"/>
     <listener class="com.jetbrains.edu.learning.InitializationListener" topic="com.intellij.ide.plugins.DynamicPluginListener"/>
     <listener class="com.jetbrains.edu.learning.RecentPreviewCourseListener"
@@ -502,6 +500,8 @@
     <registryKey key="edu.network.request.assertion.policy"
                  description="Assertion policy for network requests from EDT in JetBrains Academy plugin"
                  defaultValue="[OFF|LOG_ERROR*|EXCEPTION]"/>
+
+    <ide.dynamicPluginVetoer implementation="com.jetbrains.edu.learning.EduDynamicPluginVetoer"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
