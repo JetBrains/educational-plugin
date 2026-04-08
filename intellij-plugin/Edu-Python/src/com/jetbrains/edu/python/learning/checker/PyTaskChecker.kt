@@ -3,8 +3,8 @@ package com.jetbrains.edu.python.learning.checker
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
-import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -65,7 +65,7 @@ open class PyTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project:
     configuration.isActivateToolWindowBeforeRun = false
 
     val errorOutput = StringBuilder()
-    val processListener = object : ProcessAdapter() {
+    val processListener = object : ProcessListener {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         if (outputType == ProcessOutputTypes.STDERR) {
           errorOutput.append(event.text)

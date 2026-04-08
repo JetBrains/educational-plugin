@@ -16,8 +16,8 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.messages.MessageBusConnection
@@ -217,7 +217,7 @@ object CheckUtils {
       }
       val processHandler = descriptor.processHandler
       if (processHandler != null) {
-        processHandler.addProcessListener(object : ProcessAdapter() {
+        processHandler.addProcessListener(object : ProcessListener {
           override fun processTerminated(event: ProcessEvent) {
             context.latch.countDown()
           }
