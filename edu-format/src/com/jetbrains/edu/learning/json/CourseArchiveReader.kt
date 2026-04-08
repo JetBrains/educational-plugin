@@ -81,7 +81,7 @@ private fun getFormatVersionAndCourseTypeFromJson(
     // if the object is not finished, we expect a field name
     if (!parser.hasToken(JsonToken.FIELD_NAME)) throw CourseJsonParsingException("Unexpected token ${parser.currentToken} in course.json")
 
-    when (parser.currentName) {
+    when (parser.currentName()) {
       VERSION -> {
         version = parser.nextIntValue(-1)
         if (version == -1) throw CourseJsonParsingException("Course format version specified incorrectly")
