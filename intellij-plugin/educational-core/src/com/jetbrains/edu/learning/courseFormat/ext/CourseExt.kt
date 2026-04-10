@@ -159,12 +159,12 @@ private fun Course.pluginCompatibility(): CourseCompatibility? {
   val loadedPlugins = PluginManager.getLoadedPlugins()
   val notLoadedPlugins = requiredPlugins
     .mapNotNull {
-      if (pluginsState.wasInstalledWithoutRestart(PluginId.getId(it.stringId))) {
-        return@mapNotNull null
-      }
-
       val pluginDescriptor = PluginManagerCore.getPlugin(PluginId.getId(it.stringId))
       if (pluginDescriptor == null || pluginDescriptor !in loadedPlugins) {
+        return@mapNotNull it to pluginDescriptor
+      }
+
+      if (pluginsState.wasInstalledWithoutRestart(PluginId.getId(it.stringId))) {
         it to pluginDescriptor
       }
       else {
