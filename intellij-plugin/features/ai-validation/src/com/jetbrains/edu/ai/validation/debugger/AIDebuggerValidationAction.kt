@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.ai.debugger.core.service.CourseInfo
 import com.jetbrains.edu.ai.debugger.core.service.DebuggerHintRequest
 import com.jetbrains.edu.ai.debugger.core.service.TaskDescription
 import com.jetbrains.edu.ai.debugger.core.utils.AIDebugUtils.getLanguage
@@ -43,21 +44,23 @@ class AIDebuggerValidationAction : AnAction() {
     }
   }
 
-  private fun UserResult.toDebuggerHint(project: Project) = DebuggerHintRequest(
-    authorSolution =  task.taskFiles.values.filter { !it.isTestFile }.associate { it.name to it.getSolution() },
-    courseId = task.course.id,
-    programmingLanguage = project.getLanguage(),
-    taskDescription = TaskDescription(
-      descriptionFormat = task.descriptionFormat.toTaskDescriptionType(),
-      text = task.getTaskDescriptionText(project)
-    ),
-    taskId = task.id,
-    testInfo = testInfo,
-    updateVersion = project.course?.marketplaceCourseVersion,
-    userSolution = userSolution,
-    lessonName = task.lesson.name,
-    taskName = task.name
-  )
+  private fun UserResult.toDebuggerHint(project: Project): DebuggerHintRequest {
+    val courseInfo = CourseInfo(id = task.course.id, updateVersion = project.course?.marketplaceCourseVersion)
+    return DebuggerHintRequest(
+      authorSolution = task.taskFiles.values.filter { !it.isTestFile }.associate { it.name to it.getSolution() },
+      courseInfo = courseInfo,
+      programmingLanguage = project.getLanguage(),
+      taskDescription = TaskDescription(
+        descriptionFormat = task.descriptionFormat.toTaskDescriptionType(),
+        text = task.getTaskDescriptionText(project)
+      ),
+      taskId = task.id,
+      testInfo = testInfo,
+      userSolution = userSolution,
+      lessonName = task.lesson.name,
+      taskName = task.name
+    )
+  }
 
   private fun <K> parseCsvFile(recordConverter: (CSVRecord) -> K): List<K>? =
     javaClass.getResourceAsStream(pathToSolution)?.use { inputStream ->
@@ -76,17 +79,17 @@ class AIDebuggerValidationAction : AnAction() {
       forEach {
         printer.printRecord(
           it.authorSolution,
-          it.courseId,
+//          it.courseId,
           it.programmingLanguage,
           it.taskDescription.text,
           it.taskDescription.descriptionFormat,
-          it.taskId,
+//          it.taskId,
           it.testInfo.text,
           it.testInfo.name,
           it.testInfo.expectedOutput,
           it.testInfo.errorMessage,
           it.testInfo.testFiles,
-          it.updateVersion,
+//          it.updateVersion,
           it.userSolution
         )
       }

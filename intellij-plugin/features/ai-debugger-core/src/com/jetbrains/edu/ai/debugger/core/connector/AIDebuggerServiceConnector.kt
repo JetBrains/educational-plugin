@@ -11,6 +11,7 @@ import com.jetbrains.edu.ai.debugger.core.error.BreakpointsError
 import com.jetbrains.edu.ai.debugger.core.host.EduAIDebuggerServiceHost
 import com.jetbrains.edu.ai.debugger.core.service.AIDebuggerService
 import com.jetbrains.edu.ai.debugger.core.service.BreakpointHintRequest
+import com.jetbrains.edu.ai.debugger.core.service.CourseInfo
 import com.jetbrains.edu.ai.debugger.core.service.DebuggerHintRequest
 import com.jetbrains.edu.ai.debugger.core.service.TestInfo
 import com.jetbrains.edu.learning.Err
@@ -65,16 +66,16 @@ class AIDebuggerServiceConnector {
     updateVersion: Int?,
     userSolution: FileContentMap
   ): Result<List<Breakpoint>, AIDebuggerServiceError> {
+    val courseInfo = CourseInfo(id = courseId, updateVersion = updateVersion)
     val request = DebuggerHintRequest(
       authorSolution = authorSolution,
-      courseId = courseId,
+      courseInfo = courseInfo,
       lessonName = task.lesson.name,
       taskName = task.name,
       programmingLanguage = programmingLanguage,
       taskDescription = taskDescription,
       taskId = task.id,
       testInfo = testInfo,
-      updateVersion = updateVersion,
       userSolution = userSolution
     )
     return service.getBreakpoints(request).handleResponse()
