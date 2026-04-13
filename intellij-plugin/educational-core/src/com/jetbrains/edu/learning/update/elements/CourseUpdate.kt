@@ -8,6 +8,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
+import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.marketplace.update.elements.MarketplaceCourseUpdate
 import com.jetbrains.edu.learning.stepik.hyperskill.update.elements.HyperskillCourseUpdate
 import com.jetbrains.edu.learning.update.comparators.EduFileComparator.Companion.areNotEqual
@@ -36,6 +38,8 @@ abstract class CourseUpdate<T : Course>(
       localItem.additionalFiles = remoteItem.additionalFiles
     }
 
+    val features = remoteItem.disabledFeatures.mapNotNull { EduManagedFeature.forKey(it) }.toSet()
+    EduFeatureManager.getInstance(project).updateManagerState(features)
     localItem.sortItems()
   }
 

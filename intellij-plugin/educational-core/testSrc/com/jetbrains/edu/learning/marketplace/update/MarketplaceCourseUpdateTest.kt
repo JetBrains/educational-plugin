@@ -3,6 +3,8 @@ package com.jetbrains.edu.learning.marketplace.update
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
+import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.update.CourseUpdater
 import com.jetbrains.edu.learning.update.UpdateTestBase
@@ -193,6 +195,18 @@ class MarketplaceCourseUpdateTest : UpdateTestBase<EduCourse>() {
       file("settings.gradle")
     }
     expectedStructure.assertEquals(rootDir)
+  }
+
+  @Test
+  fun `disabled features are applied after course update`() {
+    initiateLocalCourse()
+    val remoteCourse = toRemoteCourse {
+      disabledFeatures = listOf("ai-completion")
+      marketplaceCourseVersion = 2
+    }
+    assertFalse(EduFeatureManager.getInstance(project).checkDisabled(EduManagedFeature.AI_COMPLETION))
+    updateCourse(remoteCourse)
+    assertTrue(EduFeatureManager.getInstance(project).checkDisabled(EduManagedFeature.AI_COMPLETION))
   }
 
   override fun initiateLocalCourse() {

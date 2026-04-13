@@ -18,6 +18,8 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
+import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.getTextFromTaskTextFile
 import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.marketplace.courseConnector
@@ -47,6 +49,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
 
     setCourseInfo(courseFromServer)
+    setDisabledFeatures(courseFromServer.disabledFeatures)
     updateSections(courseFromServer)
     updateLessons(courseFromServer)
     updateAdditionalMaterialsFiles(courseFromServer)
@@ -88,6 +91,11 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
     }
 
     CCNotificationUtils.showInfoNotification(project, EduCoreBundle.message("action.course.updated"), action = openChangeNotesAction)
+  }
+
+  private fun setDisabledFeatures(disabledFeatures: List<String>) {
+    val features = disabledFeatures.mapNotNull { EduManagedFeature.forKey(it) }.toSet()
+    EduFeatureManager.getInstance(project).updateManagerState(features)
   }
 
   private fun setUpdated(courseFromServer: EduCourse) {

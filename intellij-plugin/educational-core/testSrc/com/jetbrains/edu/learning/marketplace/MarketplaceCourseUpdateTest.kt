@@ -9,6 +9,8 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
+import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
+import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
@@ -701,6 +703,21 @@ class MarketplaceCourseUpdateTest : CourseGenerationTestBase<EmptyProjectSetting
     createCourseStructure(course)
     val issueDescription = CreateNewYouTrackIssue.createIssueDescription(course)
     assertFalse("Issue description should not contain updates history", issueDescription.contains("**Course updates**"))
+  }
+
+  @Test
+  fun `disabled features are applied after course update`() {
+    val course = createCourse(CheckStatus.Solved).apply {
+      marketplaceCourseVersion = 1
+    }
+    val courseFromServer = createCourse(CheckStatus.Solved).apply {
+      disabledFeatures = listOf("ai-completion")
+      marketplaceCourseVersion = 2
+    }
+    createCourseStructure(course)
+    assertFalse(EduFeatureManager.getInstance(project).checkDisabled(EduManagedFeature.AI_COMPLETION))
+    updateCourse(course, courseFromServer, remoteCourseVersion = 2)
+    assertTrue(EduFeatureManager.getInstance(project).checkDisabled(EduManagedFeature.AI_COMPLETION))
   }
 
   private fun createCourseWithFrameworkLesson(
