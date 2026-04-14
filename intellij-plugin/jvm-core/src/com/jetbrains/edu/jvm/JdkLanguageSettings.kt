@@ -33,6 +33,7 @@ import javax.swing.JComponent
 open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   protected var jdk: Sdk? = null
+  protected var jdkHasNeverBeenSet: Boolean = true
   protected val sdkModel: ProjectSdksModel = createSdkModel()
 
   private fun createSdkModel(): ProjectSdksModel {
@@ -61,6 +62,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
     jdkComboBox.addItemListener {
       jdk = jdkComboBox.selectedItem?.jdk
+      jdkHasNeverBeenSet = false
       notifyListeners()
     }
 
@@ -85,7 +87,9 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
     EduJdkLookupService.getInstance().findSuitableJdk(minJvmSdkVersion(course), sdksModel, modalityState, disposable) { suitableJdk ->
       withContext(Dispatchers.EDT) {
-        jdkComboBox.selectedJdk = suitableJdk
+        if (jdkHasNeverBeenSet) {
+          jdkComboBox.selectedJdk = suitableJdk
+        }
       }
     }
   }
