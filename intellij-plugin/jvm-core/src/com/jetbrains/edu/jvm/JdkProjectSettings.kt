@@ -11,25 +11,34 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModificator
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.util.concurrency.annotations.RequiresEdt
+import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.DefaultSettingsUtils.propertyValue
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
+import kotlin.coroutines.cancellation.CancellationException
 
 open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduProjectSettings {
 
+  @RequiresEdt
   fun setUpProjectJdk(
     project: Project,
     course: Course,
     getJdk: JdkProjectSettings.() -> Sdk? = { jdk }
   ): Sdk? {
     val jdk = getJdk()
+
+    jdk?.downloadIfNeeded(project)
 
     // Try to apply model, i.e. commit changes from sdk model into ProjectJdkTable
     try {
@@ -56,6 +65,25 @@ open class JdkProjectSettings(val model: ProjectSdksModel, val jdk: Sdk?) : EduP
       commitChanges()
     }
   }
+
+  @RequiresEdt
+  private fun Sdk.downloadIfNeeded(project: Project) {
+    if (!SdkDownloadTracker.getInstance().isDownloading(this)) return
+
+    try {
+      runWithModalProgressBlocking(project, EduJVMBundle.message("download.jdk.progress")) {
+        // Downloads SDK only if it was prepared for download. Doesn't take any action otherwise
+        JdkDownloadUtil.downloadSdk(this@downloadIfNeeded)
+      }
+    }
+    catch (c: CancellationException) {
+      throw c
+    }
+    catch (th: Throwable) {
+      LOG.warn("Failed to download JDK", th)
+    }
+  }
+
 
   companion object {
 
