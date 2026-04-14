@@ -15,6 +15,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.util.cancelOnDispose
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +47,14 @@ class EduJdkLookupService(private val scope: CoroutineScope) {
         LOG.warn("Failed to find suitable JDK for course sdk version=$courseSdkVersion")
       }
     }.cancelOnDispose(disposable)
+  }
+
+  fun downloadJdkIfNeeded(jdk: Sdk) {
+    if (!SdkDownloadTracker.getInstance().isDownloading(jdk)) return
+
+    scope.launch(Dispatchers.IO) {
+      JdkDownloadUtil.downloadSdk(jdk)
+    }
   }
 
   private suspend fun doFindSuitableJdk(courseSdkVersion: ParsedJavaVersion, sdkModel: ProjectSdksModel): Sdk? {
