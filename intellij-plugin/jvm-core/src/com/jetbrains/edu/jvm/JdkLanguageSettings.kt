@@ -1,11 +1,11 @@
 package com.jetbrains.edu.jvm
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
@@ -16,14 +16,15 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
-import com.jetbrains.edu.learning.runInBackground
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
 import java.io.File
@@ -63,17 +64,27 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       notifyListeners()
     }
 
-    preselectJdk(course, jdkComboBox, sdkModel)
+    waitForModality(jdkComboBox, disposable) { modalityState ->
+      preselectJdk(course, jdkComboBox, sdkModel, modalityState, disposable)
+    }
+
     jdk = jdkComboBox.selectedItem?.jdk
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
+    return listOf(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
   }
 
-  private fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
+  @RequiresEdt
+  private fun preselectJdk(
+    course: Course,
+    jdkComboBox: JdkComboBox,
+    sdksModel: ProjectSdksModel,
+    modalityState: ModalityState,
+    disposable: Disposable
+  ) {
     if (jdkComboBox.selectedJdk != null) return
-    runInBackground(course.project, EduJVMBundle.message("progress.setting.suitable.jdk"), false) {
-      val suitableJdk = findSuitableJdk(minJvmSdkVersion(course), sdksModel)
-      invokeLater(ModalityState.any()) {
+
+    EduJdkLookupService.getInstance().findSuitableJdk(minJvmSdkVersion(course), sdksModel, modalityState, disposable) { suitableJdk ->
+      withContext(Dispatchers.EDT) {
         jdkComboBox.selectedJdk = suitableJdk
       }
     }
@@ -140,24 +151,6 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       // Try to find existing bundled jdk added by the plugin on previous course creation or by user
       val sdk = model.projectSdks.values.find { it.homePath == bundledJdkPath }
       return BundledJdkInfo(bundledJdkPath, sdk)
-    }
-
-    fun findSuitableJdk(courseSdkVersion: ParsedJavaVersion, sdkModel: ProjectSdksModel): Sdk? {
-      val jdks = sdkModel.sdks.filter { it.sdkType == JavaSdk.getInstance() }
-
-      if (courseSdkVersion !is JavaVersionParseSuccess) {
-        return jdks.firstOrNull()
-      }
-
-      return jdks.find {
-        val jdkVersion = ParsedJavaVersion.fromJavaSdkVersionString(it.versionString)
-        if (jdkVersion is JavaVersionParseSuccess) {
-          jdkVersion isAtLeast courseSdkVersion
-        }
-        else {
-          false
-        }
-      }
     }
   }
 
