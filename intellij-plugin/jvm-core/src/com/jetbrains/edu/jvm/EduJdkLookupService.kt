@@ -14,6 +14,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
+import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkItem
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.util.cancelOnDispose
@@ -100,7 +101,7 @@ class EduJdkLookupService(private val scope: CoroutineScope) {
     val project = ProjectManager.getInstance().defaultProject
 
     val (jdkItem, jdkHome) = JdkDownloadUtil.pickJdkItemAndPath(project) { item ->
-      jdkMajorVersion == null || item.jdkMajorVersion == jdkMajorVersion
+      !item.isPreview && item.matchesJdkMajorVersion(jdkMajorVersion)
     } ?: return null
 
     val task = JdkDownloadUtil.createDownloadTask(project, jdkItem, jdkHome)
@@ -115,6 +116,8 @@ class EduJdkLookupService(private val scope: CoroutineScope) {
       }
     }
   }
+
+  private fun JdkItem.matchesJdkMajorVersion(jdkMajorVersion: Int?): Boolean = jdkMajorVersion == null || this.jdkMajorVersion == jdkMajorVersion
 
   companion object {
     private val LOG = logger<EduJdkLookupService>()
