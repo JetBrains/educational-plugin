@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
 import com.intellij.ui.EditorNotifications
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.actions.EduActionUtils.updateAction
 import com.jetbrains.edu.learning.courseFormat.ext.revertTaskFiles
@@ -60,6 +61,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
     val EP_NAME: ExtensionPointName<RevertTaskExtension> = ExtensionPointName.create("Educational.revertTaskExtension")
 
     @VisibleForTesting
+    @RequiresEdt
     fun revert(project: Project, task: Task) {
       task.apply {
         revertTaskFiles(project)
