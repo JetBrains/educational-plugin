@@ -1,9 +1,11 @@
 package com.jetbrains.edu.jvm
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdkType
@@ -49,6 +51,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   @VisibleForTesting
   fun selectJdk(jdk: Sdk?) {
     this.jdk = jdk
+    jdkHasNeverBeenSet = false
   }
 
   override fun getLanguageSettingsComponents(
@@ -95,6 +98,11 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   }
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
+    if (!ApplicationManager.getApplication().isDispatchThread) {
+      // do not prevent the valudate() method from running, but notify about the error
+      LOG.error("validate() method must be called from EDT", Throwable())
+    }
+
     fun ready(messageId: String, vararg additionalSubstitution: String): SettingsValidationResult {
       val message = EduJVMBundle.message(messageId, *additionalSubstitution)
 
@@ -102,6 +110,8 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     }
 
     course ?: return super.validate(null, courseLocation)
+
+    if (jdkHasNeverBeenSet) return SettingsValidationResult.Pending
 
     // compare the version of the selected jdk to the minimum version required by the course
     val selectedJavaVersion = ParsedJavaVersion.fromJavaSdkVersionString(jdk?.versionString)
@@ -147,6 +157,8 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
 
   companion object {
+    private val LOG = logger<JdkLanguageSettings>()
+
     fun findBundledJdk(model: ProjectSdksModel): BundledJdkInfo? {
       val bundledJdkPath = PathManager.getBundledRuntimePath()
       // It's possible IDE doesn't have bundled jdk.
