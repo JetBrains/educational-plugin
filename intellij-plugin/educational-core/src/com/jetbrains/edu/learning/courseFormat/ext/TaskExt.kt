@@ -2,11 +2,11 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -18,6 +18,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.*
@@ -31,6 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTaskContent
 import com.jetbrains.edu.learning.marketplace.areCommunitySolutionsSupported
 import com.jetbrains.edu.learning.marketplace.peekSolution.GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -41,8 +43,6 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
 import com.jetbrains.educational.core.format.enum.TranslationLanguage
 import java.io.IOException
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 val Task.project: Project? get() = course.project
 
@@ -231,11 +231,27 @@ fun Task.getCodeTaskFile(project: Project): TaskFile? {
   }
 }
 
+@RequiresEdt
 fun Task.revertTaskFiles(project: Project) {
-  ApplicationManager.getApplication().runWriteAction {
-    for (taskFile in taskFiles.values) {
-      taskFile.revert(project)
-    }
+  val taskDirectory = getDir(project.courseDir) ?: return
+
+  taskFiles.values.forEach { it.isTrackChanges = false }
+
+  try {
+    createTaskContent(project, this, taskDirectory)
+
+    val openFiles = FileEditorManager.getInstance(project).openFiles
+    FileDocumentManager.getInstance().reloadFiles(*openFiles)
+
+    taskFiles.values.forEach { it.revert(project) }
+  }
+  catch (e: IOException) {
+    LOG.error("Failed to revert task files", e)
+  }
+  finally {
+    taskFiles.values.forEach { it.isTrackChanges = true }
+
+    YamlFormatSynchronizer.saveItem(this)
   }
 }
 

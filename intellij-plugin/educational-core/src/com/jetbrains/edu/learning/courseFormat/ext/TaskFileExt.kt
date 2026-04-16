@@ -9,10 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.problems.WolfTheProblemSolver
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.EduFile.Companion.LOG
 import com.jetbrains.edu.learning.courseFormat.EduFileErrorHighlightLevel
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 
 fun TaskFile.getDocument(project: Project): Document? {
@@ -41,10 +39,6 @@ val TaskFile.isTestFile: Boolean
 
 
 fun TaskFile.revert(project: Project) {
-  if (!resetDocument(project)) {
-    return
-  }
-
   answerPlaceholders.forEach { answerPlaceholder ->
     answerPlaceholder.reset(true)
   }
@@ -56,7 +50,6 @@ fun TaskFile.revert(project: Project) {
   if (errorHighlightLevel == EduFileErrorHighlightLevel.ALL_PROBLEMS) {
     errorHighlightLevel = EduFileErrorHighlightLevel.TEMPORARY_SUPPRESSION
   }
-  YamlFormatSynchronizer.saveItem(task)
 }
 
 fun TaskFile.getSolution(): String {
@@ -71,23 +64,6 @@ fun TaskFile.getSolution(): String {
     )
   }
   return fullAnswer.toString()
-}
-
-/**
- * @return true if document related to task file has been reset, otherwise - false
- */
-private fun TaskFile.resetDocument(project: Project): Boolean {
-  val document = getDocument(project)
-  // Note, nullable document is valid situation in case of binary files.
-  if (document == null) {
-    LOG.warning("Failed to find document for task file $name")
-    return false
-  }
-
-  isTrackChanges = false
-  document.setText(text)
-  isTrackChanges = true
-  return true
 }
 
 fun TaskFile.shouldBePropagated(): Boolean = isEditable && isVisible
