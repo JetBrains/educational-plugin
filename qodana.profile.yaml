@@ -20,6 +20,12 @@ inspections:
     # The inspection produces too many false positives, so let's disable it for now
   - inspection: unused
     enabled: false
+    # Ideally, we want to disable this inspection only for inject code in tests.
+    # But it seems it's not possible to do via IDE or Qodana settings
+  - inspection: UnusedSymbol
+    ignore:
+      - "intellij-plugin/Edu-Kotlin/testSrc/**"
+      - "intellij-plugin/features/ai-hints-kotlin/testSrc/**"
   - inspection: SyntaxError
     ignore:
       - "intellij-plugin/Edu-Python/testSrc/**"
