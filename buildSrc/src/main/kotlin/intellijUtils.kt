@@ -1,3 +1,5 @@
+@file:Suppress("UnusedReceiverParameter")
+
 import org.gradle.api.Project
 import org.gradle.process.JavaForkOptions
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
