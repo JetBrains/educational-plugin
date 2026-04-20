@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
 import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
-import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.update.showUpdateNotification
 
 fun EduCourse.setRemoteMarketplaceCourseVersion() {
@@ -126,8 +125,6 @@ fun markMarketplaceTheoryTaskAsCompleted(project: Project, task: TheoryTask) {
 fun Project.isMarketplaceCourse(): Boolean = course?.isMarketplace == true
 
 fun Project.isMarketplaceStudentCourse(): Boolean = isMarketplaceCourse() && isStudentProject()
-
-fun SolutionSharingPreference?.toBoolean(): Boolean = this == SolutionSharingPreference.ALWAYS
 
 private const val COURSE_STORAGE_ID_LOWER_BOUND = 200_000
 
