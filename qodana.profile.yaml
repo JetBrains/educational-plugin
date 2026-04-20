@@ -20,6 +20,9 @@ inspections:
     # The inspection produces too many false positives, so let's disable it for now
   - inspection: unused
     enabled: false
+    # The inspection provides quite redundant warnings in batch mode (exactly Qodana case)
+  - inspection: SameReturnValue
+    enabled: false
     # Ideally, we want to disable this inspection only for inject code in tests.
     # But it seems it's not possible to do via IDE or Qodana settings
   - inspection: UnusedSymbol
