@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import org.jetbrains.annotations.NonNls
 import java.util.*
-import java.util.stream.Collectors
 
 class CCWrapWithSection : DumbAwareAction() {
 
@@ -75,10 +74,10 @@ class CCWrapWithSection : DumbAwareAction() {
       return if (!isConsecutive(lessonsToWrap)) ArrayList() else lessonsToWrap
     }
 
-    private fun isConsecutive(lessonsToWrap: ArrayList<Lesson>): Boolean {
-      val indexes = lessonsToWrap.stream().map { it: Lesson -> it.index }.collect(Collectors.toList())
+    private fun isConsecutive(lessonsToWrap: List<Lesson>): Boolean {
+      val indexes = lessonsToWrap.map { it: Lesson -> it.index }
       if (indexes.isEmpty()) return false
-      if (indexes.stream().distinct().count() != indexes.size.toLong()) {
+      if (indexes.distinct().size != indexes.size) {
         return false
       }
       val max = Collections.max(indexes)

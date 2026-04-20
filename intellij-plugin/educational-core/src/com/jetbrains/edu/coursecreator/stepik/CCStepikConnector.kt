@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames.getStepikUrl
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import org.apache.http.HttpStatus
 import org.jetbrains.annotations.NonNls
-import java.util.stream.Collectors
 
 object CCStepikConnector {
   private val LOG = Logger.getInstance(CCStepikConnector::class.java.name)
@@ -145,13 +144,10 @@ object CCStepikConnector {
 
   private fun updateLessonTasks(project: Project, localLesson: Lesson, steps: List<Int>): Boolean {
     val localTasksIds = localLesson.taskList
-      .stream()
       .map { task: Task -> task.id }
       .filter { id: Int -> id > 0 }
-      .collect(Collectors.toSet())
-    val taskIdsToDelete = steps.stream()
-      .filter { id: Int -> !localTasksIds.contains(id) }
-      .collect(Collectors.toList())
+      .toSet()
+    val taskIdsToDelete = steps.filter { id: Int -> id !in localTasksIds }
 
     // Remove all tasks from Stepik which are not in our lessons now
     for (step in taskIdsToDelete) {
