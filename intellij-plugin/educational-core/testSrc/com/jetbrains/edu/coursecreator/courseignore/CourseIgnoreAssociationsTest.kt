@@ -93,6 +93,9 @@ class CourseIgnoreAssociationsTest : CourseGenerationTestBase<EduProjectSettings
         FileTypeManager.getInstance().associate(CourseIgnoreFileType, ExactFileNameMatcher(COURSE_IGNORE))
       }
     }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
     finally {
       super.tearDown()
     }

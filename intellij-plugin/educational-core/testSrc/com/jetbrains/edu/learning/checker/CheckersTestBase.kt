@@ -153,7 +153,11 @@ abstract class CheckersTestBase<Settings : EduProjectSettings> : EduHeavyTestCas
     override fun tearDown() {
         try {
             checkerFixture.tearDown()
-        } finally {
+        }
+        catch (e: Throwable) {
+            addSuppressedException(e)
+        }
+        finally {
             super.tearDown()
         }
     }

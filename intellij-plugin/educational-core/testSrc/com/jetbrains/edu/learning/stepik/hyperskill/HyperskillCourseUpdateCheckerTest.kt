@@ -176,6 +176,9 @@ class HyperskillCourseUpdateCheckerTest : CourseUpdateCheckerTestBase() {
     try {
       HyperskillSettings.INSTANCE.updateAutomatically = true
     }
+    catch (e: Throwable) {
+      addSuppressedException(e)
+    }
     finally {
       super.tearDown()
     }
