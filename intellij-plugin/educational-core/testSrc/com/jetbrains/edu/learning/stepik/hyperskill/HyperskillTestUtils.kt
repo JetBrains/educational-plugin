@@ -45,7 +45,7 @@ fun EduTestCase.hyperskillCourseWithFiles(
   return course
 }
 
-@Suppress("unused") // want this method to be available only in EduTestCase
+@Suppress("UnusedReceiverParameter") // want this method to be available only in EduTestCase
 fun EduTestCase.hyperskillCourse(
   projectId: Int? = 1,
   language: Language = FakeGradleBasedLanguage,
@@ -60,7 +60,6 @@ fun EduTestCase.hyperskillCourse(
   return course
 }
 
-@Suppress("unused") // want this method to be available only in EduTestCase
 fun EduTestCase.defaultHyperskillCourse(): HyperskillCourse {
   return hyperskillCourse {
     frameworkLesson {

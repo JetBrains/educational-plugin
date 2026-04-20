@@ -38,7 +38,6 @@ class EduCoursePluginInstallerAppStarter : EduAppStarterWrapper(EduCoursePluginI
     super.start(args)
   }
 
-  @Suppress("UnstableApiUsage")
   override suspend fun processExternalCommandLine(args: List<String>, currentDirectory: String?): CliResult {
     // Temporary workaround not to fail on external `installCoursePlugin` command invocation.
     // Should be replaced with proper implementation later (https://youtrack.jetbrains.com/issue/EDU-6692)

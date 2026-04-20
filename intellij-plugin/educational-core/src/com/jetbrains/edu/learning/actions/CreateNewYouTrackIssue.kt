@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.learning.update.UpdateHistoryService
 import org.jetbrains.annotations.VisibleForTesting
 
-@Suppress("ComponentNotRegistered")
 class CreateNewYouTrackIssue : DumbAwareAction() {
 
   override fun update(e: AnActionEvent) {

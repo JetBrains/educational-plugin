@@ -28,7 +28,6 @@ import javax.swing.JPanel
 class EduConfigurable : CompositeConfigurable<OptionsProvider>(), Configurable.WithEpDependencies {
   private val mainPanel: JPanel = JPanel(VerticalFlowLayout())
 
-  @Suppress("UnstableApiUsage")
   @ConfigurableName
   override fun getDisplayName(): String = EduCoreBundle.message("settings.education")
   override fun getHelpTopic(): String = ID

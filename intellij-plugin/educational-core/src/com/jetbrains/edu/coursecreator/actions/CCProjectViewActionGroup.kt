@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.DumbAware
 import com.jetbrains.edu.coursecreator.CCUtils.updateActionGroup
 
-@Suppress("ComponentNotRegistered") // educational-core.xml
 class CCProjectViewActionGroup : DefaultActionGroup(), DumbAware {
   override fun update(e: AnActionEvent) {
     updateActionGroup(e)
