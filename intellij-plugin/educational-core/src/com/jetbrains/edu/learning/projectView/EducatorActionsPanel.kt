@@ -160,5 +160,5 @@ private fun createNewEvent(e: AnActionEvent, newItemPlace: NewItemPlace): AnActi
       else -> null
     }
   }
-  return AnActionEvent(e.inputEvent, context, ActionPlaces.PROJECT_VIEW_TOOLBAR, e.presentation, e.actionManager, e.modifiers)
+  return AnActionEvent.createEvent(context, e.presentation, ActionPlaces.PROJECT_VIEW_TOOLBAR, ActionUiKind.NONE, e.inputEvent)
 }
