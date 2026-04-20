@@ -8,8 +8,6 @@ object PluginInfos {
   val GRADLE: PluginInfo = PluginInfo("com.intellij.gradle", "Gradle")
   val JUNIT: PluginInfo = PluginInfo("JUnit", "JUnit")
 
-  val ANDROID: PluginInfo = PluginInfo("org.jetbrains.android", "Android")
-
   val PYTHON_COMMUNITY: PluginInfo = PluginInfo("PythonCore", "Python")
 
   val JAVA_SCRIPT: PluginInfo = PluginInfo("JavaScript", "JavaScript")

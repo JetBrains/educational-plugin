@@ -534,9 +534,6 @@
     <compatibilityProvider language="Scala"
                            environment="sbt"
                            implementationClass="com.jetbrains.edu.learning.compatibility.ScalaSbtCourseCompatibilityProvider"/>
-    <compatibilityProvider language="kotlin"
-                           environment="Android"
-                           implementationClass="com.jetbrains.edu.learning.compatibility.AndroidCourseCompatibilityProvider"/>
     <compatibilityProvider language="Python"
                            implementationClass="com.jetbrains.edu.learning.compatibility.PyCourseCompatibilityProvider"/>
     <compatibilityProvider language="Python"
