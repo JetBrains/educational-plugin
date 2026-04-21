@@ -4,6 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.jvm.JVM_LANGUAGE_LEVEL
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.learning.course
@@ -31,16 +32,19 @@ abstract class JdkVersionValidationTestBase(
     val course = course(language = langauge, environment = environment) {}
     course.languageVersion = languageVersion
     course.setLanguageLevel(languageLevel)
-    val sdk = selectedSdkVersion?.let { ProjectJdkImpl(it, JavaSdk.getInstance(), "", it) }
-    val languageSettings = course.configurator?.courseBuilder?.getLanguageSettings()
-    assertIs<JdkLanguageSettings>(languageSettings)
-    languageSettings.selectJdk(sdk)
 
-    val validationResult = languageSettings.validate(course, "")
-    assertIs<SettingsValidationResult.Ready>(validationResult)
+    runInEdtAndWait {
+      val sdk = selectedSdkVersion?.let { ProjectJdkImpl(it, JavaSdk.getInstance(), "", it) }
+      val languageSettings = course.configurator?.courseBuilder?.getLanguageSettings()
+      assertIs<JdkLanguageSettings>(languageSettings)
+      languageSettings.selectJdk(sdk, setByUser = true)
 
-    val validationMessage = validationResult.validationMessage?.message
-    assertEquals(expectedValidationMessage, validationMessage)
+      val validationResult = languageSettings.validate(course, "")
+      assertIs<SettingsValidationResult.Ready>(validationResult)
+
+      val validationMessage = validationResult.validationMessage?.message
+      assertEquals(expectedValidationMessage, validationMessage)
+    }
   }
 
   private fun Course.setLanguageLevel(languageLevel: String?) {
