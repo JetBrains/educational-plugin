@@ -36,17 +36,11 @@ class EduJdkLookupService(private val scope: CoroutineScope) {
     sdkModel: ProjectSdksModel,
     modalityState: ModalityState,
     disposable: Disposable,
-    @RequiresEdt callback: suspend (Sdk) -> Unit
+    @RequiresEdt callback: suspend (Sdk?) -> Unit
   ) {
     scope.launch(Dispatchers.IO + modalityState.asContextElement()) {
       val sdk = doFindSuitableJdk(courseSdkVersion, sdkModel)
-
-      if (sdk != null) {
-        callback(sdk)
-      }
-      else {
-        LOG.warn("Failed to find suitable JDK for course sdk version=$courseSdkVersion")
-      }
+      callback(sdk)
     }.cancelOnDispose(disposable)
   }
 

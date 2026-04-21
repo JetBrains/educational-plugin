@@ -25,11 +25,11 @@ class SqlJdkLanguageSettings : JdkLanguageSettings() {
     val (jdkPath, sdk) = findBundledJdk(model) ?: return
     if (sdk == null) {
       model.addSdk(JavaSdk.getInstance(), jdkPath) {
-        jdk = it
+        selectJdk(it, setByUser = false)
       }
     }
     else {
-      jdk = sdk
+      selectJdk(sdk, setByUser = false)
     }
   }
 

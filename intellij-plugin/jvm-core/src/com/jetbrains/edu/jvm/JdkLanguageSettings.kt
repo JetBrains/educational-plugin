@@ -27,16 +27,15 @@ import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JComponent
 
 open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
-  protected var jdk: Sdk? = null
-  protected var jdkHasNeverBeenSet: Boolean = true
+  private var jdkSelection: JdkSelection = NOTHING_SELECTED
   protected val sdkModel: ProjectSdksModel = createSdkModel()
+  protected val jdk: Sdk? get() = jdkSelection.jdk
 
   private fun createSdkModel(): ProjectSdksModel {
     val project = ProjectManager.getInstance().defaultProject
@@ -48,10 +47,10 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   protected open fun setupProjectSdksModel(model: ProjectSdksModel) {}
 
-  @VisibleForTesting
-  fun selectJdk(jdk: Sdk?) {
-    this.jdk = jdk
-    jdkHasNeverBeenSet = false
+  fun selectJdk(jdk: Sdk?, setByUser: Boolean = false) {
+    logErrorOnNonEdtCall()
+    if (!setByUser && jdkSelection.setByUser) return
+    jdkSelection = JdkSelection(jdk, setByUser)
   }
 
   override fun getLanguageSettingsComponents(
@@ -64,8 +63,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     val jdkComboBox = JdkComboBox(null, sdkModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, null)
 
     jdkComboBox.addItemListener {
-      jdk = jdkComboBox.selectedItem?.jdk
-      jdkHasNeverBeenSet = false
+      selectJdk(jdkComboBox.selectedItem?.jdk, setByUser = true)
       notifyListeners()
     }
 
@@ -73,7 +71,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       preselectJdk(course, jdkComboBox, sdkModel, modalityState, disposable)
     }
 
-    jdk = jdkComboBox.selectedItem?.jdk
+    selectJdk(jdkComboBox.selectedItem?.jdk, setByUser = false)
 
     return listOf(LabeledComponent.create(jdkComboBox, "JDK", BorderLayout.WEST))
   }
@@ -88,20 +86,25 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   ) {
     if (jdkComboBox.selectedJdk != null) return
 
-    EduJdkLookupService.getInstance().findSuitableJdk(minJvmSdkVersion(course), sdksModel, modalityState, disposable) { suitableJdk ->
+    val courseSdkVersion = minJvmSdkVersion(course)
+    EduJdkLookupService.getInstance().findSuitableJdk(courseSdkVersion, sdksModel, modalityState, disposable) { suitableJdk ->
       withContext(Dispatchers.EDT) {
-        if (jdkHasNeverBeenSet) {
+        if (suitableJdk == null) {
+            LOG.warn("Failed to find suitable JDK for course sdk version=$courseSdkVersion")
+        }
+
+        // Check whether JDK has not already been selected neither by a user nor automatically
+        if (jdkSelection == NOTHING_SELECTED) {
           jdkComboBox.selectedJdk = suitableJdk
+          // although there is a listener in the combobox, we should specify that JDK was selected not by a user
+          jdkSelection = JdkSelection(suitableJdk, setByUser = false)
         }
       }
     }
   }
 
   override fun validate(course: Course?, courseLocation: String?): SettingsValidationResult {
-    if (!ApplicationManager.getApplication().isDispatchThread) {
-      // do not prevent the valudate() method from running, but notify about the error
-      LOG.error("validate() method must be called from EDT", Throwable())
-    }
+    logErrorOnNonEdtCall()
 
     fun ready(messageId: String, vararg additionalSubstitution: String): SettingsValidationResult {
       val message = EduJVMBundle.message(messageId, *additionalSubstitution)
@@ -111,7 +114,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
     course ?: return super.validate(null, courseLocation)
 
-    if (jdkHasNeverBeenSet) return SettingsValidationResult.Pending
+    if (jdkSelection == NOTHING_SELECTED) return SettingsValidationResult.Pending
 
     // compare the version of the selected jdk to the minimum version required by the course
     val selectedJavaVersion = ParsedJavaVersion.fromJavaSdkVersionString(jdk?.versionString)
@@ -156,8 +159,20 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   override fun getSettings(): JdkProjectSettings = JdkProjectSettings(sdkModel, jdk)
 
+  /**
+   * Similar to the @RequiresEdt annotation, but only logs the error and does not prevent the method from running
+   *
+   * TODO make sure selectJdk() and validate() are always called from EDT. Change this call to the `@RequiresEdt` annotation.
+   */
+  private fun logErrorOnNonEdtCall() {
+    if (!ApplicationManager.getApplication().isDispatchThread) {
+      LOG.error("The method must be called from EDT", Throwable())
+    }
+  }
+
   companion object {
     private val LOG = logger<JdkLanguageSettings>()
+    private val NOTHING_SELECTED = JdkSelection(null, setByUser = false)
 
     fun findBundledJdk(model: ProjectSdksModel): BundledJdkInfo? {
       val bundledJdkPath = PathManager.getBundledRuntimePath()
@@ -171,4 +186,5 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
   }
 
   data class BundledJdkInfo(val path: String, val existingSdk: Sdk?)
+  private data class JdkSelection(val jdk: Sdk?, val setByUser: Boolean)
 }
