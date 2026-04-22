@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.studyItem.CCCreateTask
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
 import com.jetbrains.edu.learning.yaml.YamlDeepLoader
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.hasItem
@@ -41,7 +41,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     assertEquals(2, course.lessons[0].taskList.size)
 
-    UIUtil.dispatchAllInvocationEvents()
+    YamlConfigSyncService.getInstance(project).waitForAllJobs()
     val loadedCourseFromYaml = YamlDeepLoader.loadCourse(project)
     assertNotNull(loadedCourseFromYaml)
     assertEquals(course.lessons[0].taskList.size, loadedCourseFromYaml!!.lessons[0].taskList.size)

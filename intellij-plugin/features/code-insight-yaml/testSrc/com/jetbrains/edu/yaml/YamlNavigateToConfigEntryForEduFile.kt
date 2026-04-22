@@ -4,13 +4,13 @@ import com.intellij.ide.DataManager
 import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveTestBase
 import com.jetbrains.edu.coursecreator.archive.FailedToProcessEduFileAsTextualError
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.learning.yaml.TestYamlConfigSyncService
 import org.junit.Test
 
 class YamlNavigateToConfigEntryForEduFile : CourseArchiveTestBase() {
@@ -44,7 +44,7 @@ class YamlNavigateToConfigEntryForEduFile : CourseArchiveTestBase() {
       .build()
 
     testAction(action, context)
-    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    TestYamlConfigSyncService.getInstance(project).waitForAllJobs()
 
     val navigatedFile = kotlin.test.assertNotNull(FileEditorManagerEx.getInstanceEx(project).currentFile)
     assertEquals("task-info.yaml", navigatedFile.name)

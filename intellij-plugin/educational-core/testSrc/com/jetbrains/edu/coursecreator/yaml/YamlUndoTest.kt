@@ -7,7 +7,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
+import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -104,7 +104,7 @@ open class YamlUndoTest : YamlTestCase() {
     expectedStartOffset: Int,
     expectedEndOffset: Int
   ) {
-    UIUtil.dispatchAllInvocationEvents()
+    YamlConfigSyncService.getInstance(project).waitForAllJobs()
     assertEquals(expectedStartOffset, placeholder.offset)
     assertEquals(expectedEndOffset, placeholder.endOffset)
 

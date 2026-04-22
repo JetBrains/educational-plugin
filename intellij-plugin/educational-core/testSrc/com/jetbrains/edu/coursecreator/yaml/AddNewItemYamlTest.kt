@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
@@ -10,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -188,11 +188,11 @@ class AddNewItemYamlTest : YamlTestCase() {
 
   private fun loadAndDispatchEvents(lastChildConfig: VirtualFile) {
     YamlLoader.loadItem(project, lastChildConfig, true)
-    UIUtil.dispatchAllInvocationEvents()
+    YamlConfigSyncService.getInstance(project).waitForAllJobs()
   }
 
   private fun saveItemAndDispatchEvents(studyItem: StudyItem) {
     YamlFormatSynchronizer.saveItem(studyItem)
-    UIUtil.dispatchAllInvocationEvents()
+    YamlConfigSyncService.getInstance(project).waitForAllJobs()
   }
 }

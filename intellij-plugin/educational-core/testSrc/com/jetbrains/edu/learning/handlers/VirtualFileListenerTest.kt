@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.`in`
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
+import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
 import org.junit.Test
@@ -28,7 +28,7 @@ class VirtualFileListenerTest : VirtualFileListenerTestBase() {
         val taskConfigFile = task.getDir(project.courseDir)?.findChild(task.configFileName) ?: error("Failed to find config file")
         // after task files is created, changes are saved to config in `invokeLater`
         // we want to check config after it happened, means this event is dispatched
-        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+        YamlConfigSyncService.getInstance(project).waitForAllJobs()
         val item = deserializeItemProcessingErrors(taskConfigFile, project, mapper = studentMapper) as EduTask
         val deserializedTaskFile = item.getTaskFile(taskFile.name)
                                    ?: error("Learner config file doesn't contain `${taskFile.name}` task file")
