@@ -1,38 +1,26 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
-import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.fileTypes.PlainTextFileType
-import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.findFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.getEditor
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.storage.persistAdditionalFiles
-import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
@@ -146,56 +134,7 @@ object YamlFormatSynchronizer {
   }
 
   private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
-    val dir = getConfigDir(project)
-
-    val configFile = runReadAction { dir.findChild(configName) }
-    if (configFile?.getUserData(SAVE_TO_CONFIG) == false) return
-
-    if (this is Task) {
-      disambiguateTaskFilesContents(project)
-      persistEduFiles(project)
-    }
-
-    if (this is Course) {
-      disambiguateAdditionalFilesContents(project)
-      persistAdditionalFiles(project)
-    }
-
-    project.invokeLater {
-      runWriteAction {
-        val file = dir.findOrCreateChildData(javaClass, configName)
-        try {
-          file.putUserData(LOAD_FROM_CONFIG, false)
-          if (FileTypeManager.getInstance().getFileTypeByFile(file) == UnknownFileType.INSTANCE) {
-            @NonNls
-            val errorMessageToLog = "Failed to get extension for file ${file.name}"
-            FileTypeManager.getInstance().associateExtension(
-              PlainTextFileType.INSTANCE,
-              file.extension ?: error(errorMessageToLog)
-            )
-          }
-          val yamlText = mapper.writeValueAsString(this)
-          val formattedYamlText = reformatYaml(project, file.name, yamlText)
-
-          VfsUtil.saveText(file, formattedYamlText)
-          // make sure that there is no conflict between disk contents and ide in-memory document contents
-          FileDocumentManager.getInstance().reloadFiles(file)
-        }
-        finally {
-          file.putUserData(LOAD_FROM_CONFIG, true)
-        }
-      }
-    }
-  }
-
-  private fun reformatYaml(project: Project, fileName: String, text: String): String {
-    // We are able to reformat YAML only if the IDE supports the YAML language
-    val yamlFileType = FileTypeManager.getInstance().findFileTypeByName("YAML") ?: return text
-
-    val psiFile = PsiFileFactory.getInstance(project).createFileFromText(fileName, yamlFileType, text)
-    CodeStyleManager.getInstance(project).reformat(psiFile)
-
-    return psiFile.text ?: text
+    YamlConfigSyncService.getInstance(project).save(this, configName, mapper)
   }
 
   fun isConfigFile(file: VirtualFile): Boolean {
@@ -225,37 +164,5 @@ object YamlFormatSynchronizer {
   }
   else {
     basicMapper()
-  }
-}
-
-private fun Task.disambiguateTaskFilesContents(project: Project) {
-  for ((path, taskFile) in taskFiles) {
-    val file = taskFile.getVirtualFile(project)
-    val disambiguatedContents = if (file != null) {
-      taskFile.contents.disambiguateContents(file)
-    }
-    else {
-      taskFile.contents.disambiguateContents(path)
-    }
-
-    taskFile.contents = disambiguatedContents
-  }
-}
-
-private fun Course.disambiguateAdditionalFilesContents(project: Project) {
-  val courseDir = project.courseDir
-
-  additionalFiles.map { additionalFile ->
-    val filePath = additionalFile.name
-    val file = courseDir.findFile(filePath)
-
-    val disambiguatedContents = if (file != null) {
-      additionalFile.contents.disambiguateContents(file)
-    }
-    else {
-      additionalFile.contents.disambiguateContents(filePath)
-    }
-
-    additionalFile.contents = disambiguatedContents
   }
 }
