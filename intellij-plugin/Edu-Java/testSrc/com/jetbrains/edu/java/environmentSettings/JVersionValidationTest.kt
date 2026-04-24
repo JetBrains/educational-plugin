@@ -23,7 +23,7 @@ class JVersionValidationTest(
       val languageLevels = listOf(null, LanguageLevel.JDK_19.name, /*unsupported*/ "57.121")
 
       return listOf(
-        arrayOf(null, null, "JDK is not selected. In the settings section, choose or download some JDK with a version at least 8"),
+        arrayOf(null, null, "JDK is not selected. In the settings section, choose or download some JDK"),
         arrayOf(null, JDK_11.description, null),
         arrayOf(null, JDK_17.description, null),
         arrayOf(null, JDK_19.description, null),
