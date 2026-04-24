@@ -123,21 +123,35 @@ object EduGradleUtils {
     val projectSupported = isGradleCompatible(gradleVersion, projectJavaVersion)
     val internalSupported = isGradleCompatible(gradleVersion, internalJavaVersion)
 
-    val useGradleJdk = when {
-      projectSupported -> {
-        LOG.info("Project JDK is compatible with gradle $gradleVersion. Will be used")
-        USE_PROJECT_JDK
-      }
-      internalSupported -> {
-        LOG.info("Internal JDK is compatible with gradle $gradleVersion. Will be used")
-        USE_INTERNAL_JAVA
-      }
-      else -> resolveSuitableGradleJdk(project, gradleVersion)
-    }
+    val useGradleJdk = chooseGradleJvm(project, gradleVersion, projectSupported, internalSupported)
 
     if (useGradleJdk != null) {
       projectSettings.gradleJvm = useGradleJdk
     }
+  }
+
+  private fun chooseGradleJvm(
+    project: Project,
+    gradleVersion: GradleVersion,
+    projectSupported: Boolean,
+    internalSupported: Boolean
+  ): String? {
+    if (projectSupported) {
+      LOG.info("Project JDK is compatible with gradle $gradleVersion. Will be used")
+      return USE_PROJECT_JDK
+    }
+
+    val resolvedJdk = resolveSuitableGradleJdk(project, gradleVersion)
+    if (resolvedJdk != null) {
+      return resolvedJdk
+    }
+
+    if (internalSupported) {
+      LOG.info("Internal JDK is compatible with gradle $gradleVersion. Will be used")
+      return USE_INTERNAL_JAVA
+    }
+
+    return null
   }
 
   private val Sdk.javaSdkVersion: JavaSdkVersion? get() = JavaSdk.getInstance().getVersion(this)
