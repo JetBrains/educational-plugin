@@ -28,6 +28,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.feedback.CCInIdeFeedbackDialog
 import com.jetbrains.edu.coursecreator.getDefaultCourseType
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
@@ -310,7 +311,7 @@ class CCNewCoursePanel(
     languageSettings.addSettingsChangeListener { doValidation() }
 
     val settings = arrayListOf<LabeledComponent<*>>(locationField)
-    settings.addAll(languageSettings.getLanguageSettingsComponents(_course, settingsDisposable, context))
+    settings.addAll(languageSettings.getLanguageSettingsComponents(_course, ModalityStateProvider.forComponent(this), settingsDisposable, context))
     this.settings.setSettingsComponents(settings)
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)

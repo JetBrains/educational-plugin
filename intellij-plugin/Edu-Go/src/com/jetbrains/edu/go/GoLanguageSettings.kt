@@ -14,6 +14,7 @@ import com.intellij.openapi.util.io.FileUtil.isAncestor
 import com.jetbrains.edu.go.messages.EduGoBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_GO
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
@@ -29,6 +30,7 @@ class GoLanguageSettings : LanguageSettings<GoProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {

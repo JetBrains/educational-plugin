@@ -6,6 +6,7 @@ import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.csharp.messages.EduCSharpBundle
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
@@ -17,6 +18,7 @@ class CSharpLanguageSettings : LanguageSettings<CSharpProjectSettings>() {
   override fun getSettings(): CSharpProjectSettings = CSharpProjectSettings(targetFrameworkVersion)
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.jvm.JdkLanguageSettings
 import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.sql.core.EduSqlBundle
 import java.awt.BorderLayout
@@ -35,6 +36,7 @@ class SqlJdkLanguageSettings : JdkLanguageSettings() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
@@ -47,7 +49,7 @@ class SqlJdkLanguageSettings : JdkLanguageSettings() {
     // Non-null jdk means that `setupProjectSdksModel` successfully found bundled JDK.
     // So there is no reason to show JDK settings at all
     if (jdk == null) {
-      components += super.getLanguageSettingsComponents(course, disposable, context)
+      components += super.getLanguageSettingsComponents(course, modalityStateProvider, disposable, context)
     }
 
     return components

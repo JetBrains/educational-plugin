@@ -11,6 +11,7 @@ import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.javascript.learning.messages.EduJavaScriptBundle
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
@@ -38,6 +39,7 @@ class JsLanguageSettings : LanguageSettings<JsNewProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {

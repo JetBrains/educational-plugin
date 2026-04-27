@@ -10,6 +10,7 @@ import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP11
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP14
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
@@ -26,6 +27,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
