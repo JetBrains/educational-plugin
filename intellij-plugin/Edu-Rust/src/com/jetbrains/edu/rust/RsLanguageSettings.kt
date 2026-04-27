@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
@@ -35,6 +36,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {

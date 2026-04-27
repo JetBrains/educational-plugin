@@ -9,6 +9,7 @@ import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PYTHON
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -41,6 +42,7 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {

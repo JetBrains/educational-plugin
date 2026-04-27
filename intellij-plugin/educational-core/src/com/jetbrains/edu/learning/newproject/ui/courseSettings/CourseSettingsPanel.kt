@@ -21,6 +21,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -132,7 +133,7 @@ class CourseSettingsPanel(
     val configurator = course.configurator
     languageSettings = configurator?.courseBuilder?.getLanguageSettings()?.apply {
       if (courseDisplaySettings.showLanguageSettings) {
-        val components = getLanguageSettingsComponents(course, settingsDisposable, context)
+        val components = getLanguageSettingsComponents(course, ModalityStateProvider.forComponent(this@CourseSettingsPanel), settingsDisposable, context)
         settingsComponents.addAll(components)
       }
     }

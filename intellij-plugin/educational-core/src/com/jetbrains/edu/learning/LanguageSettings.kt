@@ -31,6 +31,8 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
    *
    * @param course course of creating project
    * @param context used as cache. If provided, must have "session"-scope. Session could be one dialog or wizard.
+   * @param modalityStateProvider is needed if some actions should be executed in EDT delayed.
+   *        [modalityStateProvider] allows waiting until a Course dialog is shown, and so its [ModalityState] is available.
    * @return list of UI components with project settings
    *
    * @see PyLanguageSettings
@@ -38,6 +40,7 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
   @RequiresEdt
   open fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
@@ -72,37 +75,51 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
   fun interface SettingsChangeListener {
     fun settingsChanged()
   }
+}
 
+interface ModalityStateProvider {
   /**
-   * Helper method. Waits until the component becomes available inside a visible modal dialog and runs action
-   * with the modality of that dialog.
+   * Runs the action when the modality state is available.
+   * If [disposable] is disposed, the action will not be executed.
    */
-  protected fun waitForModality(component: Component, disposable: Disposable, action: (ModalityState) -> Unit) {
-    fun Component.isOnVisibleDialog(): Boolean {
-      val window = SwingUtilities.getWindowAncestor(this) ?: return false
-      return window is Dialog && window.isShowing
-    }
+  fun waitForModality(disposable: Disposable, action: (ModalityState) -> Unit)
 
-    if (component.isOnVisibleDialog()) {
-      action(ModalityState.stateForComponent(component))
-      return
-    }
+  companion object {
+    /**
+     * Waits until the component is available inside some modal dialog and runs an action with the
+     * [ModalityState.stateForComponent].
+     */
+    fun forComponent(component: Component): ModalityStateProvider = object : ModalityStateProvider {
 
-    val hierarchyListener = object : HierarchyListener {
-      override fun hierarchyChanged(e: HierarchyEvent?) {
+      private fun Component.isOnVisibleDialog(): Boolean {
+        val window = SwingUtilities.getWindowAncestor(this) ?: return false
+        return window is Dialog && window.isShowing
+      }
+
+      override fun waitForModality(disposable: Disposable, action: (ModalityState) -> Unit) {
         if (component.isOnVisibleDialog()) {
           action(ModalityState.stateForComponent(component))
-          component.removeHierarchyListener(this)
+          return
         }
+
+        val hierarchyListener = object : HierarchyListener {
+          override fun hierarchyChanged(e: HierarchyEvent?) {
+            if (component.isOnVisibleDialog()) {
+              action(ModalityState.stateForComponent(component))
+              component.removeHierarchyListener(this)
+            }
+          }
+        }
+
+        Disposer.register(disposable) {
+          runInEdt {
+            component.removeHierarchyListener(hierarchyListener)
+          }
+        }
+
+        component.addHierarchyListener(hierarchyListener)
       }
     }
 
-    Disposer.register(disposable) {
-      runInEdt {
-        component.removeHierarchyListener(hierarchyListener)
-      }
-    }
-
-    component.addHierarchyListener(hierarchyListener)
   }
 }

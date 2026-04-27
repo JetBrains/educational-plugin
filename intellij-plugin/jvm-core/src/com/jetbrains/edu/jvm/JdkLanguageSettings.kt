@@ -22,6 +22,7 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.jvm.messages.EduJVMBundle
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_JAVA
 import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
@@ -55,6 +56,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   override fun getLanguageSettingsComponents(
     course: Course,
+    modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
@@ -67,7 +69,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       notifyListeners()
     }
 
-    waitForModality(jdkComboBox, disposable) { modalityState ->
+    modalityStateProvider.waitForModality(disposable) { modalityState ->
       preselectJdk(course, jdkComboBox, sdkModel, modalityState, disposable)
     }
 
