@@ -40,4 +40,4 @@ intelliJPlatformPlugin = { id = "org.jetbrains.intellij.platform", version = "2.
 kotlinPlugin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 propertiesPlugin = { id = "net.saliman.properties", version = "1.6.0" }
-testRetryPlugin = { id = "org.gradle.test-retry", version = "1.6.2" }
+testRetryPlugin = { id = "org.gradle.test-retry", version = "1.6.4" }
