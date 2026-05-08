@@ -7,11 +7,13 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -67,6 +69,7 @@ open class PyCourseProjectGenerator(
 
   private fun createAndAddVirtualEnv(project: Project, settings: PyProjectSettings, baseSdk: PyDetectedSdk) {
     val virtualEnvPath = project.basePath + "/.idea/VirtualEnvironment"
+    @Suppress("UsagesOfObsoleteApi")
     val sdk = createSdkByGenerateTask(object : Task.WithResult<String, ExecutionException>(
       project,
       message("creating.virtual.environment"),
@@ -77,7 +80,7 @@ open class PyCourseProjectGenerator(
         indicator.isIndeterminate = true
         return createVenv(baseSdk, virtualEnvPath)
       }
-    }, PyConfigurableInterpreterList.getInstance(null).allPythonSdks, baseSdk, project.basePath, null)
+    }, PyConfigurableInterpreterList.getInstance(null).allPythonSdks)
     if (sdk == null) {
       LOG.warn("Failed to create virtual env in $virtualEnvPath")
       return
@@ -92,6 +95,31 @@ open class PyCourseProjectGenerator(
     runWithModalProgressBlocking(module.project, "") {
       sdk.setAssociationToModule(module)
     }
+  }
+
+  @Suppress("UsagesOfObsoleteApi")
+  private fun createSdkByGenerateTask(generateSdkHomePath: Task.WithResult<String, ExecutionException>, existingSdks: List<Sdk>): Sdk? {
+    val homePath = try {
+      ProgressManager.getInstance().run(generateSdkHomePath)
+    }
+    catch (e: ExecutionException) {
+      LOG.error("Failed to create a Python interpreter", e)
+      return null
+    }
+
+    val homeFile = StandardFileSystems.local().refreshAndFindFileByPath(homePath)
+    if (homeFile == null) {
+      LOG.error("Python executable $homePath is missing")
+      return null
+    }
+
+    return SdkConfigurationUtil.setupSdk(
+      /* allSdks = */ existingSdks.toTypedArray(),
+      /* homeDir = */ homeFile,
+      /* sdkType = */ PythonSdkType.getInstance(),
+      /* additionalData = */ null,
+      /* customSdkSuggestedName = */ null
+    )
   }
 
   companion object {
