@@ -411,7 +411,6 @@
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.SyncChangesEditorNotificationsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.agreement.UserAgreementEditorNotificationsProvider"/>
-    <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.hyperskill.InstallHyperskillPluginEditorNotificationsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.marketplace.license.CourseLicenseEditorNotificationProvider"/>
 
     <!-- com.jetbrains.edu.learning.notification.EduNotificationManager.JETBRAINS_ACADEMY_GROUP_ID -->
