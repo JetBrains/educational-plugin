@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "defaultMode": "plan",
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(git show:*)",
+      "Bash(git mv:*)",
+      "Bash(git log:*)",
+      "Bash(git grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(git rm:*)",
+      "Bash(git restore:*)",
+      "Bash(./gradlew testClasses *)",
+      "Bash(./gradlew *:testClasses *)",
+      "Bash(./gradlew test *)",
+      "Bash(./gradlew *:test *)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "mcp__jetbrains__*"
+    ]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  }
+}

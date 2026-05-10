@@ -67,3 +67,6 @@ edu-format/resources/aes/aes.properties
 intellij-plugin/educational-core/resources/aes/aes.properties
 # don't commit changes in hyperskill css
 intellij-plugin/educational-core/resources/style/hyperskill_task.css
+
+# Claude Code
+.claude/settings.local.json
