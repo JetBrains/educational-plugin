@@ -8,9 +8,7 @@ class LicenseLinkSettingsTest : EduSettingsServiceTestBase() {
   fun `test empty link serialization`() {
     val settings = LicenseLinkSettings()
     settings.loadStateAndCheck("""
-      <EduLicenseLinkSettings>
-        <option name="link" />
-      </EduLicenseLinkSettings>
+      <EduLicenseLinkSettings />
     """)
     assertNull(settings.link)
   }

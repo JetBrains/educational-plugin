@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.configurationStore.deserialize
+import com.intellij.configurationStore.serialize
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.util.JDOMUtil
-import com.intellij.util.xmlb.XmlSerializer
 import org.intellij.lang.annotations.Language
 import org.jdom.Element
 
@@ -18,7 +19,7 @@ abstract class EduSettingsServiceTestBase : EduTestCase() {
     checkState<T>(expected)
   }
 
-  protected inline fun <reified T : Any> PersistentStateComponent<T>.checkState(@Language("XML")  expected: String) {
+  protected inline fun <reified T : Any> PersistentStateComponent<T>.checkState(@Language("XML") expected: String) {
     val currentState = state ?: error("Can't take state of `${javaClass.simpleName}`")
     val actual = JDOMUtil.writeElement(currentState.serialize())
     assertEquals(expected.trimIndent(), actual)
@@ -26,11 +27,11 @@ abstract class EduSettingsServiceTestBase : EduTestCase() {
 
   protected inline fun <reified T : Any> Element.deserialize(): T {
     if (Element::class.java.isAssignableFrom(T::class.java)) return this as T
-    return XmlSerializer.deserialize(this, T::class.java)
+    return deserialize(this)
   }
 
   protected inline fun <reified T : Any> T.serialize(): Element {
     if (this is Element) return this
-    return XmlSerializer.serialize(this)
+    return serialize(this, createElementIfEmpty = true) ?: error("Failed to serialize $this")
   }
 }
