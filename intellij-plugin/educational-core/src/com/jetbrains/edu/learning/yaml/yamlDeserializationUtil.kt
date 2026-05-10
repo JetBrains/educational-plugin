@@ -32,7 +32,7 @@ fun deserializeItemProcessingErrors(
 ): StudyItem? {
   val configFileText = if (loadFromVFile) VfsUtil.loadText(configFile) else configFile.document.text
   val configName = configFile.name
-  return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem, Exception> {
+  return ProgressManager.getInstance().computeInNonCancelableSection<StudyItem?, Exception> {
     try {
       YamlDeserializer.deserializeItem(configName, mapper, configFileText, parentItem, configFile.parent?.name)
     }

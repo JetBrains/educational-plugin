@@ -8,12 +8,22 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
 
 
 open class CoursesStorageBase : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()) {
+
+  override fun loadState(state: UserCoursesState) {
+    // We do not support Hyperskill and Stepik courses anymore.
+    // But we still can have records with such types in the storage.
+    // So, let's manually filter them out here not to expose them to other places.
+    // Also, after the next state serialization, we won't have such records in storage anymore.
+    state.courses.removeAll { it.type == EduFormatNames.HYPERSKILL || it.type == EduFormatNames.STEPIK }
+    super.loadState(state)
+  }
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)

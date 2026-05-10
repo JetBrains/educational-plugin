@@ -126,7 +126,7 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     val projectDir = VfsUtil.findFile(projectFile.toPath(), true) ?: return null
     val courseConfig = projectDir.findChild(YamlConfigSettings.COURSE_CONFIG) ?: return null
     return runReadAction {
-      ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+      ProgressManager.getInstance().computeInNonCancelableSection<Course?, Exception> {
         YamlMapper.basicMapper().deserializeCourse(VfsUtil.loadText(courseConfig))
       }
     }

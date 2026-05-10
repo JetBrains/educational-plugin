@@ -56,7 +56,12 @@ import org.jetbrains.annotations.VisibleForTesting
  * should be applied to existing one that is done in [com.jetbrains.edu.learning.yaml.YamlLoader.loadItem].
  */
 object YamlDeserializer {
-  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String, parentItem: StudyItem?, itemFolder: String?): StudyItem {
+
+  /**
+   * Returns `null` for configs with legacy `hyperskill`/`stepik` course types.
+   * See [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse] for more details
+   */
+  fun deserializeItem(configName: String, mapper: ObjectMapper, configFileText: String, parentItem: StudyItem?, itemFolder: String?): StudyItem? {
     return when (configName) {
       COURSE_CONFIG -> mapper.deserializeCourse(configFileText)
       SECTION_CONFIG -> mapper.deserializeSection(configFileText, parentItem as? Course, itemFolder)
@@ -69,9 +74,20 @@ object YamlDeserializer {
   /**
    * Creates [ItemContainer] object from yaml config file.
    * For [Course] object the instance of a proper type is created inside [com.jetbrains.edu.learning.yaml.format.CourseBuilder]
+   *
+   * Returns `null` for configs with legacy `hyperskill`/`stepik` course types.
+   * We usually throw an exception in the case of an unknown study item type.
+   * But `hyperskill` and `stepik` course types are known (although no longer supported),
+   * and it's expected when a user has a project with such course types (they are supported by [Hyperskill Academy](https://plugins.jetbrains.com/plugin/28001-hyperskill-academy) plugin).
+   * So, it's safer to return `null` no to break anything instead of throwing an exception.
    */
-  fun ObjectMapper.deserializeCourse(configFileText: String): Course {
+  fun ObjectMapper.deserializeCourse(configFileText: String): Course? {
     var treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+
+    val type = asText(treeNode.get(YamlMixinNames.TYPE))
+    if (type == YamlMixinNames.HYPERSKILL_TYPE_YAML || type == YamlMixinNames.STEPIK_TYPE_YAML) {
+      return null
+    }
 
     if (treeNode is ObjectNode) {
       treeNode = YamlMigrator(this).migrateCourse(treeNode)

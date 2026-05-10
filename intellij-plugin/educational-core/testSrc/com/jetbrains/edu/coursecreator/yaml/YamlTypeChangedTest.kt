@@ -2,18 +2,14 @@ package com.jetbrains.edu.coursecreator.yaml
 
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.placeholder.PlaceholderPainter
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_PROJECT_READY
-import com.jetbrains.edu.learning.yaml.YamlFormatSettings.YAML_TEST_THROW_EXCEPTION
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
 import org.junit.Test
 
 class YamlTypeChangedTest : YamlTestCase() {
@@ -76,18 +72,6 @@ class YamlTypeChangedTest : YamlTestCase() {
   @Test
   fun `test edu to coursera course`() {
     testCourseTypeChanged(YamlMixinNames.COURSE_TYPE_YAML, CourseraCourse::class.java)
-  }
-
-  @Test
-  fun `test edu to stepik course`() {
-    project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeChanged(YamlMixinNames.STEPIK_TYPE_YAML, StepikCourse::class.java)
-  }
-
-  @Test
-  fun `test edu to hyperskill course`() {
-    project.putUserData(YAML_TEST_THROW_EXCEPTION, false)
-    testCourseTypeChanged(HYPERSKILL_TYPE_YAML, HyperskillCourse::class.java)
   }
 
   private fun <T : Course> testCourseTypeChanged(courseType: String, expectedCourse: Class<T>) {

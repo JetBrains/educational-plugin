@@ -263,22 +263,6 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="programmingLanguageId" value="Python" />
           </course>
           <course>
-            <option name="description" value="A Hyperskill course" />
-            <option name="id" value="200" />
-            <option name="location" value="$USER_HOME$/IdeaProjects/HyperskillCourse" />
-            <option name="name" value="HyperskillCourse" />
-            <option name="type" value="Hyperskill" />
-            <option name="programmingLanguageId" value="Python" />
-          </course>
-          <course>
-            <option name="description" value="A Stepik course" />
-            <option name="id" value="300" />
-            <option name="location" value="$USER_HOME$/IdeaProjects/StepikCourse" />
-            <option name="name" value="StepikCourse" />
-            <option name="type" value="Stepik" />
-            <option name="programmingLanguageId" value="Python" />
-          </course>
-          <course>
             <option name="description" value="A Marketplace course" />
             <option name="id" value="400" />
             <option name="location" value="$USER_HOME$/IdeaProjects/MarketplaceCourse" />

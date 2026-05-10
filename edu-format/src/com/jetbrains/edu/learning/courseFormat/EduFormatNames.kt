@@ -70,12 +70,16 @@ object EduFormatNames {
   const val HYPERSKILL_TOPICS = "Topics"
   const val TOPICS = "topics"
   const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
+  // Hyperskill courses are no longer supported.
+  // The constant is kept to filter remaining Hyperskill entries out during loading of `coursesStorage.xml`
   const val HYPERSKILL = "Hyperskill"
 
   // coursera
   const val COURSERA = "Coursera"
 
   // stepik
+  // Stepik courses are no longer supported.
+  // The constant is kept to filter remaining Stepik entries out during loading of `coursesStorage.xml`
   const val STEPIK = "Stepik"
   const val ATTEMPT = "attempt"
   const val CHECK_PROFILE = "check_profile"

@@ -36,6 +36,8 @@ object YamlMixinNames {
   const val HYPERSKILL_PROJECT = "hyperskill_project"
   const val STAGES = "stages"
   const val THEORY_ID = "theory_id"
+  // Hyperskill and Stepik courses are no longer supported.
+  // The corresponding constants are kept to recognize such courses and do not deserialize them.
   const val HYPERSKILL_TYPE_YAML = "hyperskill"
   const val STEPIK_TYPE_YAML = "stepik"
   const val END_DATE_TIME = "end_date_time"

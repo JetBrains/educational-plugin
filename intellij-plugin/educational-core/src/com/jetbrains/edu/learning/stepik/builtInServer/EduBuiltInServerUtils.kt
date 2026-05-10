@@ -71,7 +71,7 @@ object EduBuiltInServerUtils {
     val remoteInfoConfig = projectDir.findChild(REMOTE_COURSE_CONFIG) ?: return null
     val localCourseConfig = projectDir.findChild(COURSE_CONFIG) ?: return null
     return runReadAction {
-      val localCourse = ProgressManager.getInstance().computeInNonCancelableSection<Course, Exception> {
+      val localCourse = ProgressManager.getInstance().computeInNonCancelableSection<Course?, Exception> {
         YamlMapper.basicMapper().deserializeCourse(VfsUtil.loadText(localCourseConfig))
       } ?: return@runReadAction null
       localCourse.loadRemoteInfo(remoteInfoConfig)

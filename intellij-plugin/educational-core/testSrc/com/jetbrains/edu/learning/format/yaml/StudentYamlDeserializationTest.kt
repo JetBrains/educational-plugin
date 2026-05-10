@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 import java.util.*
+import kotlin.test.assertNotNull as kAssertNotNull
 
 class StudentYamlDeserializationTest : EduTestCase() {
 
@@ -32,8 +33,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |  Why not?"
       |programming_language: Plain text
       |""".trimMargin()
-    val course = studentMapper().deserializeCourse(yamlContent)
-    assertNotNull(course)
+    val course = kAssertNotNull(studentMapper().deserializeCourse(yamlContent))
     assertEquals(CourseMode.STUDENT, course.courseMode)
   }
 
@@ -47,8 +47,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |programming_language: Plain text
       |mode: Study
       |""".trimMargin()
-    val course = studentMapper().deserializeCourse(yamlContent)
-    assertNotNull(course)
+    val course = kAssertNotNull(studentMapper().deserializeCourse(yamlContent))
     assertTrue(course is EduCourse)
   }
 
@@ -706,7 +705,7 @@ class StudentYamlDeserializationTest : EduTestCase() {
 
   @Test
   fun `test disabled features`() {
-    val course = studentMapper().deserializeCourse("""
+    val course = kAssertNotNull(studentMapper().deserializeCourse("""
       |title: Test Course
       |mode: Study
       |language: Russian
@@ -714,9 +713,8 @@ class StudentYamlDeserializationTest : EduTestCase() {
       |programming_language: Plain text
       |disabled_features:
       |- ai-hints
-    """.trimMargin())
+    """.trimMargin()))
 
-    assertNotNull(course)
     assertContainsElements(course.disabledFeatures, "ai-hints")
   }
 
