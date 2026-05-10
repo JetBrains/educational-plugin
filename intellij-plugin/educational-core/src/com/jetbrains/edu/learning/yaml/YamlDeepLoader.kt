@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.isHyperskillProject
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
 import com.jetbrains.edu.learning.yaml.YamlLoader.deserializeContent
@@ -89,11 +88,6 @@ object YamlDeepLoader {
     // to obtain description/remote config file to set info from
     deserializedCourse.init(true)
     deserializedCourse.loadRemoteInfoRecursively(project)
-
-    if (deserializedCourse is HyperskillCourse) {
-      project.isHyperskillProject = true
-      return null
-    }
 
     if (!deserializedCourse.isStudy) {
       deserializedCourse.setDescriptionInfo(project)
