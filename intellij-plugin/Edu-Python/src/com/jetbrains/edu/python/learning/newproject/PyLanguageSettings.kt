@@ -56,13 +56,19 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
       }
     }
 
-    @Suppress("DEPRECATION_ERROR")
     // Suggested to be replaced with PythonInterpreterCombobox, but PythonInterpreterCombobox is currently internal
     // TODO: use PythonInterpreterCombobox when instead
+    var recommendedSdk: Sdk? = null
+
+    @Suppress("DEPRECATION_ERROR")
     addInterpretersAsync(sdkField, {
-      collectPySdks(course, context ?: UserDataHolderBase())
+      val (collectedSdks, sdkToSelect) = collectPySdks(course, context ?: UserDataHolderBase())
+      recommendedSdk = sdkToSelect
+      collectedSdks
     }) {
       if (disposable.isDisposed) return@addInterpretersAsync
+
+      recommendedSdk?.let { sdkField.selectedSdk = it }
       projectSettings.sdk = sdkField.selectedSdk
       isSettingsInitialized = true
       notifyListeners()
@@ -74,24 +80,34 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
   }
 
   // Inspired by `com.jetbrains.python.sdk.add.PyAddSdkPanelKt.addBaseInterpretersAsync` implementation
+  /**
+   * @return list of all available python interpreters and a recommended one to select
+   */
   @RequiresBackgroundThread
-  private fun collectPySdks(course: Course, context: UserDataHolder): List<Sdk> {
-    val fakeSdk = listOfNotNull(createFakeSdk(course, context))
+  private fun collectPySdks(course: Course, context: UserDataHolder): Pair<List<Sdk>, Sdk?> {
+    val fakeSdk = createFakeSdk(course, context)
+    val fakeSdks = listOfNotNull(fakeSdk)
 
-    val sdks = (fakeSdk + findBaseSdks(emptyList(), null, context))
+    val sdks = (fakeSdks + findBaseSdks(emptyList(), null, context))
       // It's important to check validity here, in background thread,
       // because it caches a result of checking if python binary is executable.
       // If the first (uncached) invocation is invoked in EDT, it may throw exception and break UI rendering.
       // See https://youtrack.jetbrains.com/issue/EDU-6371
       .filter { it.sdkSeemsValid }
 
-    val needSdksToInstall = sdks.all { isSdkApplicable(course, it.languageLevel) != OK }
+    val needSdksToInstall = sdks.all { OK != isSdkApplicable(course, it.languageLevel) }
 
-    return if (needSdksToInstall) {
+    val collectedSdks = if (needSdksToInstall) {
       sdks + getSdksToInstall()
     } else {
       sdks
     }
+
+    val recommendedSdk = fakeSdk ?: collectedSdks
+      .filter { isSdkApplicable(course, it.languageLevel) == OK }
+      .maxByOrNull { it.languageLevel }
+
+    return collectedSdks to recommendedSdk
   }
 
   override fun getSettings(): PyProjectSettings = projectSettings
