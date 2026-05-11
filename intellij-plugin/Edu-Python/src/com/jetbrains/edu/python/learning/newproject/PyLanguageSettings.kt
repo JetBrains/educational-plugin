@@ -20,9 +20,10 @@ import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ready
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
+import com.jetbrains.python.PythonRuntimeService
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
-import com.jetbrains.python.sdk.PySdkUtil
+import com.jetbrains.python.sdk.PySdkToInstall
 import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
 import com.jetbrains.python.sdk.add.addInterpretersAsync
 import com.jetbrains.python.sdk.findBaseSdks
@@ -77,14 +78,20 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
   private fun collectPySdks(course: Course, context: UserDataHolder): List<Sdk> {
     val fakeSdk = listOfNotNull(createFakeSdk(course, context))
 
-    return (fakeSdk + findBaseSdks(emptyList(), null, context))
+    val sdks = (fakeSdk + findBaseSdks(emptyList(), null, context))
       // It's important to check validity here, in background thread,
       // because it caches a result of checking if python binary is executable.
       // If the first (uncached) invocation is invoked in EDT, it may throw exception and break UI rendering.
       // See https://youtrack.jetbrains.com/issue/EDU-6371
       .filter { it.sdkSeemsValid }
-      .takeIf { it.isNotEmpty() }
-      ?: getSdksToInstall()
+
+    val needSdksToInstall = sdks.all { isSdkApplicable(course, it.languageLevel) != OK }
+
+    return if (needSdksToInstall) {
+      sdks + getSdksToInstall()
+    } else {
+      sdks
+    }
   }
 
   override fun getSettings(): PyProjectSettings = projectSettings
@@ -127,8 +134,11 @@ open class PyLanguageSettings : LanguageSettings<PyProjectSettings>() {
             sdkFlavor.getLanguageLevel(it)
           } ?: LanguageLevel.getDefault()
         }
+        is PySdkToInstall -> {
+          LanguageLevel.fromPythonVersion(installation.release.version) ?: LanguageLevel.getDefault()
+        }
         else -> {
-          PySdkUtil.getLanguageLevelForSdk(this)
+          PythonRuntimeService.getInstance().getLanguageLevelForSdk(this)
         }
       }
     }
