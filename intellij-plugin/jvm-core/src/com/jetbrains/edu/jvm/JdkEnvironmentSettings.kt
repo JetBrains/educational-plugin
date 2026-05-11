@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 const val JVM_LANGUAGE_LEVEL = "jvm_language_level"
@@ -11,10 +12,12 @@ const val JVM_LANGUAGE_LEVEL = "jvm_language_level"
 // TODO(refactor this), this is a temporary solution
 // All JVM-based Hyperskill courses now require JDK version 23
 val hyperskillJdkVersion: JavaSdkVersion = JavaSdkVersion.JDK_23
+val minCCJdkVersion: JavaSdkVersion = JavaSdkVersion.JDK_17
 
 val Course.minJvmSdkVersion: ParsedJavaVersion
-  get() = when (this) {
-    is HyperskillCourse -> JavaVersionParseSuccess(hyperskillJdkVersion)
+  get() = when {
+    this is HyperskillCourse -> JavaVersionParseSuccess(hyperskillJdkVersion)
+    courseMode == CourseMode.EDUCATOR -> JavaVersionParseSuccess(minCCJdkVersion)
     else -> ParsedJavaVersion.fromStringLanguageLevel(environmentSettings[JVM_LANGUAGE_LEVEL])
   }
 
