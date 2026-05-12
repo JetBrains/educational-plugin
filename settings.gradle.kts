@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
 import java.io.IOException
 import java.net.URL
 import java.net.UnknownHostException
@@ -170,6 +171,28 @@ pluginManagement {
           password = settings.providers.gradleProperty("spacePassword").orNull
         }
       }
+    }
+  }
+}
+
+plugins {
+  // Version kept in sync with plugins.intelliJPlatformPlugin in gradle/libs.versions.toml.
+  // Gradle forbids version-catalog references inside settings `plugins { }` blocks, so we can't use it here directly.
+  // See https://github.com/gradle/gradle/issues/36437
+  id("org.jetbrains.intellij.platform.settings") version "2.16.0"
+}
+
+dependencyResolutionManagement {
+  repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
+  repositories {
+    mavenCentral()
+    maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+    maven("https://packages.jetbrains.team/maven/p/edu/maven")
+    maven("https://packages.jetbrains.team/maven/p/edu/educational-ml-library")
+    maven("https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
+    intellijPlatform {
+      defaultRepositories()
+      jetbrainsRuntime()
     }
   }
 }

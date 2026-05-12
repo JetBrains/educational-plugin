@@ -6,13 +6,6 @@ plugins {
   id("org.jetbrains.intellij.platform.module")
 }
 
-repositories {
-  intellijPlatform {
-    defaultRepositories()
-    jetbrainsRuntime()
-  }
-}
-
 intellijPlatform {
   instrumentCode = false
 }

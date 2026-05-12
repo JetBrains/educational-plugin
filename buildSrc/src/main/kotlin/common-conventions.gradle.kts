@@ -37,14 +37,6 @@ kotlin {
   }
 }
 
-repositories {
-  mavenCentral()
-  maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-  maven("https://packages.jetbrains.team/maven/p/edu/maven")
-  maven("https://packages.jetbrains.team/maven/p/edu/educational-ml-library")
-  maven("https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
-}
-
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 tasks {

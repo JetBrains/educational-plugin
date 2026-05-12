@@ -10,13 +10,6 @@ plugins {
   id("org.jetbrains.intellij.platform")
 }
 
-repositories {
-  intellijPlatform {
-    defaultRepositories()
-    jetbrainsRuntime()
-  }
-}
-
 val buildNumber = System.getenv("BUILD_NUMBER") ?: "SNAPSHOT"
 
 if (hasProp("setTCBuildNumber")) {
