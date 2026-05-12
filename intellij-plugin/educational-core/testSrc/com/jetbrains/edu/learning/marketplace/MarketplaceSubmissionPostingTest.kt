@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.application
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -30,6 +31,7 @@ import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.junit.Test
@@ -39,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull as kAssertNotNull
 
 // TODO: unify with `MarketplaceSubmissionsTest`
@@ -269,6 +272,19 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
     // then
     assertEquals(UserAgreement(ACCEPTED, DECLINED), sentUserAgreement.get())
     assertNull(SubmissionsManager.getInstance(project).getSubmissions(task)?.singleOrNull())
+  }
+
+  @Test
+  fun `test update user agreements returns error when user is not logged in`() = runTest {
+    // given
+    every { JBAccountInfoService.getInstance()?.userData } returns null
+
+    // when
+    val result = MarketplaceSubmissionsConnector.getInstance().updateUserAgreements(ACCEPTED, DECLINED)
+
+    // then
+    assertIs<Err<String>>(result)
+    assertEquals("User is not logged in", result.error)
   }
 
   // TODO: unify with similar method from `com.jetbrains.edu.socialMedia.x.XConnectorTest`

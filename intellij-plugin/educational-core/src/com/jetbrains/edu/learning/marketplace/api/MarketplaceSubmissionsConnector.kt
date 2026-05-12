@@ -412,6 +412,10 @@ class MarketplaceSubmissionsConnector {
   }
 
   suspend fun updateUserAgreements(pluginAgreement: UserAgreementState, aiAgreement: UserAgreementState): Result<Unit, String> {
+    if (!isJBALoggedIn()) {
+      return Err("User is not logged in")
+    }
+
     val loginName = JBAccountInfoService.getInstance()?.userData?.loginName
     LOG.info("Changing user $loginName plugin agreement to $pluginAgreement, AI agreement to $aiAgreement")
     return try {
