@@ -173,3 +173,14 @@ pluginManagement {
     }
   }
 }
+
+// Declared here (not in buildSrc convention plugins) so Dependabot's static parser sees the library repos.
+dependencyResolutionManagement {
+  repositories {
+    mavenCentral()
+    maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+    maven("https://packages.jetbrains.team/maven/p/edu/maven")
+    maven("https://packages.jetbrains.team/maven/p/edu/educational-ml-library")
+    maven("https://packages.jetbrains.team/maven/p/grazi/grazie-platform-public")
+  }
+}
