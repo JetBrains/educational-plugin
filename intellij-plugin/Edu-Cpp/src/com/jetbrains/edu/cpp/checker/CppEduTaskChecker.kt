@@ -11,6 +11,8 @@ import com.jetbrains.cidr.cpp.execution.testing.CMakeTestRunConfiguration
 import com.jetbrains.cidr.execution.BuildTargetAndConfigurationData
 import com.jetbrains.cidr.execution.BuildTargetData
 import com.jetbrains.cidr.execution.ExecutableData
+import com.jetbrains.cidr.execution.testing.google.CidrGoogleTestRunConfigurationType
+import com.jetbrains.cidr.execution.testing.tcatch.CidrCatchTestRunConfigurationType
 import com.jetbrains.edu.learning.checker.EduTaskCheckerBase
 import com.jetbrains.edu.learning.checker.EnvironmentChecker
 import com.jetbrains.edu.learning.courseFormat.ext.getAllTestFiles
@@ -55,9 +57,9 @@ open class CppEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, proj
 }
 
 class CppCatchEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : CppEduTaskChecker(task, envChecker, project) {
-  override fun getFactory(): ConfigurationFactory = getCatchTestConfigurationFactory()
+  override fun getFactory(): ConfigurationFactory = CidrCatchTestRunConfigurationType.getInstance().getFactory()
 }
 
 class CppGEduTaskChecker(task: EduTask, envChecker: EnvironmentChecker, project: Project) : CppEduTaskChecker(task, envChecker, project) {
-  override fun getFactory(): ConfigurationFactory = getGoogleTestConfigurationFactory()
+  override fun getFactory(): ConfigurationFactory = CidrGoogleTestRunConfigurationType.getInstance().getFactory()
 }

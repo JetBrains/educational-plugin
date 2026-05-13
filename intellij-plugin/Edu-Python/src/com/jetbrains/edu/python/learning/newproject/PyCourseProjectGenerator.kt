@@ -9,19 +9,23 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.runBlockingMaybeCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.util.io.toNioPathOrNull
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
+import com.intellij.python.venv.createVenv
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle.message
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
+import com.jetbrains.python.getOrThrow
 import com.jetbrains.python.sdk.*
 
 open class PyCourseProjectGenerator(
@@ -120,6 +124,14 @@ open class PyCourseProjectGenerator(
       /* additionalData = */ null,
       /* customSdkSuggestedName = */ null
     )
+  }
+
+  private fun createVenv(baseSdk: PyDetectedSdk, virtualEnvPath: String): String {
+    val pythonPath = baseSdk.homePath?.toNioPathOrNull() ?: error("Python home path is not found")
+    val virtualEnvNioPath = virtualEnvPath.toNioPathOrNull() ?: error("Virtual env path is not found")
+    return runBlockingMaybeCancellable {
+      createVenv(pythonPath, virtualEnvNioPath, false)
+    }.getOrThrow().toString()
   }
 
   companion object {

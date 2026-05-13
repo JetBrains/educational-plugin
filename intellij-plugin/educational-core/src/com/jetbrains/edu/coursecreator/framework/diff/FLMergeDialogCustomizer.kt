@@ -21,7 +21,7 @@ class FLMergeDialogCustomizer(
     return EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.MergeDialog.MultipleFileDialog.title")
   }
 
-  override fun getMultipleFileMergeDescription(files: FilesCollection): String {
+  override fun getMultipleFileMergeDescription(files: Collection<VirtualFile>): String {
     return EduCoreBundle.message("action.Educational.Educator.SyncChangesWithNextTasks.MergeDialog.MultipleFileDialog.description")
   }
 

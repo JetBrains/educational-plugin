@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.ai.completion
 
 import com.intellij.ml.inline.completion.impl.configuration.MLCompletionPerProjectSuppressor
+import com.jetbrains.edu.learning.ai.completion.AiCompletionFeatureWatcher.Companion.disableAiCompletion
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.mockService

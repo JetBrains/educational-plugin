@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.framework.diff
 
 import com.intellij.diff.comparison.ComparisonMergeUtil
+import com.intellij.diff.merge.MergeModelBase
 import com.intellij.diff.tools.util.base.HighlightPolicy
 import com.intellij.diff.tools.util.base.IgnorePolicy
 import com.intellij.diff.tools.util.base.TextDiffSettingsHolder
@@ -177,7 +178,7 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     project: Project,
     document: Document,
     private val initialRanges: List<LineRange>,
-  ) : MyMergeModelBase(project, document) {
+  ) : MergeModelBase<MergeModelBase.State>(project, document) {
     init {
       setChanges(initialRanges)
     }
@@ -185,6 +186,8 @@ class DiffConflictResolveStrategy(private val project: Project) : FLConflictReso
     override fun storeChangeState(index: Int): State {
       return State(index, initialRanges[index].start, initialRanges[index].end)
     }
+
+    override fun onChangeUpdated(index: Int) {}
   }
 
   private class ThreeSideContentInfo(

@@ -4,6 +4,7 @@ import com.intellij.ml.inline.completion.impl.configuration.MLCompletionPerProje
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.util.coroutines.childScope
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.ai.completion.AiCompletionFeatureWatcher.Companion.AI_COMPLETION_SUPPRESSOR_TOKEN
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature

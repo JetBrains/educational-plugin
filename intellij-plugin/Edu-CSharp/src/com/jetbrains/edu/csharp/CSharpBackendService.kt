@@ -17,6 +17,8 @@ import com.jetbrains.rd.platform.util.idea.LifetimedService
 import com.jetbrains.rd.util.reactive.RdFault
 import com.jetbrains.rd.util.reactive.whenFalse
 import com.jetbrains.rd.util.reactive.whenTrue
+import com.jetbrains.rider.ijent.extensions.toRdPath
+import com.jetbrains.rider.model.AddProjectCommand
 import com.jetbrains.rider.model.RdRemoveItemsCommand
 import com.jetbrains.rider.model.projectModelTasks
 import com.jetbrains.rider.model.riderSolutionLifecycle
@@ -124,7 +126,7 @@ class CSharpBackendService(private val project: Project, private val scope: Coro
         val taskPaths = request.tasks.map { it.csProjPathByTask(project) }
         val parentId = project.getSolutionEntity()?.getId(project) ?: return
         val parameters = RdPostProcessParameters(false, listOf())
-        val addCommand = createAddProjectCommand(parentId, taskPaths, parameters)
+        val addCommand = AddProjectCommand(parentId, taskPaths.map { it.toRdPath() }, listOf(), true, parameters)
 
         try {
           project.solution.projectModelTasks.addProject.runCommandUnderProgress(
