@@ -10,7 +10,7 @@ import java.nio.file.Path
  * To support new social network:
  *
  * 1. Extend this interface and add EP_NAME.
- * 2. Implement interface from Step 1 for the corresponding case (for example, Hyperskill or Kotlin Koans course).
+ * 2. Implement interface from Step 1 for the corresponding case (for example, Kotlin Koans course).
  */
 interface SocialMediaPluginConfigurator {
 
@@ -24,8 +24,6 @@ interface SocialMediaPluginConfigurator {
    * that task, have the same number of images, and those images correspond to
    * each other.
    *
-   * For example, if you implement a Configurator for hyperskill courses, it
-   * should have the same images as other hyperskill configurators.
    * If you implement a configurator for the "Kotlin Koans" course, it should
    * have the same images as existing "Kotlin Koans" configurators.
    */
