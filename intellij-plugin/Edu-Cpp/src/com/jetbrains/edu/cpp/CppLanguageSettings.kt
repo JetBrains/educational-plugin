@@ -12,7 +12,6 @@ import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
@@ -31,12 +30,7 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    val standards = if (course is StepikCourse) {
-      arrayOf(CPP11.standard, CPP14.standard)
-    }
-    else {
-      getLanguageVersions().toTypedArray()
-    }
+    val standards = getLanguageVersions().toTypedArray()
 
     val langStandardComboBox = ComboBox(standards)
     val courseLanguageStandard = course.languageVersion

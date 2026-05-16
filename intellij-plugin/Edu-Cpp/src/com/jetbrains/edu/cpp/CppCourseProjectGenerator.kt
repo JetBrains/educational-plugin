@@ -8,12 +8,6 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.ItemContainer
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.ext.getDir
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
@@ -36,26 +30,12 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
            }
   }
 
-  private fun addCMakeListToStepikTasks(item: StudyItem, project: Project, projectSettings: CppProjectSettings) {
-    when (item) {
-      is ItemContainer -> item.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
-      is Task -> {
-        val cMakeFile = item.addCMakeList(getCMakeProjectName(item), projectSettings.languageStandard)
-        GeneratorUtils.createChildFile(project, item.getDir(project.courseDir) ?: return, cMakeFile.name, cMakeFile.contents)
-      }
-    }
-  }
-
   override fun afterProjectGenerated(
     project: Project,
     projectSettings: CppProjectSettings,
     openCourseParams: Map<String, String>,
     onConfigurationFinished: () -> Unit
   ) {
-    if (course is StepikCourse) {
-      course.items.forEach { addCMakeListToStepikTasks(it, project, projectSettings) }
-    }
-
     val googleTestSrc = FileUtil.join(project.courseDir.path, TEST_FRAMEWORKS_BASE_DIR_VALUE, GTEST_SOURCE_DIR_VALUE)
     VcsConfiguration.getInstance(project).addIgnoredUnregisteredRoots(listOf(googleTestSrc))
 
