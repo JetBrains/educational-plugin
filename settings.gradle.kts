@@ -1,9 +1,7 @@
 import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
-import java.io.IOException
 import java.net.URL
 import java.net.UnknownHostException
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.*
 
@@ -57,8 +55,6 @@ val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
 
 configureSecretProperties()
 
-downloadHyperskillCss()
-
 fun configureSecretProperties() {
   try {
     download(URL("https://repo.labs.intellij.net/edu-tools/secret.properties"), secretProperties)
@@ -77,10 +73,6 @@ fun configureSecretProperties() {
     "intellij-plugin/educational-core/resources/stepik/stepik.properties",
     "stepikClientId",
     "cogniterraClientId",
-  )
-  secretProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/hyperskill/hyperskill-oauth.properties",
-    "hyperskillClientId",
   )
   secretProperties.extractAndStore(
     "intellij-plugin/features/social-media/resources/twitter/oauth_twitter.properties",
@@ -105,20 +97,6 @@ fun configureSecretProperties() {
     "intellij-plugin/features/lti/resources/lti/lti-auth.properties",
     "ltiServiceToken"
   )
-}
-
-fun downloadHyperskillCss() {
-  try {
-    download(URL("https://hyperskill.org/static/shared.css"), "intellij-plugin/educational-core/resources/style/hyperskill_task.css")
-  }
-  catch (e: IOException) {
-    System.err.println("Error downloading: ${e.message}. Using local copy")
-    Files.copy(
-      Paths.get("intellij-plugin/hyperskill_default.css"),
-      Paths.get("intellij-plugin/educational-core/resources/style/hyperskill_task.css"),
-      StandardCopyOption.REPLACE_EXISTING
-    )
-  }
 }
 
 fun download(url: URL, dstPath: String) {
