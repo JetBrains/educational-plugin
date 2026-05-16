@@ -28,7 +28,6 @@ object YamlMixinNames {
   const val YAML_VERSION = "yaml_version"
 
   // coursera course
-  const val TOP_LEVEL_LESSONS_SECTION = "default_section"
   const val SUBMIT_MANUALLY = "submit_manually"
   const val COURSE_TYPE_YAML = "coursera"
 

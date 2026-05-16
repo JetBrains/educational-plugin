@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.CourseBuilder
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE_VERSION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
@@ -77,7 +75,6 @@ class RemoteCourseBuilder(
         }
       }
 
-      STEPIK_TYPE_YAML -> StepikCourse()
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduFormatNames.COURSE))
     }

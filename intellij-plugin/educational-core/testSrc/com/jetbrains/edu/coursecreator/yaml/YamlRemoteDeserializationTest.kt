@@ -24,14 +24,12 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val yamlText = """
     |id: $id
     |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |default_section: $id
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
     val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(0), course.updateDate)
-    assertEquals(listOf(1), course.sectionIds)
   }
 
   @Test
@@ -40,28 +38,12 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val yamlText = """
     |id: $id
     |course_version: 5
-    |default_section: $id
     |""".trimMargin()
 
     val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
     val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(5, course.marketplaceCourseVersion)
-  }
-
-  @Test
-  fun `test course without top-level lessons`() {
-    val id = 1
-    val yamlText = """
-    |id: $id
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
-
-    val configFile = createConfigFile(yamlText, REMOTE_COURSE_CONFIG)
-    val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
-    assertEquals(1, course.id)
-    assertEquals(Date(0), course.updateDate)
-    assertTrue(course.sectionIds.isEmpty())
   }
 
   @Test

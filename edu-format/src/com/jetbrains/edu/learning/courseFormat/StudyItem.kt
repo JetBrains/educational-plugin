@@ -20,7 +20,7 @@ abstract class StudyItem() {
   var index: Int = -1
   var name: String = ""
   var updateDate: Date = Date(0)
-  var id: Int = 0 // id on remote resource (Stepik, Marketplace)
+  var id: Int = 0 // id on remote resource (Marketplace)
   var contentTags: List<String> = listOf()
 
   @Transient
@@ -35,7 +35,7 @@ abstract class StudyItem() {
   abstract val course: Course
   abstract val itemType: String     // used in json/yaml serialization/deserialization
 
-  // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
+  // Non unique lesson/task/section names can be received from a remote course. In this case unique directory name is generated,
   // but original non unique name is displayed
   @get:Deprecated("Should be used only for deserialization. Use {@link StudyItem#getPresentableName()} instead")
   var customPresentableName: String? = null

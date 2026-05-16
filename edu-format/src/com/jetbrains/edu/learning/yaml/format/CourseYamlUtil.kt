@@ -46,7 +46,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUMMARY
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TAGS
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TITLE
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TOP_LEVEL_LESSONS_SECTION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.VENDOR
@@ -205,13 +204,8 @@ private class CourseTypeSerializationConverter : StdConverter<String, String?>()
  * Mixin class is used to deserialize remote information of [EduCourse] item
  */
 @Suppress("unused") // used for json serialization
-@JsonPropertyOrder(ID, UPDATE_DATE, TOP_LEVEL_LESSONS_SECTION, MARKETPLACE_COURSE_VERSION, GENERATED_EDU_ID)
+@JsonPropertyOrder(ID, UPDATE_DATE, MARKETPLACE_COURSE_VERSION, GENERATED_EDU_ID)
 abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
-
-  @JsonSerialize(converter = TopLevelLessonsSectionSerializer::class)
-  @JsonDeserialize(converter = TopLevelLessonsSectionDeserializer::class)
-  @JsonProperty(TOP_LEVEL_LESSONS_SECTION)
-  private lateinit var sectionIds: List<Int>   // applicable only to Stepik courses. To be removed
 
   @JsonProperty(MARKETPLACE_COURSE_VERSION)
   @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = IntValueFilter::class)
@@ -222,14 +216,6 @@ abstract class EduCourseRemoteInfoYamlMixin : RemoteStudyItemYamlMixin() {
   private val generatedEduId: String? = null
 }
 
-
-private class TopLevelLessonsSectionSerializer : StdConverter<List<Int>, Int?>() {
-  override fun convert(value: List<Int>?) = value?.firstOrNull()
-}
-
-private class TopLevelLessonsSectionDeserializer : StdConverter<Int, List<Int>>() {
-  override fun convert(value: Int?) = if (value == null) emptyList() else listOf(value)
-}
 
 @JsonPOJOBuilder(withPrefix = "")
 open class CourseBuilder(

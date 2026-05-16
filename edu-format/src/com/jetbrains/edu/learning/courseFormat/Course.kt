@@ -164,9 +164,6 @@ abstract class Course : LessonContainer() {
   open val humanLanguage: String
     get() = Locale(languageCode).displayName
 
-  open val isStepikRemote: Boolean
-    get() = false
-
   fun incrementMarketplaceCourseVersion(remoteCourseVersion: Int) {
     marketplaceCourseVersion = remoteCourseVersion + 1
   }

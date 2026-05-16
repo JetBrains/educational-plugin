@@ -20,24 +20,6 @@ class YamlRemoteSerializationTest : YamlTestCase() {
     } as EduCourse
 
     course.id = 1
-    course.sectionIds = listOf(1)
-    course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
-    doTest(
-      course, """
-    |id: 1
-    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |default_section: 1
-    |""".trimMargin()
-    )
-  }
-
-  @Test
-  fun `test course without top-level lessons`() {
-    val course = course {
-      section()
-    } as EduCourse
-
-    course.id = 1
     course.updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC")
     doTest(
       course, """

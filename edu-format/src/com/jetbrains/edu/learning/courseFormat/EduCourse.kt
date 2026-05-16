@@ -7,16 +7,12 @@ import java.util.*
  * Used in the following Mixins:
  * - [com.jetbrains.edu.coursecreator.actions.mixins.RemoteEduCourseMixin]
  * - [com.jetbrains.edu.learning.marketplace.api.MarketplaceEduCourseMixin]
- * - [com.jetbrains.edu.learning.stepik.api.StepikEduCourseMixin]
  * - [com.jetbrains.edu.learning.yaml.format.EduCourseRemoteInfoYamlMixin]
  * - [com.jetbrains.edu.learning.yaml.format.CourseYamlMixin]
  */
 open class EduCourse : Course() {
   override val itemType: String
     get() = if (isMarketplace) MARKETPLACE else super.itemType
-
-  override val isStepikRemote: Boolean
-    get() = id != 0 && !isMarketplace
 
   val isMarketplaceRemote: Boolean
     get() = id != 0 && isMarketplace
@@ -34,7 +30,6 @@ open class EduCourse : Course() {
   // in CC mode is used to store top-level lessons' section id
   var sectionIds: List<Int> = emptyList()
   var instructors: List<Int> = emptyList()
-  var isStepikPublic: Boolean = false
   var reviewSummary: Int = 0
 
   fun convertToLocal() {
@@ -42,7 +37,6 @@ open class EduCourse : Course() {
       marketplaceCourseVersion = 1
     }
     else {
-      isStepikPublic = false
       sectionIds = emptyList()
       instructors = emptyList()
     }

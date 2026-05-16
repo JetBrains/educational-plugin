@@ -5,13 +5,9 @@ import java.util.*
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
- * Update [and StepikChangeRetriever#taskInfoChanged][com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever.taskFilesChanged] if you added new property that has to be compared
- * To implement new task there are 5 steps to be done:
+ * To implement a new task the following steps are needed:
  * - Extend [Task] class
- * - Update [com.jetbrains.edu.learning.stepik.api.StepikJacksonDeserializersKt.doDeserializeTask] to handle json serialization
  * - Update [com.jetbrains.edu.learning.checker.TaskCheckerProvider.getTaskChecker] and provide default checker for new task
- * - Update [com.jetbrains.edu.learning.stepik.StepikTaskBuilder.pluginTaskTypes] for the tasks we do not have separately on stepik
- *   and [com.jetbrains.edu.learning.stepik.StepikTaskBuilder.StepikTaskType] otherwise
  * - Handle yaml deserialization:
  * - add type in [com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask]
  * - add yaml mixins for course creator and student fields [com.jetbrains.edu.learning.yaml.format]
