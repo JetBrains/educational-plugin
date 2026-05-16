@@ -61,11 +61,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
       propertiesComponent.setValue(RECENT_COURSES_FILLED, true)
     }
 
-    if (!propertiesComponent.isValueSet(STEPIK_AUTH_RESET)) {
-      EduSettings.getInstance().user = null
-      propertiesComponent.setValue(STEPIK_AUTH_RESET, true)
-    }
-
     @Suppress("UnstableApiUsage", "DEPRECATION")
     if (PlatformUtils.isPyCharmEducational() || PlatformUtils.isIdeaEducational()) {
       showSwitchFromEduNotification()
@@ -242,7 +237,6 @@ class InitializationListener : AppLifecycleListener, DynamicPluginListener {
     private val LOG = logger<InitializationListener>()
 
     const val RECENT_COURSES_FILLED = "Educational.recentCoursesFilled"
-    const val STEPIK_AUTH_RESET = "Educational.stepikOAuthReset"
     private const val SWITCH_TO_COMMUNITY_DO_NOT_ASK_OPTION_ID = "Edu IDEs aren't supported"
   }
 }

@@ -2,20 +2,21 @@
 
 package com.jetbrains.edu.learning.marketplace
 
+import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.intellij.ui.EditorNotifications
-import com.jetbrains.edu.learning.EduUtilsKt
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
-import com.jetbrains.edu.learning.computeUnderProgress
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.learning.invokeLater
+import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
@@ -24,11 +25,9 @@ import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.MarketplaceCourseUpdater
 import com.jetbrains.edu.learning.marketplace.update.getUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.runInBackground
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
-import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
-import com.jetbrains.edu.learning.stepik.showUpdateAvailableNotification
 import com.jetbrains.edu.learning.update.showUpdateNotification
 
 fun EduCourse.setRemoteMarketplaceCourseVersion() {
@@ -108,6 +107,24 @@ fun isRemoteUpdateFormatVersionCompatible(project: Project, remoteCourseFormatVe
     return false
   }
   return true
+}
+
+@Suppress("DialogTitleCapitalization")
+private fun showUpdateAvailableNotification(project: Project, updateAction: () -> Unit) {
+  EduNotificationManager
+    .create(INFORMATION, EduCoreBundle.message("update.content"), EduCoreBundle.message("update.content.request"))
+    .setListener { notification, _ ->
+      FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
+      notification.expire()
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        {
+          ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+          updateAction()
+        },
+        EduCoreBundle.message("push.course.updating.progress.text"), true, project
+      )
+    }
+    .notify(project)
 }
 
 fun EduCourse.updateFeaturedStatus() {

@@ -1,10 +1,9 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.submissions
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.FutureTracker
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.tracked
 import com.jetbrains.edu.learning.ui.getUICheckLabel

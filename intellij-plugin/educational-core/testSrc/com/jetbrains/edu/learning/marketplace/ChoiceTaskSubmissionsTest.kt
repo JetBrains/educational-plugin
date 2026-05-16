@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.marketplace.api.SubmissionsService
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
+import com.jetbrains.edu.learning.submissions.SubmissionsTestBase
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.learning.ui.getUICheckLabel
 import io.mockk.every

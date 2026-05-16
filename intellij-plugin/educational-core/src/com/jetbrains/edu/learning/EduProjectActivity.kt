@@ -34,9 +34,7 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.marketplace.license.LicenseChecker
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -120,21 +118,7 @@ class EduProjectActivity : ProjectActivity {
   @VisibleForTesting
   fun migrateYaml(project: Project, course: Course) {
     migratePropagatableYamlFields(project, course)
-    migrateCanCheckLocallyYaml(project, course)
     YamlFormatSynchronizer.saveAll(project)
-  }
-
-  private fun migrateCanCheckLocallyYaml(project: Project, course: Course) {
-    val propertyComponent = PropertiesComponent.getInstance(project)
-    if (propertyComponent.getBoolean(YAML_MIGRATED)) return
-    propertyComponent.setValue(YAML_MIGRATED, true)
-    if (course !is StepikCourse) return
-
-    course.visitTasks {
-      if (it is ChoiceTask) {
-        it.canCheckLocally = false
-      }
-    }
   }
 
   private fun migratePropagatableYamlFields(project: Project, course: Course) {
@@ -230,7 +214,6 @@ class EduProjectActivity : ProjectActivity {
   companion object {
     private val LOG: Logger = logger<EduProjectActivity>()
 
-    private const val YAML_MIGRATED = "Edu.Yaml.Migrate"
     @VisibleForTesting
     const val YAML_MIGRATED_PROPAGATABLE = "Edu.Yaml.Migrate.Propagatable"
   }

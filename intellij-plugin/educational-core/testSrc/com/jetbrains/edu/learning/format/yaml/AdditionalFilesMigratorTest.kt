@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.stepik.api.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.NAME
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -96,7 +95,7 @@ class AdditionalFilesMigratorTest(
 
         val migratedYaml = project.courseDir.findChild("course-info.yaml")!!.readText()
         val tree = YAMLMapper().readTree(migratedYaml)
-        val additionalFilesList = tree.get(ADDITIONAL_FILES).map { it.get(NAME).asText() }
+        val additionalFilesList = tree.get("additional_files").map { it.get(NAME).asText() }
 
         assertEquals(
           "Wrong list of additional files",

@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.StartCourseAction
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
-import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
+import com.jetbrains.edu.learning.newproject.course.ImportCourseDialog
 
 class ImportCourseFromStorageAction : StartCourseAction() {
   override fun courseConnector(): EduCourseConnector = CourseStorageConnector.getInstance()

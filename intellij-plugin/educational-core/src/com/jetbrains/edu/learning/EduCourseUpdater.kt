@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
-import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK
 import com.jetbrains.edu.learning.update.UpdateUtils.shouldFrameworkLessonBeUpdated
 import com.jetbrains.edu.learning.update.UpdateUtils.updateFrameworkLessonFiles
 import com.jetbrains.edu.learning.update.UpdateUtils.updateTaskDescription
@@ -43,8 +42,7 @@ abstract class EduCourseUpdater(val project: Project, val course: EduCourse) {
     val courseFromServer = courseFromServer(course)
 
     if (courseFromServer == null) {
-      val platformName = if (course.isMarketplace) MARKETPLACE else STEPIK
-      LOG.warn("Course ${course.id} not found on $platformName")
+      LOG.warn("Course ${course.id} not found on $MARKETPLACE")
       return
     }
 

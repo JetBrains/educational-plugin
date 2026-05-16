@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.marketplace.deleteSubmissions.DeleteAllSubmiss
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.SubmissionsDeleteDialog
 import com.jetbrains.edu.learning.marketplace.deleteSubmissions.deleteSubmissionsWithTestDialog
 import com.jetbrains.edu.learning.simpleDiffRequestChain
-import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
+import com.jetbrains.edu.learning.submissions.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.submissions.SubmissionsManager

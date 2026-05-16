@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui.errors
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
@@ -11,16 +10,12 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
-import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
-import com.jetbrains.edu.learning.ui.EduColors.warningTextForeground
 import org.jetbrains.annotations.Nls
 import java.awt.Color
 
@@ -35,11 +30,6 @@ sealed class ErrorState(
   object None : ErrorState(OK, null, Color.BLACK, true)
   object Pending : ErrorState(LANGUAGE_SETTINGS_PENDING, null, Color.BLACK, false)
 
-  object NotLoggedIn : ErrorState(LOGIN_RECOMMENDED,
-                                  ValidationMessage(EduCoreBundle.message("validation.stepik.log.in.needed"), type = WARNING),
-                                  warningTextForeground,
-                                  true)
-
   abstract class LocationError(messageText: String) : ErrorState(LOCATION_ERROR,
                                                                  ValidationMessage(messageText, type = ERROR),
                                                                  errorTextForeground,
@@ -47,15 +37,6 @@ sealed class ErrorState(
 
   object EmptyLocation : LocationError(EduCoreBundle.message("validation.empty.location"))
   object InvalidLocation : LocationError(EduCoreBundle.message("validation.cannot.create.course.at.location"))
-
-  abstract class LoginRequired(
-    platformName: String
-  ) : ErrorState(LOGIN_ERROR,
-                 ValidationMessage(EduCoreBundle.message("validation.log.in.to.start.course", platformName)),
-                 errorTextForeground,
-                 false)
-
-  object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
 
   class CustomSevereError(message: String, val action: Runnable? = null) :
     ErrorState(LOGIN_ERROR, ValidationMessage(message), errorTextForeground, false)
@@ -122,15 +103,6 @@ sealed class ErrorState(
       get() {
         return when {
           CoursesStorage.getInstance().hasCourse(this) -> None
-          this is EduCourse -> {
-            if (!isMarketplace && !isLoggedInToStepik()) {
-              if (isStepikLoginRequired(this)) StepikLoginRequired else NotLoggedIn
-            }
-            else {
-              None
-            }
-          }
-
           else -> None
         }
       }
@@ -153,10 +125,6 @@ sealed class ErrorState(
         ValidationMessage(EduCoreBundle.message("validation.plugins.disabled.or.not.installed.plugins"))
       }
     }
-
-    private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
-
-    private fun isStepikLoginRequired(selectedCourse: EduCourse): Boolean = selectedCourse is StepikCourse
 
   }
 }

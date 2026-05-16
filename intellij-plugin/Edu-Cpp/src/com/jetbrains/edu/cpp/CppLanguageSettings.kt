@@ -6,7 +6,6 @@ import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.io.IOUtil
-import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP11
 import com.jetbrains.cmake.completion.CMakeRecognizedCPPLanguageStandard.CPP14
 import com.jetbrains.edu.cpp.messages.EduCppBundle
 import com.jetbrains.edu.learning.LanguageSettings

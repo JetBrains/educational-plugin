@@ -4,7 +4,6 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
@@ -652,25 +651,6 @@ class YamlSerializationTest : YamlTestCase() {
       |content:
       |- lesson1
       |feedback_link: $courseLink
-      |yaml_version: $CURRENT_YAML_VERSION
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test stepik course`() {
-    val course = course(courseProducer = ::StepikCourse) {} as StepikCourse
-    course.apply {
-      languageCode = "en"
-    }
-
-    doTest(course, """
-      |type: stepik
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |mode: Study
       |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin())

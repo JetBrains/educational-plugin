@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -60,38 +59,6 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       section, """
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin()
-    )
-  }
-
-  @Test
-  fun `test lesson`() {
-    val lesson = course {
-      stepikLesson()
-    }.lessons.first() as StepikLesson
-
-    lesson.id = 1
-    lesson.updateDate = Date(0)
-    lesson.unitId = 1
-    doTest(
-      lesson, """
-    |id: 1
-    |unit: 1
-    |""".trimMargin()
-    )
-  }
-
-  @Test
-  fun `test lesson default unit`() {
-    val lesson = course {
-      stepikLesson()
-    }.lessons.first() as StepikLesson
-
-    lesson.id = 1
-    lesson.updateDate = Date(0)
-    doTest(
-      lesson, """
-    |id: 1
     |""".trimMargin()
     )
   }

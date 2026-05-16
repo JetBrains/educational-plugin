@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.UPDATE_DATE
 import com.jetbrains.edu.learning.json.mixins.LocalTaskMixin
 import com.jetbrains.edu.learning.json.mixins.RemoteLessonMixin
 import com.jetbrains.edu.learning.json.mixins.RemoteSectionMixin
-import com.jetbrains.edu.learning.stepik.api.STEPIK_ID
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -59,7 +57,6 @@ abstract class TestRemoteLessonMixin : RemoteLessonMixin() {
 @Suppress("unused") // used for correct updateDate deserialization from json test data
 abstract class TestRemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(ID)
-  @JsonAlias(STEPIK_ID)
   private var id: Int = 0
 
   @JsonProperty(UPDATE_DATE)

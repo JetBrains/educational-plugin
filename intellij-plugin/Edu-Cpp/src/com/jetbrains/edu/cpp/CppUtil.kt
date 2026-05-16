@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getDefaultName
 
 /**
  * Create CMake for the task and add it as taskFile.

@@ -18,14 +18,9 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTask
 import com.jetbrains.edu.learning.isToEncodeContent
-import com.jetbrains.edu.learning.stepik.api.LessonAdditionalInfo
-import com.jetbrains.edu.learning.stepik.api.TaskAdditionalInfo
-import com.jetbrains.edu.learning.stepik.collectTaskFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
 import java.io.IOException
 
@@ -90,15 +85,6 @@ object AdditionalFilesUtils {
            excludedByConfigurator ||
            file.path == PropertiesComponent.getInstance(project)
              .getValue(CCCreateCourseArchiveAction.LAST_ARCHIVE_LOCATION)
-  }
-
-  @Suppress("DEPRECATION") // https://youtrack.jetbrains.com/issue/EDU-4930
-  fun collectAdditionalLessonInfo(lesson: Lesson, project: Project): LessonAdditionalInfo {
-    val nonPluginTasks = lesson.taskList.filter { !it.isPluginTaskType }
-    val taskInfo = nonPluginTasks.associateBy(Task::id) {
-      TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
-    }
-    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, listOf())
   }
 
   fun getChangeNotesVirtualFile(project: Project): VirtualFile? {

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.progress.ProgressIndicator
@@ -29,7 +29,7 @@ class UpdateCourseNotificationProvider : EditorNotificationProvider, DumbAware {
       return null
     }
     val course = project.course as? EduCourse ?: return null
-    if (!course.isStepikRemote && !course.isMarketplaceRemote || course.isUpToDate || file.getTaskFile(project) == null) return null
+    if (!course.isMarketplaceRemote || course.isUpToDate || file.getTaskFile(project) == null) return null
 
     return Function {
       val panel = EditorNotificationPanel()

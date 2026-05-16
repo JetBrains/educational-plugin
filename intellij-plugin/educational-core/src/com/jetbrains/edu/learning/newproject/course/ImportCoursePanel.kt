@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.course
+package com.jetbrains.edu.learning.newproject.course
 
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -55,10 +55,4 @@ abstract class ImportCoursePanel(private val courseConnector: EduCourseConnector
   }
 
   protected fun isValidLink(text: String): Boolean = courseConnector.getCourseIdFromLink(text) != -1
-
-  abstract fun setValidationListener(validationListener: ValidationListener?)
-
-  interface ValidationListener {
-    fun onLoggedIn(isLoggedIn: Boolean)
-  }
 }

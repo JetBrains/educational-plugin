@@ -8,8 +8,8 @@ import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.newproject.course.ImportCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

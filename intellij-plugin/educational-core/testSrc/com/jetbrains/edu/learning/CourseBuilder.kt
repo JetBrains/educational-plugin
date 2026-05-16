@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -90,15 +89,6 @@ abstract class LessonOwnerBuilder(val course: Course) {
   ) {
     val lesson = FrameworkLesson().also { it.isTemplateBased = isTemplateBased }
     lesson(lesson, name, customPresentableName, id, buildLesson = buildLesson)
-  }
-
-  fun stepikLesson(
-    name: String? = null,
-    customPresentableName: String? = null,
-    buildLesson: LessonBuilder<Lesson>.() -> Unit = {}
-  ) {
-    val stepikLesson = StepikLesson()
-    lesson(stepikLesson, name, customPresentableName, buildLesson = buildLesson)
   }
 
   fun lesson(

@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.agreement.solutionSharing
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.marketplace.actions.ShareMySolutionsAction
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
-import com.jetbrains.edu.learning.stepik.SubmissionsTestBase
+import com.jetbrains.edu.learning.submissions.SubmissionsTestBase
 import com.jetbrains.edu.learning.submissions.SolutionSharingPreference
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test

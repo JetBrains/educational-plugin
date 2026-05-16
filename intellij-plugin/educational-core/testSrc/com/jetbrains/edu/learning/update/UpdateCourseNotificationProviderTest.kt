@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
-import com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider
 import org.junit.Test
 
 class UpdateCourseNotificationProviderTest : NotificationsTestBase() {
@@ -32,6 +31,7 @@ class UpdateCourseNotificationProviderTest : NotificationsTestBase() {
         }
       }
     }.asRemote(CourseMode.STUDENT)
+    course.isMarketplace = true
     course.isUpToDate = isUpToDate
     return course
   }

@@ -15,7 +15,6 @@ import com.intellij.util.net.*
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.StepikNames
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -152,7 +151,7 @@ private fun OkHttpClient.Builder.addHostAssertions(): OkHttpClient.Builder {
 val eduToolsUserAgent: String
   get() {
     val version = pluginVersion(EduNames.PLUGIN_ID) ?: "unknown"
-    return "${StepikNames.PLUGIN_NAME}/version($version)/${System.getProperty("os.name")}/${PlatformUtils.getPlatformPrefix()}"
+    return "EduTools/version($version)/${System.getProperty("os.name")}/${PlatformUtils.getPlatformPrefix()}"
   }
 
 fun <T> Call<T>.executeHandlingExceptions(omitErrors: Boolean = false): Response<T>? {

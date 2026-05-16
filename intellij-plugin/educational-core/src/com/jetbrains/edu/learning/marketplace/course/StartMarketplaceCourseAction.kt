@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.marketplace.api.EduCourseConnector
-import com.jetbrains.edu.learning.stepik.course.ImportCourseDialog
+import com.jetbrains.edu.learning.newproject.course.ImportCourseDialog
 
 class StartMarketplaceCourseAction : StartCourseAction() {
   override fun courseConnector(): EduCourseConnector = MarketplaceConnector.getInstance()

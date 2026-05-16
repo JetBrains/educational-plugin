@@ -228,8 +228,6 @@
       <!-- Adding to necessary action groups happens in com.jetbrains.edu.learning.InitializationListener -->
     </group>
 
-    <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.actions.stepik.ExportStepikIds"/>
-
     <group id="Educational.Educator.AnswerPlaceholder">
       <action id="Educational.Educator.AddAnswerPlaceholder"
               class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder"/>
@@ -249,9 +247,6 @@
     </group>
 
     <action id="Educational.Educator.EditCourseFromArchive" class="com.jetbrains.edu.coursecreator.actions.CCEditCourseArchive"/>
-    <action id="Educational.Educator.StepikChangeHost"
-            class="com.jetbrains.edu.learning.stepik.changeHost.StepikChangeHost"
-            internal="true"/>
 
     <group id="Educational.LearnAndTeachFileMenu"
            class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup"
@@ -319,9 +314,6 @@
     <applicationService serviceInterface="com.jetbrains.edu.learning.EduBrowser"
                         serviceImplementation="com.jetbrains.edu.learning.EduBrowser"
                         testServiceImplementation="com.jetbrains.edu.learning.MockEduBrowser"/>
-    <applicationService serviceInterface="com.jetbrains.edu.learning.stepik.api.StepikConnector"
-                        serviceImplementation="com.jetbrains.edu.learning.stepik.api.StepikConnectorImpl"
-                        testServiceImplementation="com.jetbrains.edu.learning.stepik.api.MockStepikConnector"/>
 
     <applicationService serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
 
@@ -405,7 +397,7 @@
     <!-- Notifications   -->
     <editorNotificationProvider
         implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
-    <editorNotificationProvider implementation="com.jetbrains.edu.learning.stepik.UpdateCourseNotificationProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.edu.learning.update.UpdateCourseNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.editor.EduTaskFileNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.yaml.YamlConfigNotificationProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.SyncChangesEditorNotificationsProvider"/>
@@ -421,7 +413,6 @@
     <statistics.counterUsagesCollector implementationClass="com.jetbrains.edu.learning.statistics.EduCounterUsageCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.taskToolWindow.ui.EduToolsResourcesRequestHandler"/>
 
     <registryKey key="edu.course.update.check.interval"
@@ -506,7 +497,6 @@
     <!-- Only for development purposes -->
     <configurator language="TEXT" implementationClass="com.jetbrains.edu.learning.configuration.PlainTextConfigurator"/>
 
-    <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.coursecreator.validation.ValidationCheckListener"/>

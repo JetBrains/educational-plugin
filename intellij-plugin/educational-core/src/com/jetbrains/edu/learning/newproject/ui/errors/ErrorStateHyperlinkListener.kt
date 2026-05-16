@@ -18,11 +18,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.actions.SwitchTaskPanelAction
-import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.installAndEnablePlugin
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
@@ -33,17 +31,8 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
 
     val coursePanel = UIUtil.getParentOfType(CoursePanel::class.java, e.source as? JTextPane) ?: return
     val coursesPanel = UIUtil.getParentOfType(CoursesPanel::class.java, e.source as? JTextPane)
-    val postLoginActions = arrayOf(
-      Runnable { coursePanel.hideErrorPanel() },
-      Runnable { doValidation(coursePanel) },
-      Runnable { coursesPanel?.scheduleUpdateAfterLogin() }
-    )
 
     when (val state = coursePanel.errorState) {
-      is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
-        // TODO: Update course list
-        StepikConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
-      }
       is ErrorState.JCEFRequired -> invokeSwitchUILibrary(coursePanel)
       is ErrorState.IncompatibleVersion -> installAndEnablePlugin(setOf(PluginId.getId(EduNames.PLUGIN_ID))) {}
       is ErrorState.RequirePlugins -> {

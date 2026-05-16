@@ -97,7 +97,7 @@ class ImportLocalCourseAction : DumbAwareAction() {
   }
 
   private class ImportCourseDialog(course: Course) : JoinCourseDialog(course) {
-    override fun isToShowError(errorState: ErrorState): Boolean = errorState !is ErrorState.NotLoggedIn
+    override fun isToShowError(errorState: ErrorState): Boolean = true
   }
 
   private fun closeDialog(component: Component?) {

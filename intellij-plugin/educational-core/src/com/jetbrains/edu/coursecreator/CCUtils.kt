@@ -15,7 +15,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
@@ -38,15 +37,12 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.addVendor
 import com.jetbrains.edu.learning.marketplace.generateEduId
 import com.jetbrains.edu.learning.marketplace.setRemoteMarketplaceCourseVersion
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.stepik.api.StepikConnector
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 import java.util.*
@@ -261,24 +257,11 @@ object CCUtils {
         try {
           lessonDir.move(this, sectionDir)
         }
-        catch (e1: IOException) {
-          LOG.error("Failed to move lesson " + lessonDir.name + " to the new section " + sectionDir.name)
+        catch (e: IOException) {
+          LOG.error("Failed to move lesson " + lessonDir.name + " to the new section " + sectionDir.name, e)
         }
-
       }
     })
-  }
-
-  fun lessonFromDir(course: Course, lessonDir: VirtualFile, project: Project): Lesson? {
-    val parentDir = lessonDir.parent
-    if (parentDir != null && parentDir.name == project.courseDir.name) {
-      return course.getLesson(lessonDir.name)
-    }
-    else {
-      val sectionDir = lessonDir.parent ?: return null
-      val section = course.getSection(sectionDir.name) ?: return null
-      return section.getLesson(lessonDir.name)
-    }
   }
 
   fun askToWrapTopLevelLessons(
@@ -311,28 +294,6 @@ object CCUtils {
     }
   }
 
-  private fun checkIfAuthorized(
-    project: Project,
-    failedActionTitle: String,
-    isLoggedIn: Boolean,
-    authAction: () -> Unit
-  ): Boolean {
-    val indicator = ProgressManager.getInstance().progressIndicator
-    indicator?.checkCanceled()
-
-    if (!isLoggedIn) {
-      showLoginNeededNotification(project, failedActionTitle) { authAction() }
-      return false
-    }
-    return true
-  }
-
-  fun checkIfAuthorizedToStepik(project: Project, @Nls(capitalization = Nls.Capitalization.Title) failedActionTitle: String): Boolean {
-    return checkIfAuthorized(project, failedActionTitle, EduSettings.isLoggedIn()) {
-      StepikConnector.getInstance().doAuthorize()
-    }
-  }
-
   /**
    * Use for actions with double naming only (e.g. [com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse])
    * Concatenates upload and update action texts for action search in find actions
@@ -356,17 +317,6 @@ object CCUtils {
   ): Boolean {
     if (isMarketplaceRemote) {
       setRemoteMarketplaceCourseVersion()
-    }
-
-    if (isStepikRemote) {
-      // if the course is Stepik remote, that means that the course was opened
-      // from Stepik in CC mode with "Edit", and we need to set it's id to 0 before pushing course to marketplace
-      id = 0
-      CCNotificationUtils.showInfoNotification(
-        project,
-        EduCoreBundle.message("marketplace.course.converted"),
-        EduCoreBundle.message("marketplace.not.possible.to.post.updates.to.stepik")
-      )
     }
 
     if (marketplaceCourseVersion == 0) {
