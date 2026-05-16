@@ -32,21 +32,12 @@ data class EduCommandTestData<T : EduCommand>(
           null
         ),
         EduCommandTestData(
-          listOf("/path/to/project", "--hyperskill", "98765"),
-          mapOf(
-            EduCourseProjectCommand::source to CourseSource.HYPERSKILL,
-            EduCourseProjectCommand::courseId to "98765",
-            EduCourseProjectCommand::courseDir to Paths.get("/path/to/project")
-          ),
-          null
-        ),
-        EduCommandTestData(
           listOf("/path/to/project"),
           empty(),
           """
             Usage: $commandName [<options>] <path to course project directory>
-  
-            Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
+
+            Error: must provide one of --archive, --marketplace, --courseStorage, --local
           """
         ),
         EduCommandTestData(
@@ -65,7 +56,7 @@ data class EduCommandTestData<T : EduCommand>(
             Usage: $commandName [<options>] <path to course project directory>
   
             Error: got unexpected extra argument (/path/to/project2)
-            Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
+            Error: must provide one of --archive, --marketplace, --courseStorage, --local
           """
         ),
         EduCommandTestData(
@@ -83,7 +74,7 @@ data class EduCommandTestData<T : EduCommand>(
           """
             Usage: $commandName [<options>] <path to course project directory>
   
-            Error: option --archive cannot be used with --marketplace or --courseStorage or --hyperskill or --local
+            Error: option --archive cannot be used with --marketplace or --courseStorage or --local
           """
         ),
         EduCommandTestData(
@@ -91,9 +82,9 @@ data class EduCommandTestData<T : EduCommand>(
           empty(),
           """
             Usage: $commandName [<options>] <path to course project directory>
-  
+
             Error: no such option --foo
-            Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
+            Error: must provide one of --archive, --marketplace, --courseStorage, --local
           """
         ),
       )

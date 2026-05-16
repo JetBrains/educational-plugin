@@ -6,14 +6,10 @@ import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.newproject.openProjectTask
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.file.Files
@@ -60,24 +56,6 @@ enum class CourseSource(val option: String, val description: String) {
     }
 
     override fun isCourseFromSource(course: Course): Boolean = course is EduCourse && course.isFromCourseStorage()
-  },
-
-  HYPERSKILL("hyperskill", "Hyperskill project id") {
-    override suspend fun loadCourse(location: String): Result<Course, String> {
-      val projectId = location.toIntOrNull() ?: return Err("Hyperskill course id should be an integer. Got `$location`")
-
-      val hyperskillProject = HyperskillConnector.getInstance().getProject(projectId)
-        .onError { return Err(it) }
-      val request = HyperskillOpenProjectStageRequest(projectId, null)
-      val hyperskillCourse = HyperskillOpenInIdeRequestHandler
-        .createHyperskillCourse(request, hyperskillProject.language, hyperskillProject)
-        .onError { return Err(it.message) }
-      HyperskillConnector.getInstance().loadStages(hyperskillCourse)
-
-      return Ok(hyperskillCourse)
-    }
-
-    override fun isCourseFromSource(course: Course): Boolean = course is HyperskillCourse
   },
 
   LOCAL("local", "Path to local educator course project") {

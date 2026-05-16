@@ -41,15 +41,6 @@ class EduCoursePluginInstallerCommandTest(
         null
       ),
       EduCommandTestData(
-        listOf("--hyperskill", "98765"),
-        mapOf(
-          EduCoursePluginInstallerCommand::source to CourseSource.HYPERSKILL,
-          EduCoursePluginInstallerCommand::courseId to "98765",
-          EduCoursePluginInstallerCommand::projectPath to null
-        ),
-        null
-      ),
-      EduCommandTestData(
         emptyList(),
         emptyMap(),
         """
@@ -59,7 +50,6 @@ class EduCoursePluginInstallerCommandTest(
             --archive=<value>                                 Path to course archive file
             --marketplace=<value>                             Marketplace course id
             --courseStorage=<value>                           Course id from course storage
-            --hyperskill=<value>                              Hyperskill project id
             --local=<value>                                   Path to local educator course project
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
             -h, --help                                        Show this message and exit
@@ -71,7 +61,7 @@ class EduCoursePluginInstallerCommandTest(
         """
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
-          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
+          Error: must provide one of --archive, --marketplace, --courseStorage, --local
         """
       ),
       EduCommandTestData(
@@ -81,7 +71,7 @@ class EduCoursePluginInstallerCommandTest(
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
           Error: got unexpected extra argument (/path/to/project2)
-          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
+          Error: must provide one of --archive, --marketplace, --courseStorage, --local
         """
       ),
       EduCommandTestData(
@@ -99,7 +89,7 @@ class EduCoursePluginInstallerCommandTest(
         """
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
-          Error: option --archive cannot be used with --marketplace or --courseStorage or --hyperskill or --local
+          Error: option --archive cannot be used with --marketplace or --courseStorage or --local
         """
       ),
       EduCommandTestData(
@@ -109,7 +99,7 @@ class EduCoursePluginInstallerCommandTest(
           Usage: installCoursePlugins [<options>] [<path to course project directory>]
 
           Error: no such option --foo
-          Error: must provide one of --archive, --marketplace, --courseStorage, --hyperskill, --local
+          Error: must provide one of --archive, --marketplace, --courseStorage, --local
         """
       ),
     )

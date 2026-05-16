@@ -22,7 +22,6 @@ class EduCreateCourseCommandTest(
             --archive=<value>                                 Path to course archive file
             --marketplace=<value>                             Marketplace course id
             --courseStorage=<value>                           Course id from course storage
-            --hyperskill=<value>                              Hyperskill project id
             --local=<value>                                   Path to local educator course project
             --log-level=(OFF|SEVERE|WARNING|INFO|FINE|FINER)  Minimal IDE log level printing to stderr
             -h, --help                                        Show this message and exit
