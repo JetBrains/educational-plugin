@@ -1,6 +1,3 @@
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
-
 plugins {
   id("intellij-plugin-common-conventions")
   id("org.jetbrains.intellij.platform.module")
@@ -26,10 +23,6 @@ tasks {
     jvmArgumentProviders += CommandLineArgumentProvider {
       listOf("-Didea.kotlin.plugin.use.k2=true")
     }
-
-    // TODO: Drop Hyperskill-related code. See EDU-8582
-    exclude("com/jetbrains/edu/learning/stepik/**")
-    exclude("**/hyperskill/**")
   }
 }
 

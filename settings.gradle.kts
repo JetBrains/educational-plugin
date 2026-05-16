@@ -70,11 +70,6 @@ fun configureSecretProperties() {
   val secretProperties = loadProperties(secretProperties)
 
   secretProperties.extractAndStore(
-    "intellij-plugin/educational-core/resources/stepik/stepik.properties",
-    "stepikClientId",
-    "cogniterraClientId",
-  )
-  secretProperties.extractAndStore(
     "intellij-plugin/features/social-media/resources/twitter/oauth_twitter.properties",
     "xClientId"
   )
