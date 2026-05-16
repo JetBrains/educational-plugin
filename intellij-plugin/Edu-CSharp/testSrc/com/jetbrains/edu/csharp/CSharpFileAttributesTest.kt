@@ -4,7 +4,6 @@ import com.jetbrains.edu.coursecreator.archive.ExpectedCourseFileAttributes
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest.Companion.doTest
 import com.jetbrains.edu.coursecreator.archive.FileAttributesTest.Companion.expected
-import com.jetbrains.edu.csharp.hyperskill.CSharpHyperskillConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.rider.test.BaseIntegrationTest
@@ -25,7 +24,7 @@ class CSharpFileAttributesTest(
   }
 
   companion object {
-    val configurator = CSharpHyperskillConfigurator()
+    val configurator = CSharpConfigurator()
 
     @JvmStatic
     @Parameters(name = "{0}")
@@ -36,11 +35,6 @@ class CSharpFileAttributesTest(
         visibility = CourseViewVisibility.AUTHOR_DECISION
       )
       val notInArchiveAndExcluded = notInArchive.copy(excludedFromArchive = true)
-      val visible = expected(
-        excludedFromArchive = false,
-        archiveInclusionPolicy = ArchiveInclusionPolicy.INCLUDED_BY_DEFAULT,
-        visibility = CourseViewVisibility.VISIBLE_FOR_STUDENT
-      )
 
       return FileAttributesTest.data() + listOf(
         arrayOf("a.sln", notInArchiveAndExcluded),
@@ -53,18 +47,6 @@ class CSharpFileAttributesTest(
         arrayOf("bin/some/file/inside", notInArchiveAndExcluded),
         arrayOf("lesson1/task1/obj/", notInArchiveAndExcluded),
         arrayOf("lesson1/task1/bin/", notInArchiveAndExcluded),
-
-        arrayOf("a.meta", notInArchive),
-        arrayOf("dir/a.meta", notInArchive),
-
-        arrayOf("Packages/", visible),
-        arrayOf("dir/Packages/", visible),
-        arrayOf("ProjectSettings/", visible),
-        arrayOf("dir/ProjectSettings/", visible),
-        arrayOf("Assets/", visible),
-        arrayOf("dir/Assets/", visible),
-        arrayOf("dir/Assets/dir/", visible),
-        arrayOf("dir/Assets/file", visible),
       )
     }
   }
