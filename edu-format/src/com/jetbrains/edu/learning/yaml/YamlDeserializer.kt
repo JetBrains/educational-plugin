@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
@@ -201,15 +200,7 @@ object YamlDeserializer {
   private fun deserializeCourseRemoteInfo(configFileText: String): Course {
     val remoteMapper = remoteMapper()
     val treeNode = remoteMapper.readTree(configFileText)
-
-    val clazz = if (treeNode.get(YamlMixinNames.HYPERSKILL_PROJECT) != null) {
-      HyperskillCourse::class.java
-    }
-    else {
-      EduCourse::class.java
-    }
-
-    return remoteMapper.treeToValue(treeNode, clazz)
+    return remoteMapper.treeToValue(treeNode, EduCourse::class.java)
   }
 
   private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {

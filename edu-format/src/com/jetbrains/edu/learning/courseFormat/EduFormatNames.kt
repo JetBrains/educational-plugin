@@ -66,10 +66,7 @@ object EduFormatNames {
   const val LANGUAGE = "language"
   const val ENVIRONMENT = "environment"
   const val IS_TEMPLATE_BASED = "is_template_based"
-  const val HYPERSKILL_PROBLEMS = "Problems"
-  const val HYPERSKILL_TOPICS = "Topics"
   const val TOPICS = "topics"
-  const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
   // Hyperskill courses are no longer supported.
   // The constant is kept to filter remaining Hyperskill entries out during loading of `coursesStorage.xml`
   const val HYPERSKILL = "Hyperskill"

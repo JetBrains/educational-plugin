@@ -32,10 +32,6 @@ object YamlMixinNames {
   const val SUBMIT_MANUALLY = "submit_manually"
   const val COURSE_TYPE_YAML = "coursera"
 
-  //hyperskill course
-  const val HYPERSKILL_PROJECT = "hyperskill_project"
-  const val STAGES = "stages"
-  const val THEORY_ID = "theory_id"
   // Hyperskill and Stepik courses are no longer supported.
   // The corresponding constants are kept to recognize such courses and do not deserialize them.
   const val HYPERSKILL_TYPE_YAML = "hyperskill"

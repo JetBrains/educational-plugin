@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
@@ -16,7 +15,6 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.GENERATED_EDU_ID
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.IS_PRIVATE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.PROGRAMMING_LANGUAGE
@@ -79,7 +77,6 @@ class RemoteCourseBuilder(
         }
       }
 
-      HYPERSKILL_TYPE_YAML -> HyperskillCourse()
       STEPIK_TYPE_YAML -> StepikCourse()
       null -> EduCourse()
       else -> formatError(unsupportedItemTypeMessage(courseType, EduFormatNames.COURSE))

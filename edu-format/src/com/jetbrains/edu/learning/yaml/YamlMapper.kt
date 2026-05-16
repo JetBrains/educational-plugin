@@ -15,10 +15,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTopic
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -29,10 +25,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
-import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.HYPERSKILL_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.STEPIK_TYPE_YAML
 import com.jetbrains.edu.learning.yaml.format.coursera.CourseraCourseYamlMixin
-import com.jetbrains.edu.learning.yaml.format.hyperskill.*
+import com.jetbrains.edu.learning.yaml.format.hyperskill.StepikLessonRemoteYamlMixin
+import com.jetbrains.edu.learning.yaml.format.hyperskill.StepikLessonYamlMixin
 import com.jetbrains.edu.learning.yaml.format.remote.*
 import com.jetbrains.edu.learning.yaml.format.student.*
 import com.jetbrains.edu.learning.yaml.format.tasks.*
@@ -114,7 +110,6 @@ object YamlMapper {
 
   private fun ObjectMapper.addMixIns() {
     addMixIn(CourseraCourse::class.java, CourseraCourseYamlMixin::class.java)
-    addMixIn(HyperskillCourse::class.java, RemoteCourseYamlMixin::class.java)
     addMixIn(StepikCourse::class.java, RemoteCourseYamlMixin::class.java)
     addMixIn(Course::class.java, CourseYamlMixin::class.java)
     addMixIn(Section::class.java, SectionYamlMixin::class.java)
@@ -131,7 +126,6 @@ object YamlMapper {
     addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyYamlMixin::class.java)
 
     registerSubtypes(NamedType(CourseraCourse::class.java, COURSE_TYPE_YAML))
-    registerSubtypes(NamedType(HyperskillCourse::class.java, HYPERSKILL_TYPE_YAML))
     registerSubtypes(NamedType(StepikCourse::class.java, STEPIK_TYPE_YAML))
   }
 
@@ -143,14 +137,6 @@ object YamlMapper {
     mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(DataTask::class.java, RemoteDataTaskYamlMixin::class.java)
     mapper.addMixIn(DataTaskAttempt::class.java, DataTaskAttemptYamlMixin::class.java)
-    mapper.addHyperskillMixins()
-  }
-
-  private fun ObjectMapper.addHyperskillMixins() {
-    addMixIn(HyperskillCourse::class.java, HyperskillCourseMixin::class.java)
-    addMixIn(HyperskillProject::class.java, HyperskillProjectMixin::class.java)
-    addMixIn(HyperskillStage::class.java, HyperskillStageMixin::class.java)
-    addMixIn(HyperskillTopic::class.java, HyperskillTopicMixin::class.java)
   }
 
   private fun ObjectMapper.addStudentMixIns() {
