@@ -6,13 +6,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.TheoryTab
-import com.jetbrains.edu.learning.stepik.hyperskill.TopicsTab
-import com.jetbrains.edu.learning.stepik.hyperskill.getRelatedTheoryTask
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.ui.MarketplaceSubmissionsTab
 import com.jetbrains.edu.learning.submissions.ui.SubmissionsTab
@@ -49,8 +44,6 @@ class TabManager(private val project: Project) : Disposable {
   private fun createTab(tabType: TabType): TaskToolWindowTab {
     val taskToolWindowTab = when (tabType) {
       DESCRIPTION_TAB -> DescriptionTab(project)
-      THEORY_TAB -> TheoryTab(project)
-      TOPICS_TAB -> TopicsTab(project)
       SUBMISSIONS_TAB -> if (project.isMarketplaceCourse()) MarketplaceSubmissionsTab(project) else SubmissionsTab(project)
     }
     Disposer.register(this, taskToolWindowTab)
@@ -64,10 +57,8 @@ class TabManager(private val project: Project) : Disposable {
       return
     }
 
-    val taskForUpdate = if (tabType == THEORY_TAB) task.getRelatedTheoryTask() ?: return else task
-
     val tab = getOrCreateTab(tabType)
-    tab.update(taskForUpdate)
+    tab.update(task)
   }
 
   private fun removeTab(tabType: TabType) {
@@ -85,14 +76,8 @@ class TabManager(private val project: Project) : Disposable {
     val course = course
 
     if (course.isStudy) {
-      if (course is HyperskillCourse && course.isTaskInProject(this)) {
-        result.add(TOPICS_TAB)
-      }
       if (supportSubmissions && SubmissionsManager.getInstance(project).submissionsSupported()) {
         result.add(SUBMISSIONS_TAB)
-      }
-      if (course is HyperskillCourse && course.isTaskInTopicsSection(this) && this !is TheoryTask) {
-        result.add(THEORY_TAB)
       }
     }
 

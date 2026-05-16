@@ -4,12 +4,9 @@ import com.google.gson.Gson
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.asCssColor
-import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import com.jetbrains.edu.learning.taskToolWindow.isNewUI
 import com.jetbrains.edu.learning.taskToolWindow.ui.MatchingTaskUI
 import com.jetbrains.edu.learning.taskToolWindow.ui.getSortingShortcutHTML
@@ -54,7 +51,7 @@ abstract class SortingBasedTaskResourcesManager<T : SortingBasedTask> : TaskReso
       GeneratorUtils.getInternalTemplateText(templateName, getTextResources(task))
     }
     else {
-      EduCoreBundle.message("ui.task.specific.panel", stepLink(task.id), EduNames.JBA)
+      ""
     }
   }
 

@@ -23,15 +23,12 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.api.*
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillAdditionalInfo
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillStepOptions
 import com.jetbrains.edu.learning.taskToolWindow.replaceEncodedShortcuts
 import com.jetbrains.edu.learning.toStudentFile
 import java.util.*
@@ -100,7 +97,7 @@ class Step {
 
   constructor(project: Project, task: Task) {
     task.updateDescriptionTextAndFormat(project)
-    text = if (task.descriptionFormat == DescriptionFormat.MD && task.course !is HyperskillCourse) {
+    text = if (task.descriptionFormat == DescriptionFormat.MD) {
       // convert to html because Stepik website can't display markdown
       EduUtilsKt.convertToHtml(task.descriptionText)
     }
@@ -113,7 +110,6 @@ class Step {
     }
     options = when {
       task is ChoiceTask -> ChoiceStepOptions(task)
-      task.course is HyperskillCourse -> HyperskillStepOptions(project, task)
       else -> PyCharmStepOptions(project, task)
     }
   }
@@ -176,9 +172,6 @@ open class PyCharmStepOptions : StepOptions {
 
   @JsonProperty(CODE_TEMPLATES_FOOTER)
   var codeTemplatesFooter: Map<String, Int>? = null
-
-  @JsonProperty(HYPERSKILL_ADDITIONAL_INFO)
-  var hyperskill: HyperskillAdditionalInfo? = null
 
   constructor()
 

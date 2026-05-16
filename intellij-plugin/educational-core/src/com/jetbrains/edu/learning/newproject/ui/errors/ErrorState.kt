@@ -11,17 +11,14 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMEN
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.WARNING
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.settings.HyperskillSettings
 import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
 import com.jetbrains.edu.learning.ui.EduColors.warningTextForeground
 import org.jetbrains.annotations.Nls
@@ -43,11 +40,6 @@ sealed class ErrorState(
                                   warningTextForeground,
                                   true)
 
-  object HyperskillLoginNeeded : ErrorState(LOGIN_ERROR,
-                                                  ValidationMessage(EduCoreBundle.message("validation.hyperskill.login.needed")),
-                                                  errorTextForeground,
-                                                  false)
-
   abstract class LocationError(messageText: String) : ErrorState(LOCATION_ERROR,
                                                                  ValidationMessage(messageText, type = ERROR),
                                                                  errorTextForeground,
@@ -65,8 +57,6 @@ sealed class ErrorState(
 
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
 
-  //TODO: remove it?
-  object HyperskillLoginRequired : LoginRequired(EduNames.JBA)
   class CustomSevereError(message: String, val action: Runnable? = null) :
     ErrorState(LOGIN_ERROR, ValidationMessage(message), errorTextForeground, false)
 
@@ -132,8 +122,6 @@ sealed class ErrorState(
       get() {
         return when {
           CoursesStorage.getInstance().hasCourse(this) -> None
-          this is HyperskillCourseAdvertiser -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginNeeded else None
-          this is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
           this is EduCourse -> {
             if (!isMarketplace && !isLoggedInToStepik()) {
               if (isStepikLoginRequired(this)) StepikLoginRequired else NotLoggedIn

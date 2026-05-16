@@ -9,11 +9,8 @@ import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.AppUIUtil
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.getFormattedTaskText
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.JCEFToolWindow
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jsoup.Jsoup
@@ -26,43 +23,6 @@ import javax.swing.UIManager
 import javax.swing.UIManager.setLookAndFeel
 
 class TaskDescriptionTest : EduTestCase() {
-
-  @Test
-  fun `test hyperskill tags removed`() {
-    createCourseWithHyperskillTags(courseProducer = ::HyperskillCourse)
-
-    val task = findTask(0, 0)
-    val taskDescription = task.getFormattedTaskText(project)
-
-    val expectedTextWithoutTags = """
-      text danger hint pre meta
-    """.trimIndent()
-    assertEquals(expectedTextWithoutTags, taskDescription)
-  }
-
-  @Test
-  fun `test hyperskill tags not removed`() {
-    val expectedTextWithTags = createCourseWithHyperskillTags(courseProducer = ::EduCourse)
-
-    val task = findTask(0, 0)
-    val taskDescription = task.getFormattedTaskText(project)
-
-    assertEquals(expectedTextWithTags, taskDescription)
-  }
-
-  private fun createCourseWithHyperskillTags(courseProducer: () -> Course): String {
-    val taskText = "text [ALERT-danger]danger[/ALERT] [HINT]hint[/HINT] [PRE]pre[/PRE] [META]meta[/META]"
-
-    courseWithFiles(courseProducer = courseProducer) {
-      lesson {
-        eduTask(taskDescription = taskText, taskDescriptionFormat = DescriptionFormat.HTML) {
-          taskFile("taskFile1.txt")
-        }
-      }
-    }
-
-    return taskText
-  }
 
   @Test
   fun `test ide name`() {

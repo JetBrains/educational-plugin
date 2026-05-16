@@ -9,13 +9,11 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.authUtils.ConnectorUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 
 interface StepikBasedConnector {
   val platformName: String
@@ -59,7 +57,6 @@ interface StepikBasedConnector {
     fun Course.getStepikBasedConnector(): StepikBasedConnector {
       return when {
         isStepikRemote -> StepikConnector.getInstance()
-        this is HyperskillCourse -> HyperskillConnector.getInstance()
         else -> error("Wrong course type: ${course.itemType}")
       }
     }

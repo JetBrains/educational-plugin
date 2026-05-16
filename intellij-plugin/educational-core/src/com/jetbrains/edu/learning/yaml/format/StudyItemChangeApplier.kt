@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
@@ -40,7 +39,7 @@ open class ItemContainerChangeApplier<T : ItemContainer>(val project: Project) :
   }
 
   private fun <T : ItemContainer> changeType(project: Project, existingItem: T, deserializedItem: T) {
-    if (deserializedItem is EduCourse || deserializedItem is CourseraCourse || deserializedItem is HyperskillCourse) {
+    if (deserializedItem is EduCourse || deserializedItem is CourseraCourse) {
       deserializedItem.items = existingItem.items
       deserializedItem.init(deserializedItem, false)
       StudyTaskManager.getInstance(project).course = deserializedItem as Course

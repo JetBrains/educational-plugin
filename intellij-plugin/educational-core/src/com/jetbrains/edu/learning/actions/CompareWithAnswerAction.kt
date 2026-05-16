@@ -13,20 +13,16 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getSolution
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.eduState
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
-import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import org.jetbrains.annotations.NonNls
 import java.util.*
 
@@ -38,12 +34,6 @@ open class CompareWithAnswerAction : DumbAwareAction() {
 
     val task = state.task
     val taskFile = state.taskFile
-
-    if (task.course is HyperskillCourse) {
-      val url = hyperskillTaskLink(task)
-      EduBrowser.getInstance().browse("$url$HYPERSKILL_SOLUTIONS_ANCHOR")
-      return
-    }
 
     val taskFiles = getTaskFiles(task)
     putSelectedTaskFileFirst(taskFiles, taskFile)

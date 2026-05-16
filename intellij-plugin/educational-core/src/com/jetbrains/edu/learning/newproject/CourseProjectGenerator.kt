@@ -55,7 +55,6 @@ import com.jetbrains.edu.learning.marketplace.courseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillCourseProjectGenerator
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
@@ -65,10 +64,6 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Path
 
-/**
- * If you add any new public methods here, please do not forget to add it also to
- * @see HyperskillCourseProjectGenerator
- */
 @Suppress("UnstableApiUsage")
 abstract class CourseProjectGenerator<S : EduProjectSettings>(
   protected val courseBuilder: EduCourseBuilder<S>,

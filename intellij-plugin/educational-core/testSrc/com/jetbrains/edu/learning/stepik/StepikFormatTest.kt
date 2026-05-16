@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX
 import com.jetbrains.edu.learning.stepik.api.*
 import com.jetbrains.edu.learning.stepik.api.JacksonStepOptionsDeserializer.Companion.migrate
 import com.jetbrains.edu.learning.stepik.api.JacksonSubmissionDeserializer.Companion.migrate
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector.Companion.getInstance
+import com.jetbrains.edu.learning.stepik.api.StepikConnector.Companion.getInstance
 import com.jetbrains.edu.learning.stepik.api.StepikReplyDeserializer.Companion.migrate
 import org.junit.Test
 import java.io.File

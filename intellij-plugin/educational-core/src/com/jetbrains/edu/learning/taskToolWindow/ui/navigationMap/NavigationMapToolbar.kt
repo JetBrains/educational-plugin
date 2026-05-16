@@ -12,11 +12,8 @@ import com.intellij.openapi.actionSystem.toolbarLayout.ToolbarLayoutStrategy
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBInsets
-import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.isSolved
 import com.jetbrains.edu.learning.ui.EduColors
@@ -142,23 +139,12 @@ class NavigationMapAction(val task: Task, private val currentTask: Task, private
     val presentation = e.presentation
     isSelected = e.project?.getCurrentTask() == task
     presentation.isEnabled = true
-    if ((task.index > 1) && isPreviousTaskUnsolvedHyperskillStage(task)) {
-      presentation.isEnabled = false
-    }
     presentation.text = task.presentableName
-    presentation.icon = if (task is TheoryTask && task.course is HyperskillCourse) {
-      EducationalCoreIcons.TaskToolWindow.NavigationMapTheoryTask
-    }
-    else {
-      EduTextIcon(index.toString())
-    }
+    presentation.icon = EduTextIcon(index.toString())
     presentation.disabledIcon = EduTextIcon(index.toString())
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread {
     return ActionUpdateThread.BGT
   }
-
-  private fun isPreviousTaskUnsolvedHyperskillStage(task: Task): Boolean =
-    NavigationUtils.isUnsolvedHyperskillStage(task.lesson.taskList[task.index - 2])
 }

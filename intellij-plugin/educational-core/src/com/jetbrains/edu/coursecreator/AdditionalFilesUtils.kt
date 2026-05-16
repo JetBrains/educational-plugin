@@ -19,9 +19,7 @@ import com.jetbrains.edu.learning.configuration.courseFileAttributes
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getTask
 import com.jetbrains.edu.learning.isToEncodeContent
@@ -100,13 +98,7 @@ object AdditionalFilesUtils {
     val taskInfo = nonPluginTasks.associateBy(Task::id) {
       TaskAdditionalInfo(it.name, it.customPresentableName, collectTaskFiles(project, it))
     }
-    val courseFiles: List<EduFile> = if (lesson.course is HyperskillCourse) {
-      collectAdditionalFiles(lesson.course.configurator, project)
-    }
-    else {
-      listOf()
-    }
-    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, courseFiles)
+    return LessonAdditionalInfo(lesson.customPresentableName, taskInfo, listOf())
   }
 
   fun getChangeNotesVirtualFile(project: Project): VirtualFile? {

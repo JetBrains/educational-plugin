@@ -6,8 +6,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -31,29 +29,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     val course = course {}
 
     doTest(course, """
-      |title: Test Course
-      |language: English
-      |summary: Test Course Description
-      |programming_language: Plain text
-      |mode: Study
-      |yaml_version: $CURRENT_YAML_VERSION
-      |
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test hyperskill course`() {
-    val course = course(courseProducer = ::HyperskillCourse) {} as HyperskillCourse
-
-    val hyperskillProject = HyperskillProject()
-    hyperskillProject.id = 111
-    hyperskillProject.ideFiles = "ideFiles"
-    hyperskillProject.isTemplateBased = true
-
-    course.hyperskillProject = hyperskillProject
-
-    doTest(course, """
-      |type: hyperskill
       |title: Test Course
       |language: English
       |summary: Test Course Description

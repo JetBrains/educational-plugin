@@ -6,10 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 
-/**
- * If you add any new methods here, please do not forget to add it also to
- * @see com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillTaskCheckerProvider
- */
 interface TaskCheckerProvider {
   val codeExecutor: CodeExecutor
     get() = DefaultCodeExecutor()

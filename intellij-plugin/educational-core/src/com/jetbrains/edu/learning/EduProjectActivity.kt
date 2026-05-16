@@ -34,7 +34,6 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -129,7 +128,7 @@ class EduProjectActivity : ProjectActivity {
     val propertyComponent = PropertiesComponent.getInstance(project)
     if (propertyComponent.getBoolean(YAML_MIGRATED)) return
     propertyComponent.setValue(YAML_MIGRATED, true)
-    if (course !is HyperskillCourse && course !is StepikCourse) return
+    if (course !is StepikCourse) return
 
     course.visitTasks {
       if (it is ChoiceTask) {

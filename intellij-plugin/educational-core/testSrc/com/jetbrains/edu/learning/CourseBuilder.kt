@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.stepik.StepikLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -249,8 +248,7 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     val nextTaskIndex = lesson.taskList.size + 1
     taskBuilder.withName(name ?: (TASK + nextTaskIndex))
     taskBuilder.withCustomPresentableName(customPresentableName)
-    val descriptionFormat = if (task.course is HyperskillCourse) DescriptionFormat.HTML else taskDescriptionFormat
-    taskBuilder.withTaskDescription(taskDescription ?: "solve task", descriptionFormat)
+    taskBuilder.withTaskDescription(taskDescription ?: "solve task", taskDescriptionFormat)
     taskBuilder.withStepId(stepId)
     taskBuilder.withUpdateDate(updateDate)
     taskBuilder.buildTask()

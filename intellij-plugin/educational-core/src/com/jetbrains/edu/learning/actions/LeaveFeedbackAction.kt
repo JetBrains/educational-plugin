@@ -7,7 +7,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
@@ -34,12 +33,6 @@ class LeaveFeedbackAction :
     val course = task.course
     // For marketplace courses, `com.jetbrains.edu.learning.actions.LeaveInIdeFeedbackAction` should be used instead
     if (course.isMarketplace) return
-
-    if (course is HyperskillCourse) {
-      e.presentation.text = EduCoreBundle.message("action.show.discussions.text")
-      e.presentation.description = EduCoreBundle.message("action.show.discussions.description")
-      addSynonym(EduCoreBundle.lazyMessage("action.show.discussions.text"))
-    }
 
     e.presentation.isEnabledAndVisible = task.feedbackLink != null
   }

@@ -3,12 +3,9 @@ package com.jetbrains.edu.learning.submissions.ui
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.JavaUILibrary
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.isFeatureEnabled
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.*
 import com.jetbrains.edu.learning.submissions.ui.linkHandler.LoginLinkHandler
@@ -101,10 +98,7 @@ open class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project,
 
     private fun emptySubmissionsMessage(): String = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
 
-    /**
-     * Showing submissions ids is needed for `ApplyHyperskillSubmission` action testing
-     */
-    private fun isToShowSubmissionsIds(task: Task) = task.course is HyperskillCourse && isFeatureEnabled(EduExperimentalFeatures.CC_HYPERSKILL)
+    private fun isToShowSubmissionsIds(task: Task): Boolean = false
 
     private fun submissionLink(submission: Submission, isToShowSubmissionsIds: Boolean): String? {
       val time = submission.time ?: return null

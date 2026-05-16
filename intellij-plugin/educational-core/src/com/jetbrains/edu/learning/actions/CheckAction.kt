@@ -46,7 +46,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.projectView.ProgressUtil.updateCourseProgress
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.checkTask
-import com.jetbrains.edu.learning.stepik.hyperskill.checker.HyperskillCheckConnector.failedToSubmit
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.getUICheckLabel
@@ -285,12 +284,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
 
     override fun onThrowable(error: Throwable) {
       super.onThrowable(error)
-      if (error.message == message("error.failed.to.refresh.tokens")) {
-        TaskToolWindowView.getInstance(project).checkFinished(task, failedToSubmit(project, task, message("error.failed.to.refresh.tokens")))
-      }
-      else {
-        TaskToolWindowView.getInstance(project).checkFinished(task, failedToCheck)
-      }
+      TaskToolWindowView.getInstance(project).checkFinished(task, failedToCheck)
     }
 
     private fun turnOffTestRunnerNotifications(): NotificationSettings {

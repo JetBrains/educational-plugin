@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.notLoggedInPanel.getIconPath
 import com.jetbrains.edu.learning.taskToolWindow.links.JCefToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.ChoiceTaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.SortingBasedTaskQueryManager

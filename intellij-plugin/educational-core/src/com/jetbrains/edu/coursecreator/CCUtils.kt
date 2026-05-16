@@ -334,8 +334,7 @@ object CCUtils {
   }
 
   /**
-   * Use for actions with double naming only (e.g. [com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse],
-   * [com.jetbrains.edu.coursecreator.actions.stepik.hyperskill.PushHyperskillLesson])
+   * Use for actions with double naming only (e.g. [com.jetbrains.edu.coursecreator.actions.marketplace.MarketplacePushCourse])
    * Concatenates upload and update action texts for action search in find actions
    */
   fun addGluingSlash(updateText: @NlsActions.ActionText String, uploadText: @NlsActions.ActionText String): String {

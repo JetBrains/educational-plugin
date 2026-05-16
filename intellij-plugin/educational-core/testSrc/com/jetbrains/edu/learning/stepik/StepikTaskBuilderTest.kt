@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -105,18 +104,6 @@ class StepikTaskBuilderTest : EduTestCase() {
 
     assertInstanceOf(options, PyCharmStepOptions::class.java)
     assertEquals((options as PyCharmStepOptions).descriptionText, task.descriptionText)
-  }
-
-  // EDU-3080 the old way for hyperskill: task text from step
-  @Test
-  fun `test hyperskill edu task text from step`() {
-    val stepSource = loadStepSource()
-    val task = buildTask(stepSource, PlainTextLanguage.INSTANCE, HyperskillCourse())
-
-    val block = stepSource.block
-    assertNotNull(block)
-
-    assertEquals(block!!.text, task.descriptionText)
   }
 
   @Test

@@ -44,21 +44,6 @@ const val TERM_CLASS = "term"
 private const val SRCSET_ATTRIBUTE = "srcset"
 private const val DARK_SRC_CUSTOM_ATTRIBUTE = "dark-src"
 private const val DARK_SUFFIX = "_dark"
-private val HYPERSKILL_TAGS = tagsToRegex({ "\\[$it](.*)\\[/$it]" }, "HINT", "PRE", "META") +
-                              tagsToRegex({ "\\[$it-\\w+](.*)\\[/$it]" }, "ALERT")
-
-private fun tagsToRegex(pattern: (String) -> String, vararg tags: String): List<Regex> = tags.map { pattern(it).toRegex() }
-
-// see EDU-2444
-fun removeHyperskillTags(text: StringBuffer) {
-  var result: String = text.toString()
-  for (regex in HYPERSKILL_TAGS) {
-    result = result.replace(regex) { it.groupValues[1] }
-  }
-
-  text.delete(0, text.length)
-  text.append(result)
-}
 
 fun replaceActionIDsWithShortcuts(text: StringBuffer) {
   var lastIndex = 0

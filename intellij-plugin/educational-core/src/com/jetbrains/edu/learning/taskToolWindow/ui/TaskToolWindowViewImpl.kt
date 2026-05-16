@@ -27,7 +27,6 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
@@ -35,10 +34,8 @@ import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
 import com.jetbrains.edu.learning.combineStateFlow
 import com.jetbrains.edu.learning.courseFormat.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.marketplace.isMarketplaceCourse
@@ -189,17 +186,13 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     task ?: return
 
     lessonHeader?.setHeaderText(task.lesson.presentableName)
-    val course = StudyTaskManager.getInstance(project).course
     var index = 1
     val actions = task.lesson.taskList.map {
-      val currentIndex = if (it is TheoryTask && course is HyperskillCourse) index else index++
+      val currentIndex = index++
       NavigationMapAction(it, task, currentIndex)
     }
     navigationMapToolbar?.replaceActions(actions)
 
-    if (course is HyperskillCourse) {
-      lessonHeader?.updateTopPanelForProblems(project, course, task)
-    }
     scrollNavMap(task)
   }
 

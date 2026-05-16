@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
@@ -59,22 +58,11 @@ val Course.technologyName: String?
   get() = compatibilityProvider?.technologyName ?: languageById?.displayName
 
 val Course.supportedTechnologies: List<String>
-  get() {
-    return when (this) {
-      is HyperskillCourseAdvertiser -> this.supportedLanguages
-      else -> if (technologyName != null) listOf(technologyName!!) else emptyList()
-    }
-  }
+  get() = if (technologyName != null) listOf(technologyName!!) else emptyList()
 
 val Course.tags: List<Tag>
   get() {
     val tags = mutableListOf<Tag>()
-    if (course is HyperskillCourseAdvertiser) {
-      tags.addAll((this as HyperskillCourseAdvertiser).supportedLanguages.map { ProgrammingLanguageTag(it) })
-      tags.add(HumanLanguageTag(humanLanguage))
-      return tags
-    }
-
     technologyName?.let { tags.add(ProgrammingLanguageTag(it)) }
     tags.add(HumanLanguageTag(humanLanguage))
 
@@ -94,10 +82,6 @@ val Course.isPreview: Boolean
 
 val Course.compatibility: CourseCompatibility
   get() {
-    if (this is HyperskillCourseAdvertiser) {
-      return CourseCompatibility.Compatible
-    }
-
     // @formatter:off
     return versionCompatibility() ?:
            pluginCompatibility() ?:

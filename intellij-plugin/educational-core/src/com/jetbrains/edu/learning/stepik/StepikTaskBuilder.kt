@@ -13,17 +13,24 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillTaskType
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_SAMPLE_FOLDER_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.INPUT_FILE_NAME
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.PYCHARM_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.NumberTask.Companion.NUMBER_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask.Companion.REMOTE_EDU_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.StringTask.Companion.STRING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.TableTask.Companion.TABLE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
+import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -59,28 +66,28 @@ open class StepikTaskBuilder(private val course: Course, stepSource: StepSource)
     THEORY_TASK_TYPE to { name: String -> TheoryTask(name, stepId, stepPosition, updateDate, CheckStatus.Unchecked) },
   )
 
-  private val stepikTaskBuilders: Map<String, (String) -> Task> = HyperskillTaskType.entries.associateBy(
+  private val stepikTaskBuilders: Map<String, (String) -> Task> = StepikTaskKind.entries.associateBy(
     { it.type },
     {
       when (it) {
         // lexicographical order
-        HyperskillTaskType.CHOICE -> this::choiceTask
-        HyperskillTaskType.CODE -> this::codeTask
-        HyperskillTaskType.DATASET -> this::dataTask
-        HyperskillTaskType.MATCHING -> this::matchingTask
-        HyperskillTaskType.NUMBER -> this::numberTask
-        HyperskillTaskType.PYCHARM -> { _: String -> pycharmTask() }
-        HyperskillTaskType.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
-        HyperskillTaskType.SORTING -> this::sortingTask
-        HyperskillTaskType.STRING -> this::stringTask
-        HyperskillTaskType.TABLE -> this::tableTask
-        HyperskillTaskType.TEXT -> this::theoryTask
+        StepikTaskKind.CHOICE -> this::choiceTask
+        StepikTaskKind.CODE -> this::codeTask
+        StepikTaskKind.DATASET -> this::dataTask
+        StepikTaskKind.MATCHING -> this::matchingTask
+        StepikTaskKind.NUMBER -> this::numberTask
+        StepikTaskKind.PYCHARM -> { _: String -> pycharmTask() }
+        StepikTaskKind.REMOTE_EDU -> { _: String -> pycharmTask(REMOTE_EDU_TASK_TYPE) }
+        StepikTaskKind.SORTING -> this::sortingTask
+        StepikTaskKind.STRING -> this::stringTask
+        StepikTaskKind.TABLE -> this::tableTask
+        StepikTaskKind.TEXT -> this::theoryTask
         else -> this::unsupportedTask
       }
     })
 
   open fun createTask(type: String): Task {
-    val taskName = HyperskillTaskType.entries.find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
+    val taskName = StepikTaskKind.entries.find { it.type == type }?.value ?: UNKNOWN_TASK_NAME
     return (stepikTaskBuilders[type] ?: this::unsupportedTask).invoke(taskName)
   }
 
@@ -463,4 +470,27 @@ open class StepikTaskBuilder(private val course: Course, stepSource: StepSource)
     @VisibleForTesting
     fun String.prepareSample(): String = xmlEscaped.replace("\n", "<br>")
   }
+}
+
+// lexicographical order
+@Suppress("unused")
+private enum class StepikTaskKind(val type: String, val value: String) {
+  ADMIN("admin", "Linux"),
+  CHOICE(CHOICE_TASK_TYPE, "Quiz"),
+  CODE(CODE_TASK_TYPE, "Programming"),
+  DATASET(DATA_TASK_TYPE, "Data"),
+  FILL_BLANKS("fill-blanks", "Fill Blanks"),
+  FREE_ANSWER("free-answer", "Free Response"),
+  MANUAL_SCORE("manual-score", "Manual Score"),
+  MATCHING(MATCHING_TASK_TYPE, "Matching"),
+  MATH("math", "Math"),
+  NUMBER(NUMBER_TASK_TYPE, "Number"),
+  PARSONS("parsons", "Parsons"),
+  PYCHARM(PYCHARM_TASK_TYPE, "Programming"),
+  REMOTE_EDU(REMOTE_EDU_TASK_TYPE, "Programming"),
+  SORTING(SORTING_TASK_TYPE, "Sorting"),
+  STRING(STRING_TASK_TYPE, "Text"),
+  TABLE(TABLE_TASK_TYPE, "Table"),
+  TEXT("text", "Theory"),
+  VIDEO("video", "Video"),
 }

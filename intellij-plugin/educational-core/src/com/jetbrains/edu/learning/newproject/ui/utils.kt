@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.TypographyManager
 import com.jetbrains.edu.learning.ui.EduColors
@@ -42,9 +41,6 @@ const val COURSE_CARD_BOTTOM_LABEL_H_GAP = 10
 
 val Course.logo: Icon?
   get() {
-    if (this is HyperskillCourseAdvertiser) {
-      return EducationalCoreIcons.Platform.JetBrainsAcademy
-    }
     val logo = configurator?.logo ?: compatibilityProvider?.logo
     if (logo == null) {
       val language = languageDisplayName

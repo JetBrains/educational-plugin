@@ -7,9 +7,5 @@
               name="FakeGradleFileType"
               extensions="kt"
               implementationClass="com.jetbrains.edu.learning.configurators.FakeGradleFileType"/>
-    <fileType language="FakeBinaryDBFileType"
-              name="FakeDBFileType"
-              extensions="db"
-              implementationClass="com.jetbrains.edu.learning.stepik.hyperskill.FakeBinaryDBFileType"/>
   </extensions>
 </idea-plugin>

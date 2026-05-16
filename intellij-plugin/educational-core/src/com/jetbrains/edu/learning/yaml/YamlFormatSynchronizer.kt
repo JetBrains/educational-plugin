@@ -28,7 +28,6 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.disambiguateContents
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.storage.persistAdditionalFiles
@@ -104,7 +103,7 @@ object YamlFormatSynchronizer {
 
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
-    if (item.id > 0 || item is HyperskillCourse) {
+    if (item.id > 0) {
       saveItem(item, remoteMapper(), item.remoteConfigFileName)
     }
   }

@@ -28,7 +28,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
-import com.jetbrains.edu.learning.newproject.HyperskillCourseAdvertiser
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
@@ -138,9 +137,7 @@ class CourseSettingsPanel(
       }
     }
 
-    if (settingsComponents.isNotEmpty()
-        && course !is HyperskillCourseAdvertiser
-        && !CoursesStorage.getInstance().hasCourse(course)) {
+    if (settingsComponents.isNotEmpty() && !CoursesStorage.getInstance().hasCourse(course)) {
       isVisible = true
       setSettingsComponents(settingsComponents)
     }

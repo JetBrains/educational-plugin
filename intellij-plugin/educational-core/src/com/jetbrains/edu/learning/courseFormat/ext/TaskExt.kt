@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.TASK_DESCRIPTION_PREFIX
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
@@ -37,7 +36,6 @@ import com.jetbrains.edu.learning.marketplace.areCommunitySolutionsSupported
 import com.jetbrains.edu.learning.marketplace.peekSolution.GOT_STUCK_WRONG_SUBMISSIONS_AMOUNT
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
-import com.jetbrains.edu.learning.taskToolWindow.removeHyperskillTags
 import com.jetbrains.edu.learning.taskToolWindow.replaceActionIDsWithShortcuts
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.yaml.errorHandling.loadingError
@@ -184,9 +182,6 @@ private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
 fun Task.canShowSolution(): Boolean {
-  if (course is HyperskillCourse) {
-    return hasSolutions() && status == CheckStatus.Solved
-  }
   val hiddenByEducator = solutionHidden ?: course.solutionsHidden
   val shouldShow = !hiddenByEducator || status == CheckStatus.Solved
   return shouldShow && taskFiles.values.any { it.canShowSolution() }
@@ -315,9 +310,6 @@ fun Task.getFormattedTaskText(project: Project, translationLanguage: Translation
   text = StringUtil.replace(text, "%IDE_NAME%", ApplicationNamesInfo.getInstance().fullProductName)
   val textBuffer = StringBuffer(text)
   replaceActionIDsWithShortcuts(textBuffer)
-  if (course is HyperskillCourse) {
-    removeHyperskillTags(textBuffer)
-  }
   return textBuffer.toString()
 }
 

@@ -140,12 +140,13 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
       .executeCall().onError { error(EduCoreBundle.message("error.failed.to.refresh.tokens")) }
     if (response.isSuccessful) return response.body() ?: error("Failed to refresh token")
 
+    // TODO: check if we still need to this part
     // logout the user if the server did not accept Hyperskill refresh token
     if (response.code() in BROKEN_TOKEN_RESPONSE_CODES && response.errorBody()?.string() == "{\"error\": \"invalid_grant\"}") {
       doLogout()
       EduNotificationManager.showErrorNotification(
         title = @Suppress("DialogTitleCapitalization") EduCoreBundle.message("error.authorization.error"),
-        content = EduCoreBundle.message("notification.hyperskill.no.next.activity.login.content")
+        content = EduCoreBundle.message("error.authorization.error.content", platformName)
       )
     }
     error("Failed to refresh token")

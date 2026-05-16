@@ -7,9 +7,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 class FrameworkLessonNode private constructor(
   project: Project,
@@ -36,19 +34,6 @@ class FrameworkLessonNode private constructor(
     val firstTask = item.currentTask() ?: return
     NavigationUtils.navigateToTask(myProject, firstTask)
   }
-
-  override val additionalInfo: String?
-    get() {
-      val course = item.course
-      return if (course is HyperskillCourse && course.isStudy && item == course.getProjectLesson()) {
-        val (tasksSolved, tasksTotal) = ProgressUtil.countProgress(item)
-        if (tasksTotal == 0) {
-          return null
-        }
-        return EduCoreBundle.message("hyperskill.course.view.progress", tasksSolved, tasksTotal)
-      }
-      else super.additionalInfo
-    }
 
   private fun createChildFileNode(originalNode: AbstractTreeNode<*>, psiFile: PsiFile): AbstractTreeNode<*> {
     return originalNode

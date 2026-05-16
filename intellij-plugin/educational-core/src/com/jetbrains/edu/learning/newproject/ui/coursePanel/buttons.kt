@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.ide.plugins.newui.ColorButton
 import com.intellij.openapi.application.invokeLater
-import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.ui.Messages
@@ -14,14 +13,9 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.onError
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenInIdeRequestHandler
-import com.jetbrains.edu.learning.stepik.hyperskill.courseGeneration.HyperskillOpenProjectStageRequest
 import java.awt.Color
 import java.awt.event.ActionListener
 
@@ -56,21 +50,8 @@ class OpenCourseButton(private val openCourseMetadata: () -> Map<String, String>
 
     if (showNoCourseDialog(coursePath, message) == Messages.NO) {
       CoursesStorage.getInstance().removeCourseByLocation(coursePath)
-      when (course) {
-        is HyperskillCourse -> {
-          closeDialog()
-          ProjectOpener.getInstance().apply {
-            HyperskillOpenInIdeRequestHandler.openInNewProject(HyperskillOpenProjectStageRequest(course.id, null)).onError {
-              Messages.showErrorDialog(it.message, EduCoreBundle.message("course.dialog.error.restart.jba"))
-              logger<HyperskillOpenInIdeRequestHandler>().warn("Opening a new project resulted in an error: ${it.message}. The error was shown inside an error dialog.")
-            }
-          }
-        }
-        else -> {
-          closeDialog()
-          JoinCourseDialog(course).show()
-        }
-      }
+      closeDialog()
+      JoinCourseDialog(course).show()
     }
   }
 

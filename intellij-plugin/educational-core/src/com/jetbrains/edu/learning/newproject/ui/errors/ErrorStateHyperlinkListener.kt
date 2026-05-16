@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.installAndEnablePlugin
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.stepik.api.StepikConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.api.HyperskillConnector
 import javax.swing.JTextPane
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
@@ -41,9 +40,6 @@ class ErrorStateHyperlinkListener(private val parentDisposable: Disposable) : Hy
     )
 
     when (val state = coursePanel.errorState) {
-      is ErrorState.HyperskillLoginNeeded -> {
-        HyperskillConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)
-      }
       is ErrorState.StepikLoginRequired, ErrorState.NotLoggedIn -> {
         // TODO: Update course list
         StepikConnector.getInstance().doAuthorize(*postLoginActions, authorizationPlace = AuthorizationPlace.START_COURSE_DIALOG)

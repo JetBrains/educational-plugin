@@ -14,10 +14,8 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings
-import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.ExecutionException
@@ -111,15 +109,7 @@ object EduActionUtils {
   }
 
   fun getOpenOnSiteActionInfo(project: Project, task: Task? = null): String? {
-    val courseStorageLink = OpenOnSiteLinkSettings.getInstance(project).link
-    val currentTask = task ?: project.getCurrentTask()
-    val link = if (project.course is HyperskillCourse && currentTask != null) {
-      hyperskillTaskLink(currentTask)
-    }
-    else {
-      courseStorageLink
-    }
-    return link
+    return OpenOnSiteLinkSettings.getInstance(project).link
   }
 
   @RequiresEdt

@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.TEXT
 import com.jetbrains.edu.learning.stepik.ChoiceStepSource
 import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.hyperskill.api.WithPaginationMetaData
 import com.jetbrains.edu.learning.submissions.SolutionFile
 import com.jetbrains.edu.learning.submissions.Submission
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SOLUTIONS_HIDDEN
@@ -81,6 +80,16 @@ const val AVERAGE = "average"
 const val FIRST_NAME = "first_name"
 const val LAST_NAME = "last_name"
 const val IS_GUEST = "is_guest"
+
+abstract class WithPaginationMetaData {
+  @JsonProperty(META)
+  lateinit var meta: PaginationMetaData
+}
+
+class PaginationMetaData {
+  @JsonProperty("has_next")
+  var hasNext: Boolean = false
+}
 
 // List wrappers for GET requests:
 

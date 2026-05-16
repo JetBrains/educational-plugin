@@ -137,9 +137,6 @@ private val ROOT_COURSE_ATTRIBUTES_EVALUATOR = AttributesEvaluator {
  *
  * If you want to advertise courses supported by the configurator even when
  * required plugins are not installed, implement [CourseCompatibilityProvider] and register it via [CourseCompatibilityProviderEP]
- *
- * If you add any new methods here, please do not forget to add it also to
- * @see com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
  */
 interface EduConfigurator<Settings : EduProjectSettings> {
   val courseBuilder: EduCourseBuilder<Settings>

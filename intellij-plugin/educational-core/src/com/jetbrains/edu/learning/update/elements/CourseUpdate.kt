@@ -6,12 +6,10 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.marketplace.update.elements.MarketplaceCourseUpdate
-import com.jetbrains.edu.learning.stepik.hyperskill.update.elements.HyperskillCourseUpdate
 import com.jetbrains.edu.learning.update.comparators.EduFileComparator.Companion.areNotEqual
 
 abstract class CourseUpdate<T : Course>(
@@ -48,7 +46,6 @@ abstract class CourseUpdate<T : Course>(
 
     fun <T : Course> get(localCourse: T, remoteCourse: T): CourseUpdate<out Course> = when (localCourse) {
       is EduCourse if remoteCourse is EduCourse -> MarketplaceCourseUpdate(localCourse, remoteCourse)
-      is HyperskillCourse if remoteCourse is HyperskillCourse -> HyperskillCourseUpdate(localCourse, remoteCourse)
       else -> error("Unsupported course types: local=${localCourse::class.simpleName}, remote=${remoteCourse::class.simpleName}")
     }
   }

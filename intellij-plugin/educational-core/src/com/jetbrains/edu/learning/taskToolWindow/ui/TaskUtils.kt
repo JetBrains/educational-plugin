@@ -95,7 +95,7 @@ fun getSortingShortcutHTML(
   val selectShortcut = "$x1 / $y1"
   val reorderShortcut = "$shift $x1 / $y1"
 
-  return EduCoreBundle.message("hyperskill.sorting.tasks.shortcut.description", selectShortcut, reorderShortcut)
+  return EduCoreBundle.message("sorting.tasks.shortcut.description", selectShortcut, reorderShortcut)
 }
 
 fun canShowTerms(project: Project, task: Task): Boolean {

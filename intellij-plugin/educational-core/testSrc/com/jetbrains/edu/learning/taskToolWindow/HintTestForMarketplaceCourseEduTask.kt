@@ -2,18 +2,15 @@ package com.jetbrains.edu.learning.taskToolWindow
 
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.taskToolWindow.ui.getHintIconSize
 import org.junit.Test
 
 abstract class HintsInTaskDescriptionTestBase(
-  private val isTheoryTask: Boolean, private val isHyperskillCourse: Boolean
+  private val isTheoryTask: Boolean
 ) : TaskDescriptionTestBase() {
 
   override fun createCourseWithTestTask(taskDescription: String, format: DescriptionFormat) {
-    val courseProducer = if (isHyperskillCourse) ::HyperskillCourse else ::EduCourse
-
-    courseWithFiles(courseProducer = courseProducer, language = language, environment = environment) {
+    courseWithFiles(courseProducer = ::EduCourse, language = language, environment = environment) {
       lesson {
         if (isTheoryTask) {
           theoryTask(taskDescription = taskDescription.trimIndent(), taskDescriptionFormat = format)
@@ -65,17 +62,6 @@ abstract class HintsInTaskDescriptionTestBase(
       </html>
     """.replaceWidthHeightWithFontSize()
 
-    const val UNPROCESSED_HINT_DIV = """
-      <html>
-       <head>...</head>
-       <body>
-        <div class="wrapper">
-         <div class="hint">Hint text</div>
-        </div>
-       </body>
-      </html>
-    """
-
     fun String.replaceWidthHeightWithFontSize(): String {
       val iconSize = getHintIconSize()
       return replace(Regex("""(width|height)="0""""), """$1="$iconSize"""")
@@ -83,25 +69,13 @@ abstract class HintsInTaskDescriptionTestBase(
   }
 }
 
-class HintTestForHyperskillCourseEduTask : HintsInTaskDescriptionTestBase(false, true) {
-
-  @Test
-  fun `test hints are not processed in hyperskill edu tasks`() = doMarkdownTest(HINT_DIV, UNPROCESSED_HINT_DIV)
-}
-
-class HintTestForHyperskillCourseTheoryTask : HintsInTaskDescriptionTestBase(true, true) {
-
-  @Test
-  fun `test hints are not processed in hyperskill theory tasks`() = doMarkdownTest(HINT_DIV, UNPROCESSED_HINT_DIV)
-}
-
-class HintTestForMarketplaceCourseTheoryTask : HintsInTaskDescriptionTestBase(true, false) {
+class HintTestForMarketplaceCourseTheoryTask : HintsInTaskDescriptionTestBase(true) {
 
   @Test
   fun `test hints are processed in marketplace theory tasks`() = doMarkdownTest(HINT_DIV, JCEF_PROCESSED_HINT_DIV, swingProcessedHintDiv())
 }
 
-class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false, false) {
+class HintTestForMarketplaceCourseEduTask : HintsInTaskDescriptionTestBase(false) {
 
   @Test
   fun `test hints are processed in marketplace edu tasks`() = doMarkdownTest(HINT_DIV, JCEF_PROCESSED_HINT_DIV, swingProcessedHintDiv())

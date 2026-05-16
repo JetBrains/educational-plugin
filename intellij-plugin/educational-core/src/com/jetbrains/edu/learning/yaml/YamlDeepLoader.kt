@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.ext.updateDescriptionTextAndFormat
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.invokeLater
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -166,7 +165,7 @@ object YamlDeepLoader {
 
   fun StudyItem.loadRemoteInfo(remoteConfigFile: VirtualFile) {
     val itemRemoteInfo = YamlDeserializer.deserializeRemoteItem(remoteConfigFile.name, VfsUtil.loadText(remoteConfigFile))
-    if (itemRemoteInfo.id > 0 || itemRemoteInfo is HyperskillCourse) {
+    if (itemRemoteInfo.id > 0) {
       getRemoteChangeApplierForItem(itemRemoteInfo).applyChanges(this, itemRemoteInfo)
     }
   }

@@ -6,37 +6,12 @@ import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.requests.SimpleDiffRequest
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.MockEduBrowser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_SOLUTIONS_ANCHOR
-import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillCourseWithFiles
-import com.jetbrains.edu.learning.stepik.hyperskill.hyperskillTaskLink
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
 class CompareWithAnswerActionTest : EduActionTestCase() {
-
-  @Test
-  fun `test for Hyperskill course`() {
-    hyperskillCourseWithFiles {
-      frameworkLesson("lesson1") {
-        eduTask("task1", stepId = 1) {
-          taskFile("task.txt", "stage 1")
-        }
-        eduTask("task2", stepId = 2) {
-          taskFile("task.txt", "stage 2")
-        }
-      }
-    }
-    openFirstTaskFile()
-
-    testAction(CompareWithAnswerAction.ACTION_ID)
-
-    val mockEduBrowser = EduBrowser.getInstance() as MockEduBrowser
-    assertEquals("${hyperskillTaskLink(findTask(0, 0))}$HYPERSKILL_SOLUTIONS_ANCHOR", mockEduBrowser.lastVisitedUrl)
-  }
 
   @Test
   fun `test disabled in educator mode`() {

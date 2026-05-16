@@ -23,7 +23,6 @@ import com.jetbrains.edu.learning.statistics.EduFields.COURSE_MODE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.ITEM_TYPE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.LANGUAGE_FIELD
 import com.jetbrains.edu.learning.statistics.EduFields.PLATFORM_FIELD
-import com.jetbrains.edu.learning.stepik.hyperskill.newProjectUI.HyperskillPlatformProvider
 import com.jetbrains.edu.learning.submissions.UserAgreementState
 
 /**
@@ -106,7 +105,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     companion object {
       fun fromProvider(provider: CoursesPlatformProvider): CourseSelectionViewTab {
         return when (provider) {
-          is HyperskillPlatformProvider -> JBA
           is CourseraPlatformProvider -> COURSERA
           is MarketplacePlatformProvider -> MARKETPLACE
           is MyCoursesProvider -> MY_COURSES

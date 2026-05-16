@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
-import com.jetbrains.edu.learning.actions.navigate.hyperskill.HyperskillNavigationTest
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -386,7 +385,7 @@ class NonTemplateBasedFrameworkLessonNavigationTest : NavigationTestBase() {
     withVirtualFileListener(course) {
       withEduTestDialog(EduTestDialog(Messages.NO)) {
         runWriteAction {
-          findFile("lesson1/task/src/Baz.kt").delete(HyperskillNavigationTest::class.java)
+          findFile("lesson1/task/src/Baz.kt").delete(NonTemplateBasedFrameworkLessonNavigationTest::class.java)
         }
         task1.openTaskFileInEditor("src/Task.kt")
         testAction(NextTaskAction.ACTION_ID)

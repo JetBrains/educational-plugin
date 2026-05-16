@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.framework
 
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 
 /**
  * Corresponds to the way with which a learner navigates between tasks of the framework lesson.
@@ -15,7 +14,4 @@ import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
  * for either lesson or a course.
  */
 val FrameworkLesson.propagateFilesOnNavigation: Boolean
-  get() {
-    val thisCourse = course
-    return !isTemplateBased || thisCourse is HyperskillCourse && !thisCourse.isTemplateBased
-  }
+  get() = !isTemplateBased

@@ -3,13 +3,10 @@ package com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers
 import com.google.gson.Gson
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JavaUILibrary
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.asCssColor
-import com.jetbrains.edu.learning.stepik.hyperskill.stepLink
 import com.jetbrains.edu.learning.taskToolWindow.ui.*
 import kotlinx.css.*
 import kotlinx.css.properties.*
@@ -22,7 +19,7 @@ class TableTaskResourcesManager: TaskResourcesManager<TableTask> {
       GeneratorUtils.getInternalTemplateText(templateName, getTextResources(task))
     }
     else {
-      EduCoreBundle.message("ui.task.specific.panel", stepLink(task.id), EduNames.JBA)
+      ""
     }
   }
 

@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import java.awt.Color
@@ -25,12 +24,6 @@ import javax.swing.JProgressBar
 object ProgressUtil {
 
   fun countProgress(course: Course): CourseProgress {
-    if (course is HyperskillCourse) {
-      // we want empty progress in case project stages are not loaded
-      // and only code challenges are present
-      val projectLesson = course.getProjectLesson() ?: return CourseProgress(0, 0)
-      return countProgress(projectLesson)
-    }
     var taskNum = 0
     var taskSolved = 0
     course.visitLessons { lesson ->
@@ -45,12 +38,6 @@ object ProgressUtil {
         taskSolved += getSolvedTasks(lesson)
       }
     }
-    return CourseProgress(taskSolved, taskNum)
-  }
-
-  fun countProgress(lesson: Lesson): CourseProgress {
-    val taskNum = lesson.taskList.size
-    val taskSolved = getSolvedTasks(lesson)
     return CourseProgress(taskSolved, taskNum)
   }
 

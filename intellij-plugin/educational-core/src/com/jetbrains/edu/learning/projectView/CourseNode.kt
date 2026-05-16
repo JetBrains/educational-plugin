@@ -5,7 +5,6 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.createNodeFromPsiDirectory
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.modifyAdditionalFileOrDirectory
 
@@ -31,9 +30,6 @@ open class CourseNode(
 
   override val additionalInfo: String?
     get() {
-      if (item is HyperskillCourse) {
-        return null
-      }
       val (tasksSolved, tasksTotal) = ProgressUtil.countProgress(item)
       return " $tasksSolved/$tasksTotal"
     }

@@ -1,16 +1,11 @@
 package com.jetbrains.edu.learning.actions.rename
 
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.ext.getAdditionalFile
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillProject
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.findTask
-import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
 class RenameTest : RenameTestBase() {
@@ -161,35 +156,6 @@ class RenameTest : RenameTestBase() {
     assertNull(course.getAdditionalFile("additionalFile2.txt"))
     assertNotNull(LightPlatformTestCase.getSourceRoot().findFileByRelativePath("additionalFile1.txt"))
     assertNotNull(course.getAdditionalFile("additionalFile1.txt"))
-  }
-
-  @Test
-  fun `test rename student created task file in student mode in hyperskill course`() {
-    val course = courseWithFiles(courseProducer = ::HyperskillCourse) {
-      frameworkLesson {
-        eduTask("task1") {
-          taskFile("taskFile1.txt")
-        }
-        eduTask("task2") {
-          taskFile("taskFile1.txt")
-        }
-      }
-    } as HyperskillCourse
-    course.hyperskillProject = HyperskillProject()
-    course.stages = listOf(HyperskillStage(1, "", 1, true), HyperskillStage(2, "", 2, true))
-
-    withVirtualFileListener(course) {
-      GeneratorUtils.createTextChildFile(project, findFile("lesson1/task"), "taskFile2.txt", "")
-      val task1 = course.findTask("lesson1", "task1")
-      task1.openTaskFileInEditor("taskFile2.txt")
-      testAction(NextTaskAction.ACTION_ID)
-    }
-
-    doRenameAction(course, "lesson1/task/taskFile2.txt", "taskFile3.txt", shouldBeShown = false)
-
-    val task2 = course.findTask("lesson1", "task2")
-    assertNull(task2.getTaskFile("taskFile2.txt"))
-    assertNotNull(task2.getTaskFile("taskFile3.txt"))
   }
 
   @Test

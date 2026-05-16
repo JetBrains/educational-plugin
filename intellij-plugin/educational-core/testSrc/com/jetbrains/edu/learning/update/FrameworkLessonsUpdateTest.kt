@@ -10,8 +10,6 @@ import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
@@ -297,10 +295,6 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
         isEditable = false
       })
       lessons[0].addTask(newTask)
-
-      if (this is HyperskillCourse) {
-        stages += HyperskillStage(4, "", 4)
-      }
     }
 
     assertEquals(4, localCourse.taskList.size)

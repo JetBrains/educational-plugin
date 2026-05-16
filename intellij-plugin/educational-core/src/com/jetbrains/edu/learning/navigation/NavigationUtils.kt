@@ -21,7 +21,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
@@ -32,8 +31,6 @@ import javax.swing.tree.TreePath
 object NavigationUtils {
 
   fun nextTask(task: Task): Task? {
-    if (isUnsolvedHyperskillStage(task) || isLastHyperskillStage(task) || isLastHyperskillProblem(task)) return null
-
     val currentLesson = task.lesson
     val taskList = currentLesson.taskList
     if (task.index < taskList.size) return taskList[task.index]
@@ -48,8 +45,6 @@ object NavigationUtils {
   }
 
   fun previousTask(task: Task): Task? {
-    if (isFirstHyperskillProblem(task)) return null
-
     val currentLesson = task.lesson
     val prevTaskIndex = task.index - 2
     if (prevTaskIndex >= 0) return currentLesson.taskList[prevTaskIndex]
@@ -62,29 +57,6 @@ object NavigationUtils {
       prevLessonTaskList = prevLesson.taskList
     }
     return prevLessonTaskList[prevLessonTaskList.size - 1]
-  }
-
-  fun isUnsolvedHyperskillStage(task: Task): Boolean {
-    val course = task.course as? HyperskillCourse ?: return false
-    if (task.lesson != course.getProjectLesson() || task.status == CheckStatus.Solved) return false
-    val stage = course.stages.getOrNull(task.index - 1) ?: return false
-    return !stage.isCompleted
-  }
-
-  private fun isLastHyperskillStage(task: Task): Boolean {
-    val course = task.course as? HyperskillCourse ?: return false
-    return task.lesson == course.getProjectLesson() && task.index == course.stages.size
-  }
-
-  private fun isFirstHyperskillProblem(task: Task): Boolean {
-    val course = task.course as? HyperskillCourse ?: return false
-    return task.lesson != course.getProjectLesson() && task.index == 1
-  }
-
-  fun isLastHyperskillProblem(task: Task): Boolean {
-    val course = task.course as? HyperskillCourse ?: return false
-    val lesson = task.lesson
-    return lesson != course.getProjectLesson() && task.index == lesson.items.size
   }
 
   fun nextLesson(lesson: Lesson): Lesson? {

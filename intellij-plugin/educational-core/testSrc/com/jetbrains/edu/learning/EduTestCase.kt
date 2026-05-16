@@ -30,10 +30,8 @@ import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
-import com.jetbrains.edu.learning.configurators.FakeGradleHyperskillConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames.HYPERSKILL
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.STEPIK
 import com.jetbrains.edu.learning.courseFormat.ext.customContentPath
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -73,12 +71,10 @@ abstract class EduTestCase : BasePlatformTestCase() {
     // In this method course is set before course files are created so `CCProjectComponent.createYamlConfigFilesIfMissing` is called
     // for course with no files. This flag is checked in this method and it does nothing if the flag is false
     project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, false)
-    registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, courseType = HYPERSKILL)
     registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, courseType = STEPIK)
     registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, environment = EduNames.ANDROID)
     registerConfigurator<PlainTextConfigurator>(PlainTextLanguage.INSTANCE, courseType = COURSERA)
     registerConfigurator<FakeGradleConfigurator>(FakeGradleBasedLanguage)
-    registerConfigurator<FakeGradleHyperskillConfigurator>(FakeGradleBasedLanguage, courseType = HYPERSKILL)
 
     // Mock tool window provided by default headless implementation of `ToolWindowManager` doesn't keep any state.
     // As a result, it's impossible to write tests which check tool window state.

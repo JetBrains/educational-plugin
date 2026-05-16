@@ -8,9 +8,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.components.AnActionLink
-import com.intellij.ui.content.Content
 import com.intellij.util.Alarm
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
@@ -23,17 +21,14 @@ import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.isMarketplaceStudentCourse
 import com.jetbrains.edu.learning.marketplace.peekSolution.LinkToCommunitySolutionsPanel
 import com.jetbrains.edu.learning.marketplace.peekSolution.MarketplacePeekSolutionPanel
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
-import com.jetbrains.edu.learning.stepik.hyperskill.PostHyperskillProjectToGithub
 import com.jetbrains.edu.learning.taskToolWindow.addActionLinks
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowFactory
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckMessagePanel.Companion.FOCUS_BORDER_WIDTH
 import com.jetbrains.edu.learning.xmlUnescaped
 import java.awt.BorderLayout
@@ -81,20 +76,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
 
     addActionLinks(project, linksPanel, 16, 0)
 
-    if (course is HyperskillCourse) {
-      if (course.isTaskInProject(task) && checkResult.status == CheckStatus.Failed) {
-        val showMoreInfo = LightColoredActionLink(EduCoreBundle.message("hyperskill.review.topics.action.link"),
-                                                  SwitchTaskTabAction(project, 1))
-        linksPanel.add(showMoreInfo)
-      }
-
-      if (PostHyperskillProjectToGithub.isAvailable(task)) {
-        val postToGithubLink = LightColoredActionLink(EduCoreBundle.message("hyperskill.action.post.to.github"),
-                                                      PostHyperskillProjectToGithub())
-        linksPanel.add(postToGithubLink)
-      }
-    }
-
     if (course !is CourseraCourse && task.showAnswerHints) {
       val answerHintsPanel = createAnswerHintsPanel(project, task, checkResult)
       if (answerHintsPanel != null) {
@@ -125,9 +106,8 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
     val peekSolution = when {
       !task.canShowSolution() || (project.isMarketplaceStudentCourse() && !checkResult.isSolved) -> null
       project.isStudentProject() -> {
-        val isExternal = task.course is HyperskillCourse
-        val text = EduCoreBundle.message("label.peek.solution") + if (isExternal) "" else "..."
-        LightColoredActionLink(text, ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID), isExternal = isExternal)
+        val text = EduCoreBundle.message("label.peek.solution") + "..."
+        LightColoredActionLink(text, ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID), isExternal = false)
       }
       else -> null
     }
@@ -162,24 +142,6 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult, 
         outputShown = false
         actionLink.text = EduCoreBundle.message("label.full.output.show")
       }
-    }
-  }
-
-  class SwitchTaskTabAction(private val project: Project, private val index: Int) : DumbAwareAction(null as String?) {
-    override fun actionPerformed(e: AnActionEvent) {
-      val tab = selectTab(project, index)
-      if (tab != null && index == 1) {
-        EduCounterUsageCollector.reviewStageTopics()
-      }
-    }
-  }
-
-  companion object {
-    fun selectTab(project: Project, index: Int): Content? {
-      val window = ToolWindowManager.getInstance(project).getToolWindow(TaskToolWindowFactory.STUDY_TOOL_WINDOW)
-      val tab = window?.contentManager?.getContent(index) ?: return null
-      window.contentManager.setSelectedContent(tab)
-      return tab
     }
   }
 

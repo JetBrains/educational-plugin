@@ -4,7 +4,6 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.components.service
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL_DEFAULT_URL
 import java.net.URL
 
 open class EduBrowser : EduTestAware {
@@ -19,9 +18,6 @@ open class EduBrowser : EduTestAware {
     when {
       link.startsWith(StepikNames.getStepikUrl()) -> {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.STEPIK)
-      }
-      link.startsWith(HYPERSKILL_DEFAULT_URL) -> {
-        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.JBA)
       }
       else -> {
         EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)

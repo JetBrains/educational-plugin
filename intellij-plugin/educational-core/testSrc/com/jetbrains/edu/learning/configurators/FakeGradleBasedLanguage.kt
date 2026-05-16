@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConfigurator
 import javax.swing.Icon
 
 object FakeGradleBasedLanguage : Language("FakeGradleBasedLanguage")
@@ -60,8 +59,6 @@ class FakeGradleConfigurator : EduConfigurator<EmptyProjectSettings> {
     const val TASK_FILE_NAME = "Task.kt"
   }
 }
-
-class FakeGradleHyperskillConfigurator : HyperskillConfigurator<EmptyProjectSettings>(FakeGradleConfigurator())
 
 class FakeGradleCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
   override fun getLanguageSettings(): LanguageSettings<EmptyProjectSettings> = object : LanguageSettings<EmptyProjectSettings>() {

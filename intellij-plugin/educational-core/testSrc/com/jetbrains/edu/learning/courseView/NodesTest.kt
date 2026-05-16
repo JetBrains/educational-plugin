@@ -9,10 +9,8 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.hyperskill.HyperskillCourse
 import com.jetbrains.edu.learning.projectView.CourseViewUtils.COURSES_WITH_VISIBLE_USER_FILES
 import org.junit.Test
 
@@ -538,52 +536,6 @@ class NodesTest : CourseViewTestBase() {
       |  CCStudentInvisibleFileNode ignored.txt (excluded)
       |  CCStudentInvisibleFileNode not-ignored.txt
     """.trimMargin("|"))
-  }
-
-  @Test
-  fun `test hyperskill course`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse) {
-      frameworkLesson  {
-        eduTask {
-          taskFile("file1.txt")
-        }
-        eduTask {
-          taskFile("file2.txt")
-        }
-      }
-
-      lesson {
-        eduTask {
-          taskFile("task1.txt")
-        }
-      }
-    }
-
-    findTask(0, 0).status = CheckStatus.Solved
-
-    assertCourseView("""
-      |-Project
-      | -CourseNode Test Course
-      |  -FrameworkLessonNode lesson1 1 of 2 stages completed
-      |   file1.txt
-      |  -LessonNode lesson2
-      |   -TaskNode task1
-      |    task1.txt
-    """.trimMargin())
-  }
-
-  @Test
-  fun `test hyperskill course with empty framework lesson`() {
-    courseWithFiles(courseProducer = ::HyperskillCourse) {
-      frameworkLesson {
-      }
-    }
-
-    assertCourseView("""
-      |-Project
-      | -CourseNode Test Course
-      |  FrameworkLessonNode lesson1
-    """.trimMargin())
   }
 
   @Test
