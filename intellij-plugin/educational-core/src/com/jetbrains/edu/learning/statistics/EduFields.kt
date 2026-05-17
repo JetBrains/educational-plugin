@@ -13,7 +13,7 @@ object EduFields {
   private const val MARKETPLACE_COURSE_VERSION = "marketplace_course_version"
   private const val TASK_ID = "task_id"
 
-  private val PLATFORM_NAMES = listOf("PyCharm", "Coursera", "Hyperskill", "Marketplace")
+  private val PLATFORM_NAMES = listOf("PyCharm", "Coursera", "Marketplace")
 
   val COURSE_ID_FIELD = EventFields.Int(COURSE_ID, listOf(
     0,      // unpublished local course

@@ -48,7 +48,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
   }
 
   enum class LinkType {
-    IN_COURSE, STEPIK, EXTERNAL, PSI, JBA, FILE
+    IN_COURSE, STEPIK, EXTERNAL, PSI, FILE
   }
 
   /**
@@ -97,7 +97,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
 
   private enum class CourseSelectionViewTab {
     MARKETPLACE,
-    JBA,
     COURSERA,
     MY_COURSES,
     UNKNOWN;
@@ -146,7 +145,7 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     private const val USER_AGREEMENT_PLUGIN = "plugin_agreement"
     private const val USER_AGREEMENT_AI = "ai_agreement"
 
-    private val GROUP = EventLogGroup("educational.counters", 27)
+    private val GROUP = EventLogGroup("educational.counters", 28)
 
     private val TASK_NAVIGATION_EVENT = GROUP.registerEvent(
       "navigate.to.task",
@@ -206,7 +205,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
       enumField<CheckStatus>("status")
     )
     private val RATE_MARKETPLACE_COURSE = GROUP.registerEvent("rate.marketplace.course")
-    private val REVIEW_STAGE_TOPICS_EVENT = GROUP.registerEvent("review.stage.topics")
     private val HINT_CLICKED_EVENT = GROUP.registerEvent(
       "hint",
       enumField<HintEvent>(EVENT)
@@ -343,8 +341,6 @@ class EduCounterUsageCollector : CounterUsagesCollector() {
     fun rateMarketplaceCourse() = RATE_MARKETPLACE_COURSE.log()
 
     fun revertTask() = REVERT_TASK_EVENT.log()
-
-    fun reviewStageTopics() = REVIEW_STAGE_TOPICS_EVENT.log()
 
     fun checkTask(status: CheckStatus) = CHECK_TASK_EVENT.log(status)
 
