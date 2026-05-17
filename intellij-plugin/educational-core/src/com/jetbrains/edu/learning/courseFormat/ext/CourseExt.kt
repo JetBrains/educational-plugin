@@ -58,7 +58,7 @@ val Course.technologyName: String?
   get() = compatibilityProvider?.technologyName ?: languageById?.displayName
 
 val Course.supportedTechnologies: List<String>
-  get() = if (technologyName != null) listOf(technologyName!!) else emptyList()
+  get() = listOfNotNull(technologyName)
 
 val Course.tags: List<Tag>
   get() {

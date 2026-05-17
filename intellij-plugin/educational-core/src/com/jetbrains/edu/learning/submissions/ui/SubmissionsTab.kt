@@ -61,7 +61,7 @@ open class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project,
 
     if (!isLoggedIn) {
       if (task.course.isMarketplace && submissionsList.isNotEmpty()) {
-        return getSubmissionsText(submissionsList).toString() to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
+        return getSubmissionsText(submissionsList) to SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
       }
       else {
         return LoginLinkHandler.getLoginText() to LoginLinkHandler(project, submissionsManager)
@@ -72,20 +72,14 @@ open class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project,
       return emptySubmissionsMessage() to null
     }
 
-    return getSubmissionsText(submissionsList, isToShowSubmissionsIds(task)).toString() to
+    return getSubmissionsText(submissionsList) to
       SubmissionsDifferenceLinkHandler(project, task, submissionsManager)
   }
 
   fun showLoadingPanel(platformName: String) = panel.showLoadingSubmissionsPanel(platformName)
 
-  protected fun getSubmissionsText(
-    submissionsNext: List<Submission>,
-    isToShowSubmissionsIds: Boolean = false,
-  ): StringBuilder = submissionsNext.map {
-    submissionLink(it, isToShowSubmissionsIds)
-  }.joinTo(
-    StringBuilder(OPEN_UL_TAG), separator = ""
-  ).append(CLOSE_UL_TAG)
+  protected fun getSubmissionsText(submissionsNext: List<Submission>): String =
+    submissionsNext.joinToString(separator = "", prefix = OPEN_UL_TAG, postfix = CLOSE_UL_TAG, transform = ::submissionLink)
 
   companion object {
     const val SUBMISSION_PROTOCOL = "submission://"
@@ -98,21 +92,13 @@ open class SubmissionsTab(project: Project) : TaskToolWindowCardTextTab(project,
 
     private fun emptySubmissionsMessage(): String = "<a $textStyleHeader>${EduCoreBundle.message("submissions.empty")}"
 
-    private fun isToShowSubmissionsIds(task: Task): Boolean = false
-
-    private fun submissionLink(submission: Submission, isToShowSubmissionsIds: Boolean): String? {
-      val time = submission.time ?: return null
+    private fun submissionLink(submission: Submission): String {
+      val time = submission.time ?: return ""
       val pictureSize = StyleManager().bodyLineHeight
       val date = formatDate(time)
-      val text = if (isToShowSubmissionsIds) {
-        "$date submission.id = ${submission.id}"
-      }
-      else {
-        date
-      }
 
       return "<li><h><img src=${getImageUrl(submission.status)} hspace=6 width=${pictureSize} height=${pictureSize}/></h>" +
-             "<a $textStyleHeader;color:${getLinkColor(submission)} href=${getSubmissionDiffLink(submission.id)}> ${text}</a></li>"
+             "<a $textStyleHeader;color:${getLinkColor(submission)} href=${getSubmissionDiffLink(submission.id)}> ${date}</a></li>"
     }
   }
 }

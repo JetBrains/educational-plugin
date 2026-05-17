@@ -28,7 +28,7 @@ import java.awt.Dimension
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 
-class CheckPanel(private val project: Project, private val parentDisposable: Disposable) : JPanel(BorderLayout()) {
+class CheckPanel(private val project: Project, parentDisposable: Disposable) : JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val linkPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())

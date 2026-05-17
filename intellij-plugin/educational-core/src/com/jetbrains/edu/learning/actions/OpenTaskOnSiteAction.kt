@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduBrowser
+import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.NonNls
 
 
@@ -14,14 +14,13 @@ class OpenTaskOnSiteAction : DumbAwareAction(EduCoreBundle.lazyMessage("action.o
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val task = TaskToolWindowView.getInstance(project).currentTask ?: return
-    val link = EduActionUtils.getOpenOnSiteActionInfo(project, task) ?: return
+    val link = OpenOnSiteLinkSettings.getInstance(project).link ?: return
     EduBrowser.getInstance().browse(link)
   }
 
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
-    e.presentation.isEnabledAndVisible = EduActionUtils.getOpenOnSiteActionInfo(project) != null
+    e.presentation.isEnabledAndVisible = OpenOnSiteLinkSettings.getInstance(project).link != null
   }
 
   override fun getActionUpdateThread() = ActionUpdateThread.BGT

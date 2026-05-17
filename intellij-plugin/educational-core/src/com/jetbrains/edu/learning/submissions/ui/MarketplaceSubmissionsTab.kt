@@ -90,7 +90,7 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
         return emptyCommunitySolutionsMessage() to null
       }
       val isToDisplayShowMore = submissionsManager.hasMoreCommunitySubmissions(task.id)
-      return getCommunitySolutionsText(submissionsList, isToDisplayShowMore).toString() to SubmissionsDifferenceLinkHandler(
+      return getCommunitySolutionsText(submissionsList, isToDisplayShowMore) to SubmissionsDifferenceLinkHandler(
         project,
         task,
         submissionsManager,
@@ -194,12 +194,14 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
     communityPanel.showLoadingSubmissionsPanel(platformName)
   }
 
-  private fun getCommunitySolutionsText(communitySolutions: List<Submission>, showMore: Boolean): StringBuilder {
-    val submissionsStringBuilder = getSubmissionsText(communitySolutions)
-    if (showMore) {
-      submissionsStringBuilder.append(showMoreLink())
+  private fun getCommunitySolutionsText(communitySolutions: List<Submission>, showMore: Boolean): String {
+    val submissionsText = getSubmissionsText(communitySolutions)
+    return if (showMore) {
+      submissionsText + showMoreLink()
     }
-    return submissionsStringBuilder
+    else {
+      submissionsText
+    }
   }
 
   companion object {

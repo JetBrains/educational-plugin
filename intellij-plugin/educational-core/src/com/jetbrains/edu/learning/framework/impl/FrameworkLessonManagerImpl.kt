@@ -8,6 +8,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.storage.AbstractStorage
+import com.jetbrains.edu.coursecreator.StudyItemType
+import com.jetbrains.edu.coursecreator.presentableName
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FileContents
@@ -18,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.framework.propagateFilesOnNavigation
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.ui.getUIName
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
@@ -293,8 +294,8 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     }
 
     val keepConflictingChanges = if (showDialogIfConflict) {
-      val currentTaskName = "${currentTask.getUIName()} ${currentTask.index}"
-      val targetTaskName = "${targetTask.getUIName()} ${targetTask.index}"
+      val currentTaskName = "${StudyItemType.TASK_TYPE.presentableName} ${currentTask.index}"
+      val targetTaskName = "${StudyItemType.TASK_TYPE.presentableName} ${targetTask.index}"
       val message = EduCoreBundle.message("framework.lesson.changes.conflict.message", currentTaskName, targetTaskName, targetTaskName,
         currentTaskName)
       Messages.showYesNoDialog(project,

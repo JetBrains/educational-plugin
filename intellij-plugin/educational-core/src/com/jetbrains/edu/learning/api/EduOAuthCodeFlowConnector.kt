@@ -4,7 +4,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.Urls
 import com.intellij.util.io.origin
 import com.jetbrains.edu.learning.EduBrowser
-import com.jetbrains.edu.learning.EduLogInListener
 import com.jetbrains.edu.learning.authUtils.*
 import com.jetbrains.edu.learning.courseFormat.UserInfo
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -47,11 +46,6 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
    */
   private var postLoginActions: List<Runnable>? = null
 
-  /**
-   * Must be changed only with synchronization
-   */
-  private var submissionTabListener: EduLogInListener? = null
-
   @Synchronized
   override fun doAuthorize(
     vararg postLoginActions: Runnable,
@@ -78,15 +72,6 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
   }
 
   /**
-   * @param logInListener - listener to update submissions list and
-   * [com.jetbrains.edu.learning.submissions.SubmissionsTab]
-   */
-  @Synchronized
-  fun setSubmissionTabListener(logInListener: EduLogInListener) {
-    submissionTabListener = logInListener
-  }
-
-  /**
    * Designed to be called in a single place `*Settings.setAccount` for every platform
    * @see com.jetbrains.edu.learning.EduSettings.user
    */
@@ -95,7 +80,6 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
     postLoginActions?.forEach {
       it.run()
     }
-    submissionTabListener?.userLoggedIn()
 
     val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
     EduCounterUsageCollector.logInSucceed(platformName, place)
@@ -108,8 +92,6 @@ abstract class EduOAuthCodeFlowConnector<Account : OAuthAccount<*>, SpecificUser
    */
   @Synchronized
   fun notifyUserLoggedOut() {
-    submissionTabListener?.userLoggedOut()
-
     val place = authorizationPlace ?: AuthorizationPlace.UNKNOWN
     EduCounterUsageCollector.logOutSucceed(platformName, place)
     authorizationPlace = null

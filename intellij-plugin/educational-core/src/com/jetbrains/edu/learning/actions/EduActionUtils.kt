@@ -15,7 +15,6 @@ import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.ExecutionException
@@ -106,10 +105,6 @@ object EduActionUtils {
       catch (ignored: TimeoutException) {
       }
     }
-  }
-
-  fun getOpenOnSiteActionInfo(project: Project, task: Task? = null): String? {
-    return OpenOnSiteLinkSettings.getInstance(project).link
   }
 
   @RequiresEdt

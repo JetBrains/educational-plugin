@@ -13,12 +13,12 @@ import com.intellij.ui.ExperimentalUI
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.AnActionLink
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.actions.OpenTaskOnSiteAction
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.metadata.TRUSTED_METADATA_HOSTS
+import com.jetbrains.edu.learning.marketplace.settings.OpenOnSiteLinkSettings
 import com.jetbrains.edu.learning.taskToolWindow.ui.LightColoredActionLink
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -182,7 +182,7 @@ fun getDashedUnderlineElement(document: Document, text: String): Element =
 
 fun addActionLinks(project: Project, linkPanel: JPanel, topMargin: Int, leftMargin: Int) {
   // TODO move to toolbar (EDU-7584)
-  val link = EduActionUtils.getOpenOnSiteActionInfo(project) ?: return
+  val link = OpenOnSiteLinkSettings.getInstance(project).link ?: return
   val host = URI(link).host
   val linkMessageSupplier = TRUSTED_METADATA_HOSTS[host] ?: return
   linkPanel.add(

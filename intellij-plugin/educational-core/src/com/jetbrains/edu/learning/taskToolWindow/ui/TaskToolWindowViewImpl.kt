@@ -186,11 +186,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     task ?: return
 
     lessonHeader?.setHeaderText(task.lesson.presentableName)
-    var index = 1
-    val actions = task.lesson.taskList.map {
-      val currentIndex = index++
-      NavigationMapAction(it, task, currentIndex)
-    }
+    val actions = task.lesson.taskList.map { NavigationMapAction(it, task, it.index) }
     navigationMapToolbar?.replaceActions(actions)
 
     scrollNavMap(task)

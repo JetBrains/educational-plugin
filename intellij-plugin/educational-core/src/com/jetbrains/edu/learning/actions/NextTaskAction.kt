@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
@@ -19,8 +18,6 @@ class NextTaskAction : TaskNavigationAction() {
     }
     super.update(e)
   }
-
-  override fun getCustomAction(task: Task): ((Project, Task) -> Unit)? = null
 
   companion object {
     @NonNls

@@ -13,8 +13,6 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 
 abstract class TaskNavigationAction : DumbAwareAction() {
 
-  protected open fun getCustomAction(task: Task): ((Project, Task) -> Unit)? = null
-
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     if (!project.isEduProject()) return
@@ -26,7 +24,7 @@ abstract class TaskNavigationAction : DumbAwareAction() {
     val project = e.project ?: return
     if (!project.isEduProject()) return
     val currentTask = TaskToolWindowView.getInstance(project).currentTask ?: return
-    if (getTargetTask(currentTask) != null || getCustomAction(currentTask) != null) {
+    if (getTargetTask(currentTask) != null) {
       e.presentation.isEnabled = true
     }
   }
@@ -35,11 +33,6 @@ abstract class TaskNavigationAction : DumbAwareAction() {
 
   private fun navigateTask(project: Project, place: String) {
     val currentTask = TaskToolWindowView.getInstance(project).currentTask ?: return
-    val customAction = getCustomAction(currentTask)
-    if (customAction != null) {
-      customAction(project, currentTask)
-      return
-    }
     val targetTask = getTargetTask(currentTask) ?: return
 
     NavigationUtils.navigateToTask(project, targetTask, currentTask)

@@ -1,14 +1,9 @@
 package com.jetbrains.edu.learning.ui
 
 import com.intellij.openapi.util.NlsActions
-import com.jetbrains.edu.coursecreator.StudyItemType
-import com.jetbrains.edu.coursecreator.presentableName
 import com.jetbrains.edu.learning.courseFormat.CourseraCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-
-
-fun Task.getUIName(): String = StudyItemType.TASK_TYPE.presentableName
 
 @NlsActions.ActionText
 fun Task.getUICheckLabel(): String {
