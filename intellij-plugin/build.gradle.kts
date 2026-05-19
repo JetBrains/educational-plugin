@@ -197,9 +197,6 @@ tasks {
 
     customRunIdeTask(IntellijIdea, ideaVersion, baseTaskName = "Idea")
     customRunIdeTask(CLion, clionVersion) {
-      setClionSystemProperties(project, withRadler = false)
-    }
-    customRunIdeTask(CLion, clionVersion, baseTaskName = "CLion-Nova") {
       setClionSystemProperties(project, withRadler = true)
     }
     customRunIdeTask(PyCharm, pycharmVersion)
