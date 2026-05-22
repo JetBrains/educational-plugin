@@ -12,19 +12,19 @@ cd educational-plugin
 1. Java 21 is required for development.
 For example, you can install [openJDK](https://openjdk.java.net/install/) or [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
 2. Open project directory in IntelliJ IDEA.
-You can get the latest IntelliJ IDEA Community Edition [here](https://www.jetbrains.com/idea/download/).
+You can get the latest IntelliJ IDEA [here](https://www.jetbrains.com/idea/download/).
 3. Import Gradle project. If you are not familiar with IntelliJ IDEA Gradle integration, check out the [documentation](https://www.jetbrains.com/help/idea/gradle.html)
 4. You can modify `gradle.properties` if needed
-5. For running and debugging plugin with IntelliJ IDEA, PyCharm, CLion, Android Studio, WebStorm, and GoLand predefined run configurations *runIdea*, *runPyCharm*, *runCLion*, *runStudio*, *runWebStorm*, and *runGoLand* 
+5. For running and debugging plugin with IntelliJ IDEA, PyCharm, CLion, WebStorm, GoLand, and Rider predefined run configurations *runIdea*, *runPyCharm*, *runCLion*, *runWebStorm*, *runGoLand*, and *runRider* 
 should be used
-6. To build plugin distribution use *:buildPlugin* Gradle task. 
-It creates an archive at `build/distributions` which can be installed into your IDE via `Install plugin from disk...` action found in `Settings > Plugins`.
+6. To build plugin distribution use *:intellij-plugin:buildPlugin* Gradle task. 
+It creates an archive at `intellij-plugin/build/distributions` which can be installed into your IDE via `Install plugin from disk...` action found in `Settings > Plugins`.
 
 # Supporting different platforms
 
 ### Different versions
 
-We support some latest releases of platform (for example, 2018.2 and 2018.3) and the latest EAP.
+We support some latest releases of the platform (for example, 2018.2 and 2018.3) and the latest EAP.
 To be sure the plugin works with all releases, we have to build plugin with different versions of IDE.
 The plugin project has separate settings for each platform version (in general, IDE and plugin versions) 
 to avoid manual changes when you want to compile project with non default platform version.
@@ -49,36 +49,36 @@ Then source code structure of the corresponding module will be
      |       +-- other platfrom independent code
      
 Of course, only one batch of platform-specific code will be used in compilation.
-To change platform version which you use during compilation, 
-i.e. change IDEA/Android Studio/plugins dependencies and platform dependent code,
+To change the platform version which you use during compilation, 
+i.e. change IDEA, plugins dependencies, and platform dependent code,
 you need to modify `environmentName` property in `gradle.properties` file or 
 pass `-PenvironmentName=%platform.version%` argument to gradle command.
 
-See [Tips and tricks](#tips-and-tricks) section to get more details how to create platform-specific code.
+See [Tips and tricks](#tips-and-tricks) section to get more details on how to create platform-specific code.
 See [SupportNewPlatformVersion.md](/documentation/SupportNewPlatformVersion.md) for more details if you need to support a new platform version.
 
 ### Different IDEs
 
-The plugin is available in several IDEs like IDEA, Android Studio, PyCharm, CLion, WebStorm, etc.
+The plugin is available in several IDEs like IDEA, PyCharm, CLion, WebStorm, etc.
 Generally, they provide common core API that we can be safely used in the plugin. But they also provide some specific API
 available only in particular IDE (for example, `java-api` and `java-impl` modules in IDEA).
 To prevent accidental usage of specific API in common code, we have to build plugin/run with different IDEs.
-At the moment, the plugin tests can be launched with IDEA, Android Studio, CLion and PyCharm.
+At the moment, the plugin tests can be launched with IDEA, CLion, and PyCharm.
 You can change this IDE via `baseIDE` property in `gradle.properties` file.
 
-Note, not all modules can be compiled with any IDE. For example, `Edu-Android` module is supposed to be built
-only with Android Studio. 
+Note, not all modules can be compiled with any IDE. For example, `Edu-Cpp` module is supposed to be built
+only with CLion. 
 Such restrictions are already taken into account in the configuration of the corresponding modules
 in `build.gradle.kts` and when you choose base IDE for build unsupported in the particular module, 
 it will be compiled with some default IDE.
 
 ### Tips and tricks
 
-Please, always remember a general advice - if you have to extract a code into platform-specific source sets, try to minimize it.
+Please, always remember the general advice - if you have to extract a code into platform-specific source sets, try to minimize it.
 It will simplify maintenance of this code in the future.
 
-A non-exhaustive list of tips how you can adapt your code for several platforms:
-* to execute specific code for certain platform in gradle build scripts (`build.gradle.kts` or `settings.gradle.kts`),
+A non-exhaustive list of tips on how you can adapt your code for several platforms:
+* to execute specific code for a certain platform in gradle build scripts (`build.gradle.kts` or `settings.gradle.kts`),
 just use `environmentName` property and `if`/`when` conditions
 * if you need to have different sources for each platform:
     - check that you actually need to have specific code for each platform.
@@ -90,7 +90,7 @@ just use `environmentName` property and `if`/`when` conditions
     It usually works well when you need to call specific public code to make the same things in each platform
     - if code that you need to call is not public (for example, it uses some protected methods of parent class), use the inheritance mechanism.
     Extract `AwesomeClassBase` from your `AwesomeClass`, inherit `AwesomeClass` from `AwesomeClassBase`,
-    move `AwesomeClassBase` into platform-specific source sets and move all platform-specific code into `AwesomeClassBase` as protected methods.
+    move `AwesomeClassBase` into platform-specific source sets, and move all platform-specific code into `AwesomeClassBase` as protected methods.
     - sometimes, signatures of some methods might have changed during platform evolution.
     For example, `protected abstract void foo(Bar<Baz> bar)` can be converted into `protected abstract void foo(Bar<? extends Baz> bar)` since `%platform.version%`
     and you have to override this method in your implementation.
@@ -115,8 +115,8 @@ just use `environmentName` property and `if`/`when` conditions
     This approach can be used to temporarily disable some tests to find out why they don't work later.
 * if you need to register different items in `%xml_name%.xml` for each platform:
     1. create `platform-%xml_name%.xml` in all `%module_name%/branch/%platform.version%/resources/META-INF` directories
-    2. put platform specific definitions into these xml files
-    3. include platform specific xml into `%module_name%/resources/META-INF/%xml_name%.xml`, i.e. add the following code
+    2. put platform-specific definitions into these xml files
+    3. include platform-specific xml into `%module_name%/resources/META-INF/%xml_name%.xml`, i.e. add the following code
     ```xml
     <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
         <xi:include href="/META-INF/platform-%xml_name%.xml" xpointer="xpointer(/idea-plugin/*)"/>
@@ -135,10 +135,10 @@ Everything works:
 5. Push all the changes
 
 Something went wrong (some API changes):
-5. Ensure that you can't use old API instead of new one for all platforms. If you can, just modify your current implementation.
+5. Ensure that you can't use the old API instead of the new one for all platforms. If you can, just modify your current implementation.
 Note, if you use deprecated API, don't forget to suppress deprecation warning and 
-add `// BACKCOMPAT` comment (see more in [Supporting a new platform version](#Supporting a new platform version) section)
-6. If there isn't common API for all platforms, extract problem pieces of code into separate files as new functions or classes
+add `// BACKCOMPAT` comment (see more in [Supporting a new platform version](#Supporting-a-new-platform-version) section)
+6. If there isn't a common API for all platforms, extract problem pieces of code into separate files as new functions or classes
 7. Create implementations for each platform and place them into `branches/%platform.name%/src` folders of the corresponding module
 8. Commit new files
 9. Push all the changes
@@ -149,7 +149,7 @@ add `// BACKCOMPAT` comment (see more in [Supporting a new platform version](#Su
 2. Copy `%module.name%/branches/%latest.platform.name%` folder as `%module.name%/branches/%new.platform.name%`
 for each existing module
 3. Check the project can be compiled with a new platform. If compilation fails, fix all new incompatibilities
-(see [Supporting different platforms](#Supporting different platforms) section for more details)
+(see [Supporting different platforms](#Supporting-different-platforms) section for more details)
 4. Fix all new deprecation warnings. There are two different cases:
   * Deprecated piece of code can be replaced with some other equivalent code for all supported platforms.
   In this case, just replace deprecated code
@@ -157,7 +157,7 @@ for each existing module
   add suppress annotation (or comment if suppress annotation cannot be added because of syntax error).
   Also add a comment `// BACKOMPAT: %platform.name%` where `%platform.name` is the latest platform version where deprecated code has to be used
   
-## Dropping old platform version
+## Dropping the old platform version
 
 1. Remove `gradle-%old.platform.name%.properties` file
 2. Remove `%module.name%/branches/%old.platform.name%` folders for each module
