@@ -10,13 +10,11 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.EduCourseCard
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
-import kotlinx.coroutines.CoroutineScope
 
 class MarketplaceCoursesPanel(
   coursesPlatformProvider: CoursesPlatformProvider,
-  scope: CoroutineScope,
   disposable: Disposable
-) : CoursesPanel(coursesPlatformProvider, scope, disposable) {
+) : CoursesPanel(coursesPlatformProvider, disposable) {
 
   override fun createCoursePanel(disposable: Disposable): CoursePanel {
     return MarketplaceCoursePanel(disposable)

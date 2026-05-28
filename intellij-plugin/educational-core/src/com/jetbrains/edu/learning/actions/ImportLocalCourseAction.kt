@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
-import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import org.jetbrains.annotations.NonNls
 import java.awt.Component
@@ -93,11 +92,7 @@ class ImportLocalCourseAction : DumbAwareAction() {
   private fun doImportNewCourse(course: Course, component: Component?) {
     EduCounterUsageCollector.importCourseArchive()
     closeDialog(component)
-    ImportCourseDialog(course).show()
-  }
-
-  private class ImportCourseDialog(course: Course) : JoinCourseDialog(course) {
-    override fun isToShowError(errorState: ErrorState): Boolean = true
+    JoinCourseDialog(course).show()
   }
 
   private fun closeDialog(component: Component?) {

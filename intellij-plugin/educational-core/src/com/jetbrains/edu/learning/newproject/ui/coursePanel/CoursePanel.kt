@@ -201,11 +201,7 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     }
 
     val message = errorState.message ?: return
-    when (errorState) {
-      else -> {
-        setError(message)
-      }
-    }
+    setError(message)
     showErrorPanel()
   }
 

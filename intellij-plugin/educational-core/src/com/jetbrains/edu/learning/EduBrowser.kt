@@ -10,15 +10,11 @@ open class EduBrowser : EduTestAware {
 
   open fun browse(link: String) {
     BrowserUtil.browse(link)
-    countUsage(link)
+    countUsage()
   }
 
-  fun countUsage(link: String) {
-    when {
-      else -> {
-        EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
-      }
-    }
+  fun countUsage() {
+    EduCounterUsageCollector.linkClicked(EduCounterUsageCollector.LinkType.EXTERNAL)
   }
 
   companion object {

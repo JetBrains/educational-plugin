@@ -5,70 +5,59 @@ import com.intellij.openapi.extensions.PluginId
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.PluginInfo
 import com.jetbrains.edu.learning.courseFormat.ext.compatibility
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorSeverity.*
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessageType.ERROR
 import com.jetbrains.edu.learning.newproject.ui.getRequiredPluginsMessage
-import com.jetbrains.edu.learning.ui.EduColors.errorTextForeground
 import org.jetbrains.annotations.Nls
-import java.awt.Color
 
 sealed class ErrorState(
   private val severity: ErrorSeverity,
   val message: ValidationMessage?,
-  val foregroundColor: Color,
   val courseCanBeStarted: Boolean
 ) {
 
-  object NothingSelected : ErrorState(OK, null, Color.BLACK, false)
-  object None : ErrorState(OK, null, Color.BLACK, true)
-  object Pending : ErrorState(LANGUAGE_SETTINGS_PENDING, null, Color.BLACK, false)
+  object NothingSelected : ErrorState(OK, null, false)
+  object None : ErrorState(OK, null, true)
+  object Pending : ErrorState(LANGUAGE_SETTINGS_PENDING, null, false)
 
   abstract class LocationError(messageText: String) : ErrorState(LOCATION_ERROR,
                                                                  ValidationMessage(messageText, type = ERROR),
-                                                                 errorTextForeground,
-                                                                 false)
+    false)
 
   object EmptyLocation : LocationError(EduCoreBundle.message("validation.empty.location"))
   object InvalidLocation : LocationError(EduCoreBundle.message("validation.cannot.create.course.at.location"))
 
   class CustomSevereError(message: String, val action: Runnable? = null) :
-    ErrorState(LOGIN_ERROR, ValidationMessage(message), errorTextForeground, false)
+    ErrorState(LOGIN_ERROR, ValidationMessage(message), false)
 
-  class LanguageSettingsError(message: ValidationMessage) : ErrorState(LANGUAGE_SETTINGS_ERROR, message, errorTextForeground, false)
+  class LanguageSettingsError(message: ValidationMessage) : ErrorState(LANGUAGE_SETTINGS_ERROR, message, false)
 
   object JCEFRequired : ErrorState(NO_JCEF, ValidationMessage(
-    EduCoreBundle.message("validation.no.jcef")), errorTextForeground, false)
+    EduCoreBundle.message("validation.no.jcef")), false)
 
-  object IncompatibleVersion : ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage(EduCoreBundle.message("validation.plugins.required")),
-                                          errorTextForeground, false)
+  object IncompatibleVersion :
+    ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage(EduCoreBundle.message("validation.plugins.required")), false)
 
-  data class RequirePlugins(val pluginIds: List<PluginInfo>) : ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessageForRequiredPlugins(pluginIds),
-                                                                          errorTextForeground, false)
+  data class RequirePlugins(val pluginIds: List<PluginInfo>) :
+    ErrorState(PLUGIN_UPDATE_REQUIRED, errorMessageForRequiredPlugins(pluginIds), false)
 
-  object RestartNeeded : ErrorState(PLUGIN_UPDATE_REQUIRED,
-                                    ValidationMessage(EduCoreBundle.message("validation.plugins.restart.to.activate.plugin")),
-                                    errorTextForeground,
-                                    false)
+  object RestartNeeded :
+    ErrorState(PLUGIN_UPDATE_REQUIRED, ValidationMessage(EduCoreBundle.message("validation.plugins.restart.to.activate.plugin")), false)
 
-  class UnsupportedCourse(@Nls(capitalization = Nls.Capitalization.Sentence) message: String) : ErrorState(UNSUPPORTED_COURSE,
-                                                                                                           ValidationMessage(message),
-                                                                                                           errorTextForeground, false)
+  class UnsupportedCourse(@Nls(capitalization = Nls.Capitalization.Sentence) message: String) :
+    ErrorState(UNSUPPORTED_COURSE, ValidationMessage(message), false)
 
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 
   companion object {
     fun forCourse(course: Course?): ErrorState {
       if (course == null) return NothingSelected
-      return None
-        .merge(course.compatibilityError)
-        .merge(course.courseSpecificError)
+      return course.compatibilityError
     }
 
     private val Course.compatibilityError: ErrorState
@@ -96,14 +85,6 @@ sealed class ErrorState(
         }
         else {
           EduCoreBundle.message("selected.course.not.supported", course.name)
-        }
-      }
-
-    private val Course.courseSpecificError: ErrorState
-      get() {
-        return when {
-          CoursesStorage.getInstance().hasCourse(this) -> None
-          else -> None
         }
       }
 
@@ -137,7 +118,6 @@ private enum class ErrorSeverity {
 
   LANGUAGE_SETTINGS_PENDING,
 
-  LOGIN_RECOMMENDED,
   LOGIN_ERROR,
 
   LANGUAGE_SETTINGS_ERROR,

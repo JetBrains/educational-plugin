@@ -59,8 +59,8 @@ data class TemplateInfo(private val templateName: String, val generatedFileName:
 }
 
 fun getCppTemplates(course: Course): CppTemplates =
-  when {
-    course.environment == "GoogleTest" ->
+  when (course.environment) {
+    "GoogleTest" ->
       CppTemplates(
         mainCMakeList = TemplateInfo("gtest.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
         extraTopLevelFiles = listOf(
@@ -68,13 +68,12 @@ fun getCppTemplates(course: Course): CppTemplates =
           TemplateInfo("gtest.cmake.googletest.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_GOOGLE_TEST)),
           TemplateInfo("gtest.cmake.googletest-download.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_GOOGLE_TEST_DOWNLOAD)))
       )
-    course.environment == "Catch" ->
+    "Catch" ->
       CppTemplates(
         mainCMakeList = TemplateInfo("catch.CMakeLists.txt", CMakeListsFileType.FILE_NAME),
         extraTopLevelFiles = listOf(
           TemplateInfo("catch.cmake.utils.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_UTILS)),
           TemplateInfo("catch.cmake.catch.cmake", GeneratorUtils.joinPaths(CMAKE_DIRECTORY, CMAKE_CATCH)))
       )
-    else ->
-      throw IllegalStateException("Course must be Stepik type or have one of these environments: GoogleTest, Catch")
+    else -> error("Course must be Stepik type or have one of these environments: GoogleTest, Catch")
   }

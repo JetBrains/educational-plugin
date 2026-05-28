@@ -7,9 +7,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.newProjectUI.MarketplacePlatformProvider
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import kotlinx.coroutines.CoroutineScope
 import org.junit.Test
-import kotlin.coroutines.EmptyCoroutineContext
 
 class StartButtonsTest : EduTestCase() {
 
@@ -20,8 +18,7 @@ class StartButtonsTest : EduTestCase() {
 
   @Test
   fun `test edu course`() {
-    val scope = CoroutineScope(EmptyCoroutineContext)
-    val panel = MarketplacePlatformProvider().createPanel(scope, testRootDisposable)
+    val panel = MarketplacePlatformProvider().createPanel(testRootDisposable)
     val course = course { }
     val coursePanel = panel.coursePanel
     coursePanel.bindCourse(course)

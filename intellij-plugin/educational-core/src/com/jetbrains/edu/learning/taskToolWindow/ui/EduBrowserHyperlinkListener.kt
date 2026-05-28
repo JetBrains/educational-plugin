@@ -7,9 +7,7 @@ import javax.swing.event.HyperlinkEvent
 open class EduBrowserHyperlinkListener : BrowserHyperlinkListener() {
   override fun hyperlinkActivated(e: HyperlinkEvent) {
     super.hyperlinkActivated(e)
-
-    val host = e.url?.toString() ?: return
-    EduBrowser.getInstance().countUsage(host)
+    EduBrowser.getInstance().countUsage()
   }
 
   companion object {

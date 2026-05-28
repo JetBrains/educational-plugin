@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPanel
 import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.GRAY_COLOR
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
-import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 
 class MyCoursesProvider : CoursesPlatformProvider() {
@@ -20,7 +19,7 @@ class MyCoursesProvider : CoursesPlatformProvider() {
 
   override val icon: Icon? = null
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = MyCoursesPanel(this, scope, disposable)
+  override fun createPanel(disposable: Disposable): CoursesPanel = MyCoursesPanel(this, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     return CoursesStorage.getInstance().coursesInGroups()

@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.errors.ErrorState
-import kotlinx.coroutines.CoroutineScope
 import javax.swing.Icon
 import javax.swing.JPanel
 
@@ -29,7 +28,7 @@ abstract class CoursesPlatformProvider {
 
   abstract val icon: Icon?
 
-  abstract fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel
+  abstract fun createPanel(disposable: Disposable): CoursesPanel
 
   open fun joinAction(courseInfo: CourseCreationInfo, courseMode: CourseMode, coursePanel: CoursePanel, openCourseParams: Map<String, String> = emptyMap()) {
     joinCourse(courseInfo, courseMode, coursePanel, openCourseParams) { coursePanel.setError(it) }

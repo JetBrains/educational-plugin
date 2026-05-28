@@ -22,9 +22,7 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel
 import com.jetbrains.edu.learning.newproject.ui.filters.CoursesSearchComponent
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 import java.awt.BorderLayout
@@ -39,7 +37,6 @@ private const val NO_COURSES = "NO_COURSES"
 
 abstract class CoursesPanel(
   private val coursesProvider: CoursesPlatformProvider,
-  private val scope: CoroutineScope,
   disposable: Disposable
 ) : JPanel() {
 
@@ -196,25 +193,6 @@ abstract class CoursesPanel(
     }
     else {
       coursesListDecorator.updateModel(coursesGroups, courseToSelect)
-    }
-  }
-
-  fun scheduleUpdateAfterLogin() {
-    scope.launch {
-      updateCoursesAfterLogin()
-    }
-  }
-
-  protected open suspend fun updateCoursesAfterLogin(preserveSelection: Boolean = true) {
-    updateFilters(coursesGroups)
-    showContent(coursesGroups.isEmpty())
-
-    // hack: selection in com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesListPanel.updateModel can't scroll correctly
-    // as all the child components have 0 bounds at the moment of update
-    val courseToSelect = selectedCourse
-    updateModel(coursesGroups, null)
-    if (preserveSelection) {
-      coursesListDecorator.setSelectedValue(courseToSelect)
     }
   }
 

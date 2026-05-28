@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.CoursePanel
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext
 import com.jetbrains.edu.learning.statistics.DownloadCourseContext.IDE_UI
-import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.io.IOException
@@ -42,7 +41,7 @@ class MarketplacePlatformProvider(
 
   override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.MarketplaceTab
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel = MarketplaceCoursesPanel(this, scope, disposable)
+  override fun createPanel(disposable: Disposable): CoursesPanel = MarketplaceCoursesPanel(this, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> {
     val marketplaceCourses = MarketplaceConnector.getInstance().searchCourses()

@@ -28,8 +28,8 @@ class CourseraPlatformProvider : CoursesPlatformProvider() {
 
   override val icon: Icon get() = EducationalCoreIcons.Platform.Tab.CourseraTab
 
-  override fun createPanel(scope: CoroutineScope, disposable: Disposable): CoursesPanel =
-    CourseraCoursesPanel(this, scope, disposable)
+  override fun createPanel(disposable: Disposable): CoursesPanel =
+    CourseraCoursesPanel(this, disposable)
 
   override suspend fun doLoadCourses(): List<CoursesGroup> =
     withContext(Dispatchers.IO) {

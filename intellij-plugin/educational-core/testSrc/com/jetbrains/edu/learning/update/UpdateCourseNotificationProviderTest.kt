@@ -3,23 +3,21 @@ package com.jetbrains.edu.learning.update
 import com.jetbrains.edu.learning.NotificationsTestBase
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.navigation.NavigationUtils.getFirstTask
 import org.junit.Test
 
 class UpdateCourseNotificationProviderTest : NotificationsTestBase() {
 
   @Test
   fun `test update course notification shown`() {
-    val course = createCourse(isUpToDate = false)
-    val virtualFile = getFirstTask(course)!!.getTaskFile("Task.txt")!!.getVirtualFile(project)!!
+    createCourse(isUpToDate = false)
+    val virtualFile = findFile("lesson1/task1/Task.txt")
     checkEditorNotification<UpdateCourseNotificationProvider>(virtualFile)
   }
 
   @Test
   fun `test update course notification not shown`() {
-    val course = createCourse(isUpToDate = true)
-    val virtualFile = getFirstTask(course)!!.getTaskFile("Task.txt")!!.getVirtualFile(project)!!
+    createCourse(isUpToDate = true)
+    val virtualFile = findFile("lesson1/task1/Task.txt")
     checkNoEditorNotification<UpdateCourseNotificationProvider>(virtualFile)
   }
 

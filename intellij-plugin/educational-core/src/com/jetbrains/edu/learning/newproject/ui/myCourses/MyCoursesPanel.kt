@@ -15,15 +15,13 @@ import com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider
 import com.jetbrains.edu.learning.newproject.ui.ToolbarActionWrapper
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
-import kotlinx.coroutines.CoroutineScope
 
 private const val ACTION_PLACE = "MyCoursesPanel"
 
 class MyCoursesPanel(
   myCoursesProvider: CoursesPlatformProvider,
-  scope: CoroutineScope,
   disposable: Disposable
-) : CoursesPanel(myCoursesProvider, scope, disposable) {
+) : CoursesPanel(myCoursesProvider, disposable) {
 
   override fun toolbarAction(): ToolbarActionWrapper {
     coursesSearchComponent.hideFilters()
