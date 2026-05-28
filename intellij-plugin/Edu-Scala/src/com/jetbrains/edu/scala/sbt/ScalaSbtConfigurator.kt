@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.jvm.JdkProjectSettings
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
-import com.jetbrains.edu.jvm.stepik.fileName
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtilsKt
@@ -13,12 +12,9 @@ import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEv
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import com.jetbrains.edu.scala.isScalaPluginCompatible
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import com.jetbrains.edu.scala.sbt.checker.ScalaSbtTaskCheckerProvider
-import org.jetbrains.plugins.scala.ScalaLanguage
 import org.jetbrains.sbt.Sbt
 import javax.swing.Icon
 
@@ -34,11 +30,6 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
 
   override val taskCheckerProvider: TaskCheckerProvider
     get() = ScalaSbtTaskCheckerProvider()
-
-  override fun getMockFileName(course: Course, text: String): String = fileName(ScalaLanguage.INSTANCE, text)
-
-  override val mockTemplate: String
-    get() = getInternalTemplateText(MOCK_SCALA)
 
   override val sourceDir: String
     get() = EduNames.SRC
@@ -75,7 +66,6 @@ class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
     const val TEST_SCALA = "TestSpec.scala"
     const val TASK_SCALA = "Task.scala"
     const val MAIN_SCALA = "Main.scala"
-    const val MOCK_SCALA = "Mock.scala"
   }
 
   override fun getEnvironmentSettings(project: Project): Map<String, String> = jvmEnvironmentSettings(project)

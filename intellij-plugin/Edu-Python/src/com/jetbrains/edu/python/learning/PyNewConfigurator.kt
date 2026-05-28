@@ -4,8 +4,6 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import javax.swing.Icon
@@ -16,8 +14,6 @@ class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
 
   override val testFileName: String
     get() = TEST_FILE_NAME
-
-  override fun getMockFileName(course: Course, text: String): String = TASK_PY
 
   override val testDirs: List<String>
     get() = listOf(TEST_FOLDER)

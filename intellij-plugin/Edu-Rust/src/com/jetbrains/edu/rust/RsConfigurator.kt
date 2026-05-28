@@ -8,12 +8,10 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.cargo.CargoConstants
-import org.rust.lang.RsConstants
 import javax.swing.Icon
 
 private val BUILD_242: BuildNumber = BuildNumber.fromString("242")!!
@@ -24,8 +22,6 @@ class RsConfigurator : EduConfigurator<RsProjectSettings> {
 
   override val testFileName: String
     get() = ""
-
-  override fun getMockFileName(course: Course, text: String): String = RsConstants.MAIN_RS_FILE
 
   override val courseBuilder: EduCourseBuilder<RsProjectSettings>
     get() = RsCourseBuilder()

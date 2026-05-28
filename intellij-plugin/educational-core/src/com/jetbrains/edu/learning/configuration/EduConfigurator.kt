@@ -18,8 +18,6 @@ import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEv
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.taskDescriptionRegex
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getCodeTaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.marketplace.loadMarketplaceCourseStructure
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
@@ -195,22 +193,6 @@ interface EduConfigurator<Settings : EduProjectSettings> {
     get() = true
 
   /**
-   * Constructs file name for Stepik tasks according to its text.
-   * For example, Java requires file name should be the same as name of public class in it
-   *
-   * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-   */
-  fun getMockFileName(course: Course, text: String): String? = courseBuilder.mainTemplateName(course)
-
-  /**
-   * Allows to customize file template used as playground in theory and choice tasks
-   *
-   * @see com.jetbrains.edu.learning.stepik.StepikTaskBuilder
-   */
-  val mockTemplate: String
-    get() = ""
-
-  /**
    * Provide IDE plugin ids which are required for correct work of courses for the corresponding language.
    *
    * @return list of plugin ids
@@ -241,8 +223,6 @@ interface EduConfigurator<Settings : EduProjectSettings> {
 
   val defaultPlaceholderText: String
     get() = CCUtils.DEFAULT_PLACEHOLDER_TEXT
-
-  fun getCodeTaskFile(project: Project, task: Task): TaskFile? = task.getCodeTaskFile(project)
 
   fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
 }

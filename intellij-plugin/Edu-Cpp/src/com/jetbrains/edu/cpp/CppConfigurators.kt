@@ -16,8 +16,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTemplateText
 import javax.swing.Icon
 
 class CppGTestConfigurator : CppConfigurator() {
@@ -46,16 +44,11 @@ open class CppConfigurator : EduConfigurator<CppProjectSettings> {
   override val testFileName: String
     get() = TEST_CPP
 
-  override fun getMockFileName(course: Course, text: String): String = MAIN_CPP
-
   override val sourceDir: String
     get() = EduNames.SRC
 
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST)
-
-  override val mockTemplate: String
-    get() = getInternalTemplateText(MAIN_CPP)
 
   override val isCourseCreatorEnabled: Boolean
     get() = true

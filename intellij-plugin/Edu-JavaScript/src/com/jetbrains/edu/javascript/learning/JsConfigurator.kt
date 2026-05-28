@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
-import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.Icon
 
 
@@ -21,8 +20,6 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
 
   override val testFileName: String
     get() = ""
-
-  override fun getMockFileName(course: Course, text: String): String = TASK_JS
 
   override val testDirs: List<String>
     get() = listOf(EduNames.TEST)
@@ -60,7 +57,6 @@ open class JsConfigurator : EduConfigurator<JsNewProjectSettings> {
     get() = "/* TODO */"
 
   companion object {
-    const val MAIN_JS = "main.js"
     const val TASK_JS = "task.js"
     const val TEST_JS = "test.js"
   }

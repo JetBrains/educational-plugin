@@ -19,8 +19,6 @@ open class PlainTextConfigurator : EduConfigurator<EmptyProjectSettings> {
   override val testFileName: String
     get() = "Tests.txt"
 
-  override fun getMockFileName(course: Course, text: String): String = "Task.txt"
-
   override val testDirs: List<String>
     get() = listOf(TEST_DIR_NAME)
 

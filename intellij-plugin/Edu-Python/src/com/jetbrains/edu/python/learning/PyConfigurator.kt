@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.checker.PyTaskCheckerProvider
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import javax.swing.Icon
@@ -13,8 +12,6 @@ import javax.swing.Icon
 open class PyConfigurator : EduConfigurator<PyProjectSettings> {
   override val courseBuilder: EduCourseBuilder<PyProjectSettings>
     get() = PyCourseBuilder()
-
-  override fun getMockFileName(course: Course, text: String): String = TASK_PY
 
   override val testFileName: String
     get() = TESTS_PY

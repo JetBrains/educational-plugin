@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.php.composer.ComposerUtils
 import javax.swing.Icon
@@ -36,8 +35,6 @@ class PhpConfigurator : EduConfigurator<PhpProjectSettings> {
 
   override val pluginRequirements: List<PluginId>
     get() = listOf(PluginId.getId("com.jetbrains.php"))
-
-  override fun getMockFileName(course: Course, text: String): String = TASK_PHP
 
   override fun isTestFile(task: Task, path: String): Boolean = super.isTestFile(task, path) || path == testFileName
 
