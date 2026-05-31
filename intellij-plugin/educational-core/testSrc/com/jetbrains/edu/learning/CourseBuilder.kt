@@ -307,32 +307,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     messageIncorrect?.also {choiceTask.messageIncorrect = it }
   }
 
-  fun stringTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val stringTask = StringTask()
-    task(stringTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-  }
-
-  fun numberTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val numberTask = NumberTask()
-    task(numberTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-  }
-
   fun dataTask(
     name: String? = null,
     customPresentableName: String? = null,

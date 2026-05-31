@@ -18,7 +18,6 @@ interface TaskCheckerProvider {
   // Should not be overloaded by anyone
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
-      is StringTask, is NumberTask,
       is MatchingTask, is SortingTask,
       is DataTask, is TableTask,
       is TheoryTask, is UnsupportedTask -> null
