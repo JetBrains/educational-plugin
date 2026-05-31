@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.shouldBeEmpty
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
@@ -50,9 +49,6 @@ class PlainTextTaskCheckerProvider : TaskCheckerProvider {
   override fun getEduTaskChecker(task: EduTask, project: Project): TaskChecker<EduTask> {
     return object : TaskChecker<EduTask>(task, project) {
       override fun check(indicator: ProgressIndicator): CheckResult {
-        if (task is RemoteEduTask) {
-          error("No check for remote tasks")
-        }
         val taskDir = task.getDir(project.courseDir) ?: error("No taskDir in tests")
         val checkResultFile = taskDir.findChild(CHECK_RESULT_FILE)
 

@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.languageById
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
@@ -523,20 +522,6 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(task is EduTask)
     val answerPlaceholders = task.taskFiles["Test.java"]!!.answerPlaceholders
     assertTrue(answerPlaceholders.isEmpty())
-  }
-
-  @Test
-  fun `test remote edu task with check profile`() {
-    val checkProfile = "hyperskill_go"
-    val yamlContent = """
-    |type: remote_edu
-    |files:
-    |- name: Test.java
-    |check_profile: $checkProfile
-    |""".trimMargin()
-    val task = basicMapper().deserializeTask(yamlContent)
-    assertTrue(task is RemoteEduTask)
-    assertEquals((task as RemoteEduTask).checkProfile, checkProfile)
   }
 
   @Test

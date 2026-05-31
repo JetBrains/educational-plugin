@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
-import com.jetbrains.edu.learning.courseFormat.tasks.RemoteEduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -44,9 +43,6 @@ abstract class TaskUpdaterBase<T : Lesson>(project: Project, protected val lesso
       }
       this is MatchingTask && remoteTask is MatchingTask -> {
         options != remoteTask.options || captions != remoteTask.captions
-      }
-      this is RemoteEduTask && remoteTask is RemoteEduTask -> {
-        checkProfile != remoteTask.checkProfile
       }
       else -> {
         newTaskFiles.any { (newFileName, newTaskFile) ->

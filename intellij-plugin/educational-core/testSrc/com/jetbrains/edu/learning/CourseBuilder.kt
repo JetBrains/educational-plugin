@@ -259,21 +259,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(EduTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
 
-  fun remoteEduTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    checkProfile: String = "",
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val remoteEduTask = RemoteEduTask()
-    task(remoteEduTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-    remoteEduTask.checkProfile = checkProfile
-  }
-
   fun theoryTask(
     name: String? = null,
     customPresentableName: String? = null,
@@ -425,18 +410,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
       task.selected = selected
     }
     task.status = status
-  }
-
-  fun remoteEduTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val remoteEduTask = RemoteEduTask()
-    task(remoteEduTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
   }
 
   fun unsupportedTask(

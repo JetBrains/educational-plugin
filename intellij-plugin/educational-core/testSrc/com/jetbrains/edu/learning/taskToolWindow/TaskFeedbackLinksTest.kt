@@ -12,18 +12,18 @@ class TaskFeedbackLinksTest : EduTestCase() {
 
   @Test
   fun testNoneLink() {
-    val task = getRemoteEduTask(isMarketplaceCourse = true)
+    val task = getEduTask(isMarketplaceCourse = true)
     assertNull(task.feedbackLink)
   }
 
   @Test
   fun testCustomLink() {
-    val task = getRemoteEduTask()
+    val task = getEduTask()
     task.feedbackLink = "https://www.jetbrains.com/"
     assertEquals("Incorrect link", "https://www.jetbrains.com/", task.feedbackLink)
   }
 
-  private fun getRemoteEduTask(isMarketplaceCourse: Boolean = false): Task {
+  private fun getEduTask(isMarketplaceCourse: Boolean = false): Task {
     val course = course {
       lesson {
         eduTask { }

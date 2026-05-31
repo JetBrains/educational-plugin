@@ -42,48 +42,6 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   @Test
-  fun `test remote edu task`() {
-    val task = course {
-      lesson {
-        remoteEduTask {
-          taskFile("Test.java")
-        }
-      }
-    }.findTask("lesson1", "task1")
-    doTest(task, """
-    |type: remote_edu
-    |files:
-    |- name: Test.java
-    |  visible: true
-    |  learner_created: false
-    |status: Unchecked
-    |record: -1
-    |""".trimMargin())
-  }
-
-  @Test
-  fun `test remote edu task with check profile`() {
-    val checkProfile = "hyperskill_go"
-    val task = course {
-      lesson {
-        remoteEduTask(checkProfile = checkProfile) {
-          taskFile("Main.go")
-        }
-      }
-    }.findTask("lesson1", "task1")
-    doTest(task, """
-    |type: remote_edu
-    |files:
-    |- name: Main.go
-    |  visible: true
-    |  learner_created: false
-    |check_profile: $checkProfile
-    |status: Unchecked
-    |record: -1
-    |""".trimMargin())
-  }
-
-  @Test
   fun `test edu task with content tags`() {
     val task = course(courseMode = CourseMode.EDUCATOR) {
       lesson {

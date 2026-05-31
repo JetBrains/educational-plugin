@@ -463,7 +463,6 @@ fun deserializeTask(node: ObjectNode, taskType: String, objectMapper: ObjectCode
     }
     OutputTask.OUTPUT_TASK_TYPE -> objectMapper.treeToValue(node, OutputTask::class.java)
     MatchingTask.MATCHING_TASK_TYPE -> objectMapper.treeToValue(node, MatchingTask::class.java)
-    RemoteEduTask.REMOTE_EDU_TASK_TYPE -> objectMapper.treeToValue(node, RemoteEduTask::class.java)
     SortingTask.SORTING_TASK_TYPE -> objectMapper.treeToValue(node, SortingTask::class.java)
     UnsupportedTask.UNSUPPORTED_TASK_TYPE -> objectMapper.treeToValue(node, UnsupportedTask::class.java)
     else -> {

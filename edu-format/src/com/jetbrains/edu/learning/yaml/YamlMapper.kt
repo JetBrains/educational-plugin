@@ -135,7 +135,6 @@ object YamlMapper {
     addMixIn(FrameworkLesson::class.java, StudentFrameworkLessonYamlMixin::class.java)
 
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
-    addMixIn(RemoteEduTask::class.java, RemoteEduTaskYamlMixin::class.java)
     addMixIn(TheoryTask::class.java, TheoryTaskYamlUtil::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
     addMixIn(SortingTask::class.java, SortingTaskYamlMixin::class.java)
