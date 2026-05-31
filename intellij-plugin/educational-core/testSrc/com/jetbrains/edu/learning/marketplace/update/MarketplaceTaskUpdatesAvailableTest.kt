@@ -88,7 +88,7 @@ class MarketplaceTaskUpdatesAvailableTest : UpdatesAvailableTestBase<EduCourse>(
     initiateLocalCourse()
     val serverCourse = course {
       lesson {
-        codeTask("task1", stepId = 1) {
+        outputTask("task1", stepId = 1) {
           taskFile("TaskFile1.kt", "task file 1 text")
         }
         eduTask("task2", stepId = 2) {

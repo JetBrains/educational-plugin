@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.format.yaml
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeLesson
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlMapper.studentMapper
-import org.intellij.lang.annotations.Language
 import org.junit.Test
 import java.util.*
 import kotlin.test.assertNotNull as kAssertNotNull
@@ -521,58 +519,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("text", taskFile.text)
     assertTrue(taskFile.isLearnerCreated)
     assertFalse(taskFile.isEditable)
-  }
-
-  @Test
-  fun `test code task with java17`() {
-    testCodeTaskWithProgrammingLanguage("java17")
-  }
-
-  @Test
-  fun `test code task with c++`() {
-    testCodeTaskWithProgrammingLanguage("c++")
-  }
-
-  @Test
-  fun `test code task with python3_10`() {
-    testCodeTaskWithProgrammingLanguage("python3.10")
-  }
-
-  @Test
-  fun `test code task with scala`() {
-    testCodeTaskWithProgrammingLanguage("scala")
-  }
-
-  private fun testCodeTaskWithProgrammingLanguage(programmingLanguage: String) {
-    val yamlContent = getYAMLWithProgrammingLanguage(programmingLanguage)
-    val task = deserializeTask(yamlContent)
-    assertInstanceOf(task, CodeTask::class.java)
-    task as CodeTask
-    assertEquals(programmingLanguage, task.submissionLanguage)
-  }
-
-  @Language("YAML")
-  private fun getYAMLWithProgrammingLanguage(programmingLanguage: String): String {
-    return """
-    |type: code
-    |custom_name: Code task
-    |files:
-    |- name: src/Main.java
-    |  visible: true
-    |  text: |-
-    |    import java.util.Scanner;
-    |
-    |    public class Main {
-    |        public static void main(String[] args) {
-    |            Scanner scanner = new Scanner(System.in);
-    |            int number = scanner.nextInt();
-    |            System.out.println(number);
-    |        }
-    |    }
-    |  learner_created: false
-    |status: Failed
-    |submission_language: $programmingLanguage
-    |""".trimMargin()
   }
 
   @Test

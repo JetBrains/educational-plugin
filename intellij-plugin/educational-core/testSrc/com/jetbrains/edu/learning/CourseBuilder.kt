@@ -348,16 +348,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     task(numberTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
   }
 
-  fun codeTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) = task(CodeTask(), name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-
   fun dataTask(
     name: String? = null,
     customPresentableName: String? = null,

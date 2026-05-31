@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getTaskText
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import org.junit.Test
@@ -110,7 +110,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
     initiateLocalCourse()
 
     val newTaskName = "taskNewName"
-    val newCodeTask = CodeTask(newTaskName).apply {
+    val newCodeTask = OutputTask(newTaskName).apply {
       id = 1
       descriptionFormat = DescriptionFormat.HTML
       taskFiles = linkedMapOf(
@@ -127,7 +127,7 @@ abstract class TaskUpdateTestBase<T : Course> : UpdateTestBase<T>() {
 
     updateCourse(remoteCourse)
 
-    assertTrue("Task type isn't changed", findTask(0, 0) is CodeTask)
+    assertTrue("Task type isn't changed", findTask(0, 0) is OutputTask)
 
     val expectedStructure = fileTree {
       dir("lesson1") {

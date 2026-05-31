@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
@@ -18,7 +17,6 @@ import com.jetbrains.edu.learning.findTask
 import com.jetbrains.edu.learning.storage.pathInStorage
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
-import org.intellij.lang.annotations.Language
 import org.junit.Test
 import java.util.*
 
@@ -551,25 +549,6 @@ class StudentYamlSerializationTest : EduTestCase() {
   }
 
   @Test
-  fun `test code task with java256`() {
-    testCodeTaskProgrammingLanguage("java256")
-  }
-
-  @Test
-  fun `test code task with c++`() {
-    testCodeTaskProgrammingLanguage("c++")
-  }
-  @Test
-  fun `test code task with python3_10`() {
-    testCodeTaskProgrammingLanguage("python3.10")
-  }
-
-  @Test
-  fun `test code task with scala`() {
-    testCodeTaskProgrammingLanguage("scala")
-  }
-
-  @Test
   fun `test disabled features`() {
     val course = course {}
     course.disabledFeatures = listOf("ai-hints")
@@ -585,36 +564,6 @@ class StudentYamlSerializationTest : EduTestCase() {
       |yaml_version: $CURRENT_YAML_VERSION
       |
     """.trimMargin())
-  }
-
-  private fun testCodeTaskProgrammingLanguage(programmingLanguage: String) {
-    val task: CodeTask = courseWithFiles {
-      lesson {
-        codeTask("task1") {
-          taskFile("Task.txt", "file text")
-        }
-      }
-    }.findTask("lesson1", "task1") as CodeTask
-    task.record = -1
-    task.submissionLanguage = programmingLanguage
-
-    doTest(task, getYAMLWithProgrammingLanguageWithVersion(programmingLanguage))
-
-    assertContentsEqual("Task.txt", task.taskFiles["Task.txt"]!!.contents, InMemoryTextualContents("file text"))
-  }
-
-  @Language("YAML")
-  private fun getYAMLWithProgrammingLanguageWithVersion(languageIdWithVersion: String): String {
-    return """
-    |type: code
-    |files:
-    |- name: Task.txt
-    |  visible: true
-    |  learner_created: false
-    |status: Unchecked
-    |record: -1
-    |submission_language: $languageIdWithVersion
-    |""".trimMargin()
   }
 
   private fun doTest(item: StudyItem, expected: String) {

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask.Companion.CODE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
@@ -152,7 +151,6 @@ object YamlDeserializer {
       CHOICE_TASK_TYPE -> ChoiceTask::class.java
       IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode
-      CODE_TASK_TYPE -> CodeTask::class.java
       STRING_TASK_TYPE -> StringTask::class.java
       NUMBER_TASK_TYPE -> NumberTask::class.java
       UNSUPPORTED_TASK_TYPE -> UnsupportedTask::class.java
