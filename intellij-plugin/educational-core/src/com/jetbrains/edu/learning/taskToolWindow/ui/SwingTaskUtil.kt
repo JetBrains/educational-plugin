@@ -11,14 +11,12 @@ import com.intellij.ui.dsl.builder.Row
 import com.intellij.util.ui.HTMLEditorKitBuilder
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.ChoiceTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.SortingBasedTaskSpecificPanel
-import com.jetbrains.edu.learning.taskToolWindow.ui.specificTaskSwingPanels.TableTaskSpecificPanel
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.INTELLIJ_ICON_QUICKFIX_OFF_BULB
 import com.jetbrains.edu.learning.xmlEscaped
 import org.jetbrains.annotations.VisibleForTesting
@@ -34,7 +32,6 @@ fun createSpecificPanel(task: Task?): JPanel? {
   return when (task) {
     is ChoiceTask -> ChoiceTaskSpecificPanel(task)
     is SortingBasedTask -> SortingBasedTaskSpecificPanel(task)
-    is TableTask -> TableTaskSpecificPanel(task)
     else -> null
   }
 }

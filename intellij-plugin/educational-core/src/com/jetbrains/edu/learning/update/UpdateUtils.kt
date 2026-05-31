@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.*
-import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -38,9 +37,6 @@ object UpdateUtils {
       is MatchingTask if remoteTask is MatchingTask -> {
         task.captions = remoteTask.captions
         task.options = remoteTask.options
-      }
-      is TableTask if remoteTask is TableTask -> {
-        task.createTable(remoteTask.rows, remoteTask.columns, remoteTask.isMultipleChoice)
       }
     }
 

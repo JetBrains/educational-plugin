@@ -5,7 +5,6 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.ui.jcef.JBCefBrowser
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
@@ -15,7 +14,6 @@ import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.taskToolWindow.links.JCefToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.ChoiceTaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.SortingBasedTaskQueryManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TableTaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.*
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.INTELLIJ_ICON_QUICKFIX_OFF_BULB
@@ -108,14 +106,12 @@ fun getHTMLTemplateText(task: Task?): String? = when (task) {
   is ChoiceTask -> ChoiceTaskResourcesManager().getText(task)
   is SortingTask -> SortingTaskResourcesManager().getText(task)
   is MatchingTask -> MatchingTaskResourcesManager().getText(task)
-  is TableTask -> TableTaskResourcesManager().getText(task)
   else -> null
 }
 
 fun getTaskSpecificQueryManager(task: Task?, browserBase: JBCefBrowser): TaskQueryManager<out Task>? = when(task) {
   is ChoiceTask -> ChoiceTaskQueryManager(task, browserBase)
   is SortingBasedTask -> SortingBasedTaskQueryManager(task, browserBase)
-  is TableTask -> TableTaskQueryManager(task, browserBase)
   else -> null
 }
 

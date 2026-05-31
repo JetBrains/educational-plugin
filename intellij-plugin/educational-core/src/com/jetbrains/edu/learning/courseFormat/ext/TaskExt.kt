@@ -259,9 +259,6 @@ fun Task.revertTaskParameters() {
     is SortingBasedTask -> {
       restoreInitialOrdering()
     }
-    is TableTask -> {
-      clearSelectedVariants()
-    }
   }
 }
 

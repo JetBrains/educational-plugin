@@ -136,7 +136,6 @@ object YamlMapper {
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
     addMixIn(SortingTask::class.java, SortingTaskYamlMixin::class.java)
     addMixIn(MatchingTask::class.java, MatchingTaskYamlMixin::class.java)
-    addMixIn(TableTask::class.java, TableTaskYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
     addMixIn(CheckFeedback::class.java, FeedbackYamlMixin::class.java)
   }

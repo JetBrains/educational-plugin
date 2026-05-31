@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.format.yaml
 
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -107,26 +106,6 @@ class StudentChangeApplierTest : YamlTestCase() {
     assertEquals(deserializedItem.ordering, existingItem.ordering)
   }
 
-  @Test
-  fun `test table task student fields applied`() {
-    val existingItem = courseWithFiles {
-      lesson {
-        tableTask(rows = listOf("A", "B"), columns = listOf("1", "2", "3"))
-      }
-    }.lessons.first().taskList.first()
-    val deserializedItem = TableTask()
-    deserializedItem.name = "task1"
-    deserializedItem.rows = listOf("A", "B")
-    deserializedItem.columns = listOf("1", "2", "3")
-    deserializedItem.record = 1
-
-    getChangeApplierForItem(project, existingItem).applyChanges(existingItem, deserializedItem)
-
-    assertEquals(deserializedItem.record, existingItem.record)
-    assertEquals(deserializedItem.rows, (existingItem as TableTask).rows)
-    assertEquals(deserializedItem.columns, existingItem.columns)
-    assertEquals(deserializedItem.selected, existingItem.selected)
-  }
 
   @Test
   fun `test task file fields applied`() {
