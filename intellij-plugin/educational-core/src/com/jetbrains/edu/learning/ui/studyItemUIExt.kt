@@ -19,7 +19,6 @@ fun Task.getUICheckLabel(): String {
 
   return when (this) {
     is TheoryTask -> EduCoreBundle.message("action.check.run.text")
-    is DataTask -> EduCoreBundle.message("send.answer")
     is UnsupportedTask -> EduCoreBundle.message("unsupported.check.task")
     else -> defaultMessage
   }

@@ -14,7 +14,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLParser
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
@@ -125,8 +124,6 @@ object YamlMapper {
     mapper.addMixIn(Lesson::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, RemoteStudyItemYamlMixin::class.java)
     mapper.addMixIn(Task::class.java, RemoteStudyItemYamlMixin::class.java)
-    mapper.addMixIn(DataTask::class.java, RemoteDataTaskYamlMixin::class.java)
-    mapper.addMixIn(DataTaskAttempt::class.java, DataTaskAttemptYamlMixin::class.java)
   }
 
   private fun ObjectMapper.addStudentMixIns() {

@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.LESSON
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.SECTION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
@@ -305,20 +304,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     quizHeader?.also {choiceTask.quizHeader = it }
     messageCorrect?.also {choiceTask.messageCorrect = it }
     messageIncorrect?.also {choiceTask.messageIncorrect = it }
-  }
-
-  fun dataTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    attempt: DataTaskAttempt? = null,
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val dataTask = DataTask()
-    task(dataTask, name, customPresentableName, taskDescription, DescriptionFormat.HTML, stepId, updateDate, buildTask)
-    dataTask.attempt = attempt
   }
 
   fun sortingTask(

@@ -187,7 +187,7 @@ fun Task.canShowSolution(): Boolean {
   return shouldShow && taskFiles.values.any { it.canShowSolution() }
 }
 
-fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask && this !is DataTask
+fun Task.hasSolutions(): Boolean = course.isMarketplace || this !is TheoryTask
 
 fun Task.canShowCommunitySolutions(): Boolean {
   val project = course.project ?: return false
@@ -255,9 +255,6 @@ fun Task.revertTaskParameters() {
   when (this) {
     is ChoiceTask -> {
       clearSelectedVariants()
-    }
-    is DataTask -> {
-      attempt = null
     }
     is SortingBasedTask -> {
       restoreInitialOrdering()

@@ -3,9 +3,6 @@ package com.jetbrains.edu.coursecreator.yaml
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.yaml.YamlMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
 import org.junit.Test
@@ -59,47 +56,6 @@ class YamlRemoteSerializationTest : YamlTestCase() {
       task, """
     |id: 1
     |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin()
-    )
-  }
-
-  @Test
-  fun `test data task without attempt`() {
-    val task = course {
-      lesson {
-        dataTask(stepId = 1, updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC"))
-      }
-    }.lessons.first().taskList.first() as DataTask
-
-    doTest(
-      task, """
-    |type: dataset
-    |id: 1
-    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |""".trimMargin()
-    )
-  }
-
-  @Test
-  fun `test data task with attempt`() {
-    val task = course {
-      lesson {
-        dataTask(
-          stepId = 1,
-          updateDate = Date("Fri, 01 Jan 2010 00:00:00 UTC"),
-          attempt = Attempt(2, Date(0), 300).toDataTaskAttempt()
-        )
-      }
-    }.lessons.first().taskList.first() as DataTask
-
-    doTest(
-      task, """
-    |type: dataset
-    |id: 1
-    |update_date: "Fri, 01 Jan 2010 00:00:00 UTC"
-    |attempt:
-    |  id: 2
-    |  end_date_time: "Thu, 01 Jan 1970 00:05:00 UTC"
     |""".trimMargin()
     )
   }

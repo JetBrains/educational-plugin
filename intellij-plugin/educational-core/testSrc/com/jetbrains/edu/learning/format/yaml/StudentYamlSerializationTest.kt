@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TableTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
@@ -231,23 +230,6 @@ class StudentYamlSerializationTest : EduTestCase() {
     |- - false
     |  - false
     |  - true
-    |""".trimMargin())
-  }
-
-  @Test
-  fun `test data task`() {
-    val task: DataTask = courseWithFiles {
-      lesson {
-        dataTask()
-      }
-    }.findTask("lesson1", "task1") as DataTask
-    task.status = CheckStatus.Solved
-    task.record = 1
-
-    doTest(task, """
-    |type: dataset
-    |status: Solved
-    |record: 1
     |""".trimMargin())
   }
 

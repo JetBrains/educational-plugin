@@ -19,7 +19,7 @@ interface TaskCheckerProvider {
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
       is MatchingTask, is SortingTask,
-      is DataTask, is TableTask,
+      is TableTask,
       is TheoryTask, is UnsupportedTask -> null
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> OutputTaskChecker(task, envChecker, project, codeExecutor)

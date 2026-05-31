@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask.Companion.DATA_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask.Companion.EDU_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask.Companion.IDE_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask.Companion.OUTPUT_TASK_TYPE
@@ -142,7 +141,6 @@ object YamlDeserializer {
       EDU_TASK_TYPE -> EduTask::class.java
       OUTPUT_TASK_TYPE -> OutputTask::class.java
       THEORY_TASK_TYPE -> TheoryTask::class.java
-      DATA_TASK_TYPE -> DataTask::class.java
       CHOICE_TASK_TYPE -> ChoiceTask::class.java
       IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode
@@ -198,14 +196,10 @@ object YamlDeserializer {
   }
 
   private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
-    val treeNode = remoteMapper().readTree(configFileText)
+    val remoteMapper = remoteMapper()
+    val treeNode = remoteMapper.readTree(configFileText)
 
-    val clazz = when (asText(treeNode.get(YamlMixinNames.TYPE))) {
-      DATA_TASK_TYPE -> DataTask::class.java
-      else -> RemoteStudyItem::class.java
-    }
-
-    return remoteMapper().treeToValue(treeNode, clazz)
+    return remoteMapper.treeToValue<RemoteStudyItem>(treeNode)
   }
 
   private fun asText(node: JsonNode?): String? {

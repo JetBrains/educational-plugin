@@ -4,9 +4,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.attempts.Attempt
-import com.jetbrains.edu.learning.courseFormat.attempts.DataTaskAttempt.Companion.toDataTaskAttempt
-import com.jetbrains.edu.learning.courseFormat.tasks.DataTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
@@ -71,40 +68,6 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val task = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as RemoteStudyItem
     assertEquals(1, task.id)
     assertEquals(Date(0), task.updateDate)
-  }
-
-  @Test
-  fun `test data task without attempt`() {
-    val yamlText = """
-    |type: dataset
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |""".trimMargin()
-
-    val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as DataTask
-    assertEquals(1, task.id)
-    assertEquals(Date(0), task.updateDate)
-  }
-
-  @Test
-  fun `test data task with attempt`() {
-    val yamlText = """
-    |type: dataset
-    |id: 1
-    |update_date: Thu, 01 Jan 1970 00:00:00 UTC
-    |attempt:
-    |  id: 2
-    |  dataset_file: data/dataset1/input.txt
-    |  end_date_time: Thu, 01 Jan 1970 00:05:00 UTC
-    |""".trimMargin()
-
-    val configFile = createConfigFile(yamlText, REMOTE_TASK_CONFIG)
-    val task = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as DataTask
-    assertEquals(1, task.id)
-    assertEquals(Date(0), task.updateDate)
-    val attempt = Attempt(2, Date(0), 300).toDataTaskAttempt()
-    assertEquals(attempt, task.attempt)
   }
 
   @Test
