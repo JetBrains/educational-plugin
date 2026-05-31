@@ -5,8 +5,6 @@ import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.format.doTestPlaceholderAndDependencyVisibility
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeCourse
@@ -218,49 +216,6 @@ class StudentYamlDeserializationTest : EduTestCase() {
     assertEquals("You are not good!", task.messageIncorrect)
   }
 
-  @Test
-  fun `test deserialize sorting task`() {
-    val yamlContent = """
-    |type: sorting
-    |options:
-    |- first
-    |- second
-    |status: Solved
-    |record: 1
-    |ordering:
-    |- 1
-    |- 0
-    |""".trimMargin()
-    val task = deserializeTask(yamlContent)
-    check(task is SortingTask)
-    assertEquals(task.record, 1)
-    assertEquals(task.ordering.toList(), listOf(1, 0))
-    assertEquals(task.status, CheckStatus.Solved)
-    assertEquals(task.options, listOf("first", "second"))
-  }
-
-  @Test
-  fun `test deserialize matching task`() {
-    val yamlContent = """
-    |type: matching
-    |captions:
-    |- dog
-    |- cat
-    |options:
-    |- first
-    |- second
-    |status: Solved
-    |record: 1
-    |ordering:
-    |- 1
-    |- 0
-    |""".trimMargin()
-    val task = deserializeTask(yamlContent)
-    check(task is MatchingTask)
-    assertEquals(task.captions, listOf("dog", "cat"))
-    assertEquals(task.ordering.toList(), listOf(1, 0))
-    assertEquals(task.options, listOf("first", "second"))
-  }
 
   @Test
   fun `test task record`() {

@@ -81,23 +81,6 @@ private fun absolutizePaths(project: Project, content: String, task: Task?): Str
   return document.outerHtml()
 }
 
-fun getSortingShortcutHTML(
-  upContent: String,
-  downContent: String,
-  attributes: String = "",
-): String {
-  fun String.wrap() = "<span class='shortcut-description' $attributes>$this</span>"
-
-  val x1 = upContent.wrap()
-  val y1 = downContent.wrap()
-  val shift = "<label class='textShortcut'>Shift</label>".wrap()
-
-  val selectShortcut = "$x1 / $y1"
-  val reorderShortcut = "$shift $x1 / $y1"
-
-  return EduCoreBundle.message("sorting.tasks.shortcut.description", selectShortcut, reorderShortcut)
-}
-
 fun canShowTerms(project: Project, task: Task): Boolean {
   if (!TheoryLookupSettings.getInstance().isTheoryLookupEnabled) return false
   val language = TranslationProjectSettings.getInstance(project).translationLanguage ?: return true

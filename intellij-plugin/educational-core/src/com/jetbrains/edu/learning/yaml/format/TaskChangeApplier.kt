@@ -8,8 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
@@ -32,15 +30,6 @@ open class TaskChangeApplier(val project: Project) : StudyItemChangeApplier<Task
     existingItem.solutionHidden = deserializedItem.solutionHidden
     if (deserializedItem is TheoryTask && existingItem is TheoryTask) {
       existingItem.postSubmissionOnOpen = deserializedItem.postSubmissionOnOpen
-    }
-    if (deserializedItem is SortingTask && existingItem is SortingTask) {
-      existingItem.options = deserializedItem.options
-      TaskToolWindowView.getInstance(project).updateTaskDescription()
-    }
-    if (deserializedItem is MatchingTask && existingItem is MatchingTask) {
-      existingItem.options = deserializedItem.options
-      existingItem.captions = deserializedItem.captions
-      TaskToolWindowView.getInstance(project).updateTaskDescription()
     }
     if (deserializedItem is ChoiceTask && existingItem is ChoiceTask) {
       existingItem.isMultipleChoice = deserializedItem.isMultipleChoice

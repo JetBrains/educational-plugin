@@ -16,10 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.Companion.THEORY
 import com.jetbrains.edu.learning.courseFormat.tasks.UnsupportedTask.Companion.UNSUPPORTED_TASK_TYPE
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask.Companion.CHOICE_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask.Companion.MATCHING_TASK_TYPE
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask.Companion.SORTING_TASK_TYPE
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.COURSE_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
@@ -144,8 +140,6 @@ object YamlDeserializer {
       IDE_TASK_TYPE -> IdeTask::class.java
       // for student mode
       UNSUPPORTED_TASK_TYPE -> UnsupportedTask::class.java
-      MATCHING_TASK_TYPE -> MatchingTask::class.java
-      SORTING_TASK_TYPE -> SortingTask::class.java
       else -> formatError(unsupportedItemTypeMessage(type, TASK))
     }
     return treeToValue(treeNode, clazz)

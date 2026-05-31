@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 
 interface TaskCheckerProvider {
   val codeExecutor: CodeExecutor
@@ -18,7 +16,6 @@ interface TaskCheckerProvider {
   // Should not be overloaded by anyone
   fun getTaskChecker(task: Task, project: Project): TaskChecker<*>? {
     return when (task) {
-      is MatchingTask, is SortingTask,
       is TheoryTask, is UnsupportedTask -> null
       is EduTask -> getEduTaskChecker(task, project)
       is OutputTask -> OutputTaskChecker(task, envChecker, project, codeExecutor)

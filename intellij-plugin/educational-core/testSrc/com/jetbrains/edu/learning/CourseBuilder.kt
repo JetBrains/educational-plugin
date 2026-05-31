@@ -19,8 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.IdeaDirectoryUnpackMode.ONLY_IDEA_DIRECTORY
 import org.intellij.lang.annotations.Language
@@ -304,46 +302,6 @@ class LessonBuilder<T : Lesson>(val course: Course, section: Section?, val lesso
     quizHeader?.also {choiceTask.quizHeader = it }
     messageCorrect?.also {choiceTask.messageCorrect = it }
     messageIncorrect?.also {choiceTask.messageIncorrect = it }
-  }
-
-  fun sortingTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    options: List<String> = emptyList(),
-    ordering: IntArray = intArrayOf(),
-    status: CheckStatus = CheckStatus.Unchecked,
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val sortingTask = SortingTask()
-    task(sortingTask, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-    sortingTask.options = options
-    sortingTask.ordering = ordering
-    sortingTask.status = status
-  }
-
-  fun matchingTask(
-    name: String? = null,
-    customPresentableName: String? = null,
-    taskDescription: String? = null,
-    taskDescriptionFormat: DescriptionFormat? = null,
-    stepId: Int = 0,
-    updateDate: Date = Date(0),
-    captions: List<String> = emptyList(),
-    options: List<String> = emptyList(),
-    ordering: IntArray = intArrayOf(),
-    status: CheckStatus = CheckStatus.Unchecked,
-    buildTask: TaskBuilder.() -> Unit = {}
-  ) {
-    val task = MatchingTask()
-    task(task, name, customPresentableName, taskDescription, taskDescriptionFormat, stepId, updateDate, buildTask)
-    task.options = options
-    task.ordering = ordering
-    task.status = status
-    task.captions = captions
   }
 
   fun unsupportedTask(

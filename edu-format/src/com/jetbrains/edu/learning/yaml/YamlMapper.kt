@@ -17,8 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.json.encrypt.EncryptionModule
 import com.jetbrains.edu.learning.yaml.format.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
@@ -134,8 +132,6 @@ object YamlMapper {
     addMixIn(Task::class.java, StudentTaskYamlMixin::class.java)
     addMixIn(TheoryTask::class.java, TheoryTaskYamlUtil::class.java)
     addMixIn(ChoiceTask::class.java, StudentChoiceTaskYamlMixin::class.java)
-    addMixIn(SortingTask::class.java, SortingTaskYamlMixin::class.java)
-    addMixIn(MatchingTask::class.java, MatchingTaskYamlMixin::class.java)
     addMixIn(AnswerPlaceholder.MyInitialState::class.java, InitialStateMixin::class.java)
     addMixIn(CheckFeedback::class.java, FeedbackYamlMixin::class.java)
   }

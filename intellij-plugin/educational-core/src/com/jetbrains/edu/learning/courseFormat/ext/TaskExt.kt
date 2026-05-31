@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CORRECT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.TASK
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createTaskContent
 import com.jetbrains.edu.learning.marketplace.areCommunitySolutionsSupported
@@ -255,9 +254,6 @@ fun Task.revertTaskParameters() {
   when (this) {
     is ChoiceTask -> {
       clearSelectedVariants()
-    }
-    is SortingBasedTask -> {
-      restoreInitialOrdering()
     }
   }
 }

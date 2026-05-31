@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.yaml.errorHandling.YamlLoadingException
 import com.jetbrains.edu.learning.yaml.format.TaskChangeApplier
@@ -25,10 +24,6 @@ class StudentTaskChangeApplier(project: Project) : TaskChangeApplier(project) {
       is ChoiceTask -> {
         existingItem.record = deserializedItem.record
         existingItem.selectedVariants = (deserializedItem as ChoiceTask).selectedVariants
-      }
-      is SortingBasedTask -> {
-        existingItem.record = deserializedItem.record
-        existingItem.ordering = (deserializedItem as SortingBasedTask).ordering
       }
       is EduTask -> {
         existingItem.record = deserializedItem.record

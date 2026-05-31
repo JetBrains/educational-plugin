@@ -11,8 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.invokeLater
@@ -30,13 +28,6 @@ object UpdateUtils {
       is ChoiceTask if remoteTask is ChoiceTask -> {
         task.choiceOptions = remoteTask.choiceOptions
         task.isMultipleChoice = remoteTask.isMultipleChoice
-      }
-      is SortingTask if remoteTask is SortingTask -> {
-        task.options = remoteTask.options
-      }
-      is MatchingTask if remoteTask is MatchingTask -> {
-        task.captions = remoteTask.captions
-        task.options = remoteTask.options
       }
     }
 

@@ -7,18 +7,12 @@ import com.intellij.ui.jcef.JBCefBrowser
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.MatchingTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingBasedTask
-import com.jetbrains.edu.learning.courseFormat.tasks.matching.SortingTask
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.taskToolWindow.links.JCefToolWindowLinkHandler
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.ChoiceTaskQueryManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.SortingBasedTaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.jcefSpecificQueries.TaskQueryManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.*
 import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.StyleResourcesManager.INTELLIJ_ICON_QUICKFIX_OFF_BULB
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.MatchingTaskResourcesManager
-import com.jetbrains.edu.learning.taskToolWindow.ui.styleManagers.sortingBasedTask.SortingTaskResourcesManager
 import com.jetbrains.edu.learning.xmlEscaped
 import kotlinx.css.*
 import kotlinx.css.properties.BoxShadow
@@ -104,14 +98,11 @@ fun wrapHintJCEF(project: Project, hintElement: Element, displayedHintNumber: St
 
 fun getHTMLTemplateText(task: Task?): String? = when (task) {
   is ChoiceTask -> ChoiceTaskResourcesManager().getText(task)
-  is SortingTask -> SortingTaskResourcesManager().getText(task)
-  is MatchingTask -> MatchingTaskResourcesManager().getText(task)
   else -> null
 }
 
 fun getTaskSpecificQueryManager(task: Task?, browserBase: JBCefBrowser): TaskQueryManager<out Task>? = when(task) {
   is ChoiceTask -> ChoiceTaskQueryManager(task, browserBase)
-  is SortingBasedTask -> SortingBasedTaskQueryManager(task, browserBase)
   else -> null
 }
 
