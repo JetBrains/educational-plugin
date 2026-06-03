@@ -8,14 +8,10 @@ dependencies {
     intellijPlugins(csharpPlugins)
 
     bundledModule("intellij.rider")
-    if (isAtLeast261) {
-      bundledModule("intellij.rider.debugger.shared")
-    }
+    bundledModule("intellij.rider.debugger.shared")
   }
 
   implementation(project(":intellij-plugin:educational-core"))
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))
-  if (isAtLeast261) {
-    testImplementation(libs.testng)
-  }
+  testImplementation(libs.testng)
 }

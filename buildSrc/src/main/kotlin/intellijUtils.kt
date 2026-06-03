@@ -5,13 +5,9 @@ import org.gradle.process.JavaForkOptions
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
-import org.jetbrains.intellij.platform.gradle.utils.Version
 import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
-
-// BACKCOMPAT: 2025.3. Drop it
-val Project.isAtLeast261: Boolean get() = environmentName.toInt() >= 261
 
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -119,23 +115,8 @@ fun String.toTypeWithVersion(): TypeWithVersion {
   return TypeWithVersion(IntelliJPlatformType.fromCode(code, version), version)
 }
 
-val BUILD_NUMBER_261: Version = Version.parse("261")
-val VERSION_261: Version = Version.parse("2026.1")
-
-// BACKCOMPAT: 2025.3
-val String.isAtLeast261: Boolean
-  get() {
-    val parsedVersion = Version.parse(this)
-    return if (parsedVersion.isBuildNumber()) {
-      parsedVersion >= BUILD_NUMBER_261
-    }
-    else {
-      parsedVersion >= VERSION_261
-    }
-  }
-
-fun testFrameworkType(type: IntelliJPlatformType, version: String): TestFrameworkType {
-  return if (version.isAtLeast261 && type != IntelliJPlatformType.Rider) {
+fun testFrameworkType(type: IntelliJPlatformType): TestFrameworkType {
+  return if (type != IntelliJPlatformType.Rider) {
     TestFrameworkType.Platform
   }
   else {
@@ -152,7 +133,7 @@ fun IntelliJPlatformDependenciesExtension.intellijIde(versionWithCode: String) {
   // JetBrains runtime is necessary not only for running IDE but for tests as well
   jetbrainsRuntime()
   // Adds test framework depending on IDE type and version
-  testFramework(testFrameworkType(type, version))
+  testFramework(testFrameworkType(type))
 }
 
 fun IntelliJPlatformDependenciesExtension.intellijPlugins(vararg notations: String) {

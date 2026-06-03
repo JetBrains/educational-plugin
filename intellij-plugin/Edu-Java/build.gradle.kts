@@ -10,9 +10,7 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
 
-    if (isAtLeast261) {
-      testFramework(TestFrameworkType.Plugin.Java)
-    }
+    testFramework(TestFrameworkType.Plugin.Java)
   }
 
   implementation(project(":intellij-plugin:educational-core"))
