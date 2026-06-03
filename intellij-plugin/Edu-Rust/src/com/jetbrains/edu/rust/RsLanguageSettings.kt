@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.ui.components.fields.ExtendableTextField
 import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_RUST
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.ModalityStateProvider
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
 import com.jetbrains.edu.rust.messages.EduRustBundle
+import org.jetbrains.annotations.VisibleForTesting
 import org.rust.cargo.project.RsToolchainPathChoosingComboBox
 import org.rust.cargo.toolchain.RsToolchainBase
 import org.rust.cargo.toolchain.RsToolchainProvider
@@ -32,7 +34,10 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
   private var rustToolchain: RsToolchainBase? = null
 
-  override fun getSettings(): RsProjectSettings = RsProjectSettings(rustToolchain)
+  override fun getSettings(): RsProjectSettings = RsProjectSettings(
+    rustToolchain,
+    toolchainComboBox?.userAsksToInstallRustup() ?: false
+  )
 
   override fun getLanguageSettingsComponents(
     course: Course,
@@ -40,11 +45,17 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     disposable: CheckedDisposable,
     context: UserDataHolder?
   ): List<LabeledComponent<JComponent>> {
-    val comboBox = RsToolchainPathChoosingComboBox { updateToolchain() }
+    val comboBox = RsToolchainPathChoosingComboBox {
+      toolchainComboBox?.let { updateToolchain(it) }
+    }
+
     Disposer.register(disposable, comboBox)
     comboBox.addToolchainsAsync(::findAllToolchainsPath) {
       loadingFinished = true
       if (disposable.isDisposed) return@addToolchainsAsync
+
+      comboBox.updateToolchainsComboBoxPlaceholderText(loadingFinished = true)
+
       // `RsToolchainPathChoosingComboBox` sets initial empty text after addition of all items
       // But we want to show text of selected item
       val combobox = comboBox.childComponent
@@ -52,29 +63,30 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
       if (selectedItem is Path) {
         comboBox.selectedPath = selectedItem
       }
-      updateToolchain()
+      updateToolchain(comboBox)
     }
 
     toolchainComboBox = comboBox
+    comboBox.updateToolchainsComboBoxPlaceholderText(loadingFinished = false)
 
-    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(comboBox, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
+    return listOf(LabeledComponent.create(comboBox, EduRustBundle.message("toolchain.label.text"), BorderLayout.WEST))
   }
 
   private fun findAllToolchainsPath(): List<Path> {
     checkIsBackgroundThread()
-    return RsToolchainFlavor.getApplicableFlavors().flatMap { it.suggestHomePaths() }.distinct()
+    return RsToolchainFlavor.getApplicableFlavors(null).flatMap { it.suggestHomePaths(null) }.distinct()
   }
 
-  private fun updateToolchain() {
+  private fun updateToolchain(comboBox: RsToolchainPathChoosingComboBox) {
     // Unfortunately, `RsToolchainPathChoosingComboBox` changes its text before final callback is called
     // To avoid unexpected updates of toolchain, just skip all changes before call of final callback
     if (!loadingFinished) return
-    val toolchainPath = toolchainComboBox?.selectedPath
+    val toolchainPath = comboBox.selectedPath
+
     // We already have toolchain for this path
-    if (rustToolchain?.location == toolchainPath) return
-
-    rustToolchain = toolchainPath?.let { RsToolchainProvider.getToolchain(it) }
-
+    if (rustToolchain?.location != toolchainPath) {
+      rustToolchain = toolchainPath?.let { RsToolchainProvider.getToolchain(it) }
+    }
     notifyListeners()
   }
 
@@ -83,11 +95,18 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
     val toolchain = rustToolchain
     val validationMessage = when {
       toolchain == null -> {
-        ValidationMessage(EduRustBundle.message("error.no.toolchain.location", ""), ENVIRONMENT_CONFIGURATION_LINK_RUST)
+        if (toolchainComboBox?.userAsksToInstallRustup() == true) {
+          null
+        }
+        else {
+          ValidationMessage(EduRustBundle.message("error.no.toolchain.location", ""), ENVIRONMENT_CONFIGURATION_LINK_RUST)
+        }
       }
+
       !toolchain.looksLikeValidToolchain() -> {
         ValidationMessage(EduRustBundle.message("error.incorrect.toolchain.location"), ENVIRONMENT_CONFIGURATION_LINK_RUST)
       }
+
       else -> null
     }
     return SettingsValidationResult.Ready(validationMessage)
@@ -114,6 +133,35 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
         onFinish()
       }
     }
+  }
+
+  /**
+   * Returns the underlying editor component of the toolchain combo box.
+   * Assumes the specific implementation of the RsToolchainPathChoosingComboBox.
+   */
+  @VisibleForTesting
+  fun RsToolchainPathChoosingComboBox.editorComponent(): ExtendableTextField {
+    return childComponent.editor.editorComponent as ExtendableTextField
+  }
+
+  private fun RsToolchainPathChoosingComboBox.updateToolchainsComboBoxPlaceholderText(loadingFinished: Boolean) {
+    val emptyText = when {
+      !loadingFinished -> EduRustBundle.message("autoinstall.toolchain.placeholder.loading")
+      hasDetectedToolchains -> EduRustBundle.message("autoinstall.toolchain.placeholder.select")
+      else -> EduRustBundle.message("autoinstall.toolchain.placeholder.install")
+    }
+    setEmptyText(emptyText)
+  }
+
+  private fun RsToolchainPathChoosingComboBox.setEmptyText(emptyText: String) {
+    editorComponent().emptyText.text = emptyText
+  }
+
+  private val RsToolchainPathChoosingComboBox.hasDetectedToolchains: Boolean
+    get() = childComponent.model.size > 0
+
+  private fun RsToolchainPathChoosingComboBox.userAsksToInstallRustup(): Boolean {
+    return editorComponent().text.isEmpty() && !hasDetectedToolchains
   }
 
   companion object {

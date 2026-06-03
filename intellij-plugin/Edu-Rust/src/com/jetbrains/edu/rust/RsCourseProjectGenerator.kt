@@ -1,6 +1,7 @@
 package com.jetbrains.edu.rust
 
 import com.intellij.openapi.project.Project
+import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -9,9 +10,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
+import org.rust.cargo.toolchain.RsToolchainBase
+import org.rust.cargo.toolchain.tools.Rustup
 import org.rust.openapiext.pathAsPath
 
 class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
@@ -23,8 +27,9 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
     openCourseParams: Map<String, String>,
     onConfigurationFinished: () -> Unit
   ) {
+    val toolchain = projectSettings.toolchain ?: installRustupIfNeeded(project, projectSettings)
     project.rustSettings.modify {
-      it.toolchain = projectSettings.toolchain
+      it.toolchain = toolchain
     }
 
     if (!project.isSingleWorkspaceProject) {
@@ -60,5 +65,15 @@ class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
 
   companion object {
     private const val INITIAL_MEMBERS = "INITIAL_MEMBERS"
+
+    private fun installRustupIfNeeded(project: Project, projectSettings: RsProjectSettings): RsToolchainBase? =
+      if (projectSettings.installRustup) {
+        runWithModalProgressBlocking(project, EduRustBundle.message("autoinstall.installing.rustup")) {
+          Rustup.installRustup(project)?.toolchain
+        }
+      }
+      else {
+        null
+      }
   }
 }
