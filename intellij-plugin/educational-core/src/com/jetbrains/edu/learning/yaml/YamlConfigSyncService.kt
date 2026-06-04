@@ -1,19 +1,13 @@
 package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.asContextElement
-import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.*
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.fileTypes.UnknownFileType
-import com.intellij.openapi.progress.checkCanceled
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -48,35 +42,47 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
   private val suppressedSaveKeys: ConcurrentMap<String, Int> = ConcurrentHashMap()
 
   fun save(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
-    val saveTask = createSaveTask(studyItem, configName, mapper)
-    if (isSaveSuppressed(saveTask.jobKey)) return
+    val saveTask = createSaveTask(studyItem, configName, mapper) ?: return
 
     val currentModality = ModalityState.defaultModalityState()
 
-    item2SaveJob.compute(saveTask.jobKey) { _, oldJob ->
-      oldJob?.cancel()
-      scope.launch {
-        doSave(saveTask, currentModality)
-      }.apply {
-        invokeOnCompletion {
-          item2SaveJob.remove(saveTask.jobKey, this@apply)
-        }
-      }
+    scope.launch(
+      context = currentModality.asContextElement(),
+      start = CoroutineStart.ATOMIC // the job will start even if the scope is canceled before the start
+    ) {
+      execute(saveTask)
     }
   }
 
   suspend fun saveSync(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
-    val saveTask = createSaveTask(studyItem, configName, mapper)
-    if (isSaveSuppressed(saveTask.jobKey)) return
-
-    item2SaveJob.remove(saveTask.jobKey)?.cancelAndJoin()
-    doSave(saveTask, ModalityState.defaultModalityState())
+    val saveTask = createSaveTask(studyItem, configName, mapper) ?: return
+    execute(saveTask)
   }
 
-  private fun createSaveTask(studyItem: StudyItem, configName: String, mapper: ObjectMapper): SaveTask {
+  private suspend fun execute(saveTask: SaveTask) {
+    withContext(NonCancellable) {
+      try {
+        saveTask.previous?.join()
+        doSave(saveTask)
+      }
+      finally {
+        saveTask.finished.complete()
+        // An older save must not remove a newer save's marker
+        item2SaveJob.remove(saveTask.jobKey, saveTask.finished)
+      }
+    }
+  }
+
+  private fun createSaveTask(studyItem: StudyItem, configName: String, mapper: ObjectMapper): SaveTask? {
     val itemDir = studyItem.getConfigDir(project)
     val jobKey = getJobKey(itemDir, configName)
-    return SaveTask(studyItem, itemDir, configName, mapper, jobKey)
+
+    if (isSaveSuppressed(jobKey)) return null
+
+    val finished = Job()
+    val previous = item2SaveJob.put(jobKey, finished)
+
+    return SaveTask(studyItem, itemDir, configName, mapper, jobKey, previous, finished)
   }
 
   fun <T> withSaveSuppressed(configFile: VirtualFile?, action: () -> T): T {
@@ -107,27 +113,25 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
     return suppressedSaveKeys.containsKey(jobKey)
   }
 
-  private suspend fun doSave(saveTask: SaveTask, currentModality: ModalityState) {
+  private suspend fun doSave(saveTask: SaveTask) {
     val formattedYamlText = withContext(Dispatchers.IO) {
       val studyItem = saveTask.studyItem
       if (studyItem is Task) {
         studyItem.disambiguateTaskFilesContents(project)
         studyItem.persistEduFiles(project)
-        checkCanceled()
       }
 
       if (studyItem is Course) {
         studyItem.disambiguateAdditionalFilesContents(project)
         studyItem.persistAdditionalFiles(project)
-        checkCanceled()
       }
 
       val yamlText = saveTask.mapper.writeValueAsString(studyItem)
 
-      reformatYaml(project, yamlText)
+      reformatYaml(yamlText)
     }
 
-    withContext(Dispatchers.EDT + currentModality.asContextElement()) {
+    withContext(Dispatchers.EDT) {
       val file = writeAction {
         if (!saveTask.itemDir.isValid) return@writeAction null
         saveTask.itemDir.findOrCreateChildData(saveTask.studyItem.javaClass, saveTask.configName)
@@ -161,7 +165,7 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
     }
   }
 
-  private suspend fun reformatYaml(project: Project, text: String): String {
+  private suspend fun reformatYaml(text: String): String {
     // We are able to reformat YAML only if the IDE supports the YAML language
     val yamlFileType = FileTypeManager.getInstance().findFileTypeByName("YAML") ?: return text
 
@@ -221,7 +225,7 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
     }
     else {
       item2SaveJob.values.forEach {
-        it?.asCompletableFuture()?.get(10, TimeUnit.SECONDS)
+        it.asCompletableFuture().get(10, TimeUnit.SECONDS)
       }
     }
   }
@@ -235,11 +239,14 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
     fun getInstance(project: Project): YamlConfigSyncService = project.service()
   }
 
-  private data class SaveTask(
+  private class SaveTask(
     val studyItem: StudyItem,
     val itemDir: VirtualFile,
     val configName: String,
     val mapper: ObjectMapper,
-    val jobKey: String
+    val jobKey: String,
+    val previous: Job?,
+    // Independent completion marker: completed only after the actual save finishes.
+    val finished: CompletableJob,
   )
 }

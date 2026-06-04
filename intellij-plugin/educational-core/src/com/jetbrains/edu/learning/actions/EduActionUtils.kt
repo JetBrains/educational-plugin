@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.application.impl.TestOnlyThreading
 import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.command.undo.UndoManager
@@ -12,7 +13,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.jetbrains.annotations.Nls
@@ -92,7 +92,7 @@ object EduActionUtils {
     }
     while (true) {
       try {
-        UIUtil.dispatchAllInvocationEvents()
+        TestOnlyThreading.dispatchAwtEventsWithoutWriteIntentLock()
         future[10, TimeUnit.MILLISECONDS]
         return
       }

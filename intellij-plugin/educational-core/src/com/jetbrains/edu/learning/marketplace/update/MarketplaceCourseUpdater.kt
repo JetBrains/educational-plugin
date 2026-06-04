@@ -6,6 +6,7 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.project.Project
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.AdditionalFilesUtils.getChangeNotesVirtualFile
@@ -29,7 +30,6 @@ import com.jetbrains.edu.learning.update.UpdateHistoryService
 import com.jetbrains.edu.learning.update.UpdateItem
 import com.jetbrains.edu.learning.update.UpdateUtils
 import com.jetbrains.edu.learning.update.UpdaterImplementation
-import kotlinx.coroutines.runBlocking
 
 class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val remoteCourseVersion: Int) : EduCourseUpdater(project, course) {
   private val tasksStatuses = mutableMapOf<Int, CheckStatus>()
@@ -37,7 +37,7 @@ class MarketplaceCourseUpdater(project: Project, course: EduCourse, private val 
   override fun doUpdate(courseFromServer: EduCourse) {
     val initialVersion = course.marketplaceCourseVersion
     if (isFeatureEnabled(EduExperimentalFeatures.NEW_COURSE_UPDATE)) {
-      runBlocking {
+      runBlockingCancellable {
         MarketplaceCourseUpdaterNew(project, course).update(courseFromServer)
       }
       doAfterUpdate(initialVersion, UpdaterImplementation.COLLECT_UPDATE)
