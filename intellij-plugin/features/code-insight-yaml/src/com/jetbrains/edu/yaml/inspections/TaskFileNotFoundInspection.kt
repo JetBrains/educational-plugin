@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.removeUserData
 import com.intellij.patterns.PsiElementPattern
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -16,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.getContainingTask
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
 import com.jetbrains.edu.learning.yaml.YamlLoader
 import com.jetbrains.edu.yaml.EduYamlEduFilePathReferenceProvider
 import com.jetbrains.edu.yaml.messages.EduYAMLBundle
@@ -71,15 +70,15 @@ abstract class EduFileNotFoundInspection : UnresolvedFileReferenceInspection() {
       try {
         // Creating a file in the task folder fires listeners that add the new task file to the task.
         // They also rewrite YAML, but we want to avoid this.
-        // We thus do it while YAML is prevented from modifications.
-        configFile?.putUserData(YamlFormatSynchronizer.SAVE_TO_CONFIG, false)
-        GeneratorUtils.createTextChildFile(project, rootDir, path, "")
+        YamlConfigSyncService.getInstance(project).withSaveSuppressed(configFile) {
+          GeneratorUtils.createTextChildFile(project, rootDir, path, "")
 
-        // After we re reload the config file, the Task object will be updated automatically.
-        // So we are not going to add a newly created TaskFile to the Task here explicitly.
+          // After we reload the config file, the Task object will be updated automatically.
+          // So we are not going to add a newly created TaskFile to the Task here explicitly.
 
-        if (configFile != null) {
-          YamlLoader.loadItem(project, configFile, false)
+          if (configFile != null) {
+            YamlLoader.loadItem(project, configFile, false)
+          }
         }
       }
       catch (e: IOException) {
@@ -88,9 +87,6 @@ abstract class EduFileNotFoundInspection : UnresolvedFileReferenceInspection() {
           Messages.showErrorDialog(EduYAMLBundle.message("failed.create.file.message", path),
                                    EduYAMLBundle.message("failed.create.file.title"))
         }
-      }
-      finally {
-        configFile?.removeUserData(YamlFormatSynchronizer.SAVE_TO_CONFIG)
       }
     }
 

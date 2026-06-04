@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.storage.persistAdditionalFiles
 import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.LOAD_FROM_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.SAVE_TO_CONFIG
 import kotlinx.coroutines.*
 import kotlinx.coroutines.future.asCompletableFuture
 import org.jetbrains.annotations.NonNls
@@ -46,9 +45,11 @@ import java.util.concurrent.TimeUnit
 class YamlConfigSyncService(private val project: Project, private val scope: CoroutineScope) : EduTestAware {
 
   private val item2SaveJob: ConcurrentMap<String, Job> = ConcurrentHashMap()
+  private val suppressedSaveKeys: ConcurrentMap<String, Int> = ConcurrentHashMap()
 
   fun save(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
     val saveTask = createSaveTask(studyItem, configName, mapper)
+    if (isSaveSuppressed(saveTask.jobKey)) return
 
     val currentModality = ModalityState.defaultModalityState()
 
@@ -66,6 +67,7 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
 
   suspend fun saveSync(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
     val saveTask = createSaveTask(studyItem, configName, mapper)
+    if (isSaveSuppressed(saveTask.jobKey)) return
 
     item2SaveJob.remove(saveTask.jobKey)?.cancelAndJoin()
     doSave(saveTask, ModalityState.defaultModalityState())
@@ -73,17 +75,39 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
 
   private fun createSaveTask(studyItem: StudyItem, configName: String, mapper: ObjectMapper): SaveTask {
     val itemDir = studyItem.getConfigDir(project)
-    val jobKey = "${itemDir.pathInCourse(project)}/$configName"
+    val jobKey = getJobKey(itemDir, configName)
     return SaveTask(studyItem, itemDir, configName, mapper, jobKey)
   }
 
-  private suspend fun doSave(saveTask: SaveTask, currentModality: ModalityState) {
-    val configFile = readAction {
-      if (!saveTask.itemDir.isValid) return@readAction null
-      saveTask.itemDir.findChild(saveTask.configName)
+  fun <T> withSaveSuppressed(configFile: VirtualFile?, action: () -> T): T {
+    val itemDir = configFile?.parent ?: return action()
+    val jobKey = getJobKey(itemDir, configFile.name)
+    suppressSave(jobKey)
+    return try {
+      action()
     }
-    if (configFile?.getUserData(SAVE_TO_CONFIG) == false) return
+    finally {
+      resumeSave(jobKey)
+    }
+  }
 
+  private fun getJobKey(itemDir: VirtualFile, configName: String): String = "${itemDir.pathInCourse(project)}/$configName"
+
+  private fun suppressSave(jobKey: String) {
+    suppressedSaveKeys.compute(jobKey) { _, counter -> (counter ?: 0) + 1 }
+  }
+
+  private fun resumeSave(jobKey: String) {
+    suppressedSaveKeys.computeIfPresent(jobKey) { _, counter ->
+      (counter - 1).takeIf { it > 0 }
+    }
+  }
+
+  private fun isSaveSuppressed(jobKey: String): Boolean {
+    return suppressedSaveKeys.containsKey(jobKey)
+  }
+
+  private suspend fun doSave(saveTask: SaveTask, currentModality: ModalityState) {
     val formattedYamlText = withContext(Dispatchers.IO) {
       val studyItem = saveTask.studyItem
       if (studyItem is Task) {

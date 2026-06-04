@@ -41,7 +41,6 @@ import javax.swing.JPanel
 
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
-  val SAVE_TO_CONFIG = Key<Boolean>("Edu.saveItem")
 
   @Deprecated("Use `saveAllSync` instead")
   fun saveAll(project: Project) {
