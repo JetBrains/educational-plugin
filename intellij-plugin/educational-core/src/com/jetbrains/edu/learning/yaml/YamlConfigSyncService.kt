@@ -48,51 +48,65 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
   private val item2SaveJob: ConcurrentMap<String, Job> = ConcurrentHashMap()
 
   fun save(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
-    val itemDir = studyItem.getConfigDir(project)
-
-    val jobKey = "${itemDir.pathInCourse(project)}/$configName"
+    val saveTask = createSaveTask(studyItem, configName, mapper)
 
     val currentModality = ModalityState.defaultModalityState()
 
-    item2SaveJob.compute(jobKey) { _, oldJob ->
+    item2SaveJob.compute(saveTask.jobKey) { _, oldJob ->
       oldJob?.cancel()
-      scope.launch(Dispatchers.IO + currentModality.asContextElement()) {
-        studyItem.doSave(itemDir, configName, mapper)
+      scope.launch {
+        doSave(saveTask, currentModality)
       }.apply {
         invokeOnCompletion {
-          item2SaveJob.remove(jobKey, this@apply)
+          item2SaveJob.remove(saveTask.jobKey, this@apply)
         }
       }
     }
   }
 
-  private suspend fun StudyItem.doSave(itemDir: VirtualFile, configName: String, mapper: ObjectMapper) {
+  suspend fun saveSync(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
+    val saveTask = createSaveTask(studyItem, configName, mapper)
+
+    item2SaveJob.remove(saveTask.jobKey)?.cancelAndJoin()
+    doSave(saveTask, ModalityState.defaultModalityState())
+  }
+
+  private fun createSaveTask(studyItem: StudyItem, configName: String, mapper: ObjectMapper): SaveTask {
+    val itemDir = studyItem.getConfigDir(project)
+    val jobKey = "${itemDir.pathInCourse(project)}/$configName"
+    return SaveTask(studyItem, itemDir, configName, mapper, jobKey)
+  }
+
+  private suspend fun doSave(saveTask: SaveTask, currentModality: ModalityState) {
     val configFile = readAction {
-      if (!itemDir.isValid) return@readAction null
-      itemDir.findChild(configName)
+      if (!saveTask.itemDir.isValid) return@readAction null
+      saveTask.itemDir.findChild(saveTask.configName)
     }
     if (configFile?.getUserData(SAVE_TO_CONFIG) == false) return
 
-    if (this is Task) {
-      disambiguateTaskFilesContents(project)
-      persistEduFiles(project)
-      checkCanceled()
+    val formattedYamlText = withContext(Dispatchers.IO) {
+      val studyItem = saveTask.studyItem
+      if (studyItem is Task) {
+        studyItem.disambiguateTaskFilesContents(project)
+        studyItem.persistEduFiles(project)
+        checkCanceled()
+      }
+
+      if (studyItem is Course) {
+        studyItem.disambiguateAdditionalFilesContents(project)
+        studyItem.persistAdditionalFiles(project)
+        checkCanceled()
+      }
+
+      val yamlText = saveTask.mapper.writeValueAsString(studyItem)
+
+      reformatYaml(project, yamlText)
     }
 
-    if (this is Course) {
-      disambiguateAdditionalFilesContents(project)
-      persistAdditionalFiles(project)
-      checkCanceled()
-    }
-
-    val yamlText = mapper.writeValueAsString(this)
-
-    val formattedYamlText = reformatYaml(project, yamlText)
-
-    withContext(Dispatchers.EDT) {
+    withContext(Dispatchers.EDT + currentModality.asContextElement()) {
       val file = writeAction {
-        if (!itemDir.isValid) return@writeAction null
-        itemDir.findOrCreateChildData(javaClass, configName)
+        if (!saveTask.itemDir.isValid) return@writeAction null
+        saveTask.itemDir.findOrCreateChildData(saveTask.studyItem.javaClass, saveTask.configName)
       }
 
       if (file == null) return@withContext
@@ -196,4 +210,12 @@ class YamlConfigSyncService(private val project: Project, private val scope: Cor
   companion object {
     fun getInstance(project: Project): YamlConfigSyncService = project.service()
   }
+
+  private data class SaveTask(
+    val studyItem: StudyItem,
+    val itemDir: VirtualFile,
+    val configName: String,
+    val mapper: ObjectMapper,
+    val jobKey: String
+  )
 }

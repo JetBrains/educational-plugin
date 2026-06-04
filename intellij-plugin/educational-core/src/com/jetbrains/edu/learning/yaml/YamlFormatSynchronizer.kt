@@ -12,11 +12,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.project
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getEditor
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -43,57 +43,105 @@ object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
   val SAVE_TO_CONFIG = Key<Boolean>("Edu.saveItem")
 
+  @Deprecated("Use `saveAllSync` instead")
   fun saveAll(project: Project) {
-    @NonNls
-    val errorMessageToLog = "Attempt to create config files for project without course"
-    val course = StudyTaskManager.getInstance(project).course ?: error(errorMessageToLog)
+    val course = project.course ?: error("Attempt to create config files for project without course")
+    val items = course.allSubitems()
     val mapper = course.mapper()
-    saveItem(course, mapper)
-    course.visitSections { section -> saveItem(section, mapper) }
-    course.visitLessons { lesson ->
-      lesson.visitTasks { task ->
-        saveItem(task, mapper)
-      }
-      saveItem(lesson, mapper)
+    for (item in items) {
+      saveItem(item, mapper)
     }
 
     saveRemoteInfo(course)
   }
 
+  suspend fun saveAllSync(project: Project) {
+    val course = project.course ?: error("Attempt to create config files for project without course")
+    val items = course.allSubitems()
+    val mapper = course.mapper()
+    for (item in items) {
+      saveItemSync(item, mapper)
+    }
+
+    saveRemoteInfoSync(course)
+  }
+
+  @Deprecated("Use `saveItemSync` instead")
   fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
+    val project = getProjectIfConfigFilesEnabled(item) ?: return
+    YamlConfigSyncService.getInstance(project).save(item, configName, mapper)
+  }
+
+  suspend fun saveItemSync(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
+    val project = getProjectIfConfigFilesEnabled(item) ?: return
+    YamlConfigSyncService.getInstance(project).saveSync(item, configName, mapper)
+  }
+
+  private fun getProjectIfConfigFilesEnabled(item: StudyItem): Project? {
     val course = item.course
 
     @NonNls
     val errorMessageToLog = "Failed to find project for course"
     val project = course.project ?: error(errorMessageToLog)
     if (!YamlFormatSettings.shouldCreateConfigFiles(project)) {
-      return
+      return null
     }
-    item.saveConfig(project, configName, mapper)
+    return project
   }
 
+  @Deprecated("Use `saveRemoteInfoSync` instead")
   fun saveRemoteInfo(item: StudyItem) {
-    when (item) {
-      is ItemContainer -> {
-        saveItemRemoteInfo(item)
-        item.items.forEach { saveRemoteInfo(it) }
-      }
-      is Task -> {
-        saveItemRemoteInfo(item)
-      }
+    for (itemWithRemoteInfo in item.allSubitems()) {
+      saveItemRemoteInfo(itemWithRemoteInfo)
     }
   }
 
+  suspend fun saveRemoteInfoSync(item: StudyItem) {
+    for (itemWithRemoteInfo in item.allSubitems()) {
+      saveItemRemoteInfoSync(itemWithRemoteInfo)
+    }
+  }
+
+  @Deprecated("Use `saveItemWithRemoteInfoSync` instead")
   fun saveItemWithRemoteInfo(item: StudyItem) {
     saveItem(item)
     saveRemoteInfo(item)
   }
 
+  suspend fun saveItemWithRemoteInfoSync(item: StudyItem) {
+    saveItemSync(item)
+    saveRemoteInfoSync(item)
+  }
+
+  @Deprecated("Use `saveItemRemoteInfoSync` instead")
   private fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
-    if (item.id > 0) {
+    if (shouldSaveRemoteInfo(item)) {
       saveItem(item, remoteMapper(), item.remoteConfigFileName)
     }
+  }
+
+  private suspend fun saveItemRemoteInfoSync(item: StudyItem) {
+    // we don't want to create remote info files in local courses
+    if (shouldSaveRemoteInfo(item)) {
+      saveItemSync(item, remoteMapper(), item.remoteConfigFileName)
+    }
+  }
+
+  private fun shouldSaveRemoteInfo(item: StudyItem): Boolean = item.id > 0
+
+  private fun StudyItem.allSubitems(): List<StudyItem> {
+    val result = mutableListOf<StudyItem>()
+
+    fun collect(item: StudyItem) {
+      result.add(item)
+      if (item is ItemContainer) {
+        item.items.forEach { collect(it) }
+      }
+    }
+
+    collect(this)
+    return result
   }
 
   fun startSynchronization(project: Project) {
@@ -130,10 +178,6 @@ object YamlFormatSynchronizer {
     panel.background = MessageType.WARNING.popupBackground
 
     editor.headerComponent = panel
-  }
-
-  private fun StudyItem.saveConfig(project: Project, configName: String, mapper: ObjectMapper) {
-    YamlConfigSyncService.getInstance(project).save(this, configName, mapper)
   }
 
   fun isConfigFile(file: VirtualFile): Boolean {
