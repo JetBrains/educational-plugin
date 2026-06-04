@@ -30,7 +30,7 @@ data class LessonCreationInfo(
       GeneratorUtils.createLesson(project, remoteItem, parentDir)
     }
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(remoteItem)
   }
 }
 
@@ -68,7 +68,7 @@ data class LessonUpdateInfo(
       }
     }
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(localItem)
   }
 
   private suspend fun ensureFrameworkLessonCurrentTaskIsNotDeleted(

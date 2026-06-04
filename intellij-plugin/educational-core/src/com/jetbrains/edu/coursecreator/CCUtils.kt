@@ -307,7 +307,7 @@ object CCUtils {
     processCourseVendor: suspend EduCourse.() -> VendorError? = { processVendor() }
   ): Boolean = runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
     val result = doPrepareForUpload(project, processCourseVendor)
-    YamlFormatSynchronizer.saveRemoteInfo(this@prepareForUpload)
+    YamlFormatSynchronizer.saveRemoteInfoSync(this@prepareForUpload)
     result
   }
 
@@ -335,7 +335,7 @@ object CCUtils {
       generatedEduId = generateEduId()
     }
 
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.saveItemSync(course)
     return true
   }
 

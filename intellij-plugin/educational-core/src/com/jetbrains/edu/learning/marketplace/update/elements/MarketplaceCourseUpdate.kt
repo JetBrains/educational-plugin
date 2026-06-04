@@ -16,6 +16,6 @@ class MarketplaceCourseUpdate(
     localItem.vendor = remoteItem.vendor
     localItem.certification = remoteItem.certification
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(localItem)
   }
 }

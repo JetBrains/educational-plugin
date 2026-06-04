@@ -25,7 +25,7 @@ data class TaskCreationInfo(val localLesson: Lesson, override val remoteItem: Ta
       GeneratorUtils.createTask(project, remoteItem, lessonDir)
     }
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(remoteItem)
   }
 }
 
@@ -50,7 +50,7 @@ data class TaskUpdateInfo(override val localItem: Task, override val remoteItem:
     }
     lesson.addItem(remoteItem)
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(remoteItem)
   }
 }
 

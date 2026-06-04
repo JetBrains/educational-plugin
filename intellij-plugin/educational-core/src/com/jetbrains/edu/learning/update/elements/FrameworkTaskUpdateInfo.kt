@@ -71,7 +71,7 @@ data class FrameworkTaskUpdateInfo(
       }
     }
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(remoteItem)
   }
 
   @Throws(IOException::class, IllegalStateException::class)

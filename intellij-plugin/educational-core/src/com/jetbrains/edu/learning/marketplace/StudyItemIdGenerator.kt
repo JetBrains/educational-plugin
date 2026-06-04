@@ -75,7 +75,7 @@ class StudyItemIdGenerator(private val project: Project) {
     // TODO: convert other blocking parts into suspend function and drop `blockingContext`
     generateMissingIds(course, items = itemsToFix, bannedIds = bannedIds)
     // Dump info about new ids to `*-remote-info.yaml` files
-    YamlFormatSynchronizer.saveRemoteInfo(course)
+    YamlFormatSynchronizer.saveRemoteInfoSync(course)
 
     return itemsToFix
   }
