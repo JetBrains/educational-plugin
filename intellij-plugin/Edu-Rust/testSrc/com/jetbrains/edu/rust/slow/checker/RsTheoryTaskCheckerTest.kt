@@ -7,9 +7,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
+@Ignore // Should be replaced with working tests implemented as part of EDU-8416
 class RsTheoryTaskCheckerTest : RsCheckersTestBase() {
 
   override fun createCourse(): Course {

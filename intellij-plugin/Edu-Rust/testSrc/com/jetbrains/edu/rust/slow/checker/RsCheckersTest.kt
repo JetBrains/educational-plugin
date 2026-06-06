@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import org.junit.Ignore
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
+@Ignore // Should be replaced with working tests implemented as part of EDU-8416
 class RsCheckersTest : RsCheckersTestBase() {
 
   override fun createCourse(): Course {

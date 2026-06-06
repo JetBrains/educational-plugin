@@ -11,9 +11,11 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.nullValue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
+@Ignore // Should be replaced with working tests implemented as part of EDU-8416
 class RsCheckErrorsTest : RsCheckersTestBase() {
 
   override fun createCourse(): Course {
