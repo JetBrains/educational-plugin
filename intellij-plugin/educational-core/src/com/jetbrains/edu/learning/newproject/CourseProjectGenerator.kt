@@ -71,7 +71,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 ) {
 
   @RequiresEdt
-  open fun afterProjectGenerated(
+  open suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: S,
     openCourseParams: Map<String, String>,

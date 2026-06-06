@@ -13,7 +13,7 @@ class ShellCourseProjectGenerator(
   builder: EduCourseBuilder<EmptyProjectSettings>,
   course: Course
 ) : CourseProjectGenerator<EmptyProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: EmptyProjectSettings,
     openCourseParams: Map<String, String>,

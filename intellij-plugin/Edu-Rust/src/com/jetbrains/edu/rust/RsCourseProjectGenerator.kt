@@ -21,7 +21,7 @@ import org.rust.openapiext.pathAsPath
 class RsCourseProjectGenerator(builder: RsCourseBuilder, course: Course) :
   CourseProjectGenerator<RsProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: RsProjectSettings,
     openCourseParams: Map<String, String>,

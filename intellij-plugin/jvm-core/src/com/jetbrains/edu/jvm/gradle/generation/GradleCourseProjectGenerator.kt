@@ -19,7 +19,7 @@ open class GradleCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: JdkProjectSettings,
     openCourseParams: Map<String, String>,

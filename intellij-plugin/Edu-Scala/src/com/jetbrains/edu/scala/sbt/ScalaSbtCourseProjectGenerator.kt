@@ -50,7 +50,7 @@ class ScalaSbtCourseProjectGenerator(builder: ScalaSbtCourseBuilder, course: Cou
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, true)
   }
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: JdkProjectSettings,
     openCourseParams: Map<String, String>,

@@ -30,7 +30,7 @@ class CppCourseProjectGenerator(builder: CppCourseBuilder, course: Course) :
            }
   }
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: CppProjectSettings,
     openCourseParams: Map<String, String>,
