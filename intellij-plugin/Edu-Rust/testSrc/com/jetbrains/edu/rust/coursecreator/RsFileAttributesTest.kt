@@ -25,13 +25,15 @@ class RsFileAttributesTest(
       )
 
       return FileAttributesTest.data() + listOf(
-        arrayOf(".cargo/", insideArchive),
+        arrayOf(".cargo/",
+          expected(excludedFromArchive = false, archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)
+        ),
         arrayOf(".cargo/${CargoConstants.CONFIG_TOML_FILE}", insideArchive),
         arrayOf(".cargo/${CargoConstants.CONFIG_FILE}", insideArchive),
 
         arrayOf(
           ".cargo/other-file",
-          expected(excludedFromArchive = true, archiveInclusionPolicy = ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
+          expected(excludedFromArchive = true, archiveInclusionPolicy = ArchiveInclusionPolicy.EXCLUDED_BY_DEFAULT)
         ),
         arrayOf(
           "Cargo.toml",

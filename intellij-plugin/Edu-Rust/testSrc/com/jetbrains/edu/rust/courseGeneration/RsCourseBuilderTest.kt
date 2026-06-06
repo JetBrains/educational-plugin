@@ -59,6 +59,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
           taskFile("Cargo.toml")
         }
       }
+      additionalFile("Cargo.toml")
     }
     createCourseStructure(course)
 
@@ -73,6 +74,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
         file("Cargo.toml")
         file("task.md")
       }
+      file("Cargo.toml")
     }.assertEquals(rootDir)
   }
 
@@ -87,6 +89,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
           taskFile("Cargo.toml")
         }
       }
+      additionalFile("Cargo.toml")
     }
     createCourseStructure(course)
 
@@ -101,6 +104,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
         file("task.md")
         file("Cargo.toml")
       }
+      file("Cargo.toml")
     }.assertEquals(rootDir)
   }
 }
