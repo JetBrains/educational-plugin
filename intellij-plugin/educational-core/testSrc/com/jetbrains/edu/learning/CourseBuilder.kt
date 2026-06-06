@@ -162,7 +162,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
   }
 
   fun additionalFile(name: String, text: String = "", buildTaskFile: EduFileBuilder.() -> Unit = {}) =
-    additionalFile(name, InMemoryUndeterminedContents(text), buildTaskFile)
+    additionalFile(name, InMemoryUndeterminedContents(text.trimIndent()), buildTaskFile)
 
   fun additionalFile(name: String, contents: FileContents, buildTaskFile: EduFileBuilder.() -> Unit = {}) {
     val builder = EduFileBuilder()

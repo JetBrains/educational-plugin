@@ -19,7 +19,7 @@ class RsCourseArchiveTest : CourseArchiveTestBase() {
             [package]
             name = "task1"
             version = "0.1.0"
-            edition = "2018"            
+            edition = "2018"
           """)
           taskFile("src/lib.rs", """
             // TODO: replace this with an actual task
@@ -53,7 +53,7 @@ class RsCourseArchiveTest : CourseArchiveTestBase() {
             [package]
             name = "task1"
             version = "0.1.0"
-            edition = "2018"            
+            edition = "2018"
           """)
           taskFile("src/lib.rs", """
             // TODO: replace this with an actual task
