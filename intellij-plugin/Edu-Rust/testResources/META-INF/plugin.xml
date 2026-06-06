@@ -2,6 +2,18 @@
     <id>com.jetbrains.edu.rust</id>
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+    <!-- Workaround to replace `CargoProjectsService` with its test version  -->
+    <dependencies>
+        <plugin id="com.jetbrains.rust"/>
+        <plugin id="org.toml.lang"/>
+    </dependencies>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceInterface="org.rust.cargo.project.model.CargoProjectsService"
+                        serviceImplementation="com.jetbrains.edu.rust.TestCargoProjectsServiceImpl"
+                        overrides="true"/>
+    </extensions>
+
     <!--suppress PluginXmlValidity -->
     <content>
         <module name="Edu-Rust"/>

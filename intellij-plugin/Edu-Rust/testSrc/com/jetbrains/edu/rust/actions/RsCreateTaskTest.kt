@@ -1,8 +1,7 @@
 package com.jetbrains.edu.rust.actions
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ContentEntry
-import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Urls
@@ -12,9 +11,9 @@ import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.testAction
+import com.jetbrains.edu.rust.TestCargoProjectsServiceImpl
 import org.junit.Test
 import org.rust.cargo.CfgOptions
-import org.rust.cargo.project.model.CargoProjectsService
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.workspace.CargoWorkspace
 import org.rust.cargo.project.workspace.CargoWorkspaceData
@@ -70,11 +69,24 @@ class RsCreateTaskTest : RsActionTestBase() {
 // Should be synchronized with createCourse()
 private object RsProjectDescriptor : LightProjectDescriptor() {
 
-  override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry) {
-    super.configureModule(module, model, contentEntry)
-    val projectDir = contentEntry.file!!
+  override fun setUpProject(project: Project, handler: SetupHandler) {
+    var projectDir: VirtualFile? = null
+    super.setUpProject(project, object : SetupHandler {
+      override fun sourceRootCreated(sourceRoot: VirtualFile) {
+        projectDir = sourceRoot
+        handler.sourceRootCreated(sourceRoot)
+      }
+
+      override fun moduleCreated(module: Module) {
+        handler.moduleCreated(module)
+      }
+    })
+    createTestCargoProject(project, projectDir!!)
+  }
+
+  fun createTestCargoProject(project: Project, projectDir: VirtualFile) {
     val ws = testCargoProject(projectDir.url)
-    module.project.cargoProjects.createTestProject(projectDir, ws)
+    project.testCargoProjects.createTestProject(projectDir, ws)
   }
 
   private fun testCargoProject(contentRoot: String): CargoWorkspace {
@@ -103,13 +115,5 @@ private object RsProjectDescriptor : LightProjectDescriptor() {
     categories = emptySet()
   )
 
-  // Rust team moved `TestCargoProjectsServiceImpl` into test sources.
-  // As a result, the plugin doesn't contain test implementation class, and it's impossible to use it now.
-  //
-  // Uncomment implementation when the issue is fixed
-  @Suppress("UnusedReceiverParameter", "UNUSED_PARAMETER")
-  private fun CargoProjectsService.createTestProject(projectDir: VirtualFile, ws: CargoWorkspace) {
-//    (this as TestCargoProjectsServiceImpl).createTestProject(projectDir, ws, null)
-    TODO()
-  }
+  private val Project.testCargoProjects: TestCargoProjectsServiceImpl get() = cargoProjects as TestCargoProjectsServiceImpl
 }
