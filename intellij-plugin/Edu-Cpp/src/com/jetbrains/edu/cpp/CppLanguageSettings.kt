@@ -19,7 +19,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
-  private var languageStandard: String = CPP14.standard
+  private var languageStandard: String = DEFAULT_STANDARD
 
   override fun getSettings(): CppProjectSettings = CppProjectSettings(languageStandard)
 
@@ -57,5 +57,6 @@ class CppLanguageSettings : LanguageSettings<CppProjectSettings>() {
 
   companion object {
     private const val CPP_STANDARD_PREFIX = "C++ Standard"
+    val DEFAULT_STANDARD: String = CPP14.standard
   }
 }
