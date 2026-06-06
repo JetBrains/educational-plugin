@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class GoCourseProjectGenerator(builder: GoCourseBuilder, course: Course) :
   CourseProjectGenerator<GoProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: GoProjectSettings,
     openCourseParams: Map<String, String>,

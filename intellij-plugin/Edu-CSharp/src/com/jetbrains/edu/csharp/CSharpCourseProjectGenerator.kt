@@ -30,7 +30,7 @@ class CSharpCourseProjectGenerator(
     course.languageVersion = projectSettings.version
   }
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: CSharpProjectSettings,
     openCourseParams: Map<String, String>,

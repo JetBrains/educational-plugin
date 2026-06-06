@@ -11,7 +11,7 @@ open class PyCourseProjectGenerator(
   course: Course
 ) : CourseProjectGenerator<PyProjectSettings>(builder, course) {
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: PyProjectSettings,
     openCourseParams: Map<String, String>,

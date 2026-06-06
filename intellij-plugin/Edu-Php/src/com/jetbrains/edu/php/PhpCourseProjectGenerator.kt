@@ -24,7 +24,7 @@ class PhpCourseProjectGenerator(
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> =
     listOfNotNull(createComposerFile(holder))
 
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: PhpProjectSettings,
     openCourseParams: Map<String, String>,

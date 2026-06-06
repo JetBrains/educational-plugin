@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.getInternalTem
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 class JsCourseProjectGenerator(builder: JsCourseBuilder, course: Course) : CourseProjectGenerator<JsNewProjectSettings>(builder, course) {
-  override fun afterProjectGenerated(
+  override suspend fun afterProjectGenerated(
     project: Project,
     projectSettings: JsNewProjectSettings,
     openCourseParams: Map<String, String>,
