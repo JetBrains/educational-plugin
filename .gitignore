@@ -70,3 +70,7 @@ intellij-plugin/educational-core/resources/style/hyperskill_task.css
 
 # Claude Code
 .claude/settings.local.json
+
+# integration tests
+out/
+allure-results/
