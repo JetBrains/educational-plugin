@@ -61,7 +61,6 @@ val Project.nodeJsPlugin: String get() = "NodeJS"
 val Project.cssPlugin: String get() = "com.intellij.css"
 val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
-val Project.radlerPlugin: String get() = "org.jetbrains.plugins.clion.radler"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
 
@@ -82,12 +81,12 @@ val Project.rustPlugins: List<String> get() = listOf(
 )
 
 val Project.cppPlugins: List<String> get() = listOfNotNull(
-  "com.intellij.cidr.lang",
   "com.intellij.clion",
   "com.intellij.nativeDebug",
   "org.jetbrains.plugins.clion.test.google",
   "org.jetbrains.plugins.clion.test.catch",
   "com.intellij.cmake",
+  "org.jetbrains.plugins.clion.radler",
 )
 
 val Project.sqlPlugins: List<String> get() = listOfNotNull(

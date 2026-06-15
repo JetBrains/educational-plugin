@@ -5,13 +5,9 @@
     <module name="intellij.cmake.clion"/>
     <plugin id="org.jetbrains.plugins.clion.test.catch"/>
     <plugin id="org.jetbrains.plugins.clion.test.google"/>
+    <plugin id="org.jetbrains.plugins.clion.radler"/>
+    <module name="intellij.clion.radler.core"/>
   </dependencies>
-
-  <extensionPoints>
-    <extensionPoint qualifiedName="Educational.cppRunConfigurationHelper"
-                    interface="com.jetbrains.edu.cpp.checker.CppRunConfigurationHelper"
-                    dynamic="true"/>
-  </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <!--suppress PluginXmlCapitalization -->
@@ -19,5 +15,21 @@
                      displayName="Task project name isn't set"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.edu.cpp.inspections.NoTaskProjectNameInspection"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppGTestConfigurator"
+                  displayName="C++ (Google Test)" environment="GoogleTest"/>
+    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppCatchConfigurator"
+                  displayName="C++ (Catch 2.0)" environment="Catch"/>
+    <configurator language="C++" implementationClass="com.jetbrains.edu.cpp.CppConfigurator"
+                  courseType="Stepik"/>
+
+    <compatibilityProvider language="C++"
+                           environment="GoogleTest"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppGTestCourseCompatibilityProvider"/>
+    <compatibilityProvider language="C++"
+                           environment="Catch"
+                           implementationClass="com.jetbrains.edu.cpp.compatibility.CppCatchCourseCompatibilityProvider"/>
   </extensions>
 </idea-plugin>

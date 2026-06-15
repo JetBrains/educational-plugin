@@ -1,5 +1,6 @@
 package com.jetbrains.edu.cpp.checker
 
+import com.intellij.clion.radler.core.symbols.RadMainPsiElement
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.diagnostic.Logger
@@ -31,11 +32,13 @@ class CppCodeExecutor : DefaultCodeExecutor() {
       return null
     }
 
-    val mainElement = CppRunConfigurationHelper.getInstance()?.prepareEntryPointForRunConfiguration(project, entryPoint)
-    if (mainElement == null) {
-      LOG.warn("Failed to get wrapper for main psi element for file '${entryPoint.containingFile.name}'")
+    val virtualFile = entryPoint.containingFile.virtualFile
+    if (virtualFile == null) {
+      LOG.warn("Failed to get virtual file for main psi element for file '${entryPoint.containingFile.name}'")
       return null
     }
+
+    val mainElement = RadMainPsiElement(project, virtualFile, entryPoint.textRange)
 
     val context = ConfigurationContext(mainElement)
     val configuration = CidrTargetRunConfigurationProducer.getInstances(project)
