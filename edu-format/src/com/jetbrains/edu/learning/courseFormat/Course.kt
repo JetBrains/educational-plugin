@@ -87,10 +87,8 @@ abstract class Course : LessonContainer() {
    */
   open var languageId: String = ""
     get() {
-      // TODO: Drop it.
-      // See: EDU-8805 Drop support of CLion Classic Engine
-      if (field == OBJECTIVE_C || field == CPP) {
-        return findService<LanguageHelperService>().cppLanguageId
+      if (field == OBJECTIVE_C) {
+        return "C++"
       }
       return field
     }

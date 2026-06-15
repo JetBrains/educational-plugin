@@ -34,15 +34,8 @@ object Language {
 
   fun findLanguageByName(name: String): String? {
     if (name == "C/C++") {
-      val languageHelperService = findService<LanguageHelperService>()
-      return languageHelperService.cppLanguageId
+      return "C++"
     }
     return languages.filter { it.value == name }.keys.firstOrNull()
   }
-}
-
-// TODO: Drop it
-// See: EDU-8805 Drop support of CLion Classic Engine
-interface LanguageHelperService {
-  val cppLanguageId: String
 }
