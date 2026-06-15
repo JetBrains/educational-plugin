@@ -165,28 +165,17 @@ fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(notations: List<St
   testIntellijPlugins(*notations.toTypedArray())
 }
 
+// TODO(change comment)
 // Since 2024.1 CLion has two sets of incompatible plugins: based on classic language engine and new one (AKA Radler).
 // Platform uses `idea.suppressed.plugins.set.selector` system property to choose which plugins should be disabled.
 // But there aren't `idea.suppressed.plugins.set.selector`, `idea.suppressed.plugins.set.classic`
 // and `idea.suppressed.plugins.set.radler` properties in tests,
 // as a result, the platform tries to load all plugins and fails because of duplicate definitions.
 // Here is a workaround to make test work with CLion by defining proper values for necessary properties
-fun JavaForkOptions.setClionSystemProperties(project: Project, withRadler: Boolean = false) {
-  val (mode, suppressedPlugins) = if (withRadler) {
-    "radler" to project.clionRadlerSuppressedPlugins
-  }
-  else {
-    "classic" to project.clionClassicSuppressedPlugins
-  }
-  systemProperty("idea.suppressed.plugins.set.selector", mode) // possible values: `classic` and `radler`
-  systemProperty("idea.suppressed.plugins.set.$mode", suppressedPlugins.joinToString(","))
+fun JavaForkOptions.setClionSystemProperties(project: Project) {
+  systemProperty("idea.suppressed.plugins.set.selector", "radler")
+  systemProperty("idea.suppressed.plugins.set.radler", "com.intellij.cidr.lang")
 }
-
-private val Project.clionRadlerSuppressedPlugins: List<String>
-  get() = listOf("com.intellij.cidr.lang")
-
-private val Project.clionClassicSuppressedPlugins: List<String>
-  get() = listOf("org.jetbrains.plugins.clion.radler")
 
 // There isn't an implicit `project` object here, so
 // this is a minor workaround to use delegation for properties almost like in a regular plugin

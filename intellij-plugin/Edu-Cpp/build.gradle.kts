@@ -4,14 +4,13 @@ plugins {
 
 tasks {
   test {
-    setClionSystemProperties(project, withRadler = true)
+    setClionSystemProperties(project)
   }
 }
 
 dependencies {
   intellijPlatform {
     intellijIde(clionVersion)
-
     intellijPlugins(cppPlugins)
   }
 

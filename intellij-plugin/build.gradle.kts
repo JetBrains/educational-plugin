@@ -195,7 +195,7 @@ tasks {
 
     customRunIdeTask(IntellijIdea, ideaVersion, baseTaskName = "Idea")
     customRunIdeTask(CLion, clionVersion) {
-      setClionSystemProperties(project, withRadler = true)
+      setClionSystemProperties(project)
     }
     customRunIdeTask(PyCharm, pycharmVersion)
     customRunIdeTask(WebStorm)
