@@ -2,6 +2,12 @@ plugins {
   id("intellij-plugin-module-conventions")
 }
 
+tasks {
+  test {
+    setClionSystemProperties(project, withRadler = true)
+  }
+}
+
 dependencies {
   intellijPlatform {
     intellijIde(clionVersion)
