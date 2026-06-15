@@ -1,9 +1,9 @@
 package com.jetbrains.edu.cpp
 
-import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.learning.FindTaskFileTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.rider.cpp.fileType.CppLanguage
 import org.junit.Test
 
 class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
@@ -77,7 +77,7 @@ class CppFindTaskTest : FindTaskFileTestBase<CppProjectSettings>() {
   }
 
   private fun getCourseForTests(): Course {
-    return course(language = OCLanguage.getInstance(), environment = "GoogleTest") {
+    return course(language = CppLanguage, environment = "GoogleTest") {
       section {
         lesson {
           eduTask {

@@ -1,12 +1,12 @@
 package com.jetbrains.edu.cpp.actions.move
 
 import com.intellij.psi.PsiElement
-import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.learning.actions.move.MoveHandlerTestBase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.rider.cpp.fileType.CppLanguage
 import org.junit.Test
 
-class CppMoveHandlerTest : MoveHandlerTestBase(OCLanguage.getInstance(), environment = "Catch") {
+class CppMoveHandlerTest : MoveHandlerTestBase(CppLanguage, environment = "Catch") {
 
   @Test
   fun `test do not forbid move refactoring for functions`() {

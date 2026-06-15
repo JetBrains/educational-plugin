@@ -1,7 +1,6 @@
 package com.jetbrains.edu.cpp.actions
 
 import com.intellij.lang.Language
-import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.coursecreator.actions.create.CCNewTaskStructureTestBase
 import com.jetbrains.edu.cpp.CppConfigurator.Companion.MAIN_CPP
 import com.jetbrains.edu.cpp.CppConfigurator.Companion.TASK_CPP
@@ -9,6 +8,7 @@ import com.jetbrains.edu.cpp.CppConfigurator.Companion.TEST_CPP
 import com.jetbrains.edu.cpp.CppProjectSettings
 import com.jetbrains.edu.cpp.CppTemplates.Companion.defaultExecutableTaskCMakeList
 import com.jetbrains.edu.cpp.CppTemplates.Companion.defaultTestTaskCMakeList
+import com.jetbrains.rider.cpp.fileType.CppLanguage
 import org.junit.Test
 import com.jetbrains.cmake.CMakeListsFileType.FILE_NAME as CMAKE_LISTS_TXT
 
@@ -16,7 +16,7 @@ class CppCatchNewTaskStructureTest : CCNewTaskStructureTestBase() {
 
   private val settings: CppProjectSettings get() = CppProjectSettings()
 
-  override val language: Language get() = OCLanguage.getInstance()
+  override val language: Language get() = CppLanguage
   override val environment: String get() = "Catch"
 
   @Test

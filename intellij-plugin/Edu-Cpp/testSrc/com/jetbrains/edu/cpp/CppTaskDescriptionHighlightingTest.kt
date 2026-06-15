@@ -1,12 +1,12 @@
 package com.jetbrains.edu.cpp
 
 import com.intellij.lang.Language
-import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.edu.learning.taskToolWindow.TaskDescriptionHighlightingTestBase
+import com.jetbrains.rider.cpp.fileType.CppLanguage
 import org.junit.Test
 
 class CppTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
-  override val language: Language = OCLanguage.getInstance()
+  override val language: Language = CppLanguage
   override val environment = "GoogleTest"
 
   @Test
