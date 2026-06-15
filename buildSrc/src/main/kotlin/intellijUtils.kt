@@ -165,13 +165,8 @@ fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(notations: List<St
   testIntellijPlugins(*notations.toTypedArray())
 }
 
-// TODO(change comment)
-// Since 2024.1 CLion has two sets of incompatible plugins: based on classic language engine and new one (AKA Radler).
-// Platform uses `idea.suppressed.plugins.set.selector` system property to choose which plugins should be disabled.
-// But there aren't `idea.suppressed.plugins.set.selector`, `idea.suppressed.plugins.set.classic`
-// and `idea.suppressed.plugins.set.radler` properties in tests,
-// as a result, the platform tries to load all plugins and fails because of duplicate definitions.
-// Here is a workaround to make test work with CLion by defining proper values for necessary properties
+// Suppress classic engine support
+// BACKCOMPAT 2026.1. Drop it
 fun JavaForkOptions.setClionSystemProperties(project: Project) {
   systemProperty("idea.suppressed.plugins.set.selector", "radler")
   systemProperty("idea.suppressed.plugins.set.radler", "com.intellij.cidr.lang")

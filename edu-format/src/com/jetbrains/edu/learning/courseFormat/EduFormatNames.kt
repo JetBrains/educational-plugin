@@ -91,7 +91,9 @@ object EduFormatNames {
   const val RUST = "Rust"
   const val SHELL = "Shell Script"
   const val CPP = "C++"
-  // TODO: Add comment about usage of legacy language name
+  // Legacy language id for C++. It was replaced by [CPP] ("C++") after the switch to CLion Nova.
+  // We still need it because old courses may store this value in [Course.languageId] (persisted in YAML)
+  // Also, the plugin reports FUS events for C++ under this legacy name.
   const val OBJECTIVE_C = "ObjectiveC"
   const val GO = "go"
   const val PHP = "PHP"
