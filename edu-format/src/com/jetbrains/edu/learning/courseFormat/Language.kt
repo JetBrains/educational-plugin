@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat
 
-import com.jetbrains.edu.learning.findService
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
 
 object Language {
 
@@ -34,7 +34,7 @@ object Language {
 
   fun findLanguageByName(name: String): String? {
     if (name == "C/C++") {
-      return "C++"
+      return CPP
     }
     return languages.filter { it.value == name }.keys.firstOrNull()
   }

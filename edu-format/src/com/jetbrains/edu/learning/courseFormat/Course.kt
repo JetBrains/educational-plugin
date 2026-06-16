@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
-import com.jetbrains.edu.learning.findService
 import java.util.*
 
 /**
@@ -88,7 +87,7 @@ abstract class Course : LessonContainer() {
   open var languageId: String = ""
     get() {
       if (field == OBJECTIVE_C) {
-        return "C++"
+        return CPP
       }
       return field
     }

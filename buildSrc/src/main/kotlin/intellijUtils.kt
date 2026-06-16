@@ -1,7 +1,6 @@
 @file:Suppress("UnusedReceiverParameter")
 
 import org.gradle.api.Project
-import org.gradle.process.JavaForkOptions
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
@@ -163,13 +162,6 @@ fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(vararg notations: 
 
 fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(notations: List<String>) {
   testIntellijPlugins(*notations.toTypedArray())
-}
-
-// Suppress classic engine support
-// BACKCOMPAT 2026.1. Drop it
-fun JavaForkOptions.setClionSystemProperties(project: Project) {
-  systemProperty("idea.suppressed.plugins.set.selector", "radler")
-  systemProperty("idea.suppressed.plugins.set.radler", "com.intellij.cidr.lang")
 }
 
 // There isn't an implicit `project` object here, so
