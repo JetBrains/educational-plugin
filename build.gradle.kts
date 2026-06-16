@@ -7,8 +7,8 @@ plugins {
 
 idea {
   project {
-    jdkName = "21"
-    languageLevel = IdeaLanguageLevel("11")
+    jdkName = "25"
+    languageLevel = IdeaLanguageLevel("25")
     vcs = "Git"
   }
   module {

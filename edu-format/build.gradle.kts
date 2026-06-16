@@ -1,10 +1,27 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("common-conventions")
   `maven-publish`
 }
 
 java {
+  toolchain {
+    // If you change language version here, remember to change it for Kotlin below
+    languageVersion = JavaLanguageVersion.of(21)
+  }
   withSourcesJar()
+}
+
+
+tasks {
+  withType<KotlinCompile> {
+    compilerOptions {
+      // If you change target version here, remember to change it for Java above
+      jvmTarget = JvmTarget.JVM_21
+    }
+  }
 }
 
 dependencies {

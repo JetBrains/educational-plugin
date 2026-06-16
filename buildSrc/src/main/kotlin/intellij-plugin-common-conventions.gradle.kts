@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -16,6 +17,11 @@ java {
       java.srcDirs("branches/$environmentName/testSrc")
       resources.srcDirs("branches/$environmentName/testResources")
     }
+  }
+
+  toolchain {
+    // If you change language version here, remember to change it for Kotlin below
+    languageVersion = JavaLanguageVersion.of(25)
   }
 }
 
@@ -88,5 +94,10 @@ tasks {
   withType<KotlinCompile> {
     // Prevents unexpected incremental compilation errors after changing value of `environmentName` property
     inputs.property("environmentName", providers.gradleProperty("environmentName"))
+
+    compilerOptions {
+      // If you change target version here, remember to change it for Java above
+      jvmTarget = JvmTarget.JVM_25
+    }
   }
 }

@@ -153,6 +153,7 @@ plugins {
   // Gradle forbids version-catalog references inside settings `plugins { }` blocks, so we can't use it here directly.
   // See https://github.com/gradle/gradle/issues/36437
   id("org.jetbrains.intellij.platform.settings") version "2.16.0"
+  id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 dependencyResolutionManagement {

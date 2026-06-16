@@ -1,5 +1,3 @@
-import org.gradle.api.JavaVersion.VERSION_21
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -21,9 +19,6 @@ java {
       resources.srcDirs("testResources")
     }
   }
-
-  sourceCompatibility = VERSION_21
-  targetCompatibility = VERSION_21
 }
 
 kotlin {
@@ -45,7 +40,6 @@ tasks {
   }
   withType<KotlinCompile> {
     compilerOptions {
-      jvmTarget = JvmTarget.JVM_21
       languageVersion = KotlinVersion.DEFAULT
       // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
       // BACKCOMPAT: 2026.1. Check the minimal required API version.
