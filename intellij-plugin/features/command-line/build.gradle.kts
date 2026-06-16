@@ -9,6 +9,7 @@ dependencies {
   }
 
   implementation(project(":intellij-plugin:educational-core"))
+  implementation(project(":validation-results"))
   implementation(libs.clikt.core)
 
   testImplementation(project(":intellij-plugin:educational-core", "testOutput"))

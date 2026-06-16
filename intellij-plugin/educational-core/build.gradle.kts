@@ -11,6 +11,7 @@ dependencies {
   }
 
   api(project(":edu-format"))
+  api(project(":validation-results"))
   api(libs.edu.ai.format)
   // For some reason, kotlin serialization plugin doesn't see the corresponding library from IDE dependency
   // and fails Kotlin compilation.

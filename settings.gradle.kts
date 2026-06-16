@@ -8,6 +8,7 @@ import java.util.*
 rootProject.name = "educational-plugin"
 include(
   "edu-format",
+  "validation-results",
   "intellij-plugin",
   "intellij-plugin:educational-core",
   "intellij-plugin:jvm-core",
