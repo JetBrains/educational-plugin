@@ -129,8 +129,19 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
     private val checker: TaskChecker<*>?
 
     init {
-      val configurator = task.course.configurator
+      val course = task.course
+      val configurator = course.configurator
+
+      if (configurator == null) {
+        LOG.error("""Failed to get course configurator for ${course.languageId} course "${course.name}"""")
+      }
+
       checker = configurator?.taskCheckerProvider?.getTaskChecker(task, project)
+
+      if (checker == null && configurator != null) {
+        // This log is unnecessary in normal operation, but it might help to diagnose EDU-8276
+        LOG.info("""No local checker for task "${task.name}", ${course.languageId} course "${course.name}"""")
+      }
     }
 
     @RequiresEdt
