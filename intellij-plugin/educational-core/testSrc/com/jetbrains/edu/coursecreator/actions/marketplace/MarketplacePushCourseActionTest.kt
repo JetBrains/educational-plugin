@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.api.*
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -65,6 +66,39 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
         project,
         HUB_TOKEN,
         match { it.course == course && it.organization == personalOrganization }
+      )
+    }
+  }
+
+  @Test
+  fun `marketplace push works for course names with special characters`() {
+    // given
+    val course = createEduCourse(name = """"\|/:?""")
+
+    coEvery { mockConnector.loadUserOrganizations(HUB_TOKEN) } returns listOf(personalOrganization)
+
+    mockConnector.withResponseHandler(testRootDisposable) { _, path ->
+      when (path) {
+        "/api/plugins/edu/upload/details" -> MockResponseFactory.fromString(mapper.writeValueAsString(successUploadResponse))
+        else -> null
+      }
+    }
+
+    // when
+    val notification = runAndWaitForNotification(project) {
+      testAction(MarketplacePushCourse.ACTION_ID)
+    }
+
+    // then
+    assertEquals(NotificationType.INFORMATION, notification.type)
+
+    verify(exactly = 1) {
+      mockConnector.uploadNewCourseUnderProgress(
+        project,
+        HUB_TOKEN,
+        match {
+          it.course == course && it.courseArchiveFile.name.contains(course.nameToFileSystemName())
+        }
       )
     }
   }
@@ -290,8 +324,9 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
     }
   }
 
-  private fun createEduCourse(vendor: Vendor? = null): EduCourse {
+  private fun createEduCourse(vendor: Vendor? = null, name: String = "Test Course"): EduCourse {
     return courseWithFiles(
+      name = name,
       courseMode = CourseMode.EDUCATOR,
       id = 0,
       createYamlConfigs = true,

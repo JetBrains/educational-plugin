@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui.courseSettings
 
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.LabeledComponent
@@ -9,25 +8,20 @@ import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.panels.Wrapper
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.CollapsibleRow
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.util.PathUtil
-import com.intellij.util.io.IOUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.ModalityStateProvider
-import com.jetbrains.edu.learning.capitalize
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
+import com.jetbrains.edu.learning.newproject.nameToLocation
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseBindData
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.CourseSelectionListener
@@ -35,9 +29,6 @@ import com.jetbrains.edu.learning.newproject.ui.coursePanel.DESCRIPTION_AND_SETT
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.HORIZONTAL_MARGIN
 import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
 import java.awt.BorderLayout
-import java.io.File
-import java.text.DateFormat
-import java.util.*
 import javax.swing.BoxLayout
 import javax.swing.JPanel
 import javax.swing.event.DocumentListener
@@ -125,7 +116,7 @@ class CourseSettingsPanel(
 
     val settingsComponents = mutableListOf<LabeledComponent<*>>()
     locationField?.let {
-      it.component.text = nameToLocation(course)
+      it.component.text = course.nameToLocation()
       settingsComponents.add(it)
     }
 
@@ -155,23 +146,5 @@ class CourseSettingsPanel(
     }
 
     return settingsValidationResult
-  }
-
-  companion object {
-    fun nameToLocation(course: Course): String {
-      val courseName = course.name
-      val language = course.languageDisplayName
-      val humanLanguage = course.humanLanguage
-      var name = courseName
-      if (!IOUtil.isAscii(name)) {
-        //there are problems with venv creation for python course
-        name = "${EduNames.COURSE} $language $humanLanguage".capitalize()
-      }
-      if (!PathUtil.isValidFileName(name)) {
-        DateFormat.getDateInstance(DateFormat.DATE_FIELD, Locale.getDefault()).format(course.updateDate)
-        name = FileUtil.sanitizeFileName(name)
-      }
-      return FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), name, "").absolutePath
-    }
   }
 }

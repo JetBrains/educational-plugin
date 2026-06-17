@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.marketplace.api.UserOrganization
 import com.jetbrains.edu.learning.marketplace.defaultVendor
 import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.notification.EduNotificationManager.openLinkAction
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
@@ -125,7 +126,7 @@ class MarketplacePushCourse(
     }
     if (!preparedSuccessfully) return
 
-    val courseArchiveFile = FileUtil.createTempFile("marketplace-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
+    val courseArchiveFile = FileUtil.createTempFile("marketplace-${course.nameToFileSystemName()}-${course.marketplaceCourseVersion}", ".zip", true)
     val error = CourseArchiveCreator(project, courseArchiveFile.toPath()).createArchive(course)
     if (error != null) {
       error.showNotification(project, message("error.failed.to.create.course.archive.notification.title"))

@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.newproject.nameToLocation
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
-import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
 import com.jetbrains.edu.rust.RsConfigurator
@@ -93,7 +93,7 @@ class RsOpenCourseHandler : OpenCourseHandler {
   private fun Course.getProjectLocation(projectLocation: Path?): String {
     if (projectLocation != null) return projectLocation.absolutePathString()
 
-    return CourseSettingsPanel.nameToLocation(this)
+    return nameToLocation()
   }
 
   private fun searchExistingCourseLocation(courseId: Int): String? {

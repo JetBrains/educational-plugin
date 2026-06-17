@@ -7,12 +7,14 @@ import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
+import com.jetbrains.edu.learning.marketplace.courseStorage.COURSE_STORAGE
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.marketplace.mockJBAccount
 import com.jetbrains.edu.learning.marketplace.settings.MarketplaceSettings
 import com.jetbrains.edu.learning.marketplace.update.CourseUpdateInfo
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.mockService
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import com.jetbrains.edu.learning.testAction
 import com.jetbrains.edu.rules.WithExperimentalFeature
 import io.mockk.every
@@ -73,6 +75,28 @@ class CourseStoragePushCourseActionTest : EduActionTestCase() {
   }
 
   @Test
+  fun `course storage push works for course names with special characters`() {
+    mockJBUserInfo()
+    val course = createEduCourse(id = 0, name = """\|/:?""")
+
+    val mockConnector = mockService<CourseStorageConnector>(application)
+    every { mockConnector.getLatestCourseUpdateInfo(any()) } returns null
+    justRun { mockConnector.uploadNewCourse(project, course, any()) }
+
+    testAction(CourseStoragePushCourse.ACTION_ID, shouldBeEnabled = true)
+
+    verify(exactly = 1) {
+      mockConnector.uploadNewCourse(
+        project,
+        course,
+        match {
+          it.name.contains(course.nameToFileSystemName())
+        }
+      )
+    }
+  }
+
+  @Test
   fun `test course storage push updates course when id != 0`() {
     mockJBUserInfo()
     val course = createEduCourse()
@@ -88,11 +112,12 @@ class CourseStoragePushCourseActionTest : EduActionTestCase() {
   }
 
   private fun createEduCourse(
+    name: String = "Test Course",
     mode: CourseMode = CourseMode.EDUCATOR,
     id: Int = 200_001,
     isMarketplace: Boolean = true,
   ): EduCourse {
-    return courseWithFiles(courseMode = mode, id = id, createYamlConfigs = true) {}.apply {
+    return courseWithFiles(name = name, courseMode = mode, id = id, createYamlConfigs = true) {}.apply {
       this.isMarketplace = isMarketplace
     } as EduCourse
   }
