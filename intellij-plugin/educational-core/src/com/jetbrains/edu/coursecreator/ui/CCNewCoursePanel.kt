@@ -52,8 +52,6 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
-import javax.swing.text.AttributeSet
-import javax.swing.text.PlainDocument
 
 class CCNewCoursePanel(
   private val parentDisposable: Disposable,
@@ -94,7 +92,6 @@ class CCNewCoursePanel(
 
     _course = (course ?: courseProducer()).apply { courseMode = CourseMode.EDUCATOR }
 
-    titleField.document = CourseTitleDocument()
     titleField.complementaryTextField = pathField
     pathField.complementaryTextField = titleField
 
@@ -389,18 +386,6 @@ class CCNewCoursePanel(
     val displayName: String,
     val icon: Icon?,
   )
-
-  private class CourseTitleDocument : PlainDocument() {
-    override fun insertString(offs: Int, str: String?, a: AttributeSet?) {
-      if (str == null || str.none { it in ILLEGAL_CHARS }) {
-        super.insertString(offs, str, a)
-      }
-    }
-
-    companion object {
-      private val ILLEGAL_CHARS = arrayOf(File.separatorChar, '/', '|', ':')
-    }
-  }
 
   private class PathField : CCSyncTextField() {
     override fun doSync(complementaryTextField: CCSyncTextField) {
