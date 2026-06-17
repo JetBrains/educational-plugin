@@ -10,8 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.languageDisplayName
 import java.io.File
 
-fun Course.nameToFileSystemName(): String {
-  var fileSystemName = name
+fun Course.nameToFileSystemName(courseName: String = name): String {
+  var fileSystemName = courseName
   if (!IOUtil.isAscii(fileSystemName)) {
     // there are problems with venv creation for python course
     fileSystemName = "${EduNames.COURSE} $languageDisplayName $humanLanguage".capitalize()

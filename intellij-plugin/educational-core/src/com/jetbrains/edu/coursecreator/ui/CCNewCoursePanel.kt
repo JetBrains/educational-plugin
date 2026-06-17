@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationActivationListener
@@ -42,6 +41,8 @@ import com.jetbrains.edu.learning.feedback.CourseFeedbackInfoData
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
+import com.jetbrains.edu.learning.newproject.nameToLocation
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
 import com.jetbrains.edu.learning.newproject.ui.errors.*
 import java.awt.BorderLayout
@@ -293,11 +294,10 @@ class CCNewCoursePanel(
       _course.environment = courseData.environment
     }
 
-    val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), _course.name, "")
     if (!titleField.isChangedByUser) {
-      titleField.setTextManually(file.name)
+      titleField.setTextManually(_course.name)
       if (!pathField.isChangedByUser) {
-        pathField.setTextManually(file.absolutePath)
+        pathField.setTextManually(_course.nameToLocation())
       }
     }
 
@@ -397,13 +397,13 @@ class CCNewCoursePanel(
     }
   }
 
-  class CourseTitleField : CCSyncTextField() {
+  inner class CourseTitleField : CCSyncTextField() {
     override fun doSync(complementaryTextField: CCSyncTextField) {
       val courseName = text ?: return
       val path = complementaryTextField.text?.trim() ?: return
       val lastSeparatorIndex = path.lastIndexOf(File.separator)
       if (lastSeparatorIndex >= 0) {
-        complementaryTextField.setTextManually(path.substring(0, lastSeparatorIndex + 1) + courseName)
+        complementaryTextField.setTextManually(path.substring(0, lastSeparatorIndex + 1) + _course.nameToFileSystemName(courseName))
       }
     }
   }
