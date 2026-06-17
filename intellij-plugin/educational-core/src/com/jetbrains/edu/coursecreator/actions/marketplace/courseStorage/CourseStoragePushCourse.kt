@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.marketplace.courseStorage.COURSE_STORAGE
 import com.jetbrains.edu.learning.marketplace.courseStorage.api.CourseStorageConnector
 import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 
 private val uploadCourseActionText: @NlsActions.ActionText String
   get() = message("action.push.course.storage.upload.text")
@@ -62,7 +63,7 @@ class CourseStoragePushCourse : DumbAwareAction(addGluingSlash(uploadCourseActio
   }
 
   private fun uploadCourse(project: Project, course: EduCourse) {
-    val tempFile = FileUtil.createTempFile("$COURSE_STORAGE-${course.name}-${course.marketplaceCourseVersion}", ".zip", true)
+    val tempFile = FileUtil.createTempFile("$COURSE_STORAGE-${course.nameToFileSystemName()}-${course.marketplaceCourseVersion}", ".zip", true)
     val error = CourseArchiveCreator(project, tempFile.toPath()).createArchive(course)
     if (error != null) {
       error.showNotification(project, message("error.failed.to.create.course.archive.notification.title"))

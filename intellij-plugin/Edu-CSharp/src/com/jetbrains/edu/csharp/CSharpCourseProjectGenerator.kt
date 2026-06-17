@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import com.jetbrains.rd.ide.model.RdOpenSolution
 import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
 import com.jetbrains.rider.model.MonitoringStartMode
@@ -22,7 +23,7 @@ class CSharpCourseProjectGenerator(
   builder: CSharpCourseBuilder,
   course: Course
 ) : CSharpCourseProjectGeneratorBase(builder, course) {
-  private val solutionFileName = "${course.name}.${SolutionFileType.defaultExtension}"
+  private val solutionFileName = "${course.nameToFileSystemName()}.${SolutionFileType.defaultExtension}"
 
   override fun applySettings(projectSettings: CSharpProjectSettings) {
     super.applySettings(projectSettings)

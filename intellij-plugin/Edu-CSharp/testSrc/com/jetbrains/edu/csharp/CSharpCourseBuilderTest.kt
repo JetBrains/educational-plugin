@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import com.jetbrains.rider.languages.fileTypes.csharp.CSharpLanguage
 import org.junit.Test
 
@@ -51,6 +52,23 @@ class CSharpCourseBuilderTest : CSharpCourseGenerationTestBase() {
               }
               """)
           }
+        }
+      }
+    }
+    expectedFileTree.assertExists(rootDir)
+
+    assertListOfAdditionalFiles(course)
+  }
+
+  @Test
+  fun `test new educator course with special characters in name`() {
+    val course = csharpCourse("""\|/:?""", CourseMode.EDUCATOR)
+    createCourseStructure(course)
+    val expectedFileTree = fileTree {
+      file("${course.nameToFileSystemName()}.sln")
+      dir("lesson1") {
+        dir("task1") {
+          file("Lesson1.Task1.csproj")
         }
       }
     }
