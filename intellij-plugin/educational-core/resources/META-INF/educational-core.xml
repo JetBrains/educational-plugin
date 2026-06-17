@@ -542,6 +542,7 @@
 
     <pathMacroProvider implementation="com.jetbrains.edu.learning.checker.TaskRunConfigurationPathMacroProvider"/>
 
+    <courseMetadataProcessor implementation="com.jetbrains.edu.learning.navigation.StudyItemMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.CoursePageExperimentMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.statistics.metadata.EntryPointMetadataProcessor"/>
     <courseMetadataProcessor implementation="com.jetbrains.edu.learning.marketplace.metadata.OpenOnSiteLinkMetadataProcessor"/>
