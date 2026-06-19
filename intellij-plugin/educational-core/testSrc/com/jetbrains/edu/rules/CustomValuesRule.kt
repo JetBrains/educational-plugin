@@ -22,8 +22,8 @@ class CustomValuesRule : TestRule {
     return object : Statement() {
       override fun evaluate() {
         val annotationDescriptors = (
-          description.collectAnnotations(WithRegistryValue::key) +
-          description.collectAnnotations(WithExperimentalFeature::id)
+          description.collectAnnotations<WithRegistryValue>(WithRegistryValue::key) +
+          description.collectAnnotations<WithExperimentalFeature>(WithExperimentalFeature::id)
         ).map { ValueDescriptor.from(it) }
 
         try {
