@@ -49,7 +49,7 @@ open class CppCourseBuilder : EduCourseBuilder<CppProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<CppProjectSettings> = CppLanguageSettings()
 
-  override fun getDefaultSettings(): Result<CppProjectSettings, String> = Ok(CppProjectSettings())
+  override suspend fun getDefaultSettings(): Result<CppProjectSettings, String> = Ok(CppProjectSettings())
 
   override fun getSupportedLanguageVersions(): List<String> = getLanguageVersions()
 

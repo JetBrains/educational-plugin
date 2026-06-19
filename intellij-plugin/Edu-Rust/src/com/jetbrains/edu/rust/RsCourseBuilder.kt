@@ -51,7 +51,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<RsProjectSettings> = RsLanguageSettings()
 
-  override fun getDefaultSettings(): Result<RsProjectSettings, String> {
+  override suspend fun getDefaultSettings(): Result<RsProjectSettings, String> {
     return findPath(DEFAULT_TOOLCHAIN_PROPERTY, "Rust toolchain").flatMap { toolchainPath ->
       val toolchain = RsLocalToolchain(Paths.get(toolchainPath))
       if (!toolchain.looksLikeValidToolchain()) {

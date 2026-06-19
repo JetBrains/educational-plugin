@@ -6,6 +6,10 @@
     <plugin id="com.intellij.modules.vcs"/>
   </dependencies>
 
+  <!-- BACKCOMPAT: 2026.1. Inline educational-core-platform.xml -->
+  <xi:include href="/META-INF/educational-core-platform.xml"
+              xpointer="xpointer(/idea-plugin/*)"/>
+
   <resource-bundle>messages.EduCoreBundle</resource-bundle>
 
   <applicationListeners>

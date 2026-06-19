@@ -16,7 +16,7 @@ class JsCourseBuilder : EduCourseBuilder<JsNewProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<JsNewProjectSettings> = JsLanguageSettings()
 
-  override fun getDefaultSettings(): Result<JsNewProjectSettings, String> {
+  override suspend fun getDefaultSettings(): Result<JsNewProjectSettings, String> {
     return findPath(DEFAULT_NODE_JS_INTERPRETER_PROPERTY, "Node.js interpreter").flatMap { interpreterPath ->
       val interpreter = NodeJsLocalInterpreter(interpreterPath)
       val errorMessage = NodeInterpreterUtil.validateAndGetErrorMessage(interpreter)

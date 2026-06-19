@@ -1,0 +1,24 @@
+<idea-plugin>
+  <dependencies>
+    <plugin id="com.jetbrains.rust"/>
+    <plugin id="org.toml.lang"/>
+    <module name="intellij.rustrover.core"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="org.rust">
+    <learn.openCourseHandler implementation="com.jetbrains.edu.rust.learn.RsOpenCourseHandler"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Rust" implementationClass="com.jetbrains.edu.rust.RsConfigurator"/>
+  </extensions>
+
+  <actions>
+    <!-- Temporary internal action to check Learn Rust course creation like in RustRover banner -->
+    <!-- https://youtrack.jetbrains.com/issue/EDU-8189 -->
+    <action id="OpenLearnRustCourseAction"
+            class="com.jetbrains.edu.rust.learn.OpenLearnRustCourseAction"
+            text="Open Learn Rust"
+            internal="true"/>
+  </actions>
+</idea-plugin>

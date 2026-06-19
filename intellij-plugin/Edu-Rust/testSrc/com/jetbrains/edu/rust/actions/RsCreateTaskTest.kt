@@ -100,10 +100,7 @@ private object RsProjectDescriptor : LightProjectDescriptor() {
     contentRootUrl = contentRoot,
     name = "task1",
     version = "0.0.1",
-    targets = listOf(
-      CargoWorkspaceData.Target("$contentRoot/lesson1/task1/main.rs", "task1", CargoWorkspace.TargetKind.Bin,
-                                edition = CargoWorkspace.Edition.EDITION_2015, doctest = false, requiredFeatures = emptyList())
-    ),
+    targets = listOf(createTargetForMain(contentRoot)),
     source = null,
     origin = PackageOrigin.WORKSPACE,
     edition = CargoWorkspace.Edition.EDITION_2018,

@@ -1,15 +1,17 @@
 package com.jetbrains.edu.python.slow.checker
 
+import com.intellij.openapi.progress.runBlockingCancellable
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.python.learning.newproject.PySdkToCreateVirtualEnv
 import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.python.learning.newproject.createDefaultSettings
 import com.jetbrains.python.sdk.PythonSdkType
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import java.nio.file.Paths
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
 
 class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
   override val projectSettings: PyProjectSettings = PyProjectSettings()
@@ -22,9 +24,12 @@ class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
   override fun setUp() {
     val sdkLocation = sdkLocation ?: return
     runInEdtAndWait {
-      val versionString = PythonSdkFlavor.getApplicableFlavors(false)[0].getVersionString(sdkLocation)
-                          ?: error("Can't get python version")
-      projectSettings.sdk = PySdkToCreateVirtualEnv.create(versionString, sdkLocation, versionString)
+      projectSettings.sdk = runBlockingCancellable {
+        when(val res = createDefaultSettings(sdkLocation)) {
+         is Ok -> return@runBlockingCancellable res.value.sdk
+         is Err -> error("could not create")
+        }
+      }
       VfsRootAccess.allowRootAccess(testRootDisposable, sdkLocation)
     }
   }

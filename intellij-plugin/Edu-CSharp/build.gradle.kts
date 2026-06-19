@@ -9,6 +9,13 @@ dependencies {
 
     bundledModule("intellij.rider")
     bundledModule("intellij.rider.debugger.shared")
+    if (isAtLeast262) {
+      bundledModule("intellij.rider.rdclient.dotnet")
+      bundledModule("intellij.rider.languages")
+      bundledModule("intellij.rd.client")
+      bundledModule("intellij.rider.model.generated")
+      bundledPlugin("com.intellij.resharper.unity")
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

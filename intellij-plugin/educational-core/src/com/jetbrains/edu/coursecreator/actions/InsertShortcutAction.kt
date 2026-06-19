@@ -8,7 +8,6 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts
-import com.intellij.openapi.keymap.impl.ui.ActionsTreeUtil
 import com.intellij.openapi.keymap.impl.ui.Group
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -52,15 +51,13 @@ open class InsertShortcutAction : AnAction() {
     ProgressManager.getInstance().run(object : Task.Modal(project, EduCoreBundle.message("dialog.title.collecting.shortcuts"), false) {
       override fun run(indicator: ProgressIndicator) {
         runReadAction {
-          val mainGroup = ActionsTreeUtil.createMainGroup(
+          val mainGroup = ActionTreeGroupUtil.createMainGroup(
             project,
             KeymapManager.getInstance().activeKeymap,
             QuickListsManager.getInstance().allQuickLists,
             "",
             true, null
           )
-
-
           mainGroup.collectAllActions(allActions)
         }
       }

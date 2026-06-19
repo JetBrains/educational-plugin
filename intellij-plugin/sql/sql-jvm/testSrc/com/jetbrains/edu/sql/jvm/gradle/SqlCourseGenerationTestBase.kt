@@ -20,7 +20,6 @@ import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.newvfs.RefreshQueueImpl
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.tree.TreeVisitor
-import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
@@ -127,9 +126,9 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
     }
   }
 
-  protected fun prepareDatabaseView(): Tree {
+  protected fun prepareDatabaseView(): JTree {
     val databaseView = DatabaseView.getDatabaseView(project)
-    val tree = databaseView.panel.getTree()
+    val tree = databaseView.panel.getDatabaseTree()
 
     PlatformTestUtil.waitWhileBusy(tree)
     expandImportantNodes(tree)
@@ -181,7 +180,7 @@ abstract class SqlCourseGenerationTestBase : JvmCourseGenerationTestBase() {
       PlatformTestUtil.waitForPromise(promise)
     }
 
-    private fun expandImportantNodes(tree: Tree) {
+    private fun expandImportantNodes(tree: JTree) {
       fun TreePath.isRoot(): Boolean = parentPath == null
       fun TreePath.isGroupNode(): Boolean = lastPathComponent.toString().startsWith("Group")
       fun TreePath.isDbNode(): Boolean = lastPathComponent.toString().startsWith("DB: database")
