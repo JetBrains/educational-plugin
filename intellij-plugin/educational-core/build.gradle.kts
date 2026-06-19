@@ -8,6 +8,9 @@ dependencies {
     intellijIde(baseVersion)
 
     bundledModules("intellij.platform.vcs.impl")
+    if (isAtLeast262) {
+      bundledModules("intellij.platform.sqlite")
+    }
   }
 
   api(project(":edu-format"))

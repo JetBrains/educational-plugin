@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.update.elements
 
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.diagnostic.thisLogger
@@ -114,7 +115,7 @@ data class FrameworkTaskUpdateInfo(
     }
 
     if (virtualChangedFile != null) {
-      writeAction {
+      edtWriteAction {
         FileDocumentManager.getInstance().reloadFiles(virtualChangedFile)
         ReadOnlyAttributeUtil.setReadOnlyAttribute(virtualChangedFile, false)
       }

@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
@@ -102,7 +103,7 @@ class EduProjectActivity : ProjectActivity {
 
     LicenseChecker.getInstance(project).scheduleLicenseCheck()
 
-    writeAction {
+    edtWriteAction {
       if (project.isStudentProject()) {
         course.visitTasks {
           setHighlightLevelForFilesInTask(it, project)
@@ -156,7 +157,7 @@ class EduProjectActivity : ProjectActivity {
   }
 
   // In general, it's hack to select proper Project View pane for course projects
-  // Should be replaced with proper API
+// Should be replaced with proper API
   private fun selectProjectView(project: Project, retry: Boolean) {
     ToolWindowManager.getInstance(project).invokeLater {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.PROJECT_VIEW)

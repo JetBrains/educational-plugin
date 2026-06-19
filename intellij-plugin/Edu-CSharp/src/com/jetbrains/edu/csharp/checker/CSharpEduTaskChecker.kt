@@ -39,7 +39,6 @@ import com.jetbrains.rd.util.reactive.adviseWithPrev
 import com.jetbrains.rd.util.reactive.fire
 import com.jetbrains.rdclient.util.idea.callSynchronously
 import com.jetbrains.rider.build.BuildEventsService
-import com.jetbrains.rider.build.BuildParameters
 import com.jetbrains.rider.build.tasks.BuildTaskThrottler
 import com.jetbrains.rider.model.*
 import com.jetbrains.rider.model.build.BuildEvent
@@ -148,14 +147,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
     val projectFilePath = task.toProjectModelEntity(project)?.url?.virtualFile?.path ?: return failedToCheck
 
-    val buildParameters = BuildParameters(
-      operation = BuildTarget(),
-      selectedProjectsPaths = listOf(projectFilePath),
-      silentMode = true,
-      diagnosticsMode = false,
-      withoutDependencies = false,
-      noRestore = false
-    )
+    val buildParameters = getBuildParameters(listOf(projectFilePath))
     val buildResult = project.service<BuildTaskThrottler>().buildSequentially(buildParameters)
 
     if (buildResult.buildResultKind == BuildResultKind.HasErrors) {

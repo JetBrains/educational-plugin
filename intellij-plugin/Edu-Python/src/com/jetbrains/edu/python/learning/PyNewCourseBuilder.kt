@@ -11,9 +11,11 @@ import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FILE_NAME
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FOLDER
-import com.jetbrains.edu.python.learning.newproject.*
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
+import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
+import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.python.learning.newproject.createDefaultSettings
 import com.jetbrains.python.PyNames
-import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 
 class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
   override fun taskTemplateName(course: Course): String = TASK_PY
@@ -22,12 +24,9 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
 
-  override fun getDefaultSettings(): Result<PyProjectSettings, String> {
+  override suspend fun getDefaultSettings(): Result<PyProjectSettings, String> {
     return findPath(INTERPRETER_PROPERTY, "Python interpreter").flatMap { sdkPath ->
-      val versionString = PythonSdkFlavor.getApplicableFlavors(false).firstOrNull()?.getVersionString(sdkPath)
-                          ?: return Err("Can't get python version")
-      val sdk = PySdkToCreateVirtualEnv.create(versionString, sdkPath, versionString)
-      Ok(PyProjectSettings(sdk))
+      createDefaultSettings(sdkPath)
     }
   }
 

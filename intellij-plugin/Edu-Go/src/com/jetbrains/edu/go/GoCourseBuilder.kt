@@ -25,7 +25,7 @@ class GoCourseBuilder : EduCourseBuilder<GoProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<GoProjectSettings> = GoLanguageSettings()
 
-  override fun getDefaultSettings(): Result<GoProjectSettings, String> {
+  override suspend fun getDefaultSettings(): Result<GoProjectSettings, String> {
     return findPath(DEFAULT_GO_SDK_PROPERTY, "Go sdk").flatMap { sdkPath ->
       val sdk = GoSdk.fromHomePath(sdkPath)
       when {

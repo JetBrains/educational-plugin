@@ -1,0 +1,6 @@
+<!--BACKCOMPAT 2026.1. Inline it-->
+<idea-plugin>
+  <dependencies>
+    <module name="intellij.platform.sqlite"/>
+  </dependencies>
+</idea-plugin>

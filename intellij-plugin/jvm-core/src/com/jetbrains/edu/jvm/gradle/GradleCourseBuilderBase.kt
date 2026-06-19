@@ -69,7 +69,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
 
-  override fun getDefaultSettings(): Result<JdkProjectSettings, String> = JdkProjectSettings.defaultSettings()
+  override suspend fun getDefaultSettings(): Result<JdkProjectSettings, String> = JdkProjectSettings.defaultSettings()
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
     GradleCourseProjectGenerator(this, course)

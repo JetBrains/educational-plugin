@@ -214,7 +214,7 @@ interface EduCourseBuilder<Settings : EduProjectSettings> {
    *
    * If it's not possible to provide settings, returns [Err] with the corresponding reason
    */
-  fun getDefaultSettings(): Result<Settings, String> =
+  suspend fun getDefaultSettings(): Result<Settings, String> =
     Err("Can't provide default project settings. `getDefaultSettings` is not implemented for `${javaClass.name}`")
 
   fun getSupportedLanguageVersions(): List<String> = emptyList()

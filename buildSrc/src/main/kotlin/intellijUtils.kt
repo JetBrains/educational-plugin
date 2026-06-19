@@ -4,9 +4,13 @@ import org.gradle.api.Project
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
+import org.jetbrains.intellij.platform.gradle.utils.Version
 import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
+
+// BACKCOMPAT: 2026.1. Drop it
+val Project.isAtLeast262: Boolean get() = environmentName.toInt() >= 262
 
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
@@ -99,10 +103,15 @@ val Project.csharpPlugins: List<String> get() = listOf(
 
 // Plugins which we add to tests for all modules.
 // It's the most common plugins which affect the behavior of the plugin code
-val Project.commonTestPlugins: List<String> get() = listOf(
+val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   imagesPlugin, // adds `svg` file type and makes IDE consider .svg files as text ones
   yamlPlugin,   // makes IDE consider .yaml files as text ones and affects formatting of yaml files
   jsonPlugin,   // dependency of a lot of other bundled plugin
+  if (isAtLeast262) "com.intellij.moduleSet.structureView" else null,
+  if (isAtLeast262) "com.intellij.moduleSet.todoView" else null,
+  if (isAtLeast262) "com.intellij.moduleSet.structuralSearch" else null,
+  if (isAtLeast262) "intellij.libraries.misc.plugin" else null,
+  if (isAtLeast262) "intellij.bookmarks.plugin" else null,
 )
 
 

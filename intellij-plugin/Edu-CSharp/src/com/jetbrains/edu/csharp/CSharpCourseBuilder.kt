@@ -28,7 +28,7 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
 
   override fun getLanguageSettings(): LanguageSettings<CSharpProjectSettings> = CSharpLanguageSettings()
 
-  override fun getDefaultSettings(): Result<CSharpProjectSettings, String> = Ok(CSharpProjectSettings())
+  override suspend fun getDefaultSettings(): Result<CSharpProjectSettings, String> = Ok(CSharpProjectSettings())
 
   override fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
     info.putUserData(CSPROJ_NAME_PER_TASK_KEY, task.getCSProjFileNameWithoutExtension())

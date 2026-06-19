@@ -48,7 +48,7 @@ class PlainTextCourseBuilder : EduCourseBuilder<EmptyProjectSettings> {
     override fun getSettings(): EmptyProjectSettings = EmptyProjectSettings
   }
 
-  override fun getDefaultSettings(): Result<EmptyProjectSettings, String> = Ok(EmptyProjectSettings)
+  override suspend fun getDefaultSettings(): Result<EmptyProjectSettings, String> = Ok(EmptyProjectSettings)
 
   override fun getSupportedLanguageVersions(): List<String> = listOf("1.42")
 
