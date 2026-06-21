@@ -10,6 +10,9 @@ dependencies {
 
     intellijPlugins(pythonPlugin)
     testIntellijPlugins(tomlPlugin)
+    if (isAtLeast262) {
+      intellijPlugins(testRunnerPlugin)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

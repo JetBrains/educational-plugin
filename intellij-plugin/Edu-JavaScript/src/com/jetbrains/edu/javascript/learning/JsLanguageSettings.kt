@@ -1,7 +1,6 @@
 package com.jetbrains.edu.javascript.learning
 
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.openapi.project.ProjectManager
@@ -30,11 +29,11 @@ class JsLanguageSettings : LanguageSettings<JsNewProjectSettings>() {
         return true
       }
     }
-    interpreterField.addChangeListener { interpreter: NodeJsInterpreter? ->
-      jsSettings.selectedInterpreter = interpreter
+    interpreterField.addChangeListener { interpreter ->
+      jsSettings.selectedInterpreter = interpreter?.resolve(defaultProject)
       notifyListeners()
     }
-    interpreterField.setInterpreterRef(NodeJsInterpreterManager.getInstance(defaultProject).interpreterRef)
+    interpreterField.interpreterRef = NodeJsInterpreterManager.getInstance(defaultProject).interpreterRef
   }
 
   override fun getLanguageSettingsComponents(

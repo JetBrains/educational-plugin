@@ -10,9 +10,10 @@ dependencies {
     intellijPlugins(sqlPlugins)
     bundledModule("com.intellij.modules.ultimate")
     if (isAtLeast262) {
-      testIntellijPlugins("com.intellij.moduleSet.grid.core")
-      testIntellijPlugins("com.intellij.moduleSet.servicesView")
+      testIntellijPlugins("intellij.grid.core.plugin")
+      testIntellijPlugins("intellij.execution.serviceView.plugin")
       testIntellijPlugins("intellij.navbar.plugin")
+      testIntellijPlugins(testRunnerPlugin)
     }
   }
 

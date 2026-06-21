@@ -5,6 +5,9 @@ plugins {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
+    if (isAtLeast262) {
+      intellijPlugins(jcefPlugin)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

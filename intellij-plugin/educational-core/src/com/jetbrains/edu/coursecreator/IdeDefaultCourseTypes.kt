@@ -19,8 +19,7 @@ fun getDefaultCourseType(courses: List<CCNewCoursePanel.CourseData>): CCNewCours
 
 fun getDefaultLanguageId(): String? = when {
   PlatformUtils.isIntelliJ() || EduUtilsKt.isAndroidStudio() -> KOTLIN
-  // `isPyCharm()` covers DataSpell case as well, so `isDataSpell()` is only for readability improvement
-  PlatformUtils.isPyCharm() || PlatformUtils.isDataSpell() -> PYTHON
+  PlatformUtils.isPyCharm() -> PYTHON
   PlatformUtils.isWebStorm() -> JAVASCRIPT
   PlatformUtils.isCLion() -> CPP
   PlatformUtils.isGoIde() -> GO

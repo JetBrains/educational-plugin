@@ -9,6 +9,7 @@ dependencies {
 
     bundledModules("intellij.platform.vcs.impl")
     if (isAtLeast262) {
+      intellijPlugins(testRunnerPlugin, jcefPlugin)
       bundledModules("intellij.platform.sqlite")
     }
   }
