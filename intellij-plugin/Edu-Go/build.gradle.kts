@@ -9,6 +9,9 @@ dependencies {
     intellijPlugins(goPlugin)
 
     bundledModule("com.intellij.modules.ultimate")
+    if (isAtLeast262) {
+      intellijPlugins(testRunnerPlugin)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

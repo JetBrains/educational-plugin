@@ -14,9 +14,7 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
     val requiredPlugins = mutableListOf<PluginInfo>()
     @Suppress("DEPRECATION", "UnstableApiUsage")
     requiredPlugins += when {
-      // Actually, `isPyCharm()` covers DataSpell case as well, so `isDataSpell()` is only for readability improvement
-      isPyCharm() || isDataSpell() ||
-      isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
+      isPyCharm() || isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
       else -> return null
     }
     requiredPlugins += TOML

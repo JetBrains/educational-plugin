@@ -9,6 +9,9 @@ dependencies {
     intellijPlugins(javaScriptPlugins)
 
     testIntellijPlugins(cssPlugin)
+    if (isAtLeast262) {
+      testIntellijPlugins(sshPlugin)
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))

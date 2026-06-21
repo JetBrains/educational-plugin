@@ -6,8 +6,8 @@ dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
 
+    intellijPlugins(fullinePlugin)
     bundledModules("intellij.fullLine.core.completion")
-    bundledPlugin(fullinePlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))

@@ -66,6 +66,11 @@ val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
+// BACKCOMPAT: 2026.1. replace with `by Properties`
+val Project.nativeDebugPlugin: String? get() = if (isAtLeast262) prop("nativeDebugPlugin") else null
+val Project.jcefPlugin: String get() = "com.intellij.modules.jcef"
+val Project.testRunnerPlugin: String get() = "intellij.testRunner.plugin"
+val Project.sshPlugin: String get() = "intellij.ssh.plugin"
 
 val Project.jvmPlugins: List<String> get() = listOf(
   javaPlugin,
@@ -107,11 +112,12 @@ val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   imagesPlugin, // adds `svg` file type and makes IDE consider .svg files as text ones
   yamlPlugin,   // makes IDE consider .yaml files as text ones and affects formatting of yaml files
   jsonPlugin,   // dependency of a lot of other bundled plugin
-  if (isAtLeast262) "com.intellij.moduleSet.structureView" else null,
-  if (isAtLeast262) "com.intellij.moduleSet.todoView" else null,
-  if (isAtLeast262) "com.intellij.moduleSet.structuralSearch" else null,
+  if (isAtLeast262) "intellij.structureView.plugin" else null,
+  if (isAtLeast262) "intellij.todo.plugin" else null,
+  if (isAtLeast262) "intellij.structuralSearch.plugin" else null,
   if (isAtLeast262) "intellij.libraries.misc.plugin" else null,
   if (isAtLeast262) "intellij.bookmarks.plugin" else null,
+  if (isAtLeast262) testRunnerPlugin else null,
 )
 
 
