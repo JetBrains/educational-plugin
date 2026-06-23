@@ -111,11 +111,13 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
   private suspend fun tryInstallLanguageEnvironment(project: Project, projectSettings: S) {
     if (projectSettings !is LanguageEnvironment) return
 
-    when (val result = projectSettings.installIfNeeded(project, course)) {
-      InstallationResult.Installed -> LOG.info("Language environment has been successfully installed")
-      is InstallationResult.Error -> {
-        LOG.warn("Language environment installation failed: ${result.message}")
-        EduNotificationManager.showErrorNotification(project, content = result.message)
+    withContext(Dispatchers.IO) {
+      when (val result = projectSettings.installIfNeeded(project, course)) {
+        InstallationResult.Installed -> LOG.info("Language environment has been successfully installed")
+        is InstallationResult.Error -> {
+          LOG.warn("Language environment installation failed: ${result.message}")
+          EduNotificationManager.showErrorNotification(project, content = result.message)
+        }
       }
     }
   }

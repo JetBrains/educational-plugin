@@ -4,14 +4,15 @@ import com.intellij.python.community.services.systemPython.SystemPythonService
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import kotlin.io.path.Path
 
-suspend fun createDefaultSettings(sdkPath: String): Result<PyProjectSettings, String> {
+suspend fun createDefaultSettings(sdkPath: String): Result<PyLanguageEnvironment, String> {
   val sdk = SystemPythonService().findSystemPythons(forceRefresh = true).firstOrNull {
     it.pythonBinary == Path(sdkPath)
   }
   if (sdk == null) {
     return Err("No system python found")
   }
-  return Ok(PyProjectSettings(sdk))
+  return Ok(sdk.toExisting())
 }

@@ -27,8 +27,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isTestsFile
 import com.jetbrains.edu.learning.notification.EduNotificationManager
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
 import com.jetbrains.python.Result
 import com.jetbrains.python.errorProcessing.PyResult
 import com.jetbrains.python.packaging.common.PythonPackage
@@ -117,7 +117,7 @@ private suspend fun executePackageInstallationCommand(project: Project, sdk: Sdk
 }
 
 fun getSupportedVersions(): List<String> {
-  val pythonVersions = mutableListOf(PyLanguageSettings.ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
+  val pythonVersions = mutableListOf(PyLanguageEnvironmentCatalogProvider.ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
   pythonVersions.addAll(LanguageLevel.entries.map { it.toString() }.reversed())
   return pythonVersions
 }

@@ -6,30 +6,34 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
 import com.jetbrains.edu.python.learning.newproject.createDefaultSettings
 import com.jetbrains.python.sdk.PythonSdkType
 import java.nio.file.Paths
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider
 
-class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
-  override val projectSettings: PyProjectSettings = PyProjectSettings()
+class PyCheckerFixture : EduCheckerFixture<PyLanguageEnvironment>() {
 
   private val sdkLocation: String? by lazy {
     val location = System.getenv(PYTHON_SDK) ?: return@lazy null
     Paths.get(location).toRealPath().toString()
   }
+  override val projectSettings: PyLanguageEnvironment
+    get() = runBlockingCancellable {
+      val sdkLocation = this@PyCheckerFixture.sdkLocation
+      if (sdkLocation == null) return@runBlockingCancellable (PyLanguageEnvironmentCatalogProvider().default() as Ok).value
+
+      when (val res = createDefaultSettings(sdkLocation)) {
+        is Ok -> return@runBlockingCancellable res.value
+        is Err -> error("could not create")
+      }
+    }
 
   override fun setUp() {
     val sdkLocation = sdkLocation ?: return
     runInEdtAndWait {
-      projectSettings.sdk = runBlockingCancellable {
-        when(val res = createDefaultSettings(sdkLocation)) {
-         is Ok -> return@runBlockingCancellable res.value.sdk
-         is Err -> error("could not create")
-        }
-      }
       VfsRootAccess.allowRootAccess(testRootDisposable, sdkLocation)
     }
   }
@@ -43,7 +47,8 @@ class PyCheckerFixture : EduCheckerFixture<PyProjectSettings>() {
   override fun getSkipTestReason(): String? {
     return if (sdkLocation == null) {
       "No Python SDK location defined. Use `$PYTHON_SDK` environment variable to provide sdk location"
-    } else {
+    }
+    else {
       super.getSkipTestReason()
     }
   }

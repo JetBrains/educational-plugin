@@ -3,40 +3,38 @@ package com.jetbrains.edu.python.learning
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.newCourseSettings.NewCourseSettingsUI
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.MAIN_PY
 import com.jetbrains.edu.python.learning.PyConfigurator.Companion.TASK_PY
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FILE_NAME
 import com.jetbrains.edu.python.learning.PyNewConfigurator.Companion.TEST_FOLDER
-import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
-import com.jetbrains.edu.python.learning.newproject.createDefaultSettings
+import com.jetbrains.edu.python.learning.newproject.PyEnvironmentPresenter
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider
 import com.jetbrains.python.PyNames
 
-class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
+class PyNewCourseBuilder : EnvironmentAwareCourseBuilder<PyLanguageEnvironment> {
   override fun taskTemplateName(course: Course): String = TASK_PY
   override fun mainTemplateName(course: Course): String = MAIN_PY
   override fun testTemplateName(course: Course): String = TEST_FILE_NAME
 
-  override fun getLanguageSettings(): LanguageSettings<PyProjectSettings> = PyLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<PyLanguageEnvironment> = EnvironmentAndNewCourseSettings(
+    getLanguageEnvironmentCatalogProvider(),
+    PyEnvironmentPresenter,
+    NewCourseSettingsUI.NoSettings
+  )
 
-  override suspend fun getDefaultSettings(): Result<PyProjectSettings, String> {
-    return findPath(INTERPRETER_PROPERTY, "Python interpreter").flatMap { sdkPath ->
-      createDefaultSettings(sdkPath)
-    }
-  }
+  override fun getLanguageEnvironmentCatalogProvider(): LanguageEnvironmentCatalogProvider<PyLanguageEnvironment> =
+    PyLanguageEnvironmentCatalogProvider()
 
   override fun getSupportedLanguageVersions(): List<String> = getSupportedVersions()
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyProjectSettings> {
-    return object : PyCourseProjectGenerator(this@PyNewCourseBuilder, course) {
-      // do nothing, independently of what could a base PyCourseProjectGenerator create
-      override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> = emptyList()
-    }
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyLanguageEnvironment> {
+    return object : CourseProjectGenerator<PyLanguageEnvironment>(this@PyNewCourseBuilder, course) {}
   }
 
   override fun getDefaultTaskTemplates(
@@ -53,9 +51,5 @@ class PyNewCourseBuilder : EduCourseBuilder<PyProjectSettings> {
       templates += TemplateFileInfo(PyNames.INIT_DOT_PY, "$TEST_FOLDER/${PyNames.INIT_DOT_PY}", false)
     }
     return templates
-  }
-
-  companion object {
-    private const val INTERPRETER_PROPERTY = "project.python.interpreter"
   }
 }

@@ -4,13 +4,13 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
 
-class PyCourseBuilderTest : CourseGenerationTestBase<PyProjectSettings>() {
+class PyCourseBuilderTest : CourseGenerationTestBase<LanguageEnvironment>() {
 
-  override val defaultSettings: PyProjectSettings = PyProjectSettings()
+  override val defaultSettings: LanguageEnvironment = LanguageEnvironment.NoOp
 
   @Test
   fun `test study course structure`() {

@@ -5,10 +5,10 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.python.learning.checker.PyNewTaskCheckerProvider
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import javax.swing.Icon
 
-class PyNewConfigurator : EduConfigurator<PyProjectSettings> {
+class PyNewConfigurator : EduConfigurator<PyLanguageEnvironment> {
   override val courseBuilder: PyNewCourseBuilder
     get() = PyNewCourseBuilder()
 
