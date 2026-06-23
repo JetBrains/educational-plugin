@@ -54,6 +54,9 @@ import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.courseConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.newproject.environment.InstallationResult
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
@@ -87,6 +90,8 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     setUpPluginDependencies(project, course)
     initializeFeatureManagement(project, course)
 
+    tryInstallLanguageEnvironment(project, projectSettings)
+
     if (!SubmissionSettings.getInstance(project).stateOnClose) {
       NavigationUtils.openFirstTask(course, project)
     }
@@ -101,6 +106,18 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     }
 
     onConfigurationFinished()
+  }
+
+  private suspend fun tryInstallLanguageEnvironment(project: Project, projectSettings: S) {
+    if (projectSettings !is LanguageEnvironment) return
+
+    when (val result = projectSettings.installIfNeeded(project, course)) {
+      InstallationResult.Installed -> LOG.info("Language environment has been successfully installed")
+      is InstallationResult.Error -> {
+        LOG.warn("Language environment installation failed: ${result.message}")
+        EduNotificationManager.showErrorNotification(project, content = result.message)
+      }
+    }
   }
 
   // 'projectSettings' must have S type but due to some reasons:

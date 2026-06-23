@@ -167,12 +167,12 @@ abstract class CoursePanel(parentDisposable: Disposable, isLocationFieldNeeded: 
     }
     content.update(data)
 
+    languageSettings?.addSettingsChangeListener(settingsChangeListener)
+
     doValidation()
 
     revalidate()
     repaint()
-
-    languageSettings?.addSettingsChangeListener(settingsChangeListener)
 
     return languageSettings
   }
