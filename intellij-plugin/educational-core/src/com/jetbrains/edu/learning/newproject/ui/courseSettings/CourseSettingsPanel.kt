@@ -123,7 +123,13 @@ class CourseSettingsPanel(
     val configurator = course.configurator
     languageSettings = configurator?.courseBuilder?.getLanguageSettings()?.apply {
       if (courseDisplaySettings.showLanguageSettings) {
-        val components = getLanguageSettingsComponents(course, ModalityStateProvider.forComponent(this@CourseSettingsPanel), settingsDisposable, context)
+        val components = getLanguageSettingsComponents(
+          course,
+          ModalityStateProvider.forComponent(this@CourseSettingsPanel),
+          settingsDisposable,
+          context,
+          LanguageSettings.UiComponents.LANGUAGE_ENVIRONMENT
+        )
         settingsComponents.addAll(components)
       }
     }
