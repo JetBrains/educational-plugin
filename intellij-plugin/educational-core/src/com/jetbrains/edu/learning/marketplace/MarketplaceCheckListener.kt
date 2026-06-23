@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.execution.process.ProcessIOExecutorService
+import com.intellij.ide.util.RunOnceUtil
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.FutureTracker
@@ -17,7 +19,9 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.taskToolWindow.ui.SolutionSharingInlineBanners
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.tracked
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.concurrent.CompletableFuture
 
 class MarketplaceCheckListener : CheckListener, EduTestAware {
@@ -50,7 +54,9 @@ class MarketplaceCheckListener : CheckListener, EduTestAware {
 
     MarketplaceConnector.getInstance().isLoggedInAsync().thenApplyAsync { isLoggedIn ->
       when {
-        !isLoggedIn -> return@thenApplyAsync
+        !isLoggedIn -> {
+          showNotLoggedInBanner(project)
+        }
 
         isUpToDate -> {
           val submission = MarketplaceSubmissionsConnector.getInstance().postSubmission(project, task, result)
@@ -64,11 +70,24 @@ class MarketplaceCheckListener : CheckListener, EduTestAware {
     }.tracked(futureTracker)
   }
 
+  private fun showNotLoggedInBanner(project: Project) {
+    runInEdt {
+      RunOnceUtil.runOnceForProject(project, NOT_LOGGED_IN_BANNER_SHOWN_KEY) {
+        TaskToolWindowView.getInstance(project).addInlineBanner(NotLoggedInInlineBanner())
+      }
+    }
+  }
+
   private fun SubmissionsManager.loadCommunitySubmissions(task: Task, result: CheckResult) {
     if (task.canShowCommunitySolutions() && task.hasCommunitySolutions() || !result.isSolved) return
 
     CompletableFuture.runAsync({
       loadCommunitySubmissions(task)
     }, ProcessIOExecutorService.INSTANCE).tracked(futureTracker)
+  }
+
+  companion object {
+    @VisibleForTesting
+    const val NOT_LOGGED_IN_BANNER_SHOWN_KEY = "edu.marketplace.submissions.not.logged.in.banner.shown"
   }
 }
