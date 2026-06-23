@@ -24,7 +24,29 @@ import javax.swing.SwingUtilities
  * @param Settings container type holds project settings state
  */
 abstract class LanguageSettings<Settings : EduProjectSettings> {
+
+  enum class UiComponents {
+    LANGUAGE_ENVIRONMENT,
+    LANGUAGE_ENVIRONMENT_AND_NEW_COURSE_SETTINGS
+  }
+
   private val listeners: MutableSet<SettingsChangeListener> = mutableSetOf()
+
+  /**
+   * See [getLanguageSettingsComponents] with the `isNewCourse` parameter.
+   * This version detects automatically whether the course is new or not, and might do this incorrectly.
+   * TODO remove in EDU-8931 Decouple language environment from UI: Remove obsolete code
+   */
+  @RequiresEdt
+  @Deprecated("Use getLanguageSettingsComponents(course, modalityStateProvider, disposable, context, isNewCourse)")
+  open fun getLanguageSettingsComponents(
+    course: Course,
+    modalityStateProvider: ModalityStateProvider,
+    disposable: CheckedDisposable,
+    context: UserDataHolder?
+  ): List<LabeledComponent<JComponent>> {
+    return emptyList()
+  }
 
   /**
    * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
@@ -33,18 +55,18 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
    * @param context used as cache. If provided, must have "session"-scope. Session could be one dialog or wizard.
    * @param modalityStateProvider is needed if some actions should be executed in EDT delayed.
    *        [modalityStateProvider] allows waiting until a Course dialog is shown, and so its [ModalityState] is available.
+   * @param uiComponents which UI components should be created
    * @return list of UI components with project settings
-   *
-   * @see PyLanguageSettings
    */
   @RequiresEdt
   open fun getLanguageSettingsComponents(
     course: Course,
     modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
-    context: UserDataHolder?
+    context: UserDataHolder?,
+    uiComponents: UiComponents
   ): List<LabeledComponent<JComponent>> {
-    return emptyList()
+    return getLanguageSettingsComponents(course, modalityStateProvider, disposable, context)
   }
 
   /**

@@ -308,7 +308,21 @@ class CCNewCoursePanel(
     languageSettings.addSettingsChangeListener { doValidation() }
 
     val settings = arrayListOf<LabeledComponent<*>>(locationField)
-    settings.addAll(languageSettings.getLanguageSettingsComponents(_course, ModalityStateProvider.forComponent(this), settingsDisposable, context))
+    val uiComponents = if (openExistingCourse) {
+      LanguageSettings.UiComponents.LANGUAGE_ENVIRONMENT
+    }
+    else {
+      LanguageSettings.UiComponents.LANGUAGE_ENVIRONMENT_AND_NEW_COURSE_SETTINGS
+    }
+    settings.addAll(
+      languageSettings.getLanguageSettingsComponents(
+        _course,
+        ModalityStateProvider.forComponent(this),
+        settingsDisposable,
+        context,
+        uiComponents
+      )
+    )
     this.settings.setSettingsComponents(settings)
 
     requiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements)
