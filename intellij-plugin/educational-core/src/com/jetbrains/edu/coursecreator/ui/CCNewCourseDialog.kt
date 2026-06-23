@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.ui
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.NlsContexts.Button
 import com.intellij.openapi.util.NlsContexts.DialogTitle
@@ -48,6 +49,7 @@ class CCNewCourseDialog(
     newCoursePanel.setValidationListener(object : CCNewCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         getButton(nextAction)?.isEnabled = isInputDataComplete
+        getButton(okAction)?.isEnabled = isInputDataComplete
       }
     })
   }
@@ -55,13 +57,24 @@ class CCNewCourseDialog(
   override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
+    val validationInfos = newCoursePanel.validateAll()
+    if (validationInfos.isNotEmpty()) {
+      LOG.error("Validation failed, but the OK button is enabled: $validationInfos")
+      return
+    }
+
     val isFrameworkLessonSelected = lessonTypeSelectionPanel.isGuidedProjectSelected
-    close(OK_EXIT_CODE)
-    onOKAction()
     val course = newCoursePanel.course
     val projectSettings = newCoursePanel.projectSettings
     val location = newCoursePanel.locationString
     val lessonProducer = if (isFrameworkLessonSelected) ::FrameworkLesson else ::Lesson
+
+    val newCourseSettings = newCoursePanel.newCourseSettings
+    newCourseSettings?.applyToCourse(course)
+
+    close(OK_EXIT_CODE)
+    onOKAction()
+
     course.configurator
       ?.courseBuilder
       ?.getCourseProjectGenerator(course)
@@ -121,5 +134,9 @@ class CCNewCourseDialog(
     fun showLessonSelectionPanel() {
       cardLayout.show(this, lessonSelectionCardName)
     }
+  }
+
+  companion object {
+    val LOG = logger<CCNewCourseDialog>()
   }
 }

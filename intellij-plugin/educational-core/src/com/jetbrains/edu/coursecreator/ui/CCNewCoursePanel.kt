@@ -43,7 +43,9 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EduProjectSettings
 import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import com.jetbrains.edu.learning.newproject.nameToLocation
+import com.jetbrains.edu.learning.newproject.newCourseSettings.NewCourseSettings
 import com.jetbrains.edu.learning.newproject.ui.courseSettings.CourseSettingsPanel
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
 import com.jetbrains.edu.learning.newproject.ui.errors.*
 import java.awt.BorderLayout
 import java.awt.Component
@@ -86,6 +88,8 @@ class CCNewCoursePanel(
     }
 
   val projectSettings: EduProjectSettings get() = languageSettings.getSettings()
+  // TODO no need in type cast after EDU-8931
+  val newCourseSettings: NewCourseSettings? get() = (languageSettings as? EnvironmentAndNewCourseSettings<*, *>)?.getNewCourseSettings()
   val locationString: String get() = locationField.component.text
 
   init {
