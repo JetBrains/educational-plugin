@@ -9,6 +9,7 @@ import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.platform.backend.observation.Observation
 import com.intellij.util.io.delete
+import com.jetbrains.edu.learning.EnvironmentAwareCourseBuilder
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -40,7 +41,13 @@ abstract class EduCourseProjectCommand(name: String) : EduCommand(name) {
 
     val courseBuilder = configurator.courseBuilder
 
-    return when (val projectSettings = courseBuilder.getDefaultSettings()) {
+    val environmentSpaceProvider = (courseBuilder as? EnvironmentAwareCourseBuilder)?.getLanguageEnvironmentCatalogProvider()
+    // if environmentSpaceProvider is not null, it is possible to use the modern approach to get settings
+    val projectSettings = environmentSpaceProvider?.default()
+                          // otherwise use the legacy approach TODO EDU-8931 remove the legacy approach when all course builders are migrated
+                          ?: courseBuilder.getDefaultSettings()
+
+    return when (projectSettings) {
       is Err -> CommandResult.Error(projectSettings.error)
       is Ok -> createCourseProject(course, projectSettings.value)
     }
