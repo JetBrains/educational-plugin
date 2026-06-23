@@ -1,12 +1,12 @@
 package com.jetbrains.edu.python
 
 import com.jetbrains.edu.learning.FindTaskFileTestBase
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
 import org.junit.Test
 
-class PyFindTaskFileTest : FindTaskFileTestBase<PyProjectSettings>() {
+class PyFindTaskFileTest : FindTaskFileTestBase<LanguageEnvironment>() {
 
-  override val defaultSettings: PyProjectSettings = PyProjectSettings()
+  override val defaultSettings: LanguageEnvironment = LanguageEnvironment.NoOp
 
   @Test
   fun `test get task dir`() = doTestGetTaskDir(

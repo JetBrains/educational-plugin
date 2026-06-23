@@ -8,14 +8,14 @@ import com.jetbrains.edu.aiHints.core.context.TaskHintsDataHolder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
-import com.jetbrains.edu.python.learning.newproject.PyProjectSettings
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
 
 /**
  * Test [com.jetbrains.edu.aiHints.core.context.AuthorSolutionContextProjectActivity] for Python language.
  */
-class PyAuthorSolutionContextProjectActivityTest : CourseGenerationTestBase<PyProjectSettings>() {
+class PyAuthorSolutionContextProjectActivityTest : CourseGenerationTestBase<LanguageEnvironment>() {
   override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable?>) {
     // BACKCOMPAT: Remove when this test is fixed for 2025.2
     if (ApplicationInfo.getInstance().build < BuildNumber.fromString("252")!!) {
@@ -23,7 +23,7 @@ class PyAuthorSolutionContextProjectActivityTest : CourseGenerationTestBase<PyPr
     }
   }
 
-  override val defaultSettings: PyProjectSettings = PyProjectSettings()
+  override val defaultSettings: LanguageEnvironment = LanguageEnvironment.NoOp
 
   @Test
   fun `test author solution context project activity during project initialization`() {

@@ -1,105 +1,57 @@
 package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.util.CheckedDisposable
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
-import com.jetbrains.edu.learning.EduNames.ENVIRONMENT_CONFIGURATION_LINK_PYTHON
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
-import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.newproject.ui.errors.SettingsValidationResult
-import com.jetbrains.edu.learning.newproject.ui.errors.ValidationMessage
-import com.jetbrains.edu.learning.newproject.ui.errors.ready
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
+import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider.Companion.ALL_VERSIONS
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings.Companion.ALL_VERSIONS
 import com.jetbrains.python.PythonRuntimeService
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.*
-import com.jetbrains.python.sdk.add.PySdkPathChoosingComboBox
-import com.jetbrains.python.sdk.add.addInterpretersAsync
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
-import java.awt.BorderLayout
-import java.awt.event.ItemEvent
-import javax.swing.JComponent
 
-typealias PySdkType = Sdk
-
-fun getLanguageSettingsComponents(
-  course: Course,
-  disposable: CheckedDisposable,
-  context: UserDataHolder?,
-  projectSettings: PyProjectSettings,
-  notifyListeners: () -> Unit,
-): List<LabeledComponent<JComponent>> {
-  val sdkField = PySdkPathChoosingComboBox()
-  sdkField.childComponent.addItemListener {
-    if (it.stateChange == ItemEvent.SELECTED) {
-      projectSettings.sdk = sdkField.selectedSdk
-      notifyListeners()
-    }
-  }
-
-  // Suggested to be replaced with PythonInterpreterCombobox, but PythonInterpreterCombobox is currently internal
-  // TODO: use PythonInterpreterCombobox when instead
-  var recommendedSdk: Sdk? = null
-
-  @Suppress("DEPRECATION_ERROR")
-  addInterpretersAsync(sdkField, {
-    val (collectedSdks, sdkToSelect) = collectPySdks(course, context ?: UserDataHolderBase())
-    recommendedSdk = sdkToSelect
-    collectedSdks
-  }) {
-    if (disposable.isDisposed) return@addInterpretersAsync
-
-    recommendedSdk?.let { sdkField.selectedSdk = it }
-    projectSettings.sdk = sdkField.selectedSdk
-    notifyListeners()
-  }
-
-  return listOf(
-    LabeledComponent.create(sdkField, EduCoreBundle.message("select.interpreter"), BorderLayout.WEST)
-  )
-}
-
-@RequiresBackgroundThread
-private fun collectPySdks(course: Course, context: UserDataHolder): Pair<List<Sdk>, Sdk?> {
-  val fakeSdk = createFakeSdk(course, context)
+// Inspired by `com.jetbrains.python.sdk.add.PyAddSdkPanelKt.addBaseInterpretersAsync` implementation
+/**
+ * @return list of all available python interpreters and a recommended one to select
+ */
+suspend fun collectPyEnvironments(course: Course, context: UserDataHolder): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
+  val fakeSdk = createFakeSdk(course, context)?.toLanguageEnvironment()
   val fakeSdks = listOfNotNull(fakeSdk)
 
-  val sdks = (fakeSdks + findBaseSdks(emptyList(), null, context))
+  val baseSdks = findBaseSdks(emptyList(), null, context)
+    .sortedByDescending { it.languageLevel }
+    .map { it.toLanguageEnvironment() }
+
+  val sdks = (fakeSdks + baseSdks)
     // It's important to check validity here, in background thread,
     // because it caches a result of checking if python binary is executable.
     // If the first (uncached) invocation is invoked in EDT, it may throw exception and break UI rendering.
     // See https://youtrack.jetbrains.com/issue/EDU-6371
-    .filter { it.sdkSeemsValid }
+    .filter { it.sdk.sdkSeemsValid }
+    .filter { isSdkApplicable(course, it.sdk.languageLevel) == OK }
 
-  val needSdksToInstall = sdks.all { OK != isSdkApplicable(course, it.languageLevel) }
-
-  val collectedSdks = if (needSdksToInstall) {
-    sdks + getSdksToInstall()
-  }
-  else {
-    sdks
+  val collectedSdks = sdks.ifEmpty {
+    getSdksToInstall().filter { isSdkApplicable(course, it.languageLevel) == OK }.map { it.toLanguageEnvironment() }
   }
 
-  val recommendedSdk = fakeSdk ?: collectedSdks
-    .filter { isSdkApplicable(course, it.languageLevel) == OK }
-    .maxByOrNull { it.languageLevel }
+  val recommendedSdk = collectedSdks.firstOrNull()
 
   return collectedSdks to recommendedSdk
 }
 
-private val Sdk.languageLevel: LanguageLevel
+private fun Sdk.toLanguageEnvironment() = PyLanguageEnvironment(this, languageLevel)
+
+val Sdk.languageLevel: LanguageLevel
   get() {
-    return when (this) {
+    return when(this) {
       is PySdkToCreateVirtualEnv -> {
         val pythonVersion = versionString
         if (pythonVersion == null) {
@@ -127,26 +79,6 @@ private val Sdk.languageLevel: LanguageLevel
     }
   }
 
-fun validate(isSettingsInitialized: Boolean, projectSettings: PyProjectSettings, course: Course): SettingsValidationResult {
-  val sdk = projectSettings.sdk ?: return if (isSettingsInitialized) {
-    ValidationMessage(
-      EduPythonBundle.message("error.no.python.interpreter", ENVIRONMENT_CONFIGURATION_LINK_PYTHON),
-      ENVIRONMENT_CONFIGURATION_LINK_PYTHON
-    ).ready()
-  }
-  else {
-    SettingsValidationResult.Pending
-  }
-
-  val sdkApplicable = isSdkApplicable(course, sdk.languageLevel)
-  if (sdkApplicable is Err) {
-    val message = "${sdkApplicable.error}<br>${EduPythonBundle.message("configure.python.environment.help")}"
-    val validationMessage = ValidationMessage(message, ENVIRONMENT_CONFIGURATION_LINK_PYTHON)
-    return SettingsValidationResult.Ready(validationMessage)
-  }
-
-  return SettingsValidationResult.OK
-}
 
 private fun isSdkApplicable(course: Course, sdkLanguageLevel: LanguageLevel): Result<Unit, String> {
   val courseLanguageVersion = course.languageVersion
