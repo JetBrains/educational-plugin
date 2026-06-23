@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.cipher
 
+import com.jetbrains.edu.learning.EnvironmentService
+import com.jetbrains.edu.learning.findServiceOrNull
+
 interface Cipher {
   fun encrypt(bytes: ByteArray): ByteArray
   fun encrypt(str: String): String
@@ -8,7 +11,9 @@ interface Cipher {
   fun decrypt(str: String): String
 }
 
-fun Cipher(): Cipher = AES256Cipher.create()
+fun Cipher(): Cipher {
+  return if (findServiceOrNull<EnvironmentService>()?.isUnitTestMode == true) TestCipher() else AES256Cipher.create()
+}
 
 /**
  * Returns a cipher which is supposed to be used in tests
