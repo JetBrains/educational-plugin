@@ -22,7 +22,9 @@
       "Bash(./gradlew *:test *)",
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs",
-      "mcp__jetbrains__*"
+      "mcp__idea__*",
+      "mcp__youtrack__get_issue_fields_schema",
+      "mcp__youtrack__create_issue"
     ]
   },
   "attribution": {
