@@ -2,23 +2,21 @@
 
 package com.jetbrains.edu.python.learning
 
-import com.intellij.codeHighlighting.Pass
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.fileLogger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.platform.util.progress.SequentialProgressReporter
-import com.intellij.platform.util.progress.reportSequentialProgress
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.courseDir
@@ -28,18 +26,21 @@ import com.jetbrains.edu.learning.courseFormat.ext.findTaskFileInDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isTestsFile
+import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
-import com.jetbrains.python.packaging.PyPackageUtil
-import com.jetbrains.python.packaging.PyRequirement
+import com.jetbrains.python.Result
+import com.jetbrains.python.errorProcessing.PyResult
+import com.jetbrains.python.packaging.common.PythonPackage
 import com.jetbrains.python.packaging.management.PythonPackageManager
-import com.jetbrains.python.packaging.management.findPackageSpecification
-import com.jetbrains.python.packaging.management.toInstallRequest
 import com.jetbrains.python.psi.LanguageLevel
+import com.jetbrains.python.sdk.isReadOnly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private val LOG = fileLogger()
 
 fun Task.getCurrentTaskVirtualFile(project: Project): VirtualFile? {
   val taskDir = getDir(project.courseDir) ?: error("Failed to get task dir for `${name}` task")
@@ -77,33 +78,41 @@ internal fun pythonAttributesEvaluator(baseEvaluator: AttributesEvaluator): Attr
 
 fun installRequiredPackages(project: Project, sdk: Sdk) {
   InstallPackageCoroutineScope.getCoroutineScope(project).launch {
-    for (module in ModuleManager.getInstance(project).modules) {
-      val requirements = runReadAction { PyPackageUtil.getRequirementsFromTxt(module) }
-      if (requirements.isNullOrEmpty()) {
-        continue
-      }
+    val result = executePackageInstallationCommand(project, sdk)
+    if (result is Result.Failure) {
+      LOG.warn("Failed to install required packages")
+      EduNotificationManager.showErrorNotification(project, EduPythonBundle.message("installing.requirements.failed.title"), result.error.message)
+      return@launch
+    }
 
-      val packageManager = PythonPackageManager.forSdk(project, sdk)
-      withBackgroundProgress(project, EduPythonBundle.message("installing.requirements.progress")) {
-        withContext(Dispatchers.IO) {
-          reportSequentialProgress(requirements.size) { reporter ->
-            installRequiredPackages(reporter, packageManager, requirements)
-          }
-        }
-      }
+    withContext(Dispatchers.EDT) {
+      val editorManager = FileEditorManager.getInstance(project)
+      val analyzer = DaemonCodeAnalyzer.getInstance(project)
 
-      withContext(Dispatchers.EDT) {
-        val editorManager = FileEditorManager.getInstance(project)
-        val analyzer = DaemonCodeAnalyzerEx.getInstanceEx(module.project)
-        if (editorManager.hasOpenFiles()) {
-          editorManager.openFiles.forEach { file ->
-            file.findPsiFile(project)?.let { psiFile ->
-              analyzer.cleanFileLevelHighlights(Pass.LOCAL_INSPECTIONS, psiFile)
-            }
+      if (editorManager.hasOpenFiles()) {
+        editorManager.openFiles.forEach { file ->
+          file.findPsiFile(project)?.let { psiFile ->
+            analyzer.restart(psiFile, this)
           }
         }
       }
     }
+  }
+}
+
+private suspend fun executePackageInstallationCommand(project: Project, sdk: Sdk): PyResult<List<PythonPackage>> {
+  // Manually handle case with read-only python SDK to provide better error message
+  if (sdk.isReadOnly) {
+    return PyResult.localizedError(EduPythonBundle.message("installing.requirements.failed.message.read.only.sdk"))
+  }
+
+  edtWriteAction {
+    FileDocumentManager.getInstance().saveAllDocuments()
+  }
+
+  val packageManager = PythonPackageManager.forSdk(project, sdk)
+  return withBackgroundProgress(project, EduPythonBundle.message("installing.requirements.progress")) {
+    packageManager.syncLocked()
   }
 }
 
@@ -111,22 +120,6 @@ fun getSupportedVersions(): List<String> {
   val pythonVersions = mutableListOf(PyLanguageSettings.ALL_VERSIONS, PYTHON_3_VERSION, PYTHON_2_VERSION)
   pythonVersions.addAll(LanguageLevel.entries.map { it.toString() }.reversed())
   return pythonVersions
-}
-
-internal suspend fun installRequiredPackages(
-  @Suppress("unused") reporter: SequentialProgressReporter,
-  packageManager: PythonPackageManager,
-  requirements: List<PyRequirement>
-) {
-  for (pyRequirement in requirements) {
-    reporter.itemStep(pyRequirement.name) {
-      val packageSpecification = packageManager.findPackageSpecification(
-        packageName = pyRequirement.name,
-        versionSpec = pyRequirement.versionSpecs.firstOrNull()
-      ) ?: return@itemStep
-      packageManager.installPackage(packageSpecification.toInstallRequest())
-    }
-  }
 }
 
 private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDependentName(path)
