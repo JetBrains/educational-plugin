@@ -194,7 +194,7 @@ private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<Data
       version.version == artifact.artifactVersion -> artifact
       else -> DatabaseDriverImpl.createArtifactRef(artifact.id, version.version, artifact.channel)!!
     }
-    if (version != null && !loader.isValid(version, DatabaseArtifactContext.getDefaultContext())) {
+    if (version != null && loader.needToDownload(version)) {
       toDownload += version
     }
   }
