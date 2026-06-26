@@ -112,6 +112,7 @@ val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   imagesPlugin, // adds `svg` file type and makes IDE consider .svg files as text ones
   yamlPlugin,   // makes IDE consider .yaml files as text ones and affects formatting of yaml files
   jsonPlugin,   // dependency of a lot of other bundled plugin
+  "com.intellij.modules.ultimate",
   if (isAtLeast262) "intellij.structureView.plugin" else null,
   if (isAtLeast262) "intellij.todo.plugin" else null,
   if (isAtLeast262) "intellij.structuralSearch.plugin" else null,

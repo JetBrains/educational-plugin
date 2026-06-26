@@ -9,7 +9,6 @@ dependencies {
 
     intellijPlugins(rustPlugins)
 
-    bundledModule("com.intellij.modules.ultimate")
     if (isAtLeast262) {
       intellijPlugins(testRunnerPlugin)
       // BACKCOMPAT 2026.1: Drop not-null assertion (!!)

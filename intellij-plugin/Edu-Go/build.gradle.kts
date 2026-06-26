@@ -8,7 +8,6 @@ dependencies {
 
     intellijPlugins(goPlugin)
 
-    bundledModule("com.intellij.modules.ultimate")
     if (isAtLeast262) {
       intellijPlugins(testRunnerPlugin)
     }

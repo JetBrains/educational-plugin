@@ -8,7 +8,6 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(sqlPlugins)
-    bundledModule("com.intellij.modules.ultimate")
     if (isAtLeast262) {
       testIntellijPlugins("intellij.grid.core.plugin")
       testIntellijPlugins("intellij.execution.serviceView.plugin")
