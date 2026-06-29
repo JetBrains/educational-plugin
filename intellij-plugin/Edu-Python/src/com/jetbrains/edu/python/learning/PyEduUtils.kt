@@ -111,6 +111,12 @@ private suspend fun executePackageInstallationCommand(project: Project, sdk: Sdk
   }
 
   val packageManager = PythonPackageManager.forSdk(project, sdk)
+
+  if (!packageManager.hasRootDependencyFile()) {
+    LOG.info("No Python dependencies file found, skipping package sync")
+    return PyResult.success(emptyList())
+  }
+
   return withBackgroundProgress(project, EduPythonBundle.message("installing.requirements.progress")) {
     packageManager.syncLocked()
   }
