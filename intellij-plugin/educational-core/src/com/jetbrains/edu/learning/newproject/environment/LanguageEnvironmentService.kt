@@ -1,19 +1,24 @@
 package com.jetbrains.edu.learning.newproject.environment
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.asContextElement
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.util.cancelOnDispose
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.ModalityStateProvider
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.messages.EduCoreBundle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A helper service to work with environment catalogs. Has its own scope to execute long-running operations.
@@ -37,6 +42,19 @@ class LanguageEnvironmentService(private val scope: CoroutineScope) {
         }
         environmentsLoaded(environmentCatalog)
       }.cancelOnDispose(disposable)
+    }
+  }
+
+  fun installLanguageEnvironment(project: Project, course: Course, environment: LanguageEnvironment, finished: (InstallationResult) -> Unit) {
+    scope.launch {
+      withBackgroundProgress(project, EduCoreBundle.message("generate.course.set.up.language.environment.progress.text")) {
+        val result = withContext(Dispatchers.IO) {
+          environment.installIfNeeded(project, course)
+        }
+        withContext(Dispatchers.EDT) {
+          finished(result)
+        }
+      }
     }
   }
 
