@@ -56,6 +56,7 @@ import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.environment.InstallationResult
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentService
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.learning.submissions.SubmissionSettings
@@ -90,8 +91,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     setUpPluginDependencies(project, course)
     initializeFeatureManagement(project, course)
 
-    tryInstallLanguageEnvironment(project, projectSettings)
-
     if (!SubmissionSettings.getInstance(project).stateOnClose) {
       NavigationUtils.openFirstTask(course, project)
     }
@@ -108,20 +107,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     onConfigurationFinished()
   }
 
-  private suspend fun tryInstallLanguageEnvironment(project: Project, projectSettings: S) {
-    if (projectSettings !is LanguageEnvironment) return
-
-    withContext(Dispatchers.IO) {
-      when (val result = projectSettings.installIfNeeded(project, course)) {
-        InstallationResult.Installed -> LOG.info("Language environment has been successfully installed")
-        is InstallationResult.Error -> {
-          LOG.warn("Language environment installation failed: ${result.message}")
-          EduNotificationManager.showErrorNotification(project, content = result.message)
-        }
-      }
-    }
-  }
-
   // 'projectSettings' must have S type but due to some reasons:
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
   //  * Kotlin and Java do type erasure a little differently
@@ -133,34 +118,61 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     openCourseParams: Map<String, String> = emptyMap(),
     initialLessonProducer: () -> Lesson = ::Lesson
   ): Project? {
-    return runWithModalProgressBlocking(
+    @Suppress("UNCHECKED_CAST")
+    val castedProjectSettings = projectSettings as S
+
+    val createdProject = runWithModalProgressBlocking(
       ModalTaskOwner.guess(),
       EduCoreBundle.message("generate.course.progress.title"),
       TaskCancellation.cancellable()
     ) {
-      doCreateCourseProjectAsync(location, projectSettings, openCourseParams, initialLessonProducer)
+      doCreateCourseProjectAsync(location, castedProjectSettings, openCourseParams, initialLessonProducer)
     }
+
+    // TODO remove in EDU-8931
+    if (createdProject == null || projectSettings !is LanguageEnvironment) return createdProject
+
+    // for Language environment settings, run the installation and notify that course is configured
+
+    LanguageEnvironmentService.getInstance().installLanguageEnvironment(createdProject, course, projectSettings) { installationResult ->
+      when (installationResult) {
+        InstallationResult.Installed -> LOG.info("Language environment has been successfully installed")
+        is InstallationResult.Error -> {
+          LOG.warn("Language environment installation failed: ${installationResult.message}")
+          EduNotificationManager.showErrorNotification(createdProject, content = installationResult.message)
+        }
+      }
+
+      notifyCourseProjectConfigurationListeners(createdProject)
+    }
+
+    return createdProject
   }
 
   private suspend fun doCreateCourseProjectAsync(
     location: String,
-    projectSettings: EduProjectSettings,
+    projectSettings: S,
     openCourseParams: Map<String, String>,
     initialLessonProducer: () -> Lesson
   ): Project? {
-    @Suppress("UNCHECKED_CAST")
-    val castedProjectSettings = projectSettings as S
-    applySettings(castedProjectSettings)
+    applySettings(projectSettings)
     val createdProject = createProject(location, initialLessonProducer) ?: return null
 
     withContext(Dispatchers.EDT) {
-      afterProjectGenerated(createdProject, castedProjectSettings, openCourseParams) {
-        ApplicationManager.getApplication().messageBus
-          .syncPublisher(COURSE_PROJECT_CONFIGURATION)
-          .onCourseProjectConfigured(createdProject)
+      afterProjectGenerated(createdProject, projectSettings, openCourseParams) {
+        // for project settings that implement LanguageEnvironment, the project will be configured later. Remove in EDU-8931
+        if (projectSettings is LanguageEnvironment) return@afterProjectGenerated
+
+        notifyCourseProjectConfigurationListeners(createdProject)
       }
     }
     return createdProject
+  }
+
+  private fun notifyCourseProjectConfigurationListeners(createdProject: Project) {
+    ApplicationManager.getApplication().messageBus
+      .syncPublisher(COURSE_PROJECT_CONFIGURATION)
+      .onCourseProjectConfigured(createdProject)
   }
 
   /**
