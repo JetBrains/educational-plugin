@@ -1,11 +1,12 @@
 package com.jetbrains.edu.jvm.courseGeneration
 
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironmentNoOp
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 
-abstract class JvmCourseGenerationTestBase : CourseGenerationTestBase<JdkProjectSettings>() {
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+abstract class JvmCourseGenerationTestBase : CourseGenerationTestBase<JdkLanguageEnvironment>() {
+  override val defaultSettings: JdkLanguageEnvironment get() = JdkLanguageEnvironmentNoOp
 
   override fun tearDown() {
     try {

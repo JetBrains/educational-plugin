@@ -1,23 +1,28 @@
 package com.jetbrains.edu.jvm.gradle
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.jvm.JdkLanguageSettings
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironmentCatalogProvider
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.EduNames.PROJECT_NAME
+import com.jetbrains.edu.learning.EnvironmentAwareCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.WRAPPER
-import org.jetbrains.annotations.NonNls
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.newCourseSettings.NewCourseSettingsUI
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.plugins.gradle.util.GradleConstants.*
 
-abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
+abstract class GradleCourseBuilderBase : EnvironmentAwareCourseBuilder<JdkLanguageEnvironment> {
 
   abstract fun buildGradleTemplateName(course: Course): String
   open fun settingGradleTemplateName(course: Course): String = SETTINGS_FILE_NAME
@@ -67,9 +72,14 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     GradleCourseRefresher.firstAvailable()?.refresh(project, cause)
   }
 
-  override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<JdkLanguageEnvironment> = EnvironmentAndNewCourseSettings(
+    getLanguageEnvironmentCatalogProvider(),
+    JdkEnvironmentPresenter(),
+    NewCourseSettingsUI.NoSettings
+  )
 
-  override suspend fun getDefaultSettings(): Result<JdkProjectSettings, String> = JdkProjectSettings.defaultSettings()
+  override fun getLanguageEnvironmentCatalogProvider(): LanguageEnvironmentCatalogProvider<JdkLanguageEnvironment> =
+    JdkLanguageEnvironmentCatalogProvider(GradleBuildSystemSupport)
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
     GradleCourseProjectGenerator(this, course)
@@ -97,18 +107,16 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   }
 
   companion object {
-    @NonNls
-    const val HYPERSKILL_SETTINGS_GRADLE_TEMPLATE_NAME: String = "hyperskill-settings.gradle"
-
     @VisibleForTesting
     const val LEGACY_TEMPLATE_PREFIX: String = "legacy-"
 
     val GRADLE_WRAPPER_PROPERTIES_PATH: String = GeneratorUtils.joinPaths(GRADLE_DIR_NAME, WRAPPER, GRADLE_WRAPPER_PROPERTIES)
 
     private const val GRADLE_VERSION_VARIABLE: String = "GRADLE_VERSION"
+
     // Starting from release 2025.10.1, we put gradle-wrapper.properties in the archive.
     // Earlier courses are considered to have gradle version 8.14.3
-    private const val LEGACY_GRADLE_VERSION: String = "8.14.3"
+    const val LEGACY_GRADLE_VERSION: String = "8.14.3"
 
     fun getKotlinTemplateVariables(): Map<String, Any> {
       return mapOf(

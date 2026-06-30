@@ -9,22 +9,26 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.IdeaTestUtil
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.intellij.util.lang.JavaVersion
+import com.jetbrains.edu.jvm.gradle.GradleBuildSystemSupport
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironmentExisting
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
 import com.jetbrains.edu.learning.isTeamCity
 import java.io.File
 
-class JdkCheckerFixture : EduCheckerFixture<JdkProjectSettings>() {
+class JdkCheckerFixture : EduCheckerFixture<JdkLanguageEnvironment>() {
 
   private var sdks: Set<Sdk>? = null
 
-  override val projectSettings: JdkProjectSettings get() {
+  override val projectSettings: JdkLanguageEnvironment get() {
     val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME) ?: error("Gradle JDK should be configured in setUp()")
 
     val sdksModel = ProjectSdksModel()
     sdksModel.addSdk(jdk)
 
-    return JdkProjectSettings(sdksModel, jdk)
+    val version = JavaVersion.tryParse(jdk.versionString) ?: error("Failed to parse JDK version: ${jdk.versionString}")
+    return JdkLanguageEnvironmentExisting(sdksModel, jdk.homePath!!, version, jdk.name, GradleBuildSystemSupport, jdk)
   }
 
   override fun getSkipTestReason(): String? {

@@ -2,7 +2,7 @@ package com.jetbrains.edu.jvm.gradle
 
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
+abstract class GradleConfiguratorBase : EduConfigurator<JdkLanguageEnvironment> {
   abstract override val courseBuilder: GradleCourseBuilderBase
 
   override val courseFileAttributesEvaluator: AttributesEvaluator = AttributesEvaluator(super.courseFileAttributesEvaluator) {

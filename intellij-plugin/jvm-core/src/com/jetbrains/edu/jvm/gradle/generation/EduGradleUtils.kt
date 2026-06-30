@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.gradle.util.GradleVersion
+import org.gradle.wrapper.WrapperExecutor
 import org.jetbrains.annotations.VisibleForTesting
 import org.jetbrains.plugins.gradle.jvmcompat.GradleJvmSupportMatrix
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
@@ -48,6 +49,7 @@ import org.jetbrains.plugins.gradle.util.toJvmCriteria
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
+import java.util.Properties
 
 object EduGradleUtils {
 
@@ -80,7 +82,12 @@ object EduGradleUtils {
     }
 
   @RequiresEdt
-  fun setGradleSettings(project: Project, sdk: Sdk?, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
+  fun setGradleSettings(
+    project: Project,
+    location: String,
+    distributionType: DistributionType = DistributionType.WRAPPED,
+    configureGradleJvm: (GradleProjectSettings) -> Unit
+  ) {
     val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location)
     if (existingProject is GradleProjectSettings) {
@@ -90,7 +97,7 @@ object EduGradleUtils {
       if (existingProject.externalProjectPath == null) {
         existingProject.externalProjectPath = location
       }
-      setUpGradleJvm(project, existingProject, sdk)
+      configureGradleJvm(existingProject)
       return
     }
 
@@ -100,7 +107,7 @@ object EduGradleUtils {
     // IDEA runner is much more faster and it doesn't write redundant messages into console.
     // Note, it doesn't affect tests - they still are run with gradle runner
     gradleProjectSettings.delegatedBuild = false
-    setUpGradleJvm(project, gradleProjectSettings, sdk)
+    configureGradleJvm(gradleProjectSettings)
 
     val projects = systemSettings.linkedProjectsSettings.toHashSet()
     projects.add(gradleProjectSettings)
@@ -250,7 +257,9 @@ object EduGradleUtils {
   fun updateGradleSettings(project: Project) {
     val projectBasePath = project.basePath ?: error("Failed to find base path for the project during gradle project setup")
     val sdk = ProjectRootManager.getInstance(project).projectSdk
-    setGradleSettings(project, sdk, projectBasePath)
+    setGradleSettings(project, projectBasePath) { gradleProjectSettings ->
+      setUpGradleJvm(project, gradleProjectSettings, sdk)
+    }
   }
 
   fun setupGradleProject(project: Project) {
@@ -313,6 +322,23 @@ object EduGradleUtils {
     LOG.warn("Failed to determine gradle version. Will use the current version $currentGradleVersion")
 
     return currentGradleVersion
+  }
+
+  fun detectGradleVersion(course: Course): GradleVersion? {
+    val wrapperPropertiesFile = course.additionalFiles.find {
+      it.name == GRADLE_WRAPPER_PROPERTIES_PATH
+    } ?: return null
+
+    val contents = wrapperPropertiesFile.contents as? TextualContents ?: return null
+    val wrapperConfigurationText = contents.text
+
+    val gradleProperties = Properties().apply {
+      load(wrapperConfigurationText.reader())
+    }
+
+    val distributionUrl = gradleProperties.getProperty(WrapperExecutor.DISTRIBUTION_URL_PROPERTY) ?: return null
+
+    return GradleInstallationManager.parseDistributionVersion(distributionUrl)
   }
 
   private fun findVersionInsideGradleWrapperProperties(projectSettings: GradleProjectSettings): GradleVersion? {

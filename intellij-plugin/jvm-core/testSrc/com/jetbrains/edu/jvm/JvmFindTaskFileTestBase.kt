@@ -1,11 +1,13 @@
 package com.jetbrains.edu.jvm
 
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironmentNoOp
 import com.jetbrains.edu.learning.FindTaskFileTestBase
 
-abstract class JvmFindTaskFileTestBase : FindTaskFileTestBase<JdkProjectSettings>() {
+abstract class JvmFindTaskFileTestBase : FindTaskFileTestBase<JdkLanguageEnvironment>() {
 
-  override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
+  override val defaultSettings: JdkLanguageEnvironment get() = JdkLanguageEnvironmentNoOp
 
   override fun tearDown() {
     try {

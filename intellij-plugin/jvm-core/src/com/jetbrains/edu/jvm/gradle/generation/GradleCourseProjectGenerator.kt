@@ -4,9 +4,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.writeAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.util.concurrency.annotations.RequiresEdt
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.CourseInfoHolder
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -17,23 +15,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 open class GradleCourseProjectGenerator(
   builder: GradleCourseBuilderBase,
   course: Course
-) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
-
-  override suspend fun afterProjectGenerated(
-    project: Project,
-    projectSettings: JdkProjectSettings,
-    openCourseParams: Map<String, String>,
-    onConfigurationFinished: () -> Unit
-  ) {
-    val jdk = projectSettings.setUpProjectJdk(project, course, ::getJdk)
-    setupGradleSettings(project, jdk)
-    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
-  }
-
-  @RequiresEdt
-  protected open fun setupGradleSettings(project: Project, sdk: Sdk?) {
-    EduGradleUtils.setGradleSettings(project, sdk, project.basePath!!)
-  }
+) : CourseProjectGenerator<JdkLanguageEnvironment>(builder, course) {
 
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> {
     val gradleCourseBuilder = courseBuilder as GradleCourseBuilderBase
@@ -42,10 +24,6 @@ open class GradleCourseProjectGenerator(
       gradleCourseBuilder.templates(holder.course),
       gradleCourseBuilder.templateVariables(holder.courseDir.name, holder)
     )
-  }
-
-  protected open fun getJdk(settings: JdkProjectSettings): Sdk? {
-    return settings.jdk
   }
 
   override suspend fun prepareToOpen(project: Project, module: Module) {
