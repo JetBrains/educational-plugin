@@ -2,7 +2,7 @@ package com.jetbrains.edu.scala.sbt
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.EducationalCoreIcons
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
@@ -18,8 +18,8 @@ import com.jetbrains.edu.scala.sbt.checker.ScalaSbtTaskCheckerProvider
 import org.jetbrains.sbt.Sbt
 import javax.swing.Icon
 
-class ScalaSbtConfigurator : EduConfigurator<JdkProjectSettings> {
-  override val courseBuilder: EduCourseBuilder<JdkProjectSettings>
+class ScalaSbtConfigurator : EduConfigurator<JdkLanguageEnvironment> {
+  override val courseBuilder: EduCourseBuilder<JdkLanguageEnvironment>
     get() = ScalaSbtCourseBuilder()
 
   override val testFileName: String

@@ -9,25 +9,38 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
-import com.jetbrains.edu.jvm.JdkLanguageSettings
-import com.jetbrains.edu.jvm.JdkProjectSettings
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.jvm.gradle.JdkEnvironmentPresenter
+import com.jetbrains.edu.learning.EnvironmentAwareCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.RefreshCause
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.isHeadlessEnvironment
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.newCourseSettings.NewCourseSettingsUI
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.sbt.project.SbtProjectSystem
 
-class ScalaSbtCourseBuilder : EduCourseBuilder<JdkProjectSettings> {
+class ScalaSbtCourseBuilder : EnvironmentAwareCourseBuilder<JdkLanguageEnvironment> {
 
   override fun taskTemplateName(course: Course): String = ScalaSbtConfigurator.TASK_SCALA
   override fun mainTemplateName(course: Course): String = ScalaSbtConfigurator.MAIN_SCALA
   override fun testTemplateName(course: Course): String = ScalaSbtConfigurator.TEST_SCALA
 
-  override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<JdkLanguageEnvironment> =
+    EnvironmentAndNewCourseSettings(
+      getLanguageEnvironmentCatalogProvider(),
+      JdkEnvironmentPresenter(),
+      NewCourseSettingsUI.NoSettings
+    )
 
-  override suspend fun getDefaultSettings(): Result<JdkProjectSettings, String> = JdkProjectSettings.defaultSettings()
+  override fun getLanguageEnvironmentCatalogProvider(): LanguageEnvironmentCatalogProvider<JdkLanguageEnvironment> =
+    JdkLanguageEnvironmentCatalogProvider(SbtBuildSystemSupport)
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings> {
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkLanguageEnvironment> {
     return ScalaSbtCourseProjectGenerator(this, course)
   }
 
