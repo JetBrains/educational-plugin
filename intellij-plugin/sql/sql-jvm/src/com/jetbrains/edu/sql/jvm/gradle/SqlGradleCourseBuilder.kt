@@ -2,11 +2,13 @@ package com.jetbrains.edu.sql.jvm.gradle
 
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.jvm.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.jvm.gradle.JdkEnvironmentPresenter
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.newCourseSettings.NewCourseSettingsUI
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -22,13 +24,10 @@ class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
     val templates = super.getDefaultTaskTemplates(course, info, withSources, withTests)
     return if (withSources) {
       templates + TemplateFileInfo(INIT_SQL, INIT_SQL, isVisible = false)
-    } else {
+    }
+    else {
       templates
     }
-  }
-
-  override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator {
-    return SqlGradleCourseProjectGenerator(this, course)
   }
 
   override fun buildGradleTemplateName(course: Course): String {
@@ -45,7 +44,14 @@ class SqlGradleCourseBuilder : GradleCourseBuilderBase() {
     }
   }
 
-  override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = SqlJdkLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<JdkLanguageEnvironment> = EnvironmentAndNewCourseSettings(
+    getLanguageEnvironmentCatalogProvider(),
+    JdkEnvironmentPresenter(),
+    NewCourseSettingsUI.List(
+      SqlNewCourseSettingsCatalog,
+      SqlNewCourseSettingsPresentation
+    )
+  )
 
   companion object {
     const val INIT_SQL = "init.sql"

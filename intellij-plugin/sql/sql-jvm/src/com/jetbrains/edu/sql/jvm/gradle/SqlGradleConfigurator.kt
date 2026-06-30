@@ -1,6 +1,6 @@
 package com.jetbrains.edu.sql.jvm.gradle
 
-import com.jetbrains.edu.jvm.JdkProjectSettings
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.jvm.gradle.checker.GradleTaskCheckerProvider
@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.sql.core.SqlConfiguratorBase
 
-class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkProjectSettings> {
+class SqlGradleConfigurator : GradleConfiguratorBase(), SqlConfiguratorBase<JdkLanguageEnvironment> {
 
   // A proper test template is provided via `SqlGradleCourseBuilder.testTemplateName`
   override val testFileName: String = ""
