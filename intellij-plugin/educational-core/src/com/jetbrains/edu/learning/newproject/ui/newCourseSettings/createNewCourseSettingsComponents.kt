@@ -19,7 +19,7 @@ internal fun <S : NewCourseSettings> createNewCourseSettingsComponents(
       newCourseSettingsComboBox.addActionListener {
         setNewCourseSettings(newCourseSettingsComboBox.selectedSettings)
       }
-      listOf(LabeledComponent.create(newCourseSettingsComboBox, presenter.label, BorderLayout.WEST))
+      listOf(LabeledComponent.create(newCourseSettingsComboBox, presenter.label(), BorderLayout.WEST))
     }
 
     is NewCourseSettingsUI.NoSettings -> emptyList()

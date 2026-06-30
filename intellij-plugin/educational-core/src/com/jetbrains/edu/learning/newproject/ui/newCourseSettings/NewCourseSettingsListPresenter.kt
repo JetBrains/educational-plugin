@@ -13,8 +13,8 @@ interface NewCourseSettingsListPresenter<in S : NewCourseSettings> {
   /**
    * The label written to the left of the combo box with a list of possible settings.
    */
-  val label: String
-    @NlsContexts.Label get
+  @NlsContexts.Label
+  fun label(): String
 
   fun name(settings: S): String
   fun icon(settings: S): Icon?
