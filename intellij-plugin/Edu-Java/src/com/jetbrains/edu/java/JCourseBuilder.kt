@@ -1,9 +1,10 @@
 package com.jetbrains.edu.java
 
 import com.intellij.openapi.projectRoots.JavaSdkVersion
-import com.jetbrains.edu.java.JLanguageSettings.Companion.DEFAULT_JAVA
+import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
 
 open class JCourseBuilder : GradleCourseBuilderBase() {
 
@@ -16,9 +17,12 @@ open class JCourseBuilder : GradleCourseBuilderBase() {
     it.isAtLeast(DEFAULT_JAVA)
   }.map { it.description }
 
-  override fun getLanguageSettings() = JLanguageSettings()
+  override fun getLanguageEnvironmentCatalogProvider(): LanguageEnvironmentCatalogProvider<JdkLanguageEnvironment> {
+    return JLanguageEnvironmentCatalogProvider()
+  }
 
   companion object {
     const val JAVA_BUILD_GRADLE_TEMPLATE_NAME = "java-build.gradle"
+    val DEFAULT_JAVA = JavaSdkVersion.JDK_1_8
   }
 }
