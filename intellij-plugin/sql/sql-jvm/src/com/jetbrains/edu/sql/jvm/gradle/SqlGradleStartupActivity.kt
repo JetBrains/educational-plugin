@@ -16,7 +16,6 @@ import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.h2.H2Dialect
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.sql.core.EduSqlBundle
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.annotations.TestOnly
@@ -28,7 +27,7 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
     val course = project.course ?: return
     // Setup data sources only for learners for now
     if (!course.isStudy) return
-    if (course.configurator !is SqlGradleConfigurator) return
+    if (!course.isSqlCourse) return
 
     val initializationState = SqlInitializationState.getInstance(project)
     if (!initializationState.dataSourceInitialized && !disable) {

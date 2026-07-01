@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.navigation.TaskNavigationExtension
 
 class SqlTaskNavigationExtension : TaskNavigationExtension {
   override fun onTaskNavigation(project: Project, task: Task, fromTask: Task?) {
+    if (!task.course.isSqlCourse) return
+
     val lesson = task.lesson
     if (lesson is FrameworkLesson && lesson.course.isStudy) {
       attachSqlConsoleForOpenFiles(project, task)
