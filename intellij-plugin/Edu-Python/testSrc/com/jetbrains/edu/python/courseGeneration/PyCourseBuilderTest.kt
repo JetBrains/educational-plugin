@@ -5,12 +5,18 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
+import com.jetbrains.edu.python.disablePythonProviders
 import com.jetbrains.python.PythonLanguage
 import org.junit.Test
 
 class PyCourseBuilderTest : CourseGenerationTestBase<LanguageEnvironment>() {
 
   override val defaultSettings: LanguageEnvironment = LanguageEnvironment.NoOp
+
+  override fun setUp() {
+    super.setUp()
+    disablePythonProviders()
+  }
 
   @Test
   fun `test study course structure`() {

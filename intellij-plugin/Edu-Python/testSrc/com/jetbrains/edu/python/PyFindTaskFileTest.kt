@@ -8,6 +8,11 @@ class PyFindTaskFileTest : FindTaskFileTestBase<LanguageEnvironment>() {
 
   override val defaultSettings: LanguageEnvironment = LanguageEnvironment.NoOp
 
+  override fun setUp() {
+    super.setUp()
+    disablePythonProviders()
+  }
+
   @Test
   fun `test get task dir`() = doTestGetTaskDir(
           pathToCourseJson = "testData/newCourse/python_course.json",
