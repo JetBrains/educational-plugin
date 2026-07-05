@@ -5,6 +5,7 @@ import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.go.checker.GoCodeExecutor
 import com.jetbrains.edu.go.checker.GoEduTaskChecker
 import com.jetbrains.edu.go.checker.GoEnvironmentChecker
+import com.jetbrains.edu.go.environment.GoLanguageEnvironment
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames.TEST
 import com.jetbrains.edu.learning.checker.CodeExecutor
@@ -15,8 +16,8 @@ import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import javax.swing.Icon
 
-class GoConfigurator : EduConfigurator<GoProjectSettings> {
-  override val courseBuilder: EduCourseBuilder<GoProjectSettings>
+class GoConfigurator : EduConfigurator<GoLanguageEnvironment> {
+  override val courseBuilder: EduCourseBuilder<GoLanguageEnvironment>
     get() = GoCourseBuilder()
 
   override val testFileName: String

@@ -1,16 +1,15 @@
 package com.jetbrains.edu.go.courseGeneration
 
 import com.goide.GoLanguage
-import com.goide.sdk.GoSdk
-import com.jetbrains.edu.go.GoProjectSettings
+import com.jetbrains.edu.go.environment.GoLanguageEnvironment
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
 import org.junit.Test
 
-class GoCourseBuilderTest : CourseGenerationTestBase<GoProjectSettings>() {
-  override val defaultSettings: GoProjectSettings = GoProjectSettings(GoSdk.NULL)
+class GoCourseBuilderTest : CourseGenerationTestBase<GoLanguageEnvironment>() {
+  override val defaultSettings: GoLanguageEnvironment = GoLanguageEnvironment.NoOp
 
   @Test
   fun `test new educator course`() {
