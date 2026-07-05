@@ -11,19 +11,20 @@ import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.courseFormat.PluginInfos
 import com.jetbrains.edu.learning.pluginVersion
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironment
 import org.rust.cargo.CargoConstants
 import javax.swing.Icon
 
 private val BUILD_242: BuildNumber = BuildNumber.fromString("242")!!
 
-class RsConfigurator : EduConfigurator<RsProjectSettings> {
+class RsConfigurator : EduConfigurator<RsLanguageEnvironment> {
   override val taskCheckerProvider: RsTaskCheckerProvider
     get() = RsTaskCheckerProvider()
 
   override val testFileName: String
     get() = ""
 
-  override val courseBuilder: EduCourseBuilder<RsProjectSettings>
+  override val courseBuilder: EduCourseBuilder<RsLanguageEnvironment>
     get() = RsCourseBuilder()
 
   override val testDirs: List<String>

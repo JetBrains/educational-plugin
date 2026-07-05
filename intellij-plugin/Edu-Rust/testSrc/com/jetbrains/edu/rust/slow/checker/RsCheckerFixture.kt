@@ -1,14 +1,14 @@
 package com.jetbrains.edu.rust.slow.checker
 
 import com.jetbrains.edu.learning.checker.EduCheckerFixture
-import com.jetbrains.edu.rust.RsProjectSettings
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironment
 import org.rust.cargo.toolchain.RsToolchainBase
 
-class RsCheckerFixture : EduCheckerFixture<RsProjectSettings>() {
+class RsCheckerFixture : EduCheckerFixture<RsLanguageEnvironment>() {
 
   private var toolchain: RsToolchainBase? = null
 
-  override val projectSettings: RsProjectSettings get() = RsProjectSettings(toolchain)
+  override val projectSettings: RsLanguageEnvironment get() = RsLanguageEnvironment.Existing(toolchain!!)
 
   override fun getSkipTestReason(): String? = if (toolchain == null) "no Rust toolchain found" else super.getSkipTestReason()
 

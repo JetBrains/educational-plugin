@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import com.jetbrains.edu.learning.notification.EduNotificationManager
 import com.jetbrains.edu.learning.statistics.metadata.CourseSubmissionMetadataManager
 import com.jetbrains.edu.rust.RsConfigurator
-import com.jetbrains.edu.rust.RsProjectSettings
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironment
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -56,7 +56,7 @@ class RsOpenCourseHandler : OpenCourseHandler {
   // TODO: unify with `com.jetbrains.edu.learning.newproject.ui.CoursesPlatformProvider.joinCourse`
   private fun Course.createProject(toolchain: RsToolchainBase, projectLocation: Path?) {
     val configurator = course.configurator as? RsConfigurator ?: return
-    val projectSettings = RsProjectSettings(toolchain)
+    val projectSettings = RsLanguageEnvironment.Existing(toolchain)
 
     val location = course.getProjectLocation(projectLocation)
 

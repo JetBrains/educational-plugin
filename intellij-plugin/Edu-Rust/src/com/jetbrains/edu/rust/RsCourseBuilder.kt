@@ -14,7 +14,6 @@ import com.jetbrains.edu.coursecreator.StudyItemType.TASK_TYPE
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -24,12 +23,17 @@ import com.jetbrains.edu.learning.courseFormat.ext.pathInCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.newCourseSettings.NewCourseSettingsUI
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironment
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironmentPresenter
 import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.CargoProject
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.workspace.PackageOrigin
-import org.rust.cargo.toolchain.RsLocalToolchain
 import org.rust.ide.newProject.RsPackageNameValidator
 import org.rust.lang.RsConstants
 import org.rust.lang.core.psi.ext.childrenWithLeaves
@@ -41,25 +45,21 @@ import org.toml.lang.psi.ext.elementType
 import org.toml.lang.psi.ext.kind
 import org.toml.lang.psi.ext.name
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.io.path.exists
 
-class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
+class RsCourseBuilder : EnvironmentAwareCourseBuilder<RsLanguageEnvironment> {
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<RsProjectSettings> =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<RsLanguageEnvironment> =
     RsCourseProjectGenerator(this, course)
 
-  override fun getLanguageSettings(): LanguageSettings<RsProjectSettings> = RsLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<RsLanguageEnvironment> = EnvironmentAndNewCourseSettings(
+    getLanguageEnvironmentCatalogProvider(),
+    RsLanguageEnvironmentPresenter(),
+    NewCourseSettingsUI.NoSettings
+  )
 
-  override suspend fun getDefaultSettings(): Result<RsProjectSettings, String> {
-    return findPath(DEFAULT_TOOLCHAIN_PROPERTY, "Rust toolchain").flatMap { toolchainPath ->
-      val toolchain = RsLocalToolchain(Paths.get(toolchainPath))
-      if (!toolchain.looksLikeValidToolchain()) {
-        return@flatMap Err("`$toolchainPath` doesn't look like a valid Rust toolchain")
-      }
-      Ok(RsProjectSettings(toolchain))
-    }
-  }
+  override fun getLanguageEnvironmentCatalogProvider(): LanguageEnvironmentCatalogProvider<RsLanguageEnvironment> =
+    RsLanguageEnvironmentCatalogProvider()
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
     // Don't try to call project model reloading in light tests.
@@ -332,7 +332,5 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     private const val LIB_RS = RsConstants.LIB_RS_FILE
     private const val MAIN_RS = RsConstants.MAIN_RS_FILE
     private const val TESTS_RS = "tests.rs"
-
-    private const val DEFAULT_TOOLCHAIN_PROPERTY = "project.rust.toolchain"
   }
 }

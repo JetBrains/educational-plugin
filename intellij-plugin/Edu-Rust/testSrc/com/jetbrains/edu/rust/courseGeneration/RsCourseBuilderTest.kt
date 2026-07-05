@@ -5,13 +5,13 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newCourse
-import com.jetbrains.edu.rust.RsProjectSettings
+import com.jetbrains.edu.rust.environment.RsLanguageEnvironment
 import org.junit.Test
 import org.rust.lang.RsLanguage
 
-class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
+class RsCourseBuilderTest : CourseGenerationTestBase<RsLanguageEnvironment>() {
 
-  override val defaultSettings: RsProjectSettings = RsProjectSettings(null)
+  override val defaultSettings: RsLanguageEnvironment = RsLanguageEnvironment.NoOp
 
   @Test
   fun `test new educator course`() {
