@@ -1,11 +1,13 @@
 package com.jetbrains.edu.learning.newproject.coursesStorage
 
+import com.intellij.configurationStore.saveSettings
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseDataStorage
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseInfo
+import com.intellij.util.application
 import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.EduTestAware
@@ -15,11 +17,13 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
-class CoursesStorage :
+class CoursesStorage(private val scope: CoroutineScope) :
   SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()),
   CourseDataStorage,
   EduTestAware {
@@ -36,6 +40,7 @@ class CoursesStorage :
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
     state.addCourse(course, location, tasksSolved, tasksTotal)
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_ADDED).courseAdded(course)
+    saveState()
   }
 
   fun getCoursePath(course: Course): String? = getCourseMetaInfo(course)?.location
@@ -55,6 +60,7 @@ class CoursesStorage :
     val deletedCourse = state.removeCourseByLocation(location) ?: return false
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_DELETED).courseDeleted(deletedCourse)
     RecentProjectsManager.getInstance().removePath(location)
+    saveState()
 
     return true
   }
@@ -73,6 +79,7 @@ class CoursesStorage :
 
   fun updateCourseProgress(course: Course, location: String, tasksSolved: Int, tasksTotal: Int) {
     state.updateCourseProgress(course, location, tasksSolved, tasksTotal)
+    saveState()
   }
 
   fun coursesInGroups(): List<CoursesGroup> {
@@ -95,6 +102,21 @@ class CoursesStorage :
 
   override fun getAllCourses(): List<CourseInfo> {
     return state.courses
+  }
+
+  /**
+   * Saves the state to the config file as early as possible.
+   *
+   * Used to dump state to the config file as early as possible
+   * since Toolbox integration tracks the state of this service via the corresponding config file on filesystem
+   */
+  private fun saveState() {
+    scope.launch {
+      // Unfortunately, public API allows saving only all components instead of a single one.
+      // In theory, it can lead to some performance issues because of too frequent saving settings of all components.
+      // In practice, it's not expected since storage's state modification happens not so often
+      saveSettings(application, forceSavingAllSettings = true)
+    }
   }
 
   @TestOnly

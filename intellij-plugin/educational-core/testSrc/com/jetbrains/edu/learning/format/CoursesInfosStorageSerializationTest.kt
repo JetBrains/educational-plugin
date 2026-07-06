@@ -4,12 +4,14 @@ import com.jetbrains.edu.learning.EduSettingsServiceTestBase
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
 
   @Test
-  fun `test deserialize first version courses storage`() {
+  fun `test deserialize first version courses storage`() = runTest {
     val coursesStorage = CoursesStorage()
     coursesStorage.loadStateAndCheck($$"""
       <UserCoursesState>
@@ -45,7 +47,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test deserialize course with default parameters`() {
+  fun `test deserialize course with default parameters`() = runTest {
     val coursesStorage = CoursesStorage()
     coursesStorage.loadStateAndCheck($$"""
       <UserCoursesState>
@@ -64,7 +66,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test deserialize old language version`() {
+  fun `test deserialize old language version`() = runTest {
     val coursesStorage = CoursesStorage()
     coursesStorage.loadStateAndCheck($$"""
       <UserCoursesState>
@@ -97,7 +99,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test deserialize new language version`() {
+  fun `test deserialize new language version`() = runTest {
     val coursesStorage = CoursesStorage()
     coursesStorage.loadStateAndCheck($$"""
       <UserCoursesState>
@@ -117,7 +119,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test deserialize new and old language version`() {
+  fun `test deserialize new and old language version`() = runTest {
     val coursesStorage = CoursesStorage()
     coursesStorage.loadStateAndCheck($$"""
       <UserCoursesState>
@@ -151,7 +153,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test serialize course with default parameters`() {
+  fun `test serialize course with default parameters`() = runTest {
     val coursesStorage = CoursesStorage()
     val course = course(
       "AtomicKotlin",
@@ -180,7 +182,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test serialize language version`() {
+  fun `test serialize language version`() = runTest {
     val coursesStorage = CoursesStorage()
     val course = course(
       "AtomicKotlin",
@@ -211,7 +213,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
   }
 
   @Test
-  fun `test serialize hyperskill and stepik courses`() {
+  fun `test serialize hyperskill and stepik courses`() = runTest {
     val coursesStorage = CoursesStorage()
     coursesStorage.loadStateAndCheck($$"""
       <UserCoursesState>
@@ -274,4 +276,6 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
       </UserCoursesState>
     """)
   }
+
+  private fun TestScope.CoursesStorage(): CoursesStorage = CoursesStorage(backgroundScope)
 }
