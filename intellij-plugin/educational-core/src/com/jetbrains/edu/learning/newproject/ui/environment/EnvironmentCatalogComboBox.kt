@@ -34,7 +34,7 @@ class EnvironmentCatalogComboBox<E: LanguageEnvironment>(
     this.renderer = createCellRenderer()
 
     ComboboxSpeedSearch.installSpeedSearch(this) {
-      """${presenter.name(it)} ${presenter.secondaryText(it)}"""
+      """${presenter.name(it)} ${presenter.secondaryText(it) ?: ""}"""
     }
   }
 
