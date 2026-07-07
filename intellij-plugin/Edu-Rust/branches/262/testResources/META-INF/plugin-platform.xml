@@ -1,0 +1,10 @@
+<!-- BACKCOMPAT: 2026.1. Inline into root plugin.xml -->
+<idea-plugin>
+
+  <!-- Workaround to replace `CargoProjectsService` with its test version  -->
+  <dependencies>
+    <plugin id="com.jetbrains.rust"/>
+    <module name="intellij.rustrover.core"/>
+    <plugin id="org.toml.lang"/>
+  </dependencies>
+</idea-plugin>
