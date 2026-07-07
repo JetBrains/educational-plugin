@@ -16,12 +16,18 @@ package com.jetbrains.edu.learning.newproject.environment
  */
 data class LanguageEnvironmentCatalog<out E: LanguageEnvironment>(
   /**
-   * The recommended environment. Must be present in the [environments] list.
-   */
-  val recommended: E,
-
-  /**
    * The list of all environments to be chosen from. The list must be non-empty.
    */
-  val environments: List<E>
-)
+  val environments: List<E>,
+
+  /**
+   * The recommended environment. Must be present in the [environments] list.
+   */
+  val recommended: E = environments.first()
+) {
+
+  /**
+   * Creates a catalog with only one environment
+   */
+  constructor(environment: E) : this(environments = listOf(environment))
+}

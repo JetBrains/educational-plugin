@@ -32,7 +32,7 @@ class PyLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
       return Err("Can't find python interpreter")
     }
 
-    return Ok(LanguageEnvironmentCatalog(recommendedEnvironment, pyEnvironments))
+    return Ok(LanguageEnvironmentCatalog(pyEnvironments, recommendedEnvironment))
   }
 
   override val uiKind: EnvironmentUiKind
