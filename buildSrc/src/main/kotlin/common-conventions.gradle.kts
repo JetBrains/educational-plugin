@@ -55,6 +55,7 @@ tasks {
   withType<Test> {
     withProp("excludeTests") { exclude(it) }
     systemProperty("java.awt.headless", "true")
+    maxHeapSize = "4g"
 
     ignoreFailures = true
     filter {
