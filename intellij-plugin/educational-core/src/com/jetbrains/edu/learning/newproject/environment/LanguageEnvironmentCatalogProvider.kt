@@ -26,5 +26,5 @@ interface LanguageEnvironmentCatalogProvider<out E: LanguageEnvironment> {
    * @return a [Result] containing the collected environments in the form of a [LanguageEnvironmentCatalog] object if successful,
    *         or an error message as a [String] if the operation fails
    */
-  suspend fun collectEnvironmentsForCourse(course: Course, context: UserDataHolder?): Result<LanguageEnvironmentCatalog<E>, String>
+  suspend fun collectEnvironmentsForCourse(course: Course, context: UserDataHolder): Result<LanguageEnvironmentCatalog<E>, String>
 }

@@ -29,7 +29,7 @@ class LanguageEnvironmentService(private val scope: CoroutineScope) {
   fun <E: LanguageEnvironment> loadEnvironmentCatalog(
     environmentCatalogProvider: LanguageEnvironmentCatalogProvider<E>,
     course: Course,
-    context: UserDataHolder?,
+    context: UserDataHolder,
     modalityStateProvider: ModalityStateProvider,
     disposable: Disposable,
     environmentsLoaded: suspend (Result<LanguageEnvironmentCatalog<E>, String>) -> Unit

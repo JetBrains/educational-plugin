@@ -27,7 +27,7 @@ internal fun <E : LanguageEnvironment> createEnvironmentCatalogComponents(
   environmentCatalogProvider: LanguageEnvironmentCatalogProvider<E>,
   environmentPresenter: LanguageEnvironmentPresenter<E>,
   course: Course,
-  context: UserDataHolder?,
+  context: UserDataHolder,
   modalityStateProvider: ModalityStateProvider,
   disposable: CheckedDisposable,
   @RequiresEdt setEnvironmentState: (EnvironmentState<E>) -> Unit

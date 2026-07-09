@@ -63,7 +63,7 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
     course: Course,
     modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
-    context: UserDataHolder?,
+    context: UserDataHolder,
     uiComponents: UiComponents
   ): List<LabeledComponent<JComponent>> {
     return getLanguageSettingsComponents(course, modalityStateProvider, disposable, context)

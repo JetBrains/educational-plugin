@@ -1,7 +1,6 @@
 package com.jetbrains.edu.python.learning.environment
 
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.openapi.util.UserDataHolderBase
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -24,9 +23,9 @@ class PyLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
 
   override suspend fun collectEnvironmentsForCourse(
     course: Course,
-    context: UserDataHolder?
+    context: UserDataHolder
   ): Result<LanguageEnvironmentCatalog<PyLanguageEnvironment>, String> {
-    val (pyEnvironments, recommendedEnvironment) = collectPyEnvironments(course, context ?: UserDataHolderBase())
+    val (pyEnvironments, recommendedEnvironment) = collectPyEnvironments(course, context)
 
     if (recommendedEnvironment == null || pyEnvironments.isEmpty()) {
       return Err("Can't find python interpreter")

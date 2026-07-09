@@ -5,6 +5,7 @@ import com.goide.sdk.combobox.GoSdkList
 import com.goide.util.GoUtil
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.go.messages.EduGoBundle
@@ -37,9 +38,9 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
 
   override suspend fun collectEnvironmentsForCourse(
     course: Course,
-    context: UserDataHolder?
+    context: UserDataHolder
   ): Result<LanguageEnvironmentCatalog<GoLanguageEnvironment>, String> {
-    val sdks = loadSdks()
+    val sdks = loadSdks(context)
     val environments = sdks.filter { it != GoSdk.NULL && it.isValid }.map { GoLanguageEnvironment.Existing(it) }
 
     if (environments.isNotEmpty()) {
@@ -57,12 +58,18 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     return Ok(LanguageEnvironmentCatalog(installEnvironment))
   }
 
-  private suspend fun loadSdks(): List<GoSdk> {
+  private suspend fun loadSdks(context: UserDataHolder): List<GoSdk> {
+    val goSdksLoaded = context.getUserData(GO_SDKS_LOADED)
+    if (goSdksLoaded == true) {
+      LOG.info("Retrieving already loaded Go SDKs from cache")
+      return GoSdkList.getInstance().allGoSdks
+    }
+
     return suspendCancellableCoroutine { continuation ->
+      LOG.info("Reloading Go SDKs")
       GoSdkList.getInstance().reloadSdks(null) { sdks ->
-        continuation.resume(sdks) { th, _, _ ->
-          LOG.warn("Loading of Go SDKs is cancelled", th)
-        }
+        context.putUserData(GO_SDKS_LOADED, true)
+        continuation.resume(sdks) { _, _, _ -> }
       }
     }
   }
@@ -88,5 +95,6 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
   companion object {
     private val LOG = logger<GoLanguageEnvironmentCatalogProvider>()
     private const val DEFAULT_GO_SDK_PROPERTY = "project.go.sdk"
+    private val GO_SDKS_LOADED: Key<Boolean> = Key.create("go.sdks.loaded")
   }
 }

@@ -57,7 +57,7 @@ class EnvironmentAndNewCourseSettings<E : LanguageEnvironment, S : NewCourseSett
     course: Course,
     modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
-    context: UserDataHolder?,
+    context: UserDataHolder,
     uiComponents: UiComponents
   ): List<LabeledComponent<JComponent>> {
 
