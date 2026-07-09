@@ -14,14 +14,24 @@ class RsLanguageEnvironmentPresenter : LanguageEnvironmentPresenter<RsLanguageEn
 
   override fun name(environment: RsLanguageEnvironment): String {
     return when (environment) {
-      is RsLanguageEnvironment.Existing -> environment.toolchain.presentableLocation
+      is RsLanguageEnvironment.Existing -> {
+        // Shows version if it is available, otherwise shows the toolchain location
+        val (toolchain, version) = environment
+        version?.semver?.toString() ?: toolchain.presentableLocation
+      }
       RsLanguageEnvironment.Install -> EduRustBundle.message("toolchain.install")
       RsLanguageEnvironment.NoOp -> ""
     }
   }
 
   override fun secondaryText(environment: RsLanguageEnvironment): String? {
-    return null
+    // If the Rust version is not available, the location is already shown as the primary text, so we mustn't show it as the secondary text
+    return if (environment is RsLanguageEnvironment.Existing && environment.version != null) {
+      environment.toolchain.presentableLocation
+    }
+    else {
+      null
+    }
   }
 
   override fun icon(environment: RsLanguageEnvironment): Icon? {

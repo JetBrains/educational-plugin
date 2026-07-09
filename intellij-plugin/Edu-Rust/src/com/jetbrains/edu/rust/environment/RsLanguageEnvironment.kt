@@ -15,6 +15,7 @@ import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.rustSettings
 import org.rust.cargo.toolchain.RsToolchainBase
+import org.rust.cargo.toolchain.impl.RustcVersion
 import org.rust.cargo.toolchain.tools.Rustup
 import org.rust.openapiext.pathAsPath
 
@@ -26,7 +27,7 @@ sealed class RsLanguageEnvironment : LanguageEnvironment {
     }
   }
 
-  data class Existing(val toolchain: RsToolchainBase) : RsLanguageEnvironment() {
+  data class Existing(val toolchain: RsToolchainBase, val version: RustcVersion? = null) : RsLanguageEnvironment() {
     override suspend fun buildToolchain(project: Project): RsToolchainBase = toolchain
   }
 

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.rust.environment
 
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.UserDataHolder
 import com.jetbrains.edu.learning.DefaultSettingsUtils.findPath
 import com.jetbrains.edu.learning.Err
@@ -15,6 +16,7 @@ import com.jetbrains.edu.rust.messages.EduRustBundle
 import org.rust.cargo.toolchain.RsLocalToolchain
 import org.rust.cargo.toolchain.RsToolchainProvider
 import org.rust.cargo.toolchain.flavors.RsToolchainFlavor
+import org.rust.cargo.toolchain.tools.rustc
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -42,7 +44,16 @@ class RsLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
       .mapNotNull { RsToolchainProvider.getToolchain(it) }
       .filter { it.looksLikeValidToolchain() }
 
-    val environments = toolchains.map { RsLanguageEnvironment.Existing(it) }
+    val defaultProject = ProjectManager.getInstance().defaultProject
+    val environments = toolchains.map {
+      val version = runCatching {
+        it.rustc().queryVersion(defaultProject)
+      }.getOrElse { e ->
+        LOG.warn("Failed to query rustc version", e)
+        null
+      }
+      RsLanguageEnvironment.Existing(it, version)
+    }
 
     return Ok(
       if (environments.isNotEmpty()) {
