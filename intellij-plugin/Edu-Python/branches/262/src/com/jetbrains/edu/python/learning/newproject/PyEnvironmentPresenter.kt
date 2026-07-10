@@ -12,21 +12,21 @@ object PyEnvironmentPresenter : LanguageEnvironmentPresenter<PyLanguageEnvironme
 
   override fun name(environment: PyLanguageEnvironment): String {
     return when (environment) {
-      PyLanguageEnvironment.Install -> "Install Python"
+      is PyLanguageEnvironment.Install -> message("install.environment.install.python.unknown.version")
       is PyLanguageEnvironment.Existing -> environment.title
     }
   }
 
   override fun secondaryText(environment: PyLanguageEnvironment): String? {
     return when (environment) {
-      PyLanguageEnvironment.Install -> null
+      is PyLanguageEnvironment.Install -> null
       is PyLanguageEnvironment.Existing -> environment.secondaryText
     }
   }
 
   override fun icon(environment: PyLanguageEnvironment): Icon {
     return when (environment) {
-      PyLanguageEnvironment.Install -> AllIcons.Actions.Download
+      is PyLanguageEnvironment.Install -> AllIcons.Actions.Download
       is PyLanguageEnvironment.Existing -> PythonSdkType.getInstance().icon
     }
   }

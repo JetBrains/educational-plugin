@@ -7,18 +7,18 @@ import com.jetbrains.edu.learning.newproject.environment.InstallationResult
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
 import com.jetbrains.edu.python.learning.installRequiredPackages
 import com.jetbrains.python.Result
+import com.jetbrains.python.packaging.PyVersionSpecifiers
 import com.jetbrains.python.projectCreation.SystemPythonRequirements
 import com.jetbrains.python.projectCreation.createVenvAndSdk
 import com.jetbrains.python.sdk.ModuleOrProject
 
 sealed class PyLanguageEnvironment : LanguageEnvironment {
   data class Existing(val systemPython: SystemPython, val title: String, val secondaryText: String) : PyLanguageEnvironment()
-  // TODO allow specifying the version to install, now we always install the latest version
-  data object Install : PyLanguageEnvironment()
+  data class Install(val versionSpecifiers: PyVersionSpecifiers) : PyLanguageEnvironment()
 
   override suspend fun installIfNeeded(project: Project, course: Course): InstallationResult {
     val systemPythonRequirements = when (this) {
-      Install -> SystemPythonRequirements.ByVersionSpecifier(confirmInstallation = { true })
+      is Install -> SystemPythonRequirements.ByVersionSpecifier(versionSpecifiers = versionSpecifiers, confirmInstallation = { true })
       is Existing -> SystemPythonRequirements.Explicit(systemPython)
     }
 

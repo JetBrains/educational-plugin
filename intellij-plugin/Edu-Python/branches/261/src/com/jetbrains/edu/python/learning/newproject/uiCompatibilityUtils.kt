@@ -84,6 +84,10 @@ private fun isSdkApplicable(course: Course, sdkLanguageLevel: LanguageLevel): Re
   val courseLanguageVersion = course.languageVersion
   val isPython2Sdk = sdkLanguageLevel.isPython2
 
+  if (isVersionTooNewForCourse(course, sdkLanguageLevel)) {
+    return Err("This course does not support Python ${sdkLanguageLevel.toPythonVersion()}")
+  }
+
   return when (courseLanguageVersion) {
     null, ALL_VERSIONS -> OK
     PYTHON_2_VERSION -> if (isPython2Sdk) OK else NoApplicablePythonError(2)

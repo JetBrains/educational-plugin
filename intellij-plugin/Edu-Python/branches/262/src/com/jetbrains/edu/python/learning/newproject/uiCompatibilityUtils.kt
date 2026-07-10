@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider.Companion.ALL_VERSIONS
 import com.jetbrains.python.PathShortener
+import com.jetbrains.python.packaging.PyVersionSpecifiers
 import com.jetbrains.python.psi.LanguageLevel
 
 suspend fun collectPyEnvironments(course: Course, context: UserDataHolder): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
@@ -19,7 +20,7 @@ suspend fun collectPyEnvironments(course: Course, context: UserDataHolder): Pair
     .filter { isSdkApplicable(course, it.systemPython.pythonInfo.languageLevel) }
 
   if (existingEnvironments.isEmpty()) {
-    val installSdk = PyLanguageEnvironment.Install
+    val installSdk = PyLanguageEnvironment.Install(installVersionSpecifiers(course))
     return Pair(listOf(installSdk), installSdk)
   }
 
@@ -40,6 +41,10 @@ private fun isSdkApplicable(course: Course, sdkLanguageLevel: LanguageLevel): Bo
   val courseLanguageVersion = course.languageVersion
   val isPython2Sdk = sdkLanguageLevel.isPython2
 
+  if (isVersionTooNewForCourse(course, sdkLanguageLevel)) {
+    return false
+  }
+
   return when (courseLanguageVersion) {
     null, ALL_VERSIONS -> true
     PYTHON_2_VERSION -> isPython2Sdk
@@ -52,5 +57,27 @@ private fun isSdkApplicable(course: Course, sdkLanguageLevel: LanguageLevel): Bo
         else -> false
       }
     }
+  }
+}
+
+internal fun installVersionSpecifiers(course: Course): PyVersionSpecifiers {
+  val constraints = buildList {
+    when (val courseLanguageVersion = course.languageVersion) {
+      null, ALL_VERSIONS -> {}
+      PYTHON_2_VERSION -> add("<3")
+      PYTHON_3_VERSION -> add(">=3")
+      else -> add(">=$courseLanguageVersion")
+    }
+
+    getFirstUnsupportedPythonVersion(course)?.let {
+      add("<${it.toPythonVersion()}")
+    }
+  }
+
+  return if (constraints.isEmpty()) {
+    PyVersionSpecifiers.ANY_SUPPORTED
+  }
+  else {
+    PyVersionSpecifiers(constraints.joinToString(","))
   }
 }
