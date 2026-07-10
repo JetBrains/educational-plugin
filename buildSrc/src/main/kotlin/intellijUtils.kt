@@ -118,6 +118,7 @@ val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   if (isAtLeast262) "intellij.libraries.misc.plugin" else null,
   if (isAtLeast262) "intellij.bookmarks.plugin" else null,
   if (isAtLeast262) testRunnerPlugin else null,
+  if (isAtLeast262) jcefPlugin else null,
 )
 
 

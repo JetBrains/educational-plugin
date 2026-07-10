@@ -14,7 +14,7 @@ dependencies {
       bundledModule("intellij.rider.languages")
       bundledModule("intellij.rd.client")
       bundledModule("intellij.rider.model.generated")
-      testIntellijPlugins(jcefPlugin, sshPlugin)
+      testIntellijPlugins(sshPlugin)
     }
   }
 
