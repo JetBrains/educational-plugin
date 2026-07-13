@@ -64,6 +64,17 @@ abstract class Course : LessonContainer() {
   var feedbackLink: String? = null
   var license: String? = null
 
+  /**
+   * Whether certification is enabled for the course. `null` means the author has not specified it.
+   *
+   * The feature itself is only for [EduCourse].
+   * The property is placed here because of the complicated (de)serialization implementation for [Course] classes at the moment of writing.
+   * Will be moved to [EduCourse] later as part of EDU-8983
+   *
+   * See [EduCourse.isCertificationProvided]
+   */
+  var certification: Boolean? = null
+
   @Suppress("SetterBackingFieldAssignment")
   @Deprecated("Use languageId and languageVersion instead")
   private var programmingLanguage: String? = null

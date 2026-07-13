@@ -652,6 +652,21 @@ class YamlSerializationTest : YamlTestCase() {
   }
 
   @Test
+  fun `test course with certification enabled`() {
+    val course = course(courseMode = CourseMode.EDUCATOR) {} as EduCourse
+    course.certification = true
+    doTest(course, """
+      |title: Test Course
+      |language: English
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |certification: true
+      |yaml_version: $CURRENT_YAML_VERSION
+      |
+    """.trimMargin())
+  }
+
+  @Test
   fun `test task with hidden solution`() {
     val taskCustomName = "task custom name"
     val task = course(courseMode = CourseMode.EDUCATOR) {

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.AUTHORS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CERTIFICATION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.COURSE_TYPE
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
@@ -64,6 +65,7 @@ import java.util.*
   FEEDBACK_LINK,
   IS_PRIVATE,
   SOLUTIONS_HIDDEN,
+  CERTIFICATION,
   PLUGINS,
   ITEMS,
   AUTHORS,

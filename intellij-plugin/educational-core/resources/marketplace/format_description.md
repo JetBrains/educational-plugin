@@ -74,6 +74,10 @@
           "description": "Determines if course is private and should not be displayed in browse courses dialog",
           "type": ["boolean", "null"]
         },
+        "certification": {
+          "description": "Determines whether certification is enabled for the course",
+          "type": ["boolean", "null"]
+        },
         "course_type": {
           "description": "Course type",
           "type": "string",

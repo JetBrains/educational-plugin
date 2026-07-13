@@ -41,6 +41,7 @@ object YamlMixinNames {
   const val MARKETPLACE_YAML_TYPE = "marketplace"
   const val VENDOR = JsonMixinNames.VENDOR
   const val IS_PRIVATE = JsonMixinNames.IS_PRIVATE
+  const val CERTIFICATION = JsonMixinNames.CERTIFICATION
   const val MARKETPLACE_COURSE_VERSION = JsonMixinNames.MARKETPLACE_COURSE_VERSION
   const val GENERATED_EDU_ID = JsonMixinNames.GENERATED_EDU_ID
 

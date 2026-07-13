@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.yaml.YamlMapper.CURRENT_YAML_VERSION
 import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unnamedItemAtMessage
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CERTIFICATION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.EDU_YAML_TYPE
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
@@ -74,6 +75,7 @@ import java.util.*
   PROGRAMMING_LANGUAGE_VERSION,
   ENVIRONMENT,
   SOLUTIONS_HIDDEN,
+  CERTIFICATION,
   CONTENT,
   FEEDBACK_LINK,
   TAGS,
@@ -132,6 +134,10 @@ abstract class CourseYamlMixin {
   @JsonProperty(IS_PRIVATE)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var isMarketplacePrivate: Boolean = false
+
+  @JsonProperty(CERTIFICATION)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  protected open var certification: Boolean? = null
 
   @JsonProperty(FEEDBACK_LINK)
   @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -230,6 +236,7 @@ open class CourseBuilder(
   @param:JsonProperty(PROGRAMMING_LANGUAGE_VERSION) val programmingLanguageVersion: String?,
   @param:JsonProperty(LANGUAGE) val language: String,
   @param:JsonProperty(ENVIRONMENT) val yamlEnvironment: String?,
+  @param:JsonProperty(CERTIFICATION) val yamlCertification: Boolean?,
   @param:JsonProperty(CONTENT) val content: List<String?> = emptyList(),
   @param:JsonProperty(SUBMIT_MANUALLY) val courseraSubmitManually: Boolean?,
   @param:JsonProperty(SOLUTIONS_HIDDEN) val areSolutionsHidden: Boolean?,
@@ -270,6 +277,9 @@ open class CourseBuilder(
       }
       items = newItems
       customContentPath = pathToContent
+
+      // Certification is null when the author has not specified it
+      certification = yamlCertification
     }
 
     val locale = Locale.getISOLanguages().find { displayLanguageByCode(it) == language } ?: formatError(

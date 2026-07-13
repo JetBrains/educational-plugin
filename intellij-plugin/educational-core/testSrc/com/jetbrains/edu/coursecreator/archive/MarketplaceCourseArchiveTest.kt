@@ -15,6 +15,7 @@ import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
@@ -97,6 +98,19 @@ class MarketplaceCourseArchiveTest : CourseArchiveTestBase() {
       isMarketplace = true
       isMarketplacePrivate = true
     }
+    doTest(course)
+  }
+
+  @Test
+  fun `test certification course`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson("lesson1") {
+        eduTask("task1") {}
+      }
+    } as EduCourse
+    course.isMarketplace = true
+    course.certification = true
+
     doTest(course)
   }
 

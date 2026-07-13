@@ -19,17 +19,16 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.MARKETPLACE
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.EmtpyFileContentFactory
-import com.jetbrains.edu.learning.courseFormat.FILE_CONTENTS_FACTORY_INJECTABLE_VALUE
-import com.jetbrains.edu.learning.courseFormat.FileContentsFactory
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOption
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceOptionStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.choice.ChoiceTask
 import com.jetbrains.edu.learning.json.encrypt.Encrypt
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ADDITIONAL_FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.AUTHORS
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CERTIFICATION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CHOICE_OPTIONS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.COURSE_TYPE
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_CONTENT_PATH
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DEPENDENCY
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
@@ -57,7 +56,6 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MESSAGE_INCORRECT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.MIN_VERSION
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.OFFSET
-import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_CONTENT_PATH
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDER
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDERS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.PLACEHOLDER_TEXT
@@ -87,7 +85,7 @@ private val LOG = logger<LocalEduCourseMixin>()
 
 @JsonPropertyOrder(
   ENVIRONMENT, SUMMARY, TITLE, PROGRAMMING_LANGUAGE_ID, PROGRAMMING_LANGUAGE_VERSION, LANGUAGE,
-  COURSE_TYPE, SOLUTIONS_HIDDEN, PLUGINS, ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, CUSTOM_CONTENT_PATH, VERSION
+  COURSE_TYPE, SOLUTIONS_HIDDEN, CERTIFICATION, PLUGINS, ITEMS, AUTHORS, TAGS, ADDITIONAL_FILES, CUSTOM_CONTENT_PATH, VERSION
 )
 abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
@@ -152,6 +150,10 @@ abstract class LocalEduCourseMixin {
   @JsonProperty(SOLUTIONS_HIDDEN)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private var solutionsHidden: Boolean = false
+
+  @JsonProperty(CERTIFICATION)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private var certification: Boolean? = null
 
   @JsonProperty(TAGS)
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
