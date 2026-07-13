@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ADDITIONAL_FILES
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CERTIFICATION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.ENVIRONMENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.LANGUAGE
@@ -28,6 +29,7 @@ import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TYPE
   PROGRAMMING_LANGUAGE,
   PROGRAMMING_LANGUAGE_VERSION,
   ENVIRONMENT,
+  CERTIFICATION,
   CONTENT,
   CUSTOM_CONTENT_PATH,
   ADDITIONAL_FILES,

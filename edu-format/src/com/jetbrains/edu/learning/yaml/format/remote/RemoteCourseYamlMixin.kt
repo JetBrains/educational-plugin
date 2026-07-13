@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.yaml.errorHandling.formatError
 import com.jetbrains.edu.learning.yaml.errorHandling.unsupportedItemTypeMessage
 import com.jetbrains.edu.learning.yaml.format.CourseBuilder
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
+import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CERTIFICATION
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CONTENT
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.CUSTOM_CONTENT_PATH
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.COURSE_TYPE_YAML
@@ -43,6 +44,7 @@ class RemoteCourseBuilder(
   @JsonProperty(PROGRAMMING_LANGUAGE_VERSION) programmingLanguageVersion: String?,
   @JsonProperty(LANGUAGE) language: String,
   @JsonProperty(ENVIRONMENT) yamlEnvironment: String?,
+  @JsonProperty(CERTIFICATION) yamlCertification: Boolean?,
   @JsonProperty(CONTENT) content: List<String?> = emptyList(),
   @JsonProperty(SUBMIT_MANUALLY) courseraSubmitManually: Boolean?,
   @JsonProperty(SOLUTIONS_HIDDEN) areSolutionsHidden: Boolean?,
@@ -60,6 +62,7 @@ class RemoteCourseBuilder(
   programmingLanguageVersion,
   language,
   yamlEnvironment,
+  yamlCertification,
   content,
   courseraSubmitManually,
   areSolutionsHidden,

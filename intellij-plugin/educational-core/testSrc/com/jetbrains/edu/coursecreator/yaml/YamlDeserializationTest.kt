@@ -870,6 +870,44 @@ class YamlDeserializationTest : YamlTestCase() {
   }
 
   @Test
+  fun `test course with certification enabled`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: Test Course Description
+      |certification: true
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = kAssertNotNull(basicMapper().deserializeCourse(yamlContent))
+    assertEquals(true, course.certification)
+  }
+
+  @Test
+  fun `test course with certification disabled`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: Test Course Description
+      |certification: false
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = kAssertNotNull(basicMapper().deserializeCourse(yamlContent))
+    assertEquals(false, course.certification)
+  }
+
+  @Test
+  fun `test course without certification has null`() {
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: Test Course Description
+      |programming_language: Plain text
+      |""".trimMargin()
+    val course = kAssertNotNull(basicMapper().deserializeCourse(yamlContent))
+    assertNull(course.certification)
+  }
+
+  @Test
   fun `test default courseVersion`() {
     val yamlContent = """
       |type: marketplace

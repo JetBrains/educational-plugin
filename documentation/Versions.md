@@ -1095,6 +1095,14 @@
     So, this field had the wrong value (`true` instead of `false`).
     The older versions of the course JSON must be migrated by changing `true` to `false`.
 
+23. Introduced the optional `certification` field on the course object specifying whether certification is enabled for the course.
+    Not specified by default
+    ```json
+    {
+      "certification" : true
+    }
+    ```
+
 ### Yaml format version
 
 The YAML version is written in the `course-info.yaml` in the `yaml_version` field. For example:
@@ -1160,6 +1168,12 @@ To pass some data to migrator, unavailable in the `edu-format` module, use
 
     Both `a.txt` files are visible, both `invisible.txt` files are invisible.
     If a user creates a file inside a `dir` folder, it will also be visible.
+
+6. Introduced the optional `certification` field on the course object specifying whether certification is enabled for the course.
+   Not specified by default
+    ```yaml
+    certification: true
+    ```
 
 ### Courseignore format version
 

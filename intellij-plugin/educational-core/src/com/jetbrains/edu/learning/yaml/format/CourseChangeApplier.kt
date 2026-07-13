@@ -15,6 +15,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.vendor = deserializedItem.vendor
     existingItem.feedbackLink = deserializedItem.feedbackLink
     existingItem.isMarketplacePrivate = deserializedItem.isMarketplacePrivate
+    existingItem.certification = deserializedItem.certification
     existingItem.languageId = deserializedItem.languageId
     existingItem.languageVersion = deserializedItem.languageVersion
     existingItem.additionalFiles = deserializedItem.additionalFiles

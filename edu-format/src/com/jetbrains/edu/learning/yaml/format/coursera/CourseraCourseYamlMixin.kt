@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.jetbrains.edu.learning.yaml.format.CourseYamlMixin
-import com.jetbrains.edu.learning.yaml.format.remote.RemoteCourseBuilder
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.SUBMIT_MANUALLY
+import com.jetbrains.edu.learning.yaml.format.remote.RemoteCourseBuilder
 
 @Suppress("unused", "LateinitVarOverridesLateinitVar") // used for yaml serialization
 @JsonDeserialize(builder = RemoteCourseBuilder::class)
@@ -21,4 +21,8 @@ abstract class CourseraCourseYamlMixin : CourseYamlMixin() {
   @JsonIgnore
   override lateinit var contentTags: List<String>
 
+  // Certification is an EduCourse-only feature
+  // Will be dropped as part of EDU-8983
+  @JsonIgnore
+  override var certification: Boolean? = null
 }

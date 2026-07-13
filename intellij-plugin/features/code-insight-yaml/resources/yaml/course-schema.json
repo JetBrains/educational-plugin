@@ -53,6 +53,13 @@
       "description": "If solutions are available for learners to peek and compare with their answers",
       "type": "boolean"
     },
+    "certification": {
+      "description": "Whether certification is enabled for the course.",
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
     "environment": {
       "description": "Additional information about course environment. For example, Kotlin courses are supported for Android environment",
       "type": [

@@ -194,6 +194,43 @@ class YamlChangeApplierTest : YamlTestCase() {
   }
 
   @Test
+  fun `test set certification for course`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson { }
+    }
+    assertNull(course.certification)
+
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: My awesome summary
+      |certification: true
+      |programming_language: Plain text
+    """.trimMargin()
+
+    loadItemFromConfig(course, yamlContent)
+    assertEquals(true, course.certification)
+  }
+
+  @Test
+  fun `test clear certification for course`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      lesson { }
+    }
+    course.certification = true
+
+    val yamlContent = """
+      |title: Test Course
+      |language: Russian
+      |summary: My awesome summary
+      |programming_language: Plain text
+    """.trimMargin("|")
+
+    loadItemFromConfig(course, yamlContent)
+    assertNull(course.certification)
+  }
+
+  @Test
   fun `test add hide solution for task`() {
     val task = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
       lesson("lesson1") {

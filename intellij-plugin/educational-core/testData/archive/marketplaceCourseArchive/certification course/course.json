@@ -1,0 +1,27 @@
+{
+  "summary" : "Test Course Description",
+  "title" : "Test Course",
+  "programming_language_id" : "TEXT",
+  "language" : "en",
+  "course_type" : "Marketplace",
+  "certification" : true,
+  "items" : [
+    {
+      "id" : 1,
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "id" : 2,
+          "name" : "task1",
+          "files" : { },
+          "description_text" : "solve task",
+          "description_format" : "MD",
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "lesson"
+    }
+  ],
+  "version" : <last version>,
+  "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
+}
