@@ -9,9 +9,13 @@ import com.jetbrains.python.psi.LanguageLevel
  */
 private val FIRST_UNSUPPORTED_PYTHON_VERSION: Map<Int, LanguageLevel> = mapOf(
   28816 /* Mastering Large Language Models */ to LanguageLevel.PYTHON314,
+  205112 /* AWS, same*/ to LanguageLevel.PYTHON314,
+
   25097 /* Building a multicomponent Flask app / Building a Flask App with Microservices */ to LanguageLevel.PYTHON313,
-  27941 /* Data Visualization with Python */ to LanguageLevel.PYTHON314,
-  22686 /* Gateway to Pandas / Mastering Python Libraries – Pandas */ to LanguageLevel.PYTHON313,
+  205109 /*AWS* same */ to LanguageLevel.PYTHON313,
+
+  27941 /* Data Visualization with Python */ to LanguageLevel.PYTHON315,
+  22686 /* Gateway to Pandas / Mastering Python Libraries – Pandas */ to LanguageLevel.PYTHON315,
   23986 /* Master AI: Build Game Players using AlphaZero */ to LanguageLevel.PYTHON313,
 )
 
