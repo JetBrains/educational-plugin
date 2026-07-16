@@ -2,8 +2,9 @@ package com.jetbrains.edu.jvm.environment
 
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.diagnostic.rethrowControlFlowException
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -210,10 +211,11 @@ open class JdkLanguageEnvironmentCatalogProvider(
     }
 
     val incompleteSdk = runCatching {
-      writeAction {
+      edtWriteAction {
         sdkModel.createIncompleteSdk(JavaSdk.getInstance(), task, null)
       }
     }.getOrElse { th ->
+      rethrowControlFlowException(th)
       LOG.error("Failed to create incomplete downloadable JDK", th)
       return Err(EduJVMBundle.message("error.jdk.incomplete.create.failed"))
     }

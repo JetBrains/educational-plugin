@@ -1,7 +1,7 @@
 package com.jetbrains.edu.jvm.environment
 
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
@@ -60,7 +60,7 @@ sealed class JdkBasedLanguageEnvironment : JdkLanguageEnvironment {
       return InstallationResult.Error(EduJVMBundle.message("error.jdk.model.apply.failed", e.message ?: ""))
     }
 
-    writeAction {
+    edtWriteAction {
       ProjectRootManager.getInstance(project).projectSdk = jdk
       addAnnotations(jdk.sdkModificator)
       val sdkVersion = course.minJvmSdkVersion
