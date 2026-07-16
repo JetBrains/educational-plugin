@@ -19,14 +19,10 @@ import com.jetbrains.edu.coursecreator.CCUtils.prepareForUpload
 import com.jetbrains.edu.coursecreator.VendorError
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveCreator
 import com.jetbrains.edu.coursecreator.archive.showNotification
-import com.jetbrains.edu.learning.Err
-import com.jetbrains.edu.learning.Ok
-import com.jetbrains.edu.learning.Result
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Vendor
-import com.jetbrains.edu.learning.invokeLater
-import com.jetbrains.edu.learning.marketplace.JB_VENDOR_NAME
+import com.jetbrains.edu.learning.courseFormat.isJetBrainsCourse
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showLoginNeededNotification
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showReloginToJBANeededNotification
@@ -133,7 +129,7 @@ class MarketplacePushCourse(
       return
     }
 
-    if (!course.isMarketplacePrivate && course.vendor?.name == JB_VENDOR_NAME) {
+    if (!course.isMarketplacePrivate && course.isJetBrainsCourse()) {
       val result = showConfirmationDialog(actionName)
       if (result != Messages.OK) return
     }

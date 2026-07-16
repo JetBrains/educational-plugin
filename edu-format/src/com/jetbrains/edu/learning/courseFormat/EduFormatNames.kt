@@ -27,6 +27,7 @@ object EduFormatNames {
   const val EMAIL = "email"
   const val NAME = "name"
   const val URL = "url"
+  const val JETBRAINS_VENDOR_NAME = "JetBrains s.r.o."
 
   // Submissions status
   const val CORRECT = "correct"

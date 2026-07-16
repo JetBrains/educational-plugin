@@ -17,7 +17,10 @@ query {
       authors {
         name
       }
-      organization {name}
+      organization {
+        name
+        url
+      }
       fields
       lastUpdateDate
       cdate

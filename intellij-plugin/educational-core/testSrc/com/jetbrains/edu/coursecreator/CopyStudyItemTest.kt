@@ -167,7 +167,6 @@ class CopyStudyItemTest : EduTestCase() {
            visibility == courseCopy.visibility &&
            isMarketplace == courseCopy.isMarketplace &&
            marketplaceCourseVersion == courseCopy.marketplaceCourseVersion &&
-           organization == courseCopy.organization &&
            isMarketplacePrivate == courseCopy.isMarketplacePrivate &&
            feedbackLink == courseCopy.feedbackLink
   }

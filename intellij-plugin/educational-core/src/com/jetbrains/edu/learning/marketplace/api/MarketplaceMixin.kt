@@ -3,11 +3,8 @@ package com.jetbrains.edu.learning.marketplace.api
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility
-import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
-import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
 import com.jetbrains.edu.learning.marketplace.PLUGINS_REPOSITORY_URL
 import com.jetbrains.edu.learning.marketplace.REVIEWS
 import java.util.*
@@ -67,7 +64,9 @@ private class MarketplaceCourseBuilder(
       languageCode = fields.language
       environment = fields.environment ?: DEFAULT_ENVIRONMENT
       marketplaceCourseVersion = version ?: 1
-      organization = courseOrganization?.name
+      if (courseOrganization != null) {
+        vendor = Vendor(courseOrganization.name.orEmpty(), url = courseOrganization.url)
+      }
       isMarketplacePrivate = fields.isPrivate
       visibility = if (fields.isPrivate) CourseVisibility.PrivateVisibility else CourseVisibility.PublicVisibility
       updateDate = Date(lastUpdateDate)

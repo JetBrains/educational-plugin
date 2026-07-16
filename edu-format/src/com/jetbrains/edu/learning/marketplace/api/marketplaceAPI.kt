@@ -1,10 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.api
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import com.jetbrains.edu.learning.courseFormat.*
@@ -41,6 +37,7 @@ private const val TOTAL = "total"
 private const val UPDATES = "updates"
 private const val VERSION = "version"
 private const val HAS_NEXT = "has_next"
+private const val URL = "url"
 
 class MarketplaceAccount : OAuthAccount<JBAccountUserInfo> {
   @TestOnly
@@ -124,10 +121,12 @@ class Fields {
   var isPrivate: Boolean = false
 }
 
-class Organization {
+data class Organization(
   @JsonProperty(NAME)
-  var name: String? = ""
-}
+  val name: String?,
+  @JsonProperty(URL)
+  val url: String?
+)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class UpdateData {

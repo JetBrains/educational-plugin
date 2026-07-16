@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.CPP
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
+import com.jetbrains.edu.learning.courseFormat.EduFormatNames.JETBRAINS_VENDOR_NAME
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.OBJECTIVE_C
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYCHARM
 import java.util.*
@@ -58,7 +59,6 @@ abstract class Course : LessonContainer() {
   var isMarketplace: Boolean = false
   var vendor: Vendor? = null
   var marketplaceCourseVersion: Int = 0
-  var organization: String? = null
   var isMarketplacePrivate: Boolean = false
   var createDate: Date = Date(0)
   var feedbackLink: String? = null
@@ -166,7 +166,8 @@ abstract class Course : LessonContainer() {
 
   val authorFullNames: List<String>
     get() {
-      return organization?.let { listOf(it) } ?: authors.map { it.getFullName() }
+      val name = vendor?.name.orEmpty()
+      return if (name.isNotEmpty()) listOf(name) else authors.map { it.getFullName() }
     }
 
   open val humanLanguage: String
@@ -191,4 +192,8 @@ abstract class Course : LessonContainer() {
       nonEditableFiles.remove(path)
     }
   }
+}
+
+fun Course.isJetBrainsCourse(): Boolean {
+  return vendor?.name == JETBRAINS_VENDOR_NAME
 }

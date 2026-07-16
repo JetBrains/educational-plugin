@@ -3,9 +3,8 @@ package com.jetbrains.edu.learning.marketplace.newProjectUI
 import com.intellij.openapi.Disposable
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
-import com.jetbrains.edu.learning.marketplace.JB_VENDOR_NAME
+import com.jetbrains.edu.learning.courseFormat.isJetBrainsCourse
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.CourseCreationInfo
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
@@ -74,10 +73,6 @@ class MarketplaceCoursePanel(
       }
       @Suppress("UsePropertyAccessSyntax")
       textPanel.setBody(text)
-    }
-
-    private fun Course.isJetBrainsCourse(): Boolean {
-      return organization == JB_VENDOR_NAME
     }
 
     companion object {

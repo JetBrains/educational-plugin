@@ -39,7 +39,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val pythonCourse = courses.first()
     doTest(pythonCourse, 1, "Introduction to Python", "Python", "English", "Introduction course to Python",
            2, 5.0)
-    assertEquals("JetBrains s.r.o.", pythonCourse.organization)
+    assertEquals("JetBrains s.r.o.", pythonCourse.vendor?.name)
     checkAuthorFullNames(listOf("JetBrains s.r.o."), pythonCourse.authorFullNames)
     checkAuthors(listOf("FirstName LastName"), pythonCourse.authors)
     assertEquals(13, pythonCourse.formatVersion)
@@ -53,7 +53,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val javaCourse = courses[1]
     doTest(javaCourse, 2, "Introduction to Java", "JAVA", "Russian",
            "Introduction course to Java", 5, 5.0)
-    assertNull(javaCourse.organization)
+    assertNull(javaCourse.vendor)
     val expectedAuthors = listOf("user1 LastName1", "user2 LastName2")
     checkAuthorFullNames(expectedAuthors, javaCourse.authorFullNames)
     checkAuthors(expectedAuthors, javaCourse.authors)
@@ -68,7 +68,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val scalaCourse = courses[2]
     doTest(scalaCourse, 3, "Scala course", "Scala", "English",
            "Introduction course to Scala", 5, 4.75, expectedEnvironment = "sbt")
-    assertNull(scalaCourse.organization)
+    assertNull(scalaCourse.vendor)
     val expectedAuthors = listOf("FirstName LastName")
     checkAuthorFullNames(expectedAuthors, scalaCourse.authorFullNames)
     checkAuthors(expectedAuthors, scalaCourse.authors)
@@ -125,7 +125,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     checkNotNull(course)
     doTest(course, courseId, "Introduction to Python", "Python", "English", "Introduction course to Python",
            2, 5.0, expectedIsPrivate = true)
-    assertNull(course.organization)
+    assertNull(course.vendor)
     checkAuthorFullNames(listOf("FirstName LastName"), course.authorFullNames)
     checkAuthors(listOf("FirstName LastName"), course.authors)
   }
