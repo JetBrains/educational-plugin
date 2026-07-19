@@ -14,7 +14,6 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.projectRoots.impl.SdkVersionUtil
 import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkItem
-import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -71,7 +70,7 @@ open class JdkLanguageEnvironmentCatalogProvider(
     val defaultProject = ProjectManager.getInstance().defaultProject
 
     val sdkModel = withContext(Dispatchers.EDT) {
-      ProjectStructureConfigurable.getInstance(defaultProject).projectJdksModel.apply {
+      ProjectSdksModel().apply {
         reset(defaultProject)
       }
     }
