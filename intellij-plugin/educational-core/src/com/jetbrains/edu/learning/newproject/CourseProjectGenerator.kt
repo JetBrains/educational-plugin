@@ -143,7 +143,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
         }
       }
 
-      notifyCourseProjectConfigurationListeners(createdProject)
+      finishCourseProjectConfiguration(createdProject)
     }
 
     return createdProject
@@ -163,10 +163,18 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
         // for project settings that implement LanguageEnvironment, the project will be configured later. Remove in EDU-8931
         if (projectSettings is LanguageEnvironment) return@afterProjectGenerated
 
-        notifyCourseProjectConfigurationListeners(createdProject)
+        finishCourseProjectConfiguration(createdProject)
       }
     }
     return createdProject
+  }
+
+  @RequiresEdt
+  private fun finishCourseProjectConfiguration(createdProject: Project) {
+    if (!isUnitTestMode) {
+      course.configurator?.courseBuilder?.refreshProject(createdProject, RefreshCause.PROJECT_CREATED)
+    }
+    notifyCourseProjectConfigurationListeners(createdProject)
   }
 
   private fun notifyCourseProjectConfigurationListeners(createdProject: Project) {
