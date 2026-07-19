@@ -22,6 +22,7 @@ class JdkLanguageEnvironmentInstall(
 
   override suspend fun buildJdk(): Result<Sdk, String> {
     if (!JdkDownloadUtil.downloadSdk(incompleteJdk)) return Err(EduJVMBundle.message("error.jdk.download.failed"))
-    return Ok(incompleteJdk)
+    val downloadedJdk = model.findSdk(incompleteJdk) ?: return Err(EduJVMBundle.message("error.jdk.downloaded.failed.to.set.up"))
+    return Ok(downloadedJdk)
   }
 }
