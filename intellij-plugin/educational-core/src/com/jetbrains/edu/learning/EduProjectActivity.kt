@@ -28,12 +28,10 @@ import com.jetbrains.edu.coursecreator.framework.SyncChangesStateManager
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduNames.COURSE_IGNORE
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.EduUtilsKt.isNewlyCreated
 import com.jetbrains.edu.learning.EduUtilsKt.isStudentProject
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
@@ -196,16 +194,6 @@ class EduProjectActivity : ProjectActivity {
 
   @RequiresEdt
   private fun setupProject(project: Project, course: Course) {
-    val configurator = course.configurator
-    if (configurator == null) {
-      LOG.warn("Failed to refresh gradle project: configurator for `${course.languageId}` is null")
-      return
-    }
-
-    if (!isUnitTestMode && project.isNewlyCreated()) {
-      configurator.courseBuilder.refreshProject(project, RefreshCause.PROJECT_CREATED)
-    }
-
     // Android Studio creates `gradlew` not via VFS, so we have to refresh project dir
     runInBackground(project, EduCoreBundle.message("refresh.course.project.directory"), false) {
       VfsUtil.markDirtyAndRefresh(false, true, true, project.courseDir)
