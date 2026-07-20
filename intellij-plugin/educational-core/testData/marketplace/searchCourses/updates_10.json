@@ -82,6 +82,14 @@
           "compatibility": {
             "gte": 13
           }
+        },
+        {
+          "id" : "102996",
+          "pluginId" : "4",
+          "version" : "3",
+          "compatibility": {
+            "gte": 13
+          }
         }
       ]
     }

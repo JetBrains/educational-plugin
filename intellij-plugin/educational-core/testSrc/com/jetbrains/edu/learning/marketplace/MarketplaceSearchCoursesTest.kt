@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.UserInfo
+import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 import org.junit.Test
@@ -46,7 +47,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
       expectedDescription = "Introduction course to Python",
       expectedLearnersCount = 2,
       expectedReviewScore = 5.0,
-      expectedAuthorFullNames = listOf("JetBrains s.r.o.")
+      expectedAuthorFullNames = listOf("JetBrains s.r.o."),
+      expectedVendor = Vendor("JetBrains s.r.o.", url = "https://plugins.jetbrains.com/vendor/JetBrains")
     )
     checkAuthors(listOf("FirstName LastName"), pythonCourse.authors)
     assertEquals(13, pythonCourse.formatVersion)
@@ -96,6 +98,28 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   @Test
+  fun `test regular user vendor course created`() {
+    configureCoursesResponse()
+    val courses = doTestCoursesLoaded()
+
+    val kotlinCourse = courses[3]
+    doTest(
+      course = kotlinCourse,
+      expectedId = 4,
+      expectedName = "Kotlin course",
+      expectedLanguageId = "kotlin",
+      expectedHumanLanguage = "English",
+      expectedDescription = "Introduction course to Kotlin",
+      expectedLearnersCount = 3,
+      expectedReviewScore = 4.5,
+      expectedAuthorFullNames = listOf("Regular User"),
+      expectedVendor = Vendor("Regular User", url = "https://plugins.jetbrains.com/vendor/12345678-1234-1234-1234-123456789abc")
+    )
+    checkAuthors(listOf("FirstName LastName"), kotlinCourse.authors)
+    assertEquals(13, kotlinCourse.formatVersion)
+  }
+
+  @Test
   fun `test all courses loaded`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
@@ -108,7 +132,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
       }
     }
 
-    doTestCoursesLoaded(13)
+    doTestCoursesLoaded(14)
   }
 
   @Test
@@ -182,7 +206,8 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     expectedEnvironment: String = DEFAULT_ENVIRONMENT,
     expectedIsPrivate: Boolean = false,
     expectedCourseLink: String = "${PLUGINS_REPOSITORY_URL}courseLink$REVIEWS",
-    expectedLicense: String = "https://licenses/"
+    expectedLicense: String = "https://licenses/",
+    expectedVendor: Vendor? = null
   ) {
     assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
@@ -197,6 +222,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
     assertEquals(expectedCourseLink, course.feedbackLink)
     assertEquals(expectedLicense, course.license)
+    assertEquals(expectedVendor, course.vendor)
     assertEquals(expectedAuthorFullNames, course.authorFullNames)
     assertTrue(course.isMarketplace)
   }
@@ -220,7 +246,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     return contains("updates")
   }
 
-  private fun doTestCoursesLoaded(coursesNumber: Int = 3): List<EduCourse> {
+  private fun doTestCoursesLoaded(coursesNumber: Int = 4): List<EduCourse> {
     val courses = MarketplaceConnector.getInstance().searchCourses()
     assertEquals(coursesNumber, courses.size)
     return courses

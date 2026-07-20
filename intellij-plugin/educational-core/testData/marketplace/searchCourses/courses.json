@@ -23,7 +23,8 @@
             "isPrivate": false
           },
           "organization" : {
-            "name" : "JetBrains s.r.o."
+            "name" : "JetBrains s.r.o.",
+            "url" : "https://plugins.jetbrains.com/vendor/JetBrains"
           },
           "link" : "courseLink",
           "license" : "https://licenses/"
@@ -72,6 +73,32 @@
             "programmingLanguageId": "Scala",
             "language": "en",
             "isPrivate": false
+          },
+          "link" : "courseLink",
+          "license" : "https://licenses/"
+        },
+        {
+          "id" : "4",
+          "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
+          "name" : "Kotlin course",
+          "description" : "Introduction course to Kotlin",
+          "downloads" : 3,
+          "rating" : 4.5,
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
+          ],
+          "fields" : {
+            "environment": null,
+            "programmingLanguageId" : "kotlin",
+            "language" : "en",
+            "isPrivate": false
+          },
+          "organization" : {
+            "name" : "Regular User",
+            "url" : "https://plugins.jetbrains.com/vendor/12345678-1234-1234-1234-123456789abc"
           },
           "link" : "courseLink",
           "license" : "https://licenses/"
