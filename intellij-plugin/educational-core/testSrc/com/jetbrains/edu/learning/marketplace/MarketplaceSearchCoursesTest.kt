@@ -37,10 +37,17 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val courses = doTestCoursesLoaded()
 
     val pythonCourse = courses.first()
-    doTest(pythonCourse, 1, "Introduction to Python", "Python", "English", "Introduction course to Python",
-           2, 5.0)
-    assertEquals("JetBrains s.r.o.", pythonCourse.vendor?.name)
-    checkAuthorFullNames(listOf("JetBrains s.r.o."), pythonCourse.authorFullNames)
+    doTest(
+      course = pythonCourse,
+      expectedId = 1,
+      expectedName = "Introduction to Python",
+      expectedLanguageId = "Python",
+      expectedHumanLanguage = "English",
+      expectedDescription = "Introduction course to Python",
+      expectedLearnersCount = 2,
+      expectedReviewScore = 5.0,
+      expectedAuthorFullNames = listOf("JetBrains s.r.o.")
+    )
     checkAuthors(listOf("FirstName LastName"), pythonCourse.authors)
     assertEquals(13, pythonCourse.formatVersion)
   }
@@ -51,12 +58,18 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val courses = doTestCoursesLoaded()
 
     val javaCourse = courses[1]
-    doTest(javaCourse, 2, "Introduction to Java", "JAVA", "Russian",
-           "Introduction course to Java", 5, 5.0)
-    assertNull(javaCourse.vendor)
-    val expectedAuthors = listOf("user1 LastName1", "user2 LastName2")
-    checkAuthorFullNames(expectedAuthors, javaCourse.authorFullNames)
-    checkAuthors(expectedAuthors, javaCourse.authors)
+    doTest(
+      course = javaCourse,
+      expectedId = 2,
+      expectedName = "Introduction to Java",
+      expectedLanguageId = "JAVA",
+      expectedHumanLanguage = "Russian",
+      expectedDescription = "Introduction course to Java",
+      expectedLearnersCount = 5,
+      expectedReviewScore = 5.0,
+      expectedAuthorFullNames = listOf("user1 LastName1", "user2 LastName2")
+    )
+    checkAuthors(listOf("user1 LastName1", "user2 LastName2"), javaCourse.authors)
     assertEquals(14, javaCourse.formatVersion)
   }
 
@@ -66,12 +79,19 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val courses = doTestCoursesLoaded()
 
     val scalaCourse = courses[2]
-    doTest(scalaCourse, 3, "Scala course", "Scala", "English",
-           "Introduction course to Scala", 5, 4.75, expectedEnvironment = "sbt")
-    assertNull(scalaCourse.vendor)
-    val expectedAuthors = listOf("FirstName LastName")
-    checkAuthorFullNames(expectedAuthors, scalaCourse.authorFullNames)
-    checkAuthors(expectedAuthors, scalaCourse.authors)
+    doTest(
+      course = scalaCourse,
+      expectedId = 3,
+      expectedName = "Scala course",
+      expectedLanguageId = "Scala",
+      expectedHumanLanguage = "English",
+      expectedDescription = "Introduction course to Scala",
+      expectedLearnersCount = 5,
+      expectedReviewScore = 4.75,
+      expectedEnvironment = "sbt",
+      expectedAuthorFullNames = listOf("FirstName LastName")
+    )
+    checkAuthors(listOf("FirstName LastName"), scalaCourse.authors)
     assertEquals(13, scalaCourse.formatVersion)
   }
 
@@ -105,8 +125,17 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val courseId = 1
     val course = MarketplaceConnector.getInstance().searchCourse(courseId)
     checkNotNull(course)
-    doTest(course, courseId, "Introduction to Python", "Python", "English", "Introduction course to Python",
-           2, 5.0)
+    doTest(
+      course = course,
+      expectedId = courseId,
+      expectedName = "Introduction to Python",
+      expectedLanguageId = "Python",
+      expectedHumanLanguage = "English",
+      expectedDescription = "Introduction course to Python",
+      expectedLearnersCount = 2,
+      expectedReviewScore = 5.0,
+      expectedAuthorFullNames = listOf("FirstName LastName")
+    )
   }
 
   @Test
@@ -114,7 +143,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
       val requestBody = request.body.readUtf8()
-      when  {
+      when {
         requestBody.isPluginsRequest() -> mockResponse("private_course.json")
         requestBody.isUpdatesRequest() -> mockResponse("updates.json")
         else -> null
@@ -123,27 +152,38 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     val courseId = 1
     val course = MarketplaceConnector.getInstance().searchCourse(courseId)
     checkNotNull(course)
-    doTest(course, courseId, "Introduction to Python", "Python", "English", "Introduction course to Python",
-           2, 5.0, expectedIsPrivate = true)
-    assertNull(course.vendor)
-    checkAuthorFullNames(listOf("FirstName LastName"), course.authorFullNames)
+    doTest(
+      course = course,
+      expectedId = courseId,
+      expectedName = "Introduction to Python",
+      expectedLanguageId = "Python",
+      expectedHumanLanguage = "English",
+      expectedDescription = "Introduction course to Python",
+      expectedLearnersCount = 2,
+      expectedReviewScore = 5.0,
+      expectedIsPrivate = true,
+      expectedAuthorFullNames = listOf("FirstName LastName")
+    )
     checkAuthors(listOf("FirstName LastName"), course.authors)
   }
 
-  private fun doTest(course: EduCourse,
-                     expectedId: Int,
-                     expectedName: String,
-                     expectedLanguageId: String,
-                     expectedHumanLanguage: String,
-                     expectedDescription: String,
-                     expectedLearnersCount: Int,
-                     expectedReviewScore: Double,
-                     expectedUpdateDate: Date = Date(1619697473000),
-                     expectedCreateDate: Date = Date(1623321716000),
-                     expectedEnvironment: String = DEFAULT_ENVIRONMENT,
-                     expectedIsPrivate: Boolean = false,
-                     expectedCourseLink: String = "${PLUGINS_REPOSITORY_URL}courseLink$REVIEWS",
-                     expectedLicense: String = "https://licenses/") {
+  private fun doTest(
+    course: EduCourse,
+    expectedId: Int,
+    expectedName: String,
+    expectedLanguageId: String,
+    expectedHumanLanguage: String,
+    expectedDescription: String,
+    expectedLearnersCount: Int,
+    expectedReviewScore: Double,
+    expectedAuthorFullNames: List<String>,
+    expectedUpdateDate: Date = Date(1619697473000),
+    expectedCreateDate: Date = Date(1623321716000),
+    expectedEnvironment: String = DEFAULT_ENVIRONMENT,
+    expectedIsPrivate: Boolean = false,
+    expectedCourseLink: String = "${PLUGINS_REPOSITORY_URL}courseLink$REVIEWS",
+    expectedLicense: String = "https://licenses/"
+  ) {
     assertEquals(expectedId, course.id)
     assertEquals(expectedName, course.name)
     assertEquals(expectedEnvironment, course.environment)
@@ -157,20 +197,14 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     assertEquals(expectedIsPrivate, course.isMarketplacePrivate)
     assertEquals(expectedCourseLink, course.feedbackLink)
     assertEquals(expectedLicense, course.license)
+    assertEquals(expectedAuthorFullNames, course.authorFullNames)
     assertTrue(course.isMarketplace)
-  }
-
-  private fun checkAuthorFullNames(expected: List<String>, actual: List<String>) {
-    assertEquals(expected.size, actual.size)
-    for (n in expected.indices) {
-      assertEquals(expected[n], actual[n])
-    }
   }
 
   private fun checkAuthors(expected: List<String>, actual: List<UserInfo>) {
     assertEquals(expected.size, actual.size)
-    for (n in expected.indices) {
-      assertEquals(expected[n], actual[n].getFullName())
+    for ((expectedFullName, actualUserInfo) in expected.zip(actual)) {
+      assertEquals(expectedFullName, actualUserInfo.getFullName())
     }
   }
 
