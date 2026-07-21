@@ -123,7 +123,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
     var success = false
     return try {
-      val jbAccessToken = jbAccountInfoService.accessToken.get(30, TimeUnit.SECONDS)
+      val jbAccessToken = jbAccountInfoService.getJBAuthAccessToken().get(30, TimeUnit.SECONDS)
       success = jbAccessToken != null
       jbAccessToken
     }
@@ -174,6 +174,10 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     private val MARKETPLACE_CLIENT_ID: String = MarketplaceOAuthBundle.value("marketplaceHubClientId")
 
     private const val AUTH_TYPE_BASIC = "Basic"
+
+    // BACKCOMPAT: 2026.1. Make private and drop suppression
+    @Suppress("unused")
+    internal const val JB_AUTHN_SERVICE_AUDIENCE = "jb-authn-service"
   }
 
   @Service
