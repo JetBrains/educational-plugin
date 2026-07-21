@@ -92,12 +92,9 @@ open class JdkLanguageEnvironmentCatalogProvider(
     // the list of available environments must not be empty. Otherwise, return the error
     val availableEnvironments = availableSuitableJdks.ifEmpty {
       LOG.info("No suitable JDKs found. Creating a JDK that will be automatically downloaded.")
-      when (val prepareDownloadResult = prepareDownloadableJdk(sdkModel, jdkVersionRange, preferredJdkVersion)) {
-        is Ok -> listOf(prepareDownloadResult.value)
-        is Err -> {
-          return Err(EduJVMBundle.message("error.jdk.downloadable.create.failed", prepareDownloadResult.error))
-        }
-      }
+      prepareDownloadableJdk(sdkModel, jdkVersionRange, preferredJdkVersion)
+        .map { listOf(it) }
+        .onError { return Err(it) }
     }
 
     return Ok(LanguageEnvironmentCatalog(availableEnvironments))
