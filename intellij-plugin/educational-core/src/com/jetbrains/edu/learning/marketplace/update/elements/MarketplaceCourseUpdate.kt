@@ -13,6 +13,7 @@ class MarketplaceCourseUpdate(
     baseUpdate(project)
     localItem.marketplaceCourseVersion = remoteItem.marketplaceCourseVersion
     localItem.updateDate = remoteItem.updateDate
+    localItem.certification = remoteItem.certification
 
     YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
   }
