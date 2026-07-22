@@ -18,6 +18,7 @@ class MarketplaceCourseUpdaterNew(
 
   override fun isCourseChanged(localCourse: EduCourse, remoteCourse: EduCourse): Boolean = when {
     localCourse.marketplaceCourseVersion != remoteCourse.marketplaceCourseVersion -> true
+    localCourse.certification != remoteCourse.certification -> true
     localCourse.isChanged(remoteCourse) -> true
     else -> false
   }

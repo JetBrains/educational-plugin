@@ -209,6 +209,17 @@ class MarketplaceCourseUpdateTest : UpdateTestBase<EduCourse>() {
     assertTrue(EduFeatureManager.getInstance(project).checkDisabled(EduManagedFeature.AI_COMPLETION))
   }
 
+  @Test
+  fun `test certification updated`() {
+    initiateLocalCourse()
+
+    val remoteCourse = toRemoteCourse {
+      certification = true
+    }
+    updateCourse(remoteCourse)
+    assertEquals("Certification hasn't been updated", true, localCourse.certification)
+  }
+
   override fun initiateLocalCourse() {
     localCourse = createBasicMarketplaceCourse {
       section("section1") {
