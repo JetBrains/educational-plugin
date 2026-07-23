@@ -33,6 +33,6 @@ interface MarketplaceRepositoryEndpoints {
     @Part("pluginId") courseId: Int,
   ): Call<UploadResponse>
 
-  @GET("/api/users/me/organizations")
+  @GET("/api/users/me/vendors")
   suspend fun userOrganizations(): NetworkResult<List<UserOrganization>>
 }
