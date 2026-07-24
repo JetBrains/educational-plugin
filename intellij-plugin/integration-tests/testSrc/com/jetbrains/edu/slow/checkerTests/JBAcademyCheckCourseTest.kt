@@ -1,7 +1,5 @@
 package com.jetbrains.edu.slow.checkerTests
 
-import com.intellij.ide.starter.community.model.BuildType
-import com.intellij.ide.starter.ide.IdeProductProvider
 import com.intellij.ide.starter.junit5.hyphenateWithClass
 import com.intellij.ide.starter.models.TestCase
 import com.intellij.ide.starter.plugins.PluginConfigurator
@@ -31,8 +29,6 @@ private const val PLAIN_COURSE_LOCAL_PATH =
 private const val EXPECTED_REPORT_RELATIVE =
   "testData/expectedJsons/plainTextTest.json"
 
-// Temporarily placed in 261 source set because of some incompatibilities between 261 and 262 in starter framework
-// It will be fixed separately
 class JBAcademyCheckCourseTest {
 
   @TestFactory
@@ -43,8 +39,7 @@ class JBAcademyCheckCourseTest {
 
     val context = Starter.newContext(
       testInfo.hyphenateWithClass(),
-      TestCase(
-        IdeProductProvider.IU.copy(version = "2026.1.1", buildType = BuildType.RELEASE.type), NoProject)
+      TestCase(ideaUltimate(), NoProject)
     ).apply {
       PluginConfigurator(this).installPluginFromPath(pluginPath)
       applyVMOptionsPatch {
