@@ -12,8 +12,8 @@ idea {
     vcs = "Git"
   }
   module {
-    excludeDirs.add(file("dependencies"))
     excludeDirs.add(file(".intellijPlatform"))
+    excludeDirs.add(file("out"))
   }
 }
 
