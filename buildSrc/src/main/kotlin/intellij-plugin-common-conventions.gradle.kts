@@ -100,4 +100,8 @@ tasks {
       jvmTarget = JvmTarget.JVM_25
     }
   }
+  test {
+    // https://youtrack.jetbrains.com/issue/EDU-8999
+    enabled = !(isAtLeast262 && isClionIDE)
+  }
 }
