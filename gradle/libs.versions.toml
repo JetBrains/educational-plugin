@@ -28,7 +28,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 classgraph = { module = "io.github.classgraph:classgraph", version = "4.8.184" }
 hamcrest = { group = "org.hamcrest", name = "hamcrest", version = "3.0" }
 junit = { group = "junit", name = "junit", version = "4.13.2" }
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version = "5.14.4" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version = "6.1.1" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version = "1.10.2" }
