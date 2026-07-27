@@ -60,7 +60,7 @@ class RsTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
       }
     </code></pre>
     <p>Code block with specific language:</p>
-    <pre><code data-lang="text/x-kotlin">
+    <pre><code data-lang="text/x-rust">
       fn main() {
           println!("Hello!")
       }
