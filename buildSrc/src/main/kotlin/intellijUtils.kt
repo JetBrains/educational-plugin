@@ -122,6 +122,11 @@ val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   if (isAtLeast262) jcefPlugin else null,
 )
 
+// https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2183
+val Project.disabledTestPlugins: List<String> get() = listOf(
+  "org.jetbrains.plugins.vue"
+)
+
 
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
 

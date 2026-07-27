@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -99,6 +100,9 @@ tasks {
       // If you change target version here, remember to change it for Java above
       jvmTarget = JvmTarget.JVM_25
     }
+  }
+  withType<PrepareSandboxTask> {
+    disabledPlugins.addAll(disabledTestPlugins)
   }
   test {
     // https://youtrack.jetbrains.com/issue/EDU-8999
