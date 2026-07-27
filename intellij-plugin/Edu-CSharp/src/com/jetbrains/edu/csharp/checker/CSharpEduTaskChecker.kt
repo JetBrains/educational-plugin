@@ -125,8 +125,8 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
     withContext(Dispatchers.EDT) {
       buildEventsService.getEventsAndSubscribe(buildLifetime) { events ->
-        val errorMessages = events.joinToString("\n") { eventRef ->
-          val buildEvent = buildEventsService.getEvent(eventRef.offset).rd
+        val errorMessages = events.mapNotNull { eventRef ->
+          val buildEvent = buildEventsService.getEvent(eventRef.offset)?.rd ?: return@mapNotNull null
           val sourceFile = buildEvent.filePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
           val taskProjectId = task.toProjectModelEntity(project)?.getId(project)
 
@@ -137,7 +137,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
           else {
             ""
           }
-        }
+        }.joinToString("\n")
 
         if (errorMessages.isNotEmpty()) {
           isBuildFailed.complete(errorMessages)
