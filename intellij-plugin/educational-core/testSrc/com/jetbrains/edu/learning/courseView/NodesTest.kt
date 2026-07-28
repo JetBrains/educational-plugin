@@ -17,7 +17,7 @@ import org.junit.Test
 class NodesTest : CourseViewTestBase() {
 
   @Test
-  fun testOutsideScrDir() {
+  fun `test outside src dir`() {
     courseWithFiles(language = FakeGradleBasedLanguage) {
       lesson {
         eduTask {
@@ -47,7 +47,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   @Test
-  fun testSections() {
+  fun `test sections`() {
     courseWithFiles {
       lesson {
         eduTask {
@@ -123,7 +123,7 @@ class NodesTest : CourseViewTestBase() {
   }
 
   @Test
-  fun testTaskFilesOrder() {
+  fun `test task files order`() {
     courseWithFiles {
       lesson {
         eduTask {
