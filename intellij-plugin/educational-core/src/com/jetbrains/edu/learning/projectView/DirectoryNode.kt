@@ -8,7 +8,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -35,8 +35,8 @@ open class DirectoryNode(
     return originalNode
   }
 
-  override fun updateImpl(data: PresentationData) {
-    val course = StudyTaskManager.getInstance(myProject).course ?: return
+  override fun updatePresentation(data: PresentationData) {
+    val course = myProject.course ?: return
     val dir = value
     val directoryFile = dir.virtualFile
     val name = directoryFile.name

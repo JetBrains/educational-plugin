@@ -1,11 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
+import com.intellij.icons.AllIcons
+import com.intellij.ide.projectView.PresentationData
+import com.intellij.ide.projectView.ProjectViewNode
+import com.intellij.ide.projectView.ProjectViewNodeDecorator
+import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.findOrCreateDirectory
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.ui.SimpleTextAttributes
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseDir
@@ -971,9 +977,61 @@ class NodesTest : CourseViewTestBase() {
   }
 
   /**
+   * Other decorators, for example, the Gradle one, may present a directory node as a module or a source root.
+   * Course view presentation should survive it. See EDU-9006
+   */
+  @Test
+  fun `test course view presentation is not overridden by other decorators`() {
+    project.extensionArea
+      .getExtensionPoint<ProjectViewNodeDecorator>(PROJECT_VIEW_NODE_DECORATOR_EP_NAME)
+      .registerExtension(TestProjectViewNodeDecorator(), testRootDisposable)
+
+    courseWithFiles(language = FakeGradleBasedLanguage) {
+      lesson {
+        eduTask {
+          taskFile("src/Task.kt")
+        }
+        eduTask {
+          taskFile("src/Task.kt")
+          taskFile("file.txt")
+        }
+      }
+    }
+
+    assertCourseView("""
+    |-Project
+    | -CourseNode Test Course  0/2
+    |  -LessonNode lesson1
+    |   -TaskNode task1
+    |    Task.kt
+    |   -TaskNode task2
+    |    -DirectoryNode src
+    |     Task.kt
+    |    file.txt
+    """.trimMargin("|"))
+  }
+
+  /**
    * Creates a file on disk that should not go to the list of course additional files
    */
   private fun nonAdditionalFile(path: String, contents: String = "") = runWriteAction {
     project.courseDir.findOrCreateFile(path).writeText(contents)
+  }
+
+  private class TestProjectViewNodeDecorator : ProjectViewNodeDecorator {
+    override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
+      // just like the Gradle decorator, present directories as modules and source roots
+      if (node !is PsiDirectoryNode) return
+      data.clearText()
+      data.presentableText = "module"
+      data.addText("module", SimpleTextAttributes.REGULAR_ATTRIBUTES)
+      data.locationString = "[main]"
+      data.setIcon(AllIcons.Nodes.Module)
+    }
+  }
+
+  companion object {
+    // CompoundProjectViewNodeDecorator.Companion.EP is internal, so let's use our own constant here
+    private const val PROJECT_VIEW_NODE_DECORATOR_EP_NAME = "com.intellij.projectViewNodeDecorator"
   }
 }
