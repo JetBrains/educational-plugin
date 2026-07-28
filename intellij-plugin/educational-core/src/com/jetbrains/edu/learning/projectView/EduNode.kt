@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.projectView
 
 import com.intellij.ide.projectView.PresentationData
+import com.intellij.ide.projectView.ProjectViewNodeDecorator
 import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
@@ -25,8 +26,14 @@ abstract class EduNode<T : StudyItem>(
     myName = value.name
   }
 
-  override fun updateImpl(data: PresentationData) {
-    data.clearText()
+  /**
+   * Modifies a presentation of this node.
+   *
+   * Supposed to be called by [EduCourseViewNodeDecorator].
+   * The main difference with [updateImpl] that [ProjectViewNodeDecorator] allows calling it later than [updateImpl]
+   * and override changes made by other node decorators
+   */
+  open fun updatePresentation(data: PresentationData) {
     val item = item ?: return
     val translatedName = TranslationProjectSettings.getInstance(project).getStudyItemTranslatedName(item)
     val name = translatedName ?: item.presentableName

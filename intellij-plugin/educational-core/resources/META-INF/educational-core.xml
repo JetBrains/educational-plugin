@@ -445,7 +445,13 @@
 
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
 
+    <!-- Course view-->
     <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>
+    <!-- It's important to have `last` order here -->
+    <!-- because all decorators sequentially modify the same mutable presentation -->
+    <!-- and we want to be sure that other decorators don't override our changes -->
+    <projectViewNodeDecorator implementation="com.jetbrains.edu.learning.projectView.EduCourseViewNodeDecorator" order="last"/>
+
     <editorActionHandler action="EditorBackSpace" implementationClass="com.jetbrains.edu.learning.editor.EduTypedHandler"
                          order="first"/>
     <editorActionHandler action="EditorDelete" implementationClass="com.jetbrains.edu.learning.editor.EduTypedHandler"
