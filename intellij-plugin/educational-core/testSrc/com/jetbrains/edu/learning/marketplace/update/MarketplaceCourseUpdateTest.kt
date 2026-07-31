@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.marketplace.update
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.Vendor
 import com.jetbrains.edu.learning.featureManagement.EduFeatureManager
 import com.jetbrains.edu.learning.featureManagement.EduManagedFeature
 import com.jetbrains.edu.learning.fileTree
@@ -218,6 +219,18 @@ class MarketplaceCourseUpdateTest : UpdateTestBase<EduCourse>() {
     }
     updateCourse(remoteCourse)
     assertEquals("Certification hasn't been updated", true, localCourse.certification)
+  }
+
+  @Test
+  fun `test vendor updated`() {
+    initiateLocalCourse()
+
+    val newVendor = Vendor("JetBrains s.r.o.", url = "https://plugins.jetbrains.com/vendor/JetBrains")
+    val remoteCourse = toRemoteCourse {
+      vendor = newVendor
+    }
+    updateCourse(remoteCourse)
+    assertEquals("Vendor hasn't been updated", newVendor, localCourse.vendor)
   }
 
   override fun initiateLocalCourse() {
