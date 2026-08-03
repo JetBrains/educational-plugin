@@ -22,11 +22,12 @@ import org.jetbrains.annotations.Nls
 /**
  * @return list of all available python interpreters and a recommended one to select
  */
-suspend fun collectPyEnvironments(course: Course, context: UserDataHolder): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
-  val fakeSdk = createFakeSdk(course, context)?.toLanguageEnvironment()
+context(cache: UserDataHolder)
+suspend fun collectPyEnvironments(course: Course): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
+  val fakeSdk = createFakeSdk(course)?.toLanguageEnvironment()
   val fakeSdks = listOfNotNull(fakeSdk)
 
-  val baseSdks = findBaseSdks(emptyList(), null, context)
+  val baseSdks = findBaseSdks(emptyList(), null, cache)
     .sortedByDescending { it.languageLevel }
     .map { it.toLanguageEnvironment() }
 
@@ -104,8 +105,9 @@ private fun isSdkApplicable(course: Course, sdkLanguageLevel: LanguageLevel): Re
 }
 
 @RequiresBackgroundThread
-private fun getBaseSdk(course: Course, context: UserDataHolder? = null): PyBaseSdkDescriptor? {
-  val baseSdks = PyBaseSdksProvider.getBaseSdks(context)
+context(cache: UserDataHolder)
+private fun getBaseSdk(course: Course): PyBaseSdkDescriptor? {
+  val baseSdks = PyBaseSdksProvider.getBaseSdks(cache)
   if (baseSdks.isEmpty()) {
     return null
   }
@@ -131,8 +133,9 @@ private class SpecificPythonRequiredError(
 )
 
 @RequiresBackgroundThread
-private fun createFakeSdk(course: Course, context: UserDataHolder): Sdk? {
-  val baseSdk = getBaseSdk(course, context) ?: return null
+context(_: UserDataHolder)
+private fun createFakeSdk(course: Course): Sdk? {
+  val baseSdk = getBaseSdk(course) ?: return null
   val flavor = PythonSdkFlavor.getApplicableFlavors(false)[0]
   val prefix = flavor.name + " "
   val version = baseSdk.version

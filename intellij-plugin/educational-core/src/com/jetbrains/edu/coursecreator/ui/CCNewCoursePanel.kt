@@ -319,13 +319,14 @@ class CCNewCoursePanel(
       LanguageSettings.UiComponents.LANGUAGE_ENVIRONMENT_AND_NEW_COURSE_SETTINGS
     }
     settings.addAll(
-      languageSettings.getLanguageSettingsComponents(
-        _course,
-        ModalityStateProvider.forComponent(this),
-        settingsDisposable,
-        context,
-        uiComponents
-      )
+      with(context) {
+        languageSettings.getLanguageSettingsComponents(
+          _course,
+          ModalityStateProvider.forComponent(this@CCNewCoursePanel),
+          settingsDisposable,
+          uiComponents
+        )
+      }
     )
     this.settings.setSettingsComponents(settings)
 

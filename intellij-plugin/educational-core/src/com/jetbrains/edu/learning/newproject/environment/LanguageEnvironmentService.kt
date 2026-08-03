@@ -26,17 +26,17 @@ import kotlinx.coroutines.withContext
 @Service(Service.Level.APP)
 class LanguageEnvironmentService(private val scope: CoroutineScope) {
 
+  context(_: UserDataHolder)
   fun <E: LanguageEnvironment> loadEnvironmentCatalog(
     environmentCatalogProvider: LanguageEnvironmentCatalogProvider<E>,
     course: Course,
-    context: UserDataHolder,
     modalityStateProvider: ModalityStateProvider,
     disposable: Disposable,
     environmentsLoaded: suspend (Result<LanguageEnvironmentCatalog<E>, String>) -> Unit
   ) {
     modalityStateProvider.waitForModality(disposable) { modalityState ->
       scope.launch(Dispatchers.IO + modalityState.asContextElement()) {
-        val environmentCatalog = environmentCatalogProvider.collectEnvironmentsForCourse(course, context)
+        val environmentCatalog = environmentCatalogProvider.collectEnvironmentsForCourse(course)
         if (environmentCatalog is Err) {
           LOG.warn("Failed to load environments for ${course.name}: ${environmentCatalog.error}")
         }

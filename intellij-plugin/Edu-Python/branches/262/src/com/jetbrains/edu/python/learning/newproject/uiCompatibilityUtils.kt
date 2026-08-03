@@ -15,11 +15,10 @@ import com.jetbrains.python.psi.LanguageLevel
 
 private val SYSTEM_PYTHONS: Key<List<SystemPython>> = Key.create("edu.python.system_interpreters")
 
-suspend fun collectPyEnvironments(course: Course, context: UserDataHolder): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
-  val systemPythons = with(context) {
-    withCaching(SYSTEM_PYTHONS) {
-      SystemPythonService().findSystemPythons(forceRefresh = true)
-    }
+context(_: UserDataHolder)
+suspend fun collectPyEnvironments(course: Course): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
+  val systemPythons = withCaching(SYSTEM_PYTHONS) {
+    SystemPythonService().findSystemPythons(forceRefresh = true)
   }
 
   val existingEnvironments = systemPythons.map {

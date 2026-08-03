@@ -23,8 +23,11 @@ interface LanguageEnvironmentCatalogProvider<out E: LanguageEnvironment> {
   /**
    * Collects all the available environments suitable for the specified course.
    *
+   * The [UserDataHolder] context parameter is used as a cache.
+   *
    * @return a [Result] containing the collected environments in the form of a [LanguageEnvironmentCatalog] object if successful,
    *         or an error message as a [String] if the operation fails
    */
-  suspend fun collectEnvironmentsForCourse(course: Course, context: UserDataHolder): Result<LanguageEnvironmentCatalog<E>, String>
+  context(_: UserDataHolder)
+  suspend fun collectEnvironmentsForCourse(course: Course): Result<LanguageEnvironmentCatalog<E>, String>
 }

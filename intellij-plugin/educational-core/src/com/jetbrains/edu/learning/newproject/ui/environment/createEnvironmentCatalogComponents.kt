@@ -23,11 +23,11 @@ import javax.swing.JComponent
 /**
  * Load the environment catalog and return the UI components to represent it
  */
+context(_: UserDataHolder)
 internal fun <E : LanguageEnvironment> createEnvironmentCatalogComponents(
   environmentCatalogProvider: LanguageEnvironmentCatalogProvider<E>,
   environmentPresenter: LanguageEnvironmentPresenter<E>,
   course: Course,
-  context: UserDataHolder,
   modalityStateProvider: ModalityStateProvider,
   disposable: CheckedDisposable,
   @RequiresEdt setEnvironmentState: (EnvironmentState<E>) -> Unit
@@ -63,7 +63,7 @@ internal fun <E : LanguageEnvironment> createEnvironmentCatalogComponents(
     catalogLoaded: suspend (LanguageEnvironmentCatalog<E>) -> Unit
   ) {
     LanguageEnvironmentService.getInstance().loadEnvironmentCatalog(
-      this, course, context, modalityStateProvider, disposable
+      this, course, modalityStateProvider, disposable
     ) { environmentCatalog ->
       when (environmentCatalog) {
         is Ok -> {

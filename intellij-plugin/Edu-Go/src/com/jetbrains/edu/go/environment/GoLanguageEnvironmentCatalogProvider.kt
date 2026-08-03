@@ -36,11 +36,9 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     }
   }
 
-  override suspend fun collectEnvironmentsForCourse(
-    course: Course,
-    context: UserDataHolder
-  ): Result<LanguageEnvironmentCatalog<GoLanguageEnvironment>, String> {
-    val sdks = loadSdks(context)
+  context(_: UserDataHolder)
+  override suspend fun collectEnvironmentsForCourse(course: Course): Result<LanguageEnvironmentCatalog<GoLanguageEnvironment>, String> {
+    val sdks = loadSdks()
     val environments = sdks.filter { it != GoSdk.NULL && it.isValid }.map { GoLanguageEnvironment.Existing(it) }
 
     if (environments.isNotEmpty()) {
@@ -58,8 +56,9 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     return Ok(LanguageEnvironmentCatalog(installEnvironment))
   }
 
-  private suspend fun loadSdks(context: UserDataHolder): List<GoSdk> {
-    val goSdksLoaded = context.getUserData(GO_SDKS_LOADED)
+  context(cache: UserDataHolder)
+  private suspend fun loadSdks(): List<GoSdk> {
+    val goSdksLoaded = cache.getUserData(GO_SDKS_LOADED)
     if (goSdksLoaded == true) {
       LOG.info("Retrieving already loaded Go SDKs from cache")
       return GoSdkList.getInstance().allGoSdks
@@ -68,7 +67,7 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     return suspendCancellableCoroutine { continuation ->
       LOG.info("Reloading Go SDKs")
       GoSdkList.getInstance().reloadSdks(null) { sdks ->
-        context.putUserData(GO_SDKS_LOADED, true)
+        cache.putUserData(GO_SDKS_LOADED, true)
         continuation.resume(sdks) { _, _, _ -> }
       }
     }

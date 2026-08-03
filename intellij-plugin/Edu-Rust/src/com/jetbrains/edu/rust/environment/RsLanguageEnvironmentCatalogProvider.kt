@@ -34,10 +34,8 @@ class RsLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     }
   }
 
-  override suspend fun collectEnvironmentsForCourse(
-    course: Course,
-    context: UserDataHolder
-  ): Result<LanguageEnvironmentCatalog<RsLanguageEnvironment>, String> {
+  context(_: UserDataHolder)
+  override suspend fun collectEnvironmentsForCourse(course: Course): Result<LanguageEnvironmentCatalog<RsLanguageEnvironment>, String> {
     val toolchainPaths = getAvailableToolchainsPaths()
 
     val toolchains = toolchainPaths

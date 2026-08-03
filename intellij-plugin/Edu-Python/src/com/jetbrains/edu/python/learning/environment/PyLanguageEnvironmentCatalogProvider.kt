@@ -21,11 +21,9 @@ class PyLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     }
   }
 
-  override suspend fun collectEnvironmentsForCourse(
-    course: Course,
-    context: UserDataHolder
-  ): Result<LanguageEnvironmentCatalog<PyLanguageEnvironment>, String> {
-    val (pyEnvironments, recommendedEnvironment) = collectPyEnvironments(course, context)
+  context(_: UserDataHolder)
+  override suspend fun collectEnvironmentsForCourse(course: Course): Result<LanguageEnvironmentCatalog<PyLanguageEnvironment>, String> {
+    val (pyEnvironments, recommendedEnvironment) = collectPyEnvironments(course)
 
     if (recommendedEnvironment == null || pyEnvironments.isEmpty()) {
       return Err("Can't find python interpreter")

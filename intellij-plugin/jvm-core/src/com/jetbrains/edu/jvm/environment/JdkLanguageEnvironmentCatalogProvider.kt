@@ -63,10 +63,8 @@ open class JdkLanguageEnvironmentCatalogProvider(
     }
   }
 
-  override suspend fun collectEnvironmentsForCourse(
-    course: Course,
-    context: UserDataHolder
-  ): Result<LanguageEnvironmentCatalog<JdkLanguageEnvironment>, String> {
+  context(_: UserDataHolder)
+  override suspend fun collectEnvironmentsForCourse(course: Course): Result<LanguageEnvironmentCatalog<JdkLanguageEnvironment>, String> {
     val defaultProject = ProjectManager.getInstance().defaultProject
 
     val sdkModel = withContext(Dispatchers.EDT) {

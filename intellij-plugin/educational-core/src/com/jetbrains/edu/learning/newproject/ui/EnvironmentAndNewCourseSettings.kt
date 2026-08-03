@@ -53,16 +53,16 @@ class EnvironmentAndNewCourseSettings<E : LanguageEnvironment, S : NewCourseSett
   @Volatile
   private var newCourseSettings: S = newCourseSettingsUI.catalog.preferred
 
+  context(_: UserDataHolder)
   override fun getLanguageSettingsComponents(
     course: Course,
     modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
-    context: UserDataHolder,
     uiComponents: UiComponents
   ): List<LabeledComponent<JComponent>> {
 
     val environmentComponents = createEnvironmentCatalogComponents(
-      environmentCatalogProvider, environmentPresenter, course, context, modalityStateProvider, disposable
+      environmentCatalogProvider, environmentPresenter, course, modalityStateProvider, disposable
     ) { state ->
       environmentState = state
       notifyListeners()

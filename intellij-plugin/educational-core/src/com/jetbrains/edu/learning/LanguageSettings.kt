@@ -51,22 +51,25 @@ abstract class LanguageSettings<Settings : EduProjectSettings> {
   /**
    * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
    *
+   * @param cache context parameter used as cache for retrieving possible language options.
+   * It must have "session"-scope. Session could be one dialog or wizard.
+   *
    * @param course course of creating project
-   * @param context used as cache. If provided, must have "session"-scope. Session could be one dialog or wizard.
    * @param modalityStateProvider is needed if some actions should be executed in EDT delayed.
    *        [modalityStateProvider] allows waiting until a Course dialog is shown, and so its [ModalityState] is available.
    * @param uiComponents which UI components should be created
+   *
    * @return list of UI components with project settings
    */
   @RequiresEdt
+  context(cache: UserDataHolder)
   open fun getLanguageSettingsComponents(
     course: Course,
     modalityStateProvider: ModalityStateProvider,
     disposable: CheckedDisposable,
-    context: UserDataHolder,
     uiComponents: UiComponents
   ): List<LabeledComponent<JComponent>> {
-    return getLanguageSettingsComponents(course, modalityStateProvider, disposable, context)
+    return getLanguageSettingsComponents(course, modalityStateProvider, disposable, cache)
   }
 
   /**
