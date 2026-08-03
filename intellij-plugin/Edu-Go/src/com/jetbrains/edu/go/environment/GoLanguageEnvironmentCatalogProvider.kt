@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.flatMap
 import com.jetbrains.edu.learning.newproject.environment.EnvironmentUiKind
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalog
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.learning.newproject.environment.withCaching
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.IOException
 
@@ -56,18 +57,10 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
     return Ok(LanguageEnvironmentCatalog(installEnvironment))
   }
 
-  context(cache: UserDataHolder)
-  private suspend fun loadSdks(): List<GoSdk> {
-    val goSdksLoaded = cache.getUserData(GO_SDKS_LOADED)
-    if (goSdksLoaded == true) {
-      LOG.info("Retrieving already loaded Go SDKs from cache")
-      return GoSdkList.getInstance().allGoSdks
-    }
-
-    return suspendCancellableCoroutine { continuation ->
-      LOG.info("Reloading Go SDKs")
+  context(_: UserDataHolder)
+  private suspend fun loadSdks(): List<GoSdk> = withCaching(GO_SDKS) {
+    suspendCancellableCoroutine { continuation ->
       GoSdkList.getInstance().reloadSdks(null) { sdks ->
-        cache.putUserData(GO_SDKS_LOADED, true)
         continuation.resume(sdks) { _, _, _ -> }
       }
     }
@@ -94,6 +87,6 @@ class GoLanguageEnvironmentCatalogProvider : LanguageEnvironmentCatalogProvider<
   companion object {
     private val LOG = logger<GoLanguageEnvironmentCatalogProvider>()
     private const val DEFAULT_GO_SDK_PROPERTY = "project.go.sdk"
-    private val GO_SDKS_LOADED: Key<Boolean> = Key.create("go.sdks.loaded")
+    private val GO_SDKS: Key<List<GoSdk>> = Key.create("edu.go.sdks")
   }
 }

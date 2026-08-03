@@ -7,6 +7,7 @@ import com.intellij.python.community.services.systemPython.SystemPythonService
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
+import com.jetbrains.edu.learning.newproject.environment.withCaching
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider.Companion.ALL_VERSIONS
 import com.jetbrains.python.PathShortener
@@ -87,17 +88,4 @@ internal fun installVersionSpecifiers(course: Course): PyVersionSpecifiers {
   else {
     PyVersionSpecifiers(constraints.joinToString(","))
   }
-}
-
-/**
- * Runs [collectData] and saves result in [cache] under [key].
- * If the result is already cached, returns the cached value
- */
-context(cache: UserDataHolder)
-private suspend fun <R : Any> withCaching(key: Key<R>, collectData: suspend () -> R): R {
-  val cached = cache.getUserData(key)
-  if (cached != null) return cached
-  val result = collectData()
-  cache.putUserData(key, result)
-  return result
 }

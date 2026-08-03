@@ -1,6 +1,7 @@
 package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.Err
@@ -9,6 +10,7 @@ import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
+import com.jetbrains.edu.learning.newproject.environment.withCaching
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider.Companion.ALL_VERSIONS
 import com.jetbrains.edu.python.learning.messages.EduPythonBundle
@@ -17,6 +19,8 @@ import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.*
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import org.jetbrains.annotations.Nls
+
+private val BASE_SDKS: Key<List<Sdk>> = Key.create("edu.python.base_sdks")
 
 // Inspired by `com.jetbrains.python.sdk.add.PyAddSdkPanelKt.addBaseInterpretersAsync` implementation
 /**
@@ -27,7 +31,7 @@ suspend fun collectPyEnvironments(course: Course): Pair<List<PyLanguageEnvironme
   val fakeSdk = createFakeSdk(course)?.toLanguageEnvironment()
   val fakeSdks = listOfNotNull(fakeSdk)
 
-  val baseSdks = findBaseSdks(emptyList(), null, cache)
+  val baseSdks = withCaching(BASE_SDKS) { findBaseSdks(emptyList(), null, cache) }
     .sortedByDescending { it.languageLevel }
     .map { it.toLanguageEnvironment() }
 
