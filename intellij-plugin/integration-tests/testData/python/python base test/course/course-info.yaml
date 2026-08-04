@@ -1,0 +1,10 @@
+type: marketplace
+title: PythonCourseTest
+language: English
+summary: PythonCourseTest
+programming_language: Python
+environment: unittest
+content:
+  - lesson1
+  - lesson2
+yaml_version: 6
