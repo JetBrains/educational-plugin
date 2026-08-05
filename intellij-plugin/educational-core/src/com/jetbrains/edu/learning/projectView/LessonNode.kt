@@ -25,6 +25,7 @@ open class LessonNode(
   private fun getTaskNode(childNode: AbstractTreeNode<*>): TaskNode? {
     val directory = childNode.value as? PsiDirectory ?: return null
     val task = item.getTask(directory.name) ?: return null
+    if (!CourseViewVisibleItems.getInstance(myProject).shouldBeShown(task)) return null
     val taskDirectory = findTaskDirectory(myProject, directory, task) ?: return null
     return createTaskNode(taskDirectory, task)
   }

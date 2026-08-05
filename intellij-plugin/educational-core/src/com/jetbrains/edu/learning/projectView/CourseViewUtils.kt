@@ -195,10 +195,12 @@ object CourseViewUtils {
   ): AbstractTreeNode<*>? {
     val section = course.getSection(directory.name)
     if (section != null) {
+      if (!CourseViewVisibleItems.getInstance(getProject()).shouldBeShown(section)) return null
       return createSectionNode(directory, section)
     }
     val lesson = course.getLesson(directory.name)
     if (lesson != null) {
+      if (!CourseViewVisibleItems.getInstance(getProject()).shouldBeShown(lesson)) return null
       val lessonSolved = lesson.taskList.all { it.status == CheckStatus.Solved }
       if (lessonSolved && PropertiesComponent.getInstance().getBoolean(CourseViewPane.HIDE_SOLVED_LESSONS, false)) {
         return null

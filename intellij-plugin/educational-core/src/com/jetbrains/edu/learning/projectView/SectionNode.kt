@@ -26,6 +26,7 @@ open class SectionNode(
   private fun getLessonNode(childNode: AbstractTreeNode<*>): LessonNode? {
     val directory = childNode.value as? PsiDirectory ?: return null
     val lesson = item.getLesson(directory.name) ?: return null
+    if (!CourseViewVisibleItems.getInstance(myProject).shouldBeShown(lesson)) return null
     return createLessonNode(directory, lesson)
   }
 
