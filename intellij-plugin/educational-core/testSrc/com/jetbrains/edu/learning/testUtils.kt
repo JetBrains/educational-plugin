@@ -155,8 +155,16 @@ fun initializeCourse(project: Project, course: Course) {
   StudyTaskManager.getInstance(project).course = course
 }
 
-fun Course.findTask(lessonName: String, taskName: String): Task {
-  return getLesson(lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` in `$lessonName`")
+fun Course.findSection(sectionName: String): Section {
+  return getSection(sectionName) ?: error("Can't find `$sectionName` section")
+}
+
+fun Course.findLesson(lessonName: String, section: String? = null): Lesson {
+  return getLesson(section, lessonName) ?: error("Can't find `$lessonName` lesson")
+}
+
+fun Course.findTask(lessonName: String, taskName: String, section: String? = null): Task {
+  return getLesson(section, lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` task in `$lessonName` lesson")
 }
 
 // TODO: set up more items which are enabled in real course project

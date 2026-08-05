@@ -162,6 +162,10 @@
             class="com.jetbrains.edu.learning.actions.ToggleRestServicesAction"
             internal="true"/>
 
+    <action id="Educational.ToggleCourseSubtreeMode"
+            class="com.jetbrains.edu.learning.actions.ToggleCourseSubtreeModeAction"
+            internal="true"/>
+
     <!--educator actions-->
     <action id="Educational.Educator.InsertShortcut" class="com.jetbrains.edu.coursecreator.actions.InsertShortcutAction">
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
