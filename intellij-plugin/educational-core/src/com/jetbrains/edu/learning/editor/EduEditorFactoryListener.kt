@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils.getPlaceholderOffse
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstAnswerPlaceholder
 import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.showPlaceholders
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
+import com.jetbrains.edu.learning.projectView.CourseViewVisibleItems
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
 
@@ -49,6 +50,9 @@ class EduEditorFactoryListener : EditorFactoryListener {
     val taskFile = openedFile.getTaskFile(project) ?: return
     WolfTheProblemSolver.getInstance(project).clearProblems(openedFile)
     val task = taskFile.task
+    // If the corresponding task file was opened,
+    // consider this task as visible for user regardless of the way how the file was opened
+    CourseViewVisibleItems.getInstance(project).markStudyItemAsVisible(task)
     markTheoryTaskCompleted(project, task)
     if (taskFile.answerPlaceholders.isNotEmpty() && taskFile.isValid(editor.document.text)) {
       updateDependentPlaceholders(project, task)
