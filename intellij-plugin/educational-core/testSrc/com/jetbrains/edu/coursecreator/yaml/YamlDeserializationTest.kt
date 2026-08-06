@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
@@ -32,6 +33,17 @@ import kotlin.test.assertNotNull as kAssertNotNull
 
 
 class YamlDeserializationTest : YamlTestCase() {
+
+  /**
+   * Since Jackson 2.19 `treeToValue` returns `null` for a blank config instead of throwing,
+   * which used to end up as an NPE inside [deserializeCourse]
+   */
+  @Test
+  fun `test empty course config`() {
+    assertThrows(MismatchedInputException::class.java) {
+      basicMapper().deserializeCourse("")
+    }
+  }
 
   @Test
   fun `test course`() {
