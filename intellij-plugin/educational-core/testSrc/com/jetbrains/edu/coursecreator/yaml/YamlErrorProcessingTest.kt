@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.module.kotlin.KotlinInvalidNullException
 import com.intellij.lang.Language
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
@@ -33,7 +33,7 @@ class YamlErrorProcessingTest : YamlTestCase() {
             |- the first lesson
             |- the second lesson
             |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
-           "title is empty", MissingKotlinParameterException::class.java)
+           "title is empty", KotlinInvalidNullException::class.java)
   }
 
   @Test

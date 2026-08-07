@@ -69,7 +69,7 @@ object YamlDeserializer {
    * So, it's safer to return `null` no to break anything instead of throwing an exception.
    */
   fun ObjectMapper.deserializeCourse(configFileText: String): Course? {
-    var treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    var treeNode = readNode(configFileText)
 
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
     if (type == YamlMixinNames.HYPERSKILL_TYPE_YAML || type == YamlMixinNames.STEPIK_TYPE_YAML) {
@@ -84,6 +84,22 @@ object YamlDeserializer {
     val course = treeToValue(treeNode, Course::class.java)
     course.courseMode = if (courseMode != null) CourseMode.STUDENT else CourseMode.EDUCATOR
     return course
+  }
+
+  /**
+   * Reads a remote config, rejecting a blank one.
+   *
+   * Since Jackson 2.19 `treeToValue` returns `null` for [MissingNode] instead of throwing an exception,
+   * so a blank config has to be handled explicitly. Unlike [readNode], falling back to an empty [ObjectNode]
+   * is not an option here: remote configs deserialize into items with all-optional properties,
+   * so an empty node would silently produce a default item instead of an error.
+   */
+  private fun ObjectMapper.readNonEmptyNode(configFileText: String): JsonNode {
+    val tree = readTree(configFileText)
+    if (tree == null || tree is MissingNode || tree.isNull) {
+      formatError(message("yaml.editor.invalid.format.empty.config"))
+    }
+    return tree
   }
 
   private fun ObjectMapper.readNode(configFileText: String): JsonNode =
@@ -178,18 +194,18 @@ object YamlDeserializer {
 
   private fun deserializeCourseRemoteInfo(configFileText: String): Course {
     val remoteMapper = remoteMapper()
-    val treeNode = remoteMapper.readTree(configFileText)
+    val treeNode = remoteMapper.readNonEmptyNode(configFileText)
     return remoteMapper.treeToValue(treeNode, EduCourse::class.java)
   }
 
   private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {
-    val treeNode = remoteMapper().readTree(configFileText)
+    val treeNode = remoteMapper().readNonEmptyNode(configFileText)
     return remoteMapper().treeToValue(treeNode, RemoteStudyItem::class.java)
   }
 
   private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
     val remoteMapper = remoteMapper()
-    val treeNode = remoteMapper.readTree(configFileText)
+    val treeNode = remoteMapper.readNonEmptyNode(configFileText)
 
     return remoteMapper.treeToValue<RemoteStudyItem>(treeNode)
   }
