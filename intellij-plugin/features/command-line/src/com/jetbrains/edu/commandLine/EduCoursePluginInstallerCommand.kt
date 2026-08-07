@@ -54,12 +54,13 @@ class EduCoursePluginInstallerCommand : EduCommand("installCoursePlugins") {
 
   override suspend fun doRun(course: Course): CommandResult {
     val provider = course.compatibilityProvider
-    if (provider == null) {
+    val requiredPlugins = provider?.requiredPlugins()
+    if (provider == null || requiredPlugins == null) {
       return CommandResult.Error(course.incompatibleCourseMessage())
     }
 
+    val allRequiredPlugins = requiredPlugins + course.pluginDependencies
     val pluginManager = PluginManager.getInstance()
-    val allRequiredPlugins = provider.requiredPlugins().orEmpty() + course.pluginDependencies
     val pluginIds = allRequiredPlugins
       .map { PluginId.getId(it.stringId) }
       .filterTo(hashSetOf()) { pluginManager.findEnabledPlugin(it) == null }
