@@ -8,7 +8,8 @@ import javax.swing.Icon
 
 private val RUST_PLUGINS = listOf(
   PluginInfos.RUST,
-  PluginInfos.TOML
+  PluginInfos.TOML,
+  PluginInfos.NATIVE_DEBUGGING_SUPPORT,
 )
 
 class RsCourseCompatibilityProvider : CourseCompatibilityProvider {

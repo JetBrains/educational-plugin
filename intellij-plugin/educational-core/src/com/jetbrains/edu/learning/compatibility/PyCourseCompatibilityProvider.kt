@@ -14,7 +14,7 @@ class PyCourseCompatibilityProvider : CourseCompatibilityProvider {
     val requiredPlugins = mutableListOf<PluginInfo>()
     @Suppress("DEPRECATION", "UnstableApiUsage")
     requiredPlugins += when {
-      isPyCharm() || isCLion() || isIntelliJ() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
+      isPyCharm() || isCLion() || isIntelliJ() || isRustRover() || EduUtilsKt.isAndroidStudio() -> PYTHON_COMMUNITY
       else -> return null
     }
     requiredPlugins += TOML

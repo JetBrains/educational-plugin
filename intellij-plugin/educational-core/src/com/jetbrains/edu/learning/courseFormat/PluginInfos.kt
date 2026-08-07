@@ -16,6 +16,7 @@ object PluginInfos {
 
   val RUST: PluginInfo = PluginInfo("com.jetbrains.rust", "Rust")
   val TOML: PluginInfo = PluginInfo("org.toml.lang", "Toml")
+  val NATIVE_DEBUGGING_SUPPORT: PluginInfo = PluginInfo("com.intellij.nativeDebug", "Native Debugging Support")
 
   val CATCH: PluginInfo = PluginInfo("org.jetbrains.plugins.clion.test.catch", "Catch")
   val GOOGLE_TEST: PluginInfo = PluginInfo("org.jetbrains.plugins.clion.test.google", "Google Test")
