@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.yaml
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.module.kotlin.KotlinInvalidNullException
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -74,18 +74,14 @@ private fun processErrors(project: Project, configFile: VirtualFile, e: Throwabl
   @Suppress("DEPRECATION")
   // suppress deprecation for MarkedYAMLException as it is actually thrown from com.fasterxml.jackson.dataformat.yaml.YAMLParser.nextToken
   when (e) {
-    is MissingKotlinParameterException -> {
-      val parameterName = e.parameter.name
-      if (parameterName == null) {
-        showError(project, e, configFile)
-      }
-      else {
-        val cause = EduCoreBundle.message(
-          "yaml.editor.notification.parameter.is.empty",
-          NameUtil.nameToWordsLowerCase(parameterName).joinToString("_")
-        )
-        showError(project, e, configFile, cause)
-      }
+    // `KotlinInvalidNullException` is a subclass of `MismatchedInputException`, so it must be handled before it.
+    is KotlinInvalidNullException -> {
+      val propertyName = e.kotlinPropertyName
+      val cause = EduCoreBundle.message(
+        "yaml.editor.notification.parameter.is.empty",
+        NameUtil.nameToWordsLowerCase(propertyName).joinToString("_")
+      )
+      showError(project, e, configFile, cause)
     }
 
     is InvalidYamlFormatException -> showError(project, e, configFile, e.message)
