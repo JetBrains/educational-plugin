@@ -51,6 +51,11 @@ val Project.kotlinPlugin: String get() = "org.jetbrains.kotlin"
 val Project.scalaPlugin: String by Properties
 val Project.rustPlugin: String by Properties
 val Project.tomlPlugin: String get() = "org.toml.lang"
+val Project.nativeDebuggingSupportPlugin: String by Properties
+val Project.nativeDebugPlugin: String get() = when {
+  isClionIDE -> "com.intellij.nativeDebug"
+  else -> nativeDebuggingSupportPlugin
+}
 val Project.goPlugin: String by Properties
 val Project.sqlPlugin: String get() = "com.intellij.database"
 val Project.shellScriptPlugin: String get() = "com.jetbrains.sh"
@@ -66,8 +71,6 @@ val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
-// BACKCOMPAT: 2026.1. replace with `by Properties`
-val Project.nativeDebugPlugin: String? get() = if (isAtLeast262) prop("nativeDebugPlugin") else null
 val Project.jcefPlugin: String get() = "com.intellij.modules.jcef"
 val Project.testRunnerPlugin: String get() = "intellij.testRunner.plugin"
 val Project.sshPlugin: String get() = "intellij.ssh.plugin"
@@ -85,7 +88,8 @@ val Project.javaScriptPlugins: List<String> get() = listOf(
 
 val Project.rustPlugins: List<String> get() = listOf(
   rustPlugin,
-  tomlPlugin
+  tomlPlugin,
+  nativeDebugPlugin,
 )
 
 val Project.cppPlugins: List<String> get() = listOfNotNull(

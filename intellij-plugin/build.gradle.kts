@@ -96,7 +96,7 @@ val ideaPlugins = listOfNotNull(
   pythonCommunityPlugin,
   goPlugin,
   phpPlugin,
-  nativeDebugPlugin,
+  nativeDebuggingSupportPlugin,
 )
 
 val ideToPlugins = mapOf(
