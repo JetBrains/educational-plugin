@@ -17,192 +17,177 @@ import com.jetbrains.edu.learning.yaml.YamlTestCase
 import com.jetbrains.edu.learning.yaml.deserializeItemProcessingErrors
 import com.jetbrains.edu.learning.yaml.errorHandling.InvalidYamlFormatException
 import org.junit.Test
+import kotlin.test.assertIs
 
 class YamlErrorProcessingTest : YamlTestCase() {
 
   @Test
   fun `test empty field`() {
-    doTest("""
-            |title:
-            |language: Russian
-            |summary: |-
-            |  This is a course about string theory.
-            |  Why not?"
-            |programming_language: Plain text
-            |content:
-            |- the first lesson
-            |- the second lesson
-            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
-           "title is empty", KotlinInvalidNullException::class.java)
+    doTest<KotlinInvalidNullException>(YamlConfigSettings.COURSE_CONFIG, """
+      title:
+      language: Russian
+      summary: |-
+        This is a course about string theory.
+        Why not?"
+      programming_language: Plain text
+      content:
+      - the first lesson
+      - the second lesson
+    """, expectedErrorMessage = "title is empty")
   }
 
   @Test
   fun `test invalid field value`() {
-    doTest("""
-            |title: Test course
-            |language: wrong
-            |summary: |-
-            |  This is a course about string theory.
-            |  Why not?"
-            |programming_language: Plain text
-            |content:
-            |- the first lesson
-            |- the second lesson
-            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
-           "Unknown language \"wrong\"", InvalidYamlFormatException::class.java)
+    doTest<InvalidYamlFormatException>(YamlConfigSettings.COURSE_CONFIG, """
+      title: Test course
+      language: wrong
+      summary: |-
+        This is a course about string theory.
+        Why not?"
+      programming_language: Plain text
+      content:
+      - the first lesson
+      - the second lesson
+    """, expectedErrorMessage = "Unknown language \"wrong\"")
   }
 
+  @Suppress("DEPRECATION")
   @Test
   fun `test unexpected symbol`() {
-    @Suppress("DEPRECATION")
-    doTest("""
-            |title: Test course
-            |language: Russian
-            |summary: |-
-            |  This is a course about string theory.
-            |  Why not?"
-            |programming_language: Plain text
-            |content:e
-            |- the first lesson
-            |- the second lesson
-            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
-           "could not find expected ':' at line 7",
-           MarkedYAMLException::class.java)
+    doTest<MarkedYAMLException>(YamlConfigSettings.COURSE_CONFIG, """
+      title: Test course
+      language: Russian
+      summary: |-
+        This is a course about string theory.
+        Why not?"
+      programming_language: Plain text
+      content:e
+      - the first lesson
+      - the second lesson
+    """, expectedErrorMessage = "could not find expected ':' at line 7")
   }
 
   @Test
   fun `test parameter name without semicolon`() {
-    doTest("""
-            |title
-            |language: Russian
-            |summary: |-
-            |  This is a course about string theory.
-            |  Why not?"
-            |programming_language: Plain text
-            |content:
-            |- the first lesson
-            |""".trimMargin(), YamlConfigSettings.COURSE_CONFIG,
-           "Invalid config", MismatchedInputException::class.java)
+    doTest<MismatchedInputException>(YamlConfigSettings.COURSE_CONFIG, """
+      title
+      language: Russian
+      summary: |-
+        This is a course about string theory.
+        Why not?"
+      programming_language: Plain text
+      content:
+      - the first lesson
+    """, expectedErrorMessage = "Invalid config")
   }
 
   @Test
   fun `test wrong type of placeholder offset`() {
-    doTest("""
-    |type: edu
-    |files:
-    |- name: Test.java
-    |  placeholders:
-    |  - offset: a
-    |    length: 3
-    |    placeholder_text: type here
-    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
-           "Invalid config", InvalidFormatException::class.java)
+    doTest<InvalidFormatException>(YamlConfigSettings.TASK_CONFIG, """
+      type: edu
+      files:
+      - name: Test.java
+        placeholders:
+        - offset: a
+          length: 3
+          placeholder_text: type here
+    """, expectedErrorMessage = "Invalid config")
   }
 
   @Test
   fun `test unexpected item type`() {
-    doTest("""
-      |type: e
-      |files:
-      |- name: Test.java
-      |  visible: true
-      |is_multiple_choice: false
-      |options:
-      |- text: 1
-      |  is_correct: true
-      |- text: 2
-      |  is_correct: false
-      |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
-           "Unsupported task type \"e\"", InvalidYamlFormatException::class.java)
+    doTest<InvalidYamlFormatException>(YamlConfigSettings.TASK_CONFIG, """
+      type: e
+      files:
+      - name: Test.java
+        visible: true
+      is_multiple_choice: false
+      options:
+      - text: 1
+        is_correct: true
+      - text: 2
+        is_correct: false
+    """, expectedErrorMessage = "Unsupported task type \"e\"")
   }
 
   @Test
   fun `test task without type`() {
-    doTest("""
-    """.trimIndent(), YamlConfigSettings.TASK_CONFIG,
-           "Task type is not specified", InvalidYamlFormatException::class.java)
+    doTest<InvalidYamlFormatException>(YamlConfigSettings.TASK_CONFIG, "", expectedErrorMessage = "Task type is not specified")
   }
 
   @Test
   fun `test negative placeholder length`() {
-    doTest("""
-    |type: edu
-    |files:
-    |- name: Test.java
-    |  visible: true
-    |  placeholders:
-    |  - offset: 2
-    |    length: -1
-    |    placeholder_text: type here
-    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
-           "Answer placeholder with negative length is not allowed", InvalidYamlFormatException::class.java)
+    doTest<InvalidYamlFormatException>(YamlConfigSettings.TASK_CONFIG, """
+      type: edu
+      files:
+      - name: Test.java
+        visible: true
+        placeholders:
+        - offset: 2
+          length: -1
+          placeholder_text: type here
+    """, expectedErrorMessage = "Answer placeholder with negative length is not allowed")
   }
 
   @Test
   fun `test negative placeholder offset`() {
-    doTest("""
-    |type: edu
-    |files:
-    |- name: Test.java
-    |  visible: true
-    |  placeholders:
-    |  - offset: -1
-    |    length: 1
-    |    placeholder_text: type here
-    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
-           "Answer placeholder with negative offset is not allowed", InvalidYamlFormatException::class.java)
+    doTest<InvalidYamlFormatException>(YamlConfigSettings.TASK_CONFIG, """
+      type: edu
+      files:
+      - name: Test.java
+        visible: true
+        placeholders:
+        - offset: -1
+          length: 1
+          placeholder_text: type here
+    """, expectedErrorMessage = "Answer placeholder with negative offset is not allowed")
   }
 
   @Test
   fun `test task file without name`() {
-    doTest("""
-    |type: edu
-    |files:
-    |- name:
-    |  visible: true
-    |""".trimMargin(), YamlConfigSettings.TASK_CONFIG,
-           "File without a name is not allowed", InvalidYamlFormatException::class.java)
+    doTest<InvalidYamlFormatException>(YamlConfigSettings.TASK_CONFIG, """
+      type: edu
+      files:
+      - name:
+        visible: true
+    """, expectedErrorMessage = "File without a name is not allowed")
   }
 
-  @Test
+  @Test(expected = ValueInstantiationException::class)
   fun `test language without configurator`() {
-    val name = "Test Course"
-    val language = "Russian"
     val programmingLanguage = "HTML"
-    val firstLesson = "the first lesson"
-    val secondLesson = "the second lesson"
 
     // check language is registered
-    assertNotNull(Language.getRegisteredLanguages().find {it.displayName == programmingLanguage})
+    assertNotNull(Language.getRegisteredLanguages().find { it.displayName == programmingLanguage })
 
     // check exception as there's no configurator for this language
-    assertThrows(ValueInstantiationException::class.java) {
-      val yamlContent = """
-      |title: $name
-      |language: $language
-      |summary: |-
-      |  This is a course about string theory.
-      |  Why not?"
-      |programming_language: $programmingLanguage
-      |content:
-      |- $firstLesson
-      |- $secondLesson
-      |""".trimMargin()
-      basicMapper().deserializeCourse(yamlContent)
-    }
+    // language=YAML
+    val yamlContent = """
+      title: Test Course
+      language: Russian
+      summary: |-
+        This is a course about string theory.
+        Why not?"
+      programming_language: $programmingLanguage
+      content:
+      - the first lesson
+      - the second lesson
+    """.trimIndent()
+    basicMapper().deserializeCourse(yamlContent)
   }
 
-  private fun <T : Exception> doTest(yamlContent: String,
-                                     configName: String,
-                                     expectedErrorMessage: String,
-                                     expectedExceptionClass: Class<T>) {
+  private inline fun <reified T : Exception> doTest(
+    configName: String,
+    @org.intellij.lang.annotations.Language("YAML") yamlContent: String,
+    expectedErrorMessage: String
+  ) {
     try {
-      val configFile = createConfigFile(configName, yamlContent)
+      val configFile = createConfigFile(configName, yamlContent.trimIndent())
       deserializeItemProcessingErrors(configFile, project)
     }
     catch (e: Exception) {
-      assertInstanceOf(e, YamlLoader.ProcessedException::class.java)
-      assertInstanceOf(e.cause, expectedExceptionClass)
+      assertIs<YamlLoader.ProcessedException>(e)
+      assertIs<T>(e.cause)
       assertEquals(expectedErrorMessage, e.message)
       return
     }
