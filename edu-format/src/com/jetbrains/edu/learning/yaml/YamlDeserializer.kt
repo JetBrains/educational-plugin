@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.databind.node.MissingNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.treeToValue
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.CourseMode.Companion.toCourseMode
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -69,7 +69,7 @@ object YamlDeserializer {
    * So, it's safer to return `null` no to break anything instead of throwing an exception.
    */
   fun ObjectMapper.deserializeCourse(configFileText: String): Course? {
-    var treeNode = readTree(configFileText) ?: JsonNodeFactory.instance.objectNode()
+    var treeNode = readNode(configFileText)
 
     val type = asText(treeNode.get(YamlMixinNames.TYPE))
     if (type == YamlMixinNames.HYPERSKILL_TYPE_YAML || type == YamlMixinNames.STEPIK_TYPE_YAML) {
@@ -169,30 +169,16 @@ object YamlDeserializer {
   fun deserializeRemoteItem(configName: String, configFileText: String): StudyItem {
     return when (configName) {
       REMOTE_COURSE_CONFIG -> deserializeCourseRemoteInfo(configFileText)
-      REMOTE_LESSON_CONFIG -> deserializeLessonRemoteInfo(configFileText)
-      REMOTE_SECTION_CONFIG -> remoteMapper().readValue(configFileText, RemoteStudyItem::class.java)
-      REMOTE_TASK_CONFIG -> deserializeTaskRemoteInfo(configFileText)
+      REMOTE_SECTION_CONFIG, REMOTE_LESSON_CONFIG, REMOTE_TASK_CONFIG -> deserializeStudyItemRemoteInfo(configFileText)
       else -> loadingError(unknownConfigMessage(configName))
     }
   }
 
-  private fun deserializeCourseRemoteInfo(configFileText: String): Course {
-    val remoteMapper = remoteMapper()
-    val treeNode = remoteMapper.readTree(configFileText)
-    return remoteMapper.treeToValue(treeNode, EduCourse::class.java)
-  }
+  private fun deserializeCourseRemoteInfo(configFileText: String): Course =
+    remoteMapper().readValue<EduCourse>(configFileText)
 
-  private fun deserializeLessonRemoteInfo(configFileText: String): StudyItem {
-    val treeNode = remoteMapper().readTree(configFileText)
-    return remoteMapper().treeToValue(treeNode, RemoteStudyItem::class.java)
-  }
-
-  private fun deserializeTaskRemoteInfo(configFileText: String): StudyItem {
-    val remoteMapper = remoteMapper()
-    val treeNode = remoteMapper.readTree(configFileText)
-
-    return remoteMapper.treeToValue<RemoteStudyItem>(treeNode)
-  }
+  private fun deserializeStudyItemRemoteInfo(configFileText: String): StudyItem =
+    remoteMapper().readValue<RemoteStudyItem>(configFileText)
 
   private fun asText(node: JsonNode?): String? {
     return if (node == null || node.isNull) null else node.asText()

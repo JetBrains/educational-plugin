@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.yaml
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
@@ -64,6 +65,11 @@ class YamlDeserializationTest : YamlTestCase() {
     assertTrue(course is EduCourse)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
     assertFalse(course.isMarketplace)
+  }
+
+  @Test(expected = MismatchedInputException::class)
+  fun `test empty course config`() {
+    basicMapper().deserializeCourse("")
   }
 
   @Test

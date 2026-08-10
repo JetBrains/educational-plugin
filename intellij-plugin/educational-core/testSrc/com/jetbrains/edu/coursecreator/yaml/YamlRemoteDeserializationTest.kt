@@ -1,10 +1,12 @@
 package com.jetbrains.edu.coursecreator.yaml
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.testFramework.LightVirtualFile
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_COURSE_CONFIG
+import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_LESSON_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlDeserializer
@@ -82,6 +84,20 @@ class YamlRemoteDeserializationTest : YamlTestCase() {
     val course = YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile)) as EduCourse
     assertEquals(1, course.id)
     assertEquals(Date(1000), course.updateDate)
+  }
+
+  /**
+   * Since Jackson 2.19 `treeToValue` returns `null` for a blank config instead of throwing,
+   * which used to end up as an NPE because of the non-null return types here
+   */
+  @Test
+  fun `test empty remote configs`() {
+    for (configName in listOf(REMOTE_COURSE_CONFIG, REMOTE_SECTION_CONFIG, REMOTE_LESSON_CONFIG, REMOTE_TASK_CONFIG)) {
+      val configFile = createConfigFile("", configName)
+      assertThrows(MismatchedInputException::class.java) {
+        YamlDeserializer.deserializeRemoteItem(configFile.name, VfsUtil.loadText(configFile))
+      }
+    }
   }
 
   private fun createConfigFile(yamlText: String, configName: String): LightVirtualFile {
