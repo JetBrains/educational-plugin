@@ -47,7 +47,6 @@ tasks {
       apiVersion = KotlinVersion.KOTLIN_2_3
       freeCompilerArgs = listOf(
         "-jvm-default=no-compatibility",
-        "-Xannotation-default-target=param-property"
       )
     }
   }
