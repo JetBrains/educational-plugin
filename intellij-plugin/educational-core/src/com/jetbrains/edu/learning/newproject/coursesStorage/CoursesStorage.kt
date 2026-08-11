@@ -20,13 +20,18 @@ import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStora
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
+import java.time.Instant
+import java.util.UUID
 
 @State(name = "CoursesStorage", storages = [Storage("coursesStorage.xml", roamingType = RoamingType.DISABLED)])
 @Service
-class CoursesStorage(private val scope: CoroutineScope) :
-  SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()),
-  CourseDataStorage,
-  EduTestAware {
+class CoursesStorage @JvmOverloads constructor(
+  private val scope: CoroutineScope,
+  private val newRecordId: () -> String = { UUID.randomUUID().toString() },
+  private val now: () -> Instant = { Instant.now() },
+) : SimplePersistentStateComponent<UserCoursesState>(UserCoursesState()),
+    CourseDataStorage,
+    EduTestAware {
 
   override fun loadState(state: UserCoursesState) {
     // We do not support Hyperskill and Stepik courses anymore.
@@ -34,11 +39,30 @@ class CoursesStorage(private val scope: CoroutineScope) :
     // So, let's manually filter them out here not to expose them to other places.
     // Also, after the next state serialization, we won't have such records in storage anymore.
     state.courses.removeAll { it.type == EduFormatNames.HYPERSKILL || it.type == EduFormatNames.STEPIK }
+    // Records created before `recordId` was introduced don't have it, so let's assign ids to them.
+    // Dates are not backfilled since they are unknown for such records.
+    state.courses.forEach {
+      if (it.recordId == null) {
+        it.recordId = newRecordId()
+      }
+    }
     super.loadState(state)
   }
 
   fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
-    state.addCourse(course, location, tasksSolved, tasksTotal)
+    val systemIndependentLocation = FileUtilRt.toSystemIndependentName(location)
+    removeCourseRecordByLocation(systemIndependentLocation)
+    state.courses.add(
+      JBACourseFromStorage(
+        location = systemIndependentLocation,
+        course = course,
+        recordId = newRecordId(),
+        tasksTotal = tasksTotal,
+        tasksSolved = tasksSolved,
+        startedAt = now(),
+      )
+    )
+
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_ADDED).courseAdded(course)
     saveState()
   }
@@ -57,12 +81,21 @@ class CoursesStorage(private val scope: CoroutineScope) :
   fun hasCourse(course: Course): Boolean = getCoursePath(course) != null
 
   override fun removeCourseByLocation(location: String): Boolean {
-    val deletedCourse = state.removeCourseByLocation(location) ?: return false
+    val deletedCourse = removeCourseRecordByLocation(location) ?: return false
     ApplicationManager.getApplication().messageBus.syncPublisher(COURSE_DELETED).courseDeleted(deletedCourse)
     RecentProjectsManager.getInstance().removePath(location)
     saveState()
 
     return true
+  }
+
+  /**
+   * Removes the record for the given [location] and returns it, or returns `null` if there is no such record.
+   */
+  private fun removeCourseRecordByLocation(location: String): JBACourseFromStorage? {
+    val record = state.courses.find { it.location == location } ?: return null
+    state.courses.remove(record)
+    return record
   }
 
   fun getCourseMetaInfo(course: Course): JBACourseFromStorage? =
@@ -78,7 +111,26 @@ class CoursesStorage(private val scope: CoroutineScope) :
   }
 
   fun updateCourseProgress(course: Course, location: String, tasksSolved: Int, tasksTotal: Int) {
-    state.updateCourseProgress(course, location, tasksSolved, tasksTotal)
+    val systemIndependentLocation = FileUtilRt.toSystemIndependentName(location)
+    val courseMetaInfo = state.courses.find { it.location == systemIndependentLocation }
+    if (courseMetaInfo != null) {
+      courseMetaInfo.tasksSolved = tasksSolved
+      courseMetaInfo.tasksTotal = tasksTotal
+      courseMetaInfo.lastUpdatedAt = now()
+      state.intIncrementModificationCount()
+    }
+    else {
+      state.courses.add(
+        JBACourseFromStorage(
+          location = systemIndependentLocation,
+          course = course,
+          recordId = newRecordId(),
+          tasksTotal = tasksTotal,
+          tasksSolved = tasksSolved,
+          startedAt = now(),
+        )
+      )
+    }
     saveState()
   }
 
@@ -136,30 +188,4 @@ class UserCoursesState : BaseState() {
   //  courses list is not updated on course removal and could contain removed courses.
   @get:XCollection(style = XCollection.Style.v2)
   val courses by list<JBACourseFromStorage>()
-
-  fun addCourse(course: Course, location: String, tasksSolved: Int = 0, tasksTotal: Int = 0) {
-    val systemIndependentLocation = FileUtilRt.toSystemIndependentName(location)
-    courses.removeIf { it.location == systemIndependentLocation }
-    val courseMetaInfo = JBACourseFromStorage(systemIndependentLocation, course, tasksTotal, tasksSolved)
-    courses.add(courseMetaInfo)
-  }
-
-  fun removeCourseByLocation(location: String): JBACourseFromStorage? {
-    val courseMetaInfo = courses.find { it.location == location }
-    courses.remove(courseMetaInfo)
-    return courseMetaInfo
-  }
-
-  fun updateCourseProgress(course: Course, location: String, tasksSolved: Int, tasksTotal: Int) {
-    val systemIndependentLocation = FileUtilRt.toSystemIndependentName(location)
-    val courseMetaInfo = courses.find { it.location == systemIndependentLocation }
-    if (courseMetaInfo != null) {
-      courseMetaInfo.tasksSolved = tasksSolved
-      courseMetaInfo.tasksTotal = tasksTotal
-      intIncrementModificationCount()
-    }
-    else {
-      courses.add(JBACourseFromStorage(systemIndependentLocation, course, tasksTotal, tasksSolved))
-    }
-  }
 }

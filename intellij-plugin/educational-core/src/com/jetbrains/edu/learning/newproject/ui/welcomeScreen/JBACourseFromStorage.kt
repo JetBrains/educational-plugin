@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui.welcomeScreen
 
 import com.intellij.openapi.wm.impl.welcomeScreen.learnIde.coursesInProgress.CourseInfo
+import com.intellij.util.xmlb.Converter
 import com.intellij.util.xmlb.annotations.OptionTag
 import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.Transient
@@ -12,6 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.COURSERA
 import com.jetbrains.edu.learning.marketplace.MARKETPLACE
 import com.jetbrains.edu.learning.newproject.ui.logo
+import java.time.Instant
+import java.time.format.DateTimeParseException
 import javax.swing.Icon
 
 private const val PROGRAMMING_LANGUAGE = "programmingLanguage"
@@ -60,7 +63,37 @@ class JBACourseFromStorage() : CourseInfo() {
     get() = this.toCourse().logo
     set(_) {}
 
-  constructor(location: String = "", course: Course, tasksTotal: Int = 0, tasksSolved: Int = 0) : this() {
+  /**
+   * Unique identifier of the record in the storage.
+   *
+   * Unlike [id], it's unique for each record since the same course may be located in several places at the same time.
+   * It's necessary for external integrations (for example, Toolbox) to be able to refer to a particular record.
+   *
+   * It's `null` only for records created before this property was introduced. Such records get an id on state loading.
+   */
+  var recordId: String? = null
+
+  /**
+   * When the corresponding course project was started, i.e. when this record was created.
+   */
+  @OptionTag(converter = InstantConverter::class)
+  var startedAt: Instant? = null
+
+  /**
+   * When the progress of the corresponding course project was updated last time.
+   */
+  @OptionTag(converter = InstantConverter::class)
+  var lastUpdatedAt: Instant? = null
+
+  constructor(
+    location: String = "",
+    course: Course,
+    recordId: String,
+    tasksTotal: Int = 0,
+    tasksSolved: Int = 0,
+    startedAt: Instant? = null,
+    lastUpdatedAt: Instant? = startedAt
+  ) : this() {
     this.type = course.itemType
     id = course.id
     name = course.name
@@ -71,8 +104,11 @@ class JBACourseFromStorage() : CourseInfo() {
     languageVersion = course.languageVersion
     isMarketplace = course.isMarketplace
     this.location = location
+    this.recordId = recordId
     this.tasksTotal = tasksTotal
     this.tasksSolved = tasksSolved
+    this.startedAt = startedAt
+    this.lastUpdatedAt = lastUpdatedAt
   }
 
   /**
@@ -113,5 +149,19 @@ class JBACourseFromStorage() : CourseInfo() {
       languageId = first()
       languageVersion = getOrNull(1)
     }
+  }
+}
+
+/**
+ * Stores [Instant] as an ISO-8601 string.
+ */
+private class InstantConverter : Converter<Instant>() {
+  override fun toString(value: Instant): String = value.toString()
+
+  override fun fromString(value: String): Instant? = try {
+    Instant.parse(value)
+  }
+  catch (_: DateTimeParseException) {
+    null
   }
 }

@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.time.Instant
 
 class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
 
@@ -37,6 +38,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="238" />
             <option name="location" value="$USER_HOME$/IdeaProjects/Introduction to Python" />
             <option name="name" value="Introduction to Python" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageVersion" value="2.7" />
             <option name="programmingLanguageId" value="Python" />
@@ -57,6 +59,20 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="20403" />
             <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
             <option name="name" value="AtomicKotlin" />
+            <option name="type" value="PyCharm" />
+            <option name="programmingLanguageId" value="kotlin" />
+          </course>
+        </courses>
+      </UserCoursesState>
+    """, $$"""
+      <UserCoursesState>
+        <courses>
+          <course>
+            <option name="description" value="The examples and exercises accompanying the AtomicKotlin book" />
+            <option name="id" value="20403" />
+            <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
+            <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageId" value="kotlin" />
           </course>
@@ -89,6 +105,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="20403" />
             <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
             <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageVersion" value="3.7" />
             <option name="programmingLanguageId" value="Python" />
@@ -109,6 +126,21 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="20403" />
             <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
             <option name="name" value="AtomicKotlin" />
+            <option name="type" value="PyCharm" />
+            <option name="programmingLanguageVersion" value="3.7" />
+            <option name="programmingLanguageId" value="Python" />
+          </course>
+        </courses>
+      </UserCoursesState>
+    """, $$"""
+      <UserCoursesState>
+        <courses>
+          <course>
+            <option name="description" value="The examples and exercises accompanying the AtomicKotlin book" />
+            <option name="id" value="20403" />
+            <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
+            <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageVersion" value="3.7" />
             <option name="programmingLanguageId" value="Python" />
@@ -143,9 +175,33 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="20403" />
             <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
             <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageVersion" value="3.7" />
             <option name="programmingLanguageId" value="Python" />
+          </course>
+        </courses>
+      </UserCoursesState>
+    """)
+  }
+
+  @Test
+  fun `test deserialize record dates`() = runTest {
+    val coursesStorage = CoursesStorage()
+    // The record already has an id, so it shouldn't be regenerated
+    coursesStorage.loadStateAndCheck($$"""
+      <UserCoursesState>
+        <courses>
+          <course>
+            <option name="description" value="The examples and exercises accompanying the AtomicKotlin book" />
+            <option name="id" value="20403" />
+            <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
+            <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="c0ffee00-0000-0000-0000-000000000000" />
+            <option name="type" value="PyCharm" />
+            <option name="programmingLanguageId" value="kotlin" />
+            <option name="startedAt" value="2026-08-11T10:15:30Z" />
+            <option name="lastUpdatedAt" value="2024-06-02T11:16:31Z" />
           </course>
         </courses>
       </UserCoursesState>
@@ -173,8 +229,11 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
             <option name="marketplace" value="false" />
             <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageId" value="Python" />
+            <option name="startedAt" value="2026-08-11T10:15:30Z" />
+            <option name="lastUpdatedAt" value="2026-08-11T10:15:30Z" />
           </course>
         </courses>
       </UserCoursesState>
@@ -203,9 +262,12 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="location" value="$USER_HOME$/IdeaProjects/AtomicKotlin" />
             <option name="marketplace" value="false" />
             <option name="name" value="AtomicKotlin" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageVersion" value="3.7" />
             <option name="programmingLanguageId" value="Python" />
+            <option name="startedAt" value="2026-08-11T10:15:30Z" />
+            <option name="lastUpdatedAt" value="2026-08-11T10:15:30Z" />
           </course>
         </courses>
       </UserCoursesState>
@@ -261,6 +323,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="100" />
             <option name="location" value="$USER_HOME$/IdeaProjects/EduCourse" />
             <option name="name" value="EduCourse" />
+            <option name="recordId" value="record-id-1" />
             <option name="type" value="PyCharm" />
             <option name="programmingLanguageId" value="Python" />
           </course>
@@ -269,6 +332,7 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
             <option name="id" value="400" />
             <option name="location" value="$USER_HOME$/IdeaProjects/MarketplaceCourse" />
             <option name="name" value="MarketplaceCourse" />
+            <option name="recordId" value="record-id-2" />
             <option name="type" value="Marketplace" />
             <option name="programmingLanguageId" value="Python" />
           </course>
@@ -277,5 +341,15 @@ class CoursesInfosStorageSerializationTest : EduSettingsServiceTestBase() {
     """)
   }
 
-  private fun TestScope.CoursesStorage(): CoursesStorage = CoursesStorage(backgroundScope)
+  /**
+   * Creates a storage with deterministic record id and date generators, so the serialized state can be checked as is.
+   */
+  private fun TestScope.CoursesStorage(): CoursesStorage {
+    var recordIdCounter = 0
+    return CoursesStorage(backgroundScope, newRecordId = { "record-id-${++recordIdCounter}" }, now = { NOW })
+  }
+
+  companion object {
+    private val NOW: Instant = Instant.parse("2026-08-11T10:15:30Z")
+  }
 }

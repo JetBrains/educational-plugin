@@ -8,8 +8,11 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.coursesStorage.CoursesStorage
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import java.time.Instant
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull as kAssertNotNull
 
 class CoursesInfosStorageTest : EduTestCase() {
 
@@ -96,6 +99,53 @@ class CoursesInfosStorageTest : EduTestCase() {
   }
 
   @Test
+  fun `test record metadata is filled on course adding`() = runTest {
+    val coursesStorage = CoursesStorage(backgroundScope, newRecordId = { RECORD_ID }, now = { STARTED_AT })
+    val course = course {}
+    coursesStorage.addCourse(course, "/location", 0, 10)
+
+    val courseMetaInfo = kAssertNotNull(coursesStorage.getCourseMetaInfo(course))
+    assertEquals(RECORD_ID, courseMetaInfo.recordId)
+    assertEquals(STARTED_AT, courseMetaInfo.startedAt)
+    assertEquals(STARTED_AT, courseMetaInfo.lastUpdatedAt)
+  }
+
+  @Test
+  fun `test only last update date is changed on progress update`() = runTest {
+    var now = STARTED_AT
+    val coursesStorage = CoursesStorage(backgroundScope, newRecordId = { RECORD_ID }, now = { now })
+    val course = course {}
+    coursesStorage.addCourse(course, "/location", 0, 10)
+
+    now = UPDATED_AT
+    coursesStorage.updateCourseProgress(course, "/location", 1, 10)
+
+    val courseMetaInfo = kAssertNotNull(coursesStorage.getCourseMetaInfo(course))
+    assertEquals(1, courseMetaInfo.tasksSolved)
+    assertEquals(RECORD_ID, courseMetaInfo.recordId)
+    assertEquals(STARTED_AT, courseMetaInfo.startedAt)
+    assertEquals(UPDATED_AT, courseMetaInfo.lastUpdatedAt)
+  }
+
+  @Test
+  fun `test new record is created when course is added again`() = runTest {
+    var now = STARTED_AT
+    var recordIdCounter = 0
+    val coursesStorage = CoursesStorage(backgroundScope, newRecordId = { "record-id-${++recordIdCounter}" }, now = { now })
+    val course = course {}
+    coursesStorage.addCourse(course, "/location", 0, 10)
+
+    now = UPDATED_AT
+    coursesStorage.addCourse(course, "/location", 0, 10)
+
+    assertSize(1, coursesStorage.getAllCourses())
+    val courseMetaInfo = kAssertNotNull(coursesStorage.getCourseMetaInfo(course))
+    assertEquals("record-id-2", courseMetaInfo.recordId)
+    assertEquals(UPDATED_AT, courseMetaInfo.startedAt)
+    assertEquals(UPDATED_AT, courseMetaInfo.lastUpdatedAt)
+  }
+
+  @Test
   fun `test all courses groups`() {
     val coursesStorage = CoursesStorage.getInstance()
 
@@ -113,5 +163,11 @@ class CoursesInfosStorageTest : EduTestCase() {
     assertEquals(EduCoreBundle.message("course.dialog.my.courses.course.creation"), coursesInGroups.first().name)
     assertEquals(EduCoreBundle.message("course.dialog.in.progress"), coursesInGroups[1].name)
     assertEquals(EduCoreBundle.message("course.dialog.completed"), coursesInGroups[2].name)
+  }
+
+  companion object {
+    private const val RECORD_ID = "c0ffee00-0000-0000-0000-000000000000"
+    private val STARTED_AT: Instant = Instant.parse("2026-05-01T10:15:30Z")
+    private val UPDATED_AT: Instant = Instant.parse("2026-06-02T11:16:31Z")
   }
 }
