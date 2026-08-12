@@ -165,7 +165,7 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
     fun promptToPostProject(project: Project) {
       val course = project.course as? EduCourse ?: return
       if (!isPrompted(course.id) && canBePrompted(course)) {
-        val inlineBanner = createInlineBanner()
+        val inlineBanner = createInlineBanner(course.id)
         TaskToolWindowView.getInstance(project).addInlineBanner(inlineBanner)
       }
     }
@@ -194,8 +194,9 @@ class PostMarketplaceProjectToGitHub : DumbAwareAction() {
       PropertiesComponent.getInstance().setValue("$IS_PROMPTED.$courseId", true)
     }
 
-    private fun createInlineBanner(): InlineBanner = InlineBanner(EditorNotificationPanel.Status.Info).apply {
+    private fun createInlineBanner(courseId: Int): InlineBanner = InlineBanner(EditorNotificationPanel.Status.Info).apply {
       setMessage(EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.banner.message"))
+      setCloseAction { setPrompted(courseId) }
       addAction(EduCoreBundle.message("action.Educational.Student.PostMarketplaceProjectToGitHub.banner.action")) {
         val action = ActionManager.getInstance().getAction(ACTION_ID)
         ActionManager.getInstance().tryToExecute(action, null, null, null, false)
