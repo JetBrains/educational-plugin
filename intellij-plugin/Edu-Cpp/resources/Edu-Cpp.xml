@@ -6,7 +6,6 @@
     <plugin id="org.jetbrains.plugins.clion.test.catch"/>
     <plugin id="org.jetbrains.plugins.clion.test.google"/>
     <plugin id="org.jetbrains.plugins.clion.radler"/>
-    <module name="intellij.clion.radler.core"/>
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
