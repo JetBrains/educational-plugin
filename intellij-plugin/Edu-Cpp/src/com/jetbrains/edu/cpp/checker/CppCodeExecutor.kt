@@ -2,6 +2,7 @@ package com.jetbrains.edu.cpp.checker
 
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -32,7 +33,8 @@ class CppCodeExecutor : DefaultCodeExecutor() {
     }
 
     val context = ConfigurationContext(entryPoint)
-    val configuration = CidrTargetRunConfigurationProducer.getInstances(project)
+    val configuration = RunConfigurationProducer.getProducers(project)
+      .filterIsInstance<CidrTargetRunConfigurationProducer<*, *, *>>()
       .firstOrNull { it.getExecutableTargetsForFile(entryPoint.containingFile).isNotEmpty() }
       ?.findOrCreateConfigurationFromContext(context)
     if (configuration == null) {
