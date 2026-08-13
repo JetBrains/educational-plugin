@@ -13,7 +13,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.sql.dialects.SqlDialectMappings
-import com.intellij.sql.dialects.h2.H2Dialect
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.sql.core.EduSqlBundle
@@ -35,7 +34,7 @@ class SqlGradleStartupActivity : StartupActivity.DumbAware {
       @Suppress("UnstableApiUsage")
       invokeAndWaitIfNeeded {
         // Dependency on concrete database kind/SQL dialect
-        SqlDialectMappings.getInstance(project).setMapping(null, H2Dialect.INSTANCE)
+        SqlDialectMappings.getInstance(project).setMapping(null, findH2SqlDialect())
         createDataSources(project, course.allTasks)
       }
       initializationState.dataSourceInitialized = true

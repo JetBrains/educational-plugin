@@ -6,6 +6,10 @@
     <module name="jvm-core"/>
 
     <plugin id="com.intellij.database"/>
+    <module name="intellij.database.connectivity"/>
+    <module name="intellij.database.core.impl"/>
+    <module name="intellij.database.impl"/>
+    <module name="intellij.database.sql.core.impl"/>
   </dependencies>
 
   <projectListeners>
