@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '${KOTLIN_VERSION}' apply false
@@ -13,17 +14,19 @@ subprojects {
     }
 
     java {
+        // adjust together with kotlin jvm target below
         sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    compileKotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.fromVersion("17")
-        }
-    }
-    compileTestKotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.fromVersion("17")
+    tasks {
+        withType(KotlinCompile.class).tap {
+            configureEach {
+                compilerOptions {
+                    // adjust together with java source/target compatibility above
+                    jvmTarget = JvmTarget.JVM_17
+                }
+            }
         }
     }
 
