@@ -17,6 +17,7 @@ import com.intellij.database.dataSource.artifacts.DatabaseArtifactLoader
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactManager
 import com.intellij.database.model.DasDataSource
 import com.intellij.database.util.DataSourceUtil
+import com.intellij.database.util.SqlDialects
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.diagnostic.Logger
@@ -31,7 +32,7 @@ import com.intellij.platform.util.progress.withRawProgressReporter
 import com.intellij.psi.PsiManager
 import com.intellij.sql.SqlFileType
 import com.intellij.sql.dialects.SqlDialectMappings
-import com.intellij.sql.dialects.h2.H2Dialect
+import com.intellij.sql.dialects.SqlLanguageDialect
 import com.intellij.util.containers.addIfNotNull
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.checker.CheckUtils
@@ -309,9 +310,13 @@ private class InitScriptExecutionTask(
 private fun setSqlMappingForInitScripts(project: Project, tasks: List<Task>) {
   for (task in tasks) {
     val initSql = task.findInitSqlFile(project) ?: continue
-    // Dependency on concrete database kind/SQL dialect
-    SqlDialectMappings.getInstance(project).setMapping(initSql, H2Dialect.INSTANCE)
+    SqlDialectMappings.getInstance(project).setMapping(initSql, findH2SqlDialect())
   }
+}
+
+fun findH2SqlDialect(): SqlLanguageDialect? {
+  // Dependency on concrete database kind/SQL dialect
+  return SqlDialects.findDialectById("H2")
 }
 
 private fun collectInitializeConfigurations(project: Project, tasks: List<Task>): List<RunnerAndConfigurationSettings> {

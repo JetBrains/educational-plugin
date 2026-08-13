@@ -3,13 +3,13 @@ package com.jetbrains.edu.sql.jvm.gradle.action
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.sql.dialects.SqlDialectMappings
-import com.intellij.sql.dialects.h2.H2Dialect
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.sql.jvm.gradle.SqlCourseGenerationTestBase
 import com.jetbrains.edu.sql.jvm.gradle.SqlGradleCourseBuilder.Companion.INIT_SQL
 import com.jetbrains.edu.sql.jvm.gradle.createDatabaseScriptConfiguration
+import com.jetbrains.edu.sql.jvm.gradle.findH2SqlDialect
 import com.jetbrains.edu.sql.jvm.gradle.sqlCourse
 import org.junit.Test
 
@@ -42,7 +42,7 @@ class SqlRevertTaskActionTest : SqlCourseGenerationTestBase() {
     val sqlFile = findFile("lesson1/task1/src/task.sql")
     // Needed only not to fail on `Application#assertReadAccessAllowed` during script execution.
     // The same as in `com.jetbrains.edu.sql.jvm.gradle.SqlUtilsKt.setSqlMappingForInitScripts`
-    SqlDialectMappings.getInstance(project).setMapping(sqlFile, H2Dialect.INSTANCE)
+    SqlDialectMappings.getInstance(project).setMapping(sqlFile, findH2SqlDialect())
 
     val configuration = task.createDatabaseScriptConfiguration(project, sqlFile)
       ?: error("Failed to create database script configuration for `${sqlFile}` file")
