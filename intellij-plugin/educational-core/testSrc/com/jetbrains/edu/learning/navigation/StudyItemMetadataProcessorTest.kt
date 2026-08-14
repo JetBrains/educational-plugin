@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.navigation
 
-import com.jetbrains.edu.learning.navigation.StudyItemMetadataProcessor.Companion.STUDY_ITEM_ID
+import com.jetbrains.edu.learning.navigation.StudyItemSelectionService.Companion.STUDY_ITEM_ID
 import com.jetbrains.edu.learning.newproject.CourseMetadataProcessorTestBase
 import org.junit.Test
 
