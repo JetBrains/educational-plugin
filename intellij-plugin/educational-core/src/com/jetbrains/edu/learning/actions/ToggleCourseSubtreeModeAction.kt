@@ -8,7 +8,10 @@ import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
 import com.jetbrains.edu.learning.projectView.CourseViewVisibleItems
 
 /**
- * Internal action to try out the course subtree mode until it can be enabled with the corresponding `openCourse` parameter.
+ * Internal action to try out the course subtree mode.
+ *
+ * In production, the mode is enabled with the `enable_subtree_view_mode` parameter of the `openCourse` command,
+ * see [com.jetbrains.edu.learning.projectView.CourseViewMetadataProcessor].
  */
 class ToggleCourseSubtreeModeAction : DumbAwareToggleAction() {
 

@@ -53,6 +53,8 @@ class StudyItemSelectionService(private val project: Project, private val scope:
   fun lastStudyItemId(): Int? = studyItemSettings.replayCache.lastOrNull()
 
   companion object {
+    const val STUDY_ITEM_ID = "study_item_id"
+
     fun getInstance(project: Project): StudyItemSelectionService = project.service()
   }
 }
