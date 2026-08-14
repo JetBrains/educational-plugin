@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.newproject.ui.coursePanel
 
 import com.intellij.ide.impl.ProjectUtil
+import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.toNioPathOrNull
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -31,7 +33,14 @@ fun Course.openCourse(openCourseMetadata: Map<String, String>) {
   val project = ProjectUtil.openProject(pathToOpen, openProjectTask)
 
   if (project != null) {
-    CourseMetadataProcessor.applyProcessors(project, this, openCourseMetadata, CourseProjectState.OPENED_PROJECT)
+    // Receiver here is just a shallow copy of the course, without a course structure.
+    // The actual course object is loaded by StudyTaskManager.
+    // It's important to use the actual course object for this project because metadata processors may need the inner course structure.
+    val projectCourse = project.course ?: run {
+      fileLogger().warn("Course cannot be loaded for $project")
+      return
+    }
+    CourseMetadataProcessor.applyProcessors(project, projectCourse, openCourseMetadata, CourseProjectState.OPENED_PROJECT)
     ProjectUtil.focusProjectWindow(project, true)
   }
 }
