@@ -11,6 +11,7 @@ repositories {
 dependencies {
   implementation(plugin(libs.plugins.kotlinPlugin))
   implementation(plugin(libs.plugins.intelliJPlatformPlugin))
+  implementation(plugin(libs.plugins.osDetectorPlugin))
   implementation(plugin(libs.plugins.propertiesPlugin))
   implementation(plugin(libs.plugins.testRetryPlugin))
 }

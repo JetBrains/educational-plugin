@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("common-conventions")
   id("net.saliman.properties")
+  id("com.google.osdetector")
 }
 
 java {

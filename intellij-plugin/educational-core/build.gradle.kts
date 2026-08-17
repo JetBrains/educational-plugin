@@ -9,7 +9,8 @@ dependencies {
 
     bundledModules("intellij.platform.vcs.impl")
     if (isAtLeast262) {
-      intellijPlugins(testRunnerPlugin, jcefPlugin)
+      // BACKCOMPAT: 2026.1. Drop `listOfNotNull` since `jcefPlugin` should be not null
+      intellijPlugins(listOfNotNull(testRunnerPlugin, jcefPlugin))
       bundledModules("intellij.platform.sqlite")
     }
   }

@@ -1,10 +1,11 @@
 @file:Suppress("UnusedReceiverParameter")
 
+import com.google.gradle.osdetector.OsDetector
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.extensions.IntelliJPlatformDependenciesExtension
-import org.jetbrains.intellij.platform.gradle.utils.Version
 import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
@@ -71,7 +72,8 @@ val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
-val Project.jcefPlugin: String get() = "com.intellij.modules.jcef"
+// BACKCOMPAT: 2026.1. Always use `jcefPlugin` property and make it non-null
+val Project.jcefPlugin: String? get() = if (isAtLeast262) resolvePluginPlaceholders(prop("jcefPlugin")) else null
 val Project.testRunnerPlugin: String get() = "intellij.testRunner.plugin"
 val Project.sshPlugin: String get() = "intellij.ssh.plugin"
 
@@ -123,7 +125,7 @@ val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   if (isAtLeast262) "intellij.libraries.misc.plugin" else null,
   if (isAtLeast262) "intellij.bookmarks.plugin" else null,
   if (isAtLeast262) testRunnerPlugin else null,
-  if (isAtLeast262) jcefPlugin else null,
+  jcefPlugin,
 )
 
 // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2183
@@ -131,6 +133,32 @@ val Project.disabledTestPlugins: List<String> get() = listOf(
   "org.jetbrains.plugins.vue"
 )
 
+/**
+ * Some plugins (for example, JCEF) provide a separate artifact per OS and architecture pair,
+ * so their version can't be hardcoded in `gradle-%platform.version%.properties`.
+ * Instead, the notation there contains `{os}` and `{arch}` placeholders
+ * which are replaced with the values for the current machine.
+ */
+private fun Project.resolvePluginPlaceholders(notation: String): String =
+  notation.replace("{os}", currentOsId).replace("{arch}", currentArchId)
+
+private val Project.osDetector: OsDetector get() = extensions.getByType<OsDetector>()
+
+// Values follow the naming of plugin artifacts on JetBrains Marketplace
+private val Project.currentOsId: String
+  get() = when (val os = osDetector.os) {
+    "osx" -> "mac"
+    "windows" -> "windows"
+    "linux" -> "linux"
+    else -> error("Unsupported OS = `$os`")
+  }
+
+private val Project.currentArchId: String
+  get() = when (val arch = osDetector.arch) {
+    "aarch_64" -> "arm64"
+    "x86_64" -> "x86_64"
+    else -> error("Unsupported architecture = `$arch`")
+  }
 
 data class TypeWithVersion(val type: IntelliJPlatformType, val version: String)
 

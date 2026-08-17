@@ -206,7 +206,10 @@ tasks {
 }
 
 fun idePlugins(type: IntelliJPlatformType): List<String> {
-  return ideToPlugins[type].orEmpty() + psiViewerPlugin
+  return ideToPlugins[type].orEmpty() + listOfNotNull(
+    psiViewerPlugin,
+    jcefPlugin,
+  )
 }
 
 /**

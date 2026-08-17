@@ -5,9 +5,8 @@ plugins {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
-    if (isAtLeast262) {
-      intellijPlugins(jcefPlugin)
-    }
+    // BACKCOMPAT: 2026.1. Drop `listOfNotNull` since `jcefPlugin` should be not null
+    intellijPlugins(listOfNotNull(jcefPlugin))
   }
 
   implementation(project(":intellij-plugin:educational-core"))
