@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.ui.coursePanel.groups.CoursesGroup
 import com.jetbrains.edu.learning.newproject.ui.welcomeScreen.JBACourseFromStorage
@@ -163,6 +164,9 @@ class CoursesStorage @JvmOverloads constructor(
    * since Toolbox integration tracks the state of this service via the corresponding config file on filesystem
    */
   private fun saveState() {
+    // Saving data in unit tests leads to unexpected errors in different places
+    if (isUnitTestMode) return
+
     scope.launch {
       // Unfortunately, public API allows saving only all components instead of a single one.
       // In theory, it can lead to some performance issues because of too frequent saving settings of all components.
