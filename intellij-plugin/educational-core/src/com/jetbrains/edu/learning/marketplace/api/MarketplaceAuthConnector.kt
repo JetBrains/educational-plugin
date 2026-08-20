@@ -8,7 +8,9 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
+import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
+import com.intellij.util.messages.Topic
 import com.jetbrains.edu.learning.agreement.UserAgreementManager
 import com.jetbrains.edu.learning.authUtils.AuthorizationPlace
 import com.jetbrains.edu.learning.authUtils.EduLoginConnector
@@ -16,6 +18,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils.GrantType.JBA_TOKEN_EXCHA
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.authUtils.requestFocus
 import com.jetbrains.edu.learning.courseFormat.JBAccountUserInfo
+import com.jetbrains.edu.learning.createTopic
 import com.jetbrains.edu.learning.marketplace.HUB_AUTH_URL
 import com.jetbrains.edu.learning.marketplace.JET_BRAINS_ACCOUNT
 import com.jetbrains.edu.learning.marketplace.MarketplaceNotificationUtils.showInstallMarketplacePluginNotification
@@ -45,6 +48,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
             // Send data to service as we didn't send it when we were not authorized
             UserAgreementManager.getInstance().submitCurrentAgreements()
           }
+          application.messageBus.syncPublisher(MarketplaceLoginListener.LOGIN_TOPIC).onLoginSuccess()
         })
     }
   }
@@ -199,4 +203,18 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
     }
   }
 
+}
+
+/**
+ * Fired on the application message bus when the user successfully logs in to the JetBrains Account.
+ * The topic broadcasts to child (project) message buses, so a project-level listener is notified for
+ * every open project.
+ */
+fun interface MarketplaceLoginListener {
+  fun onLoginSuccess()
+
+  companion object {
+    @Topic.AppLevel
+    val LOGIN_TOPIC: Topic<MarketplaceLoginListener> = createTopic("Edu.marketplaceLogin")
+  }
 }

@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceAccount
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.update.SyncMarketplaceCourseAction
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.ui.EduHyperlinkLabel
 import javax.swing.JPanel
 
@@ -30,8 +29,6 @@ class MarketplaceWidget(project: Project) : LoginWidget<MarketplaceAccount>(
   override fun ID() = ID
 
   override fun loginNeeded(): Boolean = false
-
-  override fun postLoginActions() = SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn()
 
   override fun addLogoutLabel(wrapperPanel: JPanel, popup: JBPopup): EduHyperlinkLabel? = null
 

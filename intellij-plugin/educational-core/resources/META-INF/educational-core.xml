@@ -36,6 +36,8 @@
               topic="com.intellij.openapi.fileEditor.FileEditorManagerListener$Before"/>
     <listener class="com.jetbrains.edu.learning.storage.LearningObjectsPersister"
               topic="com.jetbrains.edu.learning.CourseSetListener"/>
+    <listener class="com.jetbrains.edu.learning.marketplace.submissions.ProjectMarketplaceLoginListener"
+              topic="com.jetbrains.edu.learning.marketplace.api.MarketplaceLoginListener"/>
   </projectListeners>
 
   <extensionPoints>

@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.FAILED_TO_DELETE_S
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.notification.EduNotificationManager
-import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import org.jetbrains.annotations.NotNull
 
 object MarketplaceNotificationUtils {
@@ -70,11 +69,7 @@ object MarketplaceNotificationUtils {
       .apply {
         addAction(object : AnAction(EduCoreBundle.message("log.in.to", JET_BRAINS_ACCOUNT)) {
           override fun actionPerformed(e: AnActionEvent) {
-            MarketplaceConnector.getInstance().doAuthorize(Runnable {
-              SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
-                MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
-              }
-            })
+            MarketplaceConnector.getInstance().doAuthorize()
             this@apply.notify(project)
           }
         })

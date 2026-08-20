@@ -9,6 +9,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.platform.util.progress.reportProgress
 import com.intellij.ui.JBAccountInfoService
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.jetbrains.edu.learning.*
@@ -19,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderDependencyMixin
 import com.jetbrains.edu.learning.json.mixins.AnswerPlaceholderWithAnswerMixin
 import com.jetbrains.edu.learning.json.mixins.EduTestInfoMixin
@@ -213,16 +215,17 @@ class MarketplaceSubmissionsConnector {
   }
 
   fun markTheoryTaskAsCompleted(task: TheoryTask) {
-    val emptySubmission = MarketplaceSubmission(
-      task.id,
-      CheckStatus.Solved,
-      "",
-      null,
-      task.course.marketplaceCourseVersion
-    )
     LOG.info("Marking theory task ${task.name} as completed")
-    doPostSubmission(task.course.id, task.id, emptySubmission)
+    doPostSubmission(task.course.id, task.id, createTheorySubmission(task))
   }
+
+  private fun createTheorySubmission(task: Task): MarketplaceSubmission = MarketplaceSubmission(
+    task.id,
+    CheckStatus.Solved,
+    "",
+    null,
+    task.course.marketplaceCourseVersion
+  )
 
   @RequiresBackgroundThread
   fun loadSolutionFiles(solutionKey: String): List<SolutionFile> {
@@ -255,6 +258,69 @@ class MarketplaceSubmissionsConnector {
     submission.time = postedSubmission.time
     return submission
   }
+
+  suspend fun uploadLocalSubmissions(project: Project, course: Course) {
+    if (course !is EduCourse || !course.isStudy || !course.isMarketplaceRemote || !course.isUpToDate) return
+
+    val submissionsManager = SubmissionsManager.getInstance(project)
+
+    val submissionsToUpload = collectLocalSubmissions(project, course, submissionsManager)
+    if (submissionsToUpload.isEmpty()) return
+
+    LOG.info("Uploading ${submissionsToUpload.size} locally-solved submission(s) for course ${course.id}")
+
+    reportProgress(submissionsToUpload.size) { reporter ->
+      for ((task, submission) in submissionsToUpload) {
+        reporter.itemStep(EduCoreBundle.message("marketplace.uploading.local.submissions.progress.text", task.name)) {
+          postLocalSubmission(course, task, submission, submissionsManager)
+        }
+      }
+    }
+  }
+
+  private fun collectLocalSubmissions(
+    project: Project,
+    course: EduCourse,
+    submissionsManager: SubmissionsManager
+  ): List<Pair<Task, MarketplaceSubmission>> =
+    course.allTasks
+      .filter { task -> task.shouldUploadLocalSolution() && submissionsManager.getSubmissions(task).isNullOrEmpty() }
+      .mapNotNull { task ->
+        try {
+          val submission = if (task is TheoryTask) createTheorySubmission(task) else createSubmission(project, task, course)
+          task to submission
+        }
+        catch (e: Exception) {
+          LOG.warn("Failed to build local submission for task ${task.id}", e)
+          null
+        }
+      }
+
+  private suspend fun postLocalSubmission(
+    course: EduCourse,
+    task: Task,
+    submission: MarketplaceSubmission,
+    submissionsManager: SubmissionsManager
+  ) {
+    try {
+      val result = withContext(Dispatchers.IO) { doPostSubmission(course.id, task.id, submission) }
+      when (result) {
+        is Ok -> {
+          submission.id = result.value.id
+          submission.time = result.value.time
+          submissionsManager.addToSubmissionsWithStatus(task.id, task.status, submission)
+        }
+
+        is Err -> LOG.warn("Failed to upload local submission for task ${task.id}: ${result.error}")
+      }
+    }
+    catch (e: Exception) {
+      LOG.warn("Failed to upload local submission for task ${task.id}", e)
+    }
+  }
+
+  private fun Task.shouldUploadLocalSolution(): Boolean =
+    isToSubmitToRemote || (this is TheoryTask && postSubmissionOnOpen && status == CheckStatus.Solved)
 
   private fun createSubmission(
     project: Project,
@@ -323,6 +389,16 @@ class MarketplaceSubmissionsConnector {
   }
 
   private fun solutionFilesList(project: Project, task: Task): List<SolutionFile> {
+    val lesson = task.lesson
+    return if (lesson is FrameworkLesson) {
+      frameworkSolutionFilesList(project, lesson, task)
+    }
+    else {
+      diskSolutionFilesList(project, task)
+    }
+  }
+
+  private fun diskSolutionFilesList(project: Project, task: Task): List<SolutionFile> {
     val files = mutableListOf<SolutionFile>()
     val taskDir = task.getDir(project.courseDir) ?: error("Failed to find task directory ${task.name}")
 
@@ -336,6 +412,14 @@ class MarketplaceSubmissionsConnector {
     }
 
     return files.checkNotEmpty()
+  }
+
+  private fun frameworkSolutionFilesList(project: Project, lesson: FrameworkLesson, task: Task): List<SolutionFile> {
+    val state = FrameworkLessonManager.getInstance(project).getTaskState(lesson, task)
+    return state.mapNotNull { (path, contents) ->
+      val taskFile = task.taskFiles[path] ?: return@mapNotNull null
+      SolutionFile(path, contents.textualRepresentation, taskFile.isVisible, taskFile.answerPlaceholders)
+    }
   }
 
   @RequiresBackgroundThread
