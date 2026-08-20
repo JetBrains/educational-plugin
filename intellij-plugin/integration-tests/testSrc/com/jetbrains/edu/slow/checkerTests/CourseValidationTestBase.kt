@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestInfo
+import java.lang.reflect.Method
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -66,6 +67,9 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
         addSystemProperty("idea.is.internal", true)
         addSystemProperty("java.awt.headless", true)
         addSystemProperty("edu.disable.user.agreement", true)
+        for ((property, value) in requiredProperties()) {
+          addSystemProperty(property, value)
+        }
       }
     }
 
@@ -130,12 +134,7 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
     }
   }
 
-  private fun testCaseDataDir(): Path {
-    val testMethodName = testInfo.testMethod.orElseThrow {
-      IllegalStateException("`doTest` is supposed to be called from a test method")
-    }.name
-    return Paths.get(TEST_DATA_ROOT, testDataPrefix, testMethodName)
-  }
+  private fun testCaseDataDir(): Path = Paths.get(TEST_DATA_ROOT, testDataPrefix, testMethod().name)
 
   private fun resolveCourse(): Path {
     val resolved = testCaseDataDir().resolve(COURSE_DIR_NAME)
@@ -149,11 +148,36 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
     return resolved
   }
 
+  /**
+   * Values for all properties declared via [RequiredProperty] on the current test method and on the test class.
+   */
+  private fun requiredProperties(): Map<String, String> {
+    val properties = linkedSetOf<String>()
+    javaClass.getAnnotationsByType(RequiredProperty::class.java).mapTo(properties) { it.property }
+    testMethod().getAnnotationsByType(RequiredProperty::class.java).mapTo(properties) { it.property }
+    return properties.associateWith {
+      val envVariable = envVariableName(it)
+      val value = System.getProperty(it) ?: System.getenv(envVariable)
+      checkNotNull(value) {
+        "Failed to find value for `$it` property. " +
+        "Pass `-D$it=<value>` to the test process or set the `$envVariable` environment variable"
+      }
+    }
+  }
+
+  private fun testMethod(): Method = testInfo.testMethod.orElseThrow {
+    IllegalStateException("`doTest` is supposed to be called from a test method")
+  }
+
   private companion object {
 
     private const val TEST_DATA_ROOT = "testData"
     private const val COURSE_DIR_NAME = "course"
     private const val EXPECTED_REPORT_NAME = "expected.json"
+
+    private const val ENV_PREFIX = "COM_JETBRAINS_EDU_"
+
+    private val NON_WORD_SYMBOL_SEQUENCE_RE = """\W+""".toRegex()
 
     fun resolvePluginPath(): Path {
       val property = System.getProperty("path.to.build.plugin")
@@ -162,5 +186,14 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
       check(resolved.exists()) { "Plugin missing at $resolved" }
       return resolved
     }
+
+    /**
+     * Environment variable name for the given [property].
+     *
+     * Note, it's a copy of the logic in `com.jetbrains.edu.learning.DefaultSettingsUtils.propertyValue`
+     * since these properties are exactly about the same values
+     */
+    private fun envVariableName(property: String): String =
+      "$ENV_PREFIX${property.replace(NON_WORD_SYMBOL_SEQUENCE_RE, "_").uppercase()}"
   }
 }
