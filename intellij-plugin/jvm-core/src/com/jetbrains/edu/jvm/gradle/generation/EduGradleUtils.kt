@@ -2,6 +2,7 @@ package com.jetbrains.edu.jvm.gradle.generation
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
+import com.intellij.openapi.application.runReadActionBlocking
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
@@ -15,7 +16,9 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.jdkDownloader.JdkDownloadUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.readText
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.lang.JavaVersion
@@ -324,14 +327,16 @@ object EduGradleUtils {
     return currentGradleVersion
   }
 
-  fun detectGradleVersion(course: Course): GradleVersion? {
-    val wrapperPropertiesFile = course.additionalFiles.find {
-      it.name == GRADLE_WRAPPER_PROPERTIES_PATH
+  fun detectGradleVersion(courseDir: VirtualFile): GradleVersion? {
+    val wrapperConfigurationText = runReadActionBlocking {
+      val wrapperPropertiesFile = courseDir.findFileByRelativePath(GRADLE_WRAPPER_PROPERTIES_PATH)
+      wrapperPropertiesFile?.readText()
     } ?: return null
 
-    val contents = wrapperPropertiesFile.contents as? TextualContents ?: return null
-    val wrapperConfigurationText = contents.text
+    return extractGradleVersionFromWrapperConfigurationText(wrapperConfigurationText)
+  }
 
+  private fun extractGradleVersionFromWrapperConfigurationText(wrapperConfigurationText: String): GradleVersion? {
     val gradleProperties = Properties().apply {
       load(wrapperConfigurationText.reader())
     }

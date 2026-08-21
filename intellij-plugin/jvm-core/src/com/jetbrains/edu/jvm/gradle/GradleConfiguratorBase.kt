@@ -3,12 +3,14 @@ package com.jetbrains.edu.jvm.gradle
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
+import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.detectGradleVersion
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
+import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
@@ -60,6 +62,17 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkLanguageEnvironment> 
   override val pluginRequirements: List<PluginId>
     get() = listOf(PluginId.getId("com.intellij.gradle"), PluginId.getId("JUnit"))
 
+  override fun getEnvironmentSettings(project: Project): Map<String, String> {
+    val jvmSettings = jvmEnvironmentSettings(project)
+    val gradleVersion = detectGradleVersion(project.courseDir)
+
+    return jvmSettings + mapOf(ENV_SETTINGS_GRADLE_VERSION to gradleVersion?.version).filterNullValues()
+  }
+
+  private fun <K, V> Map<K, V?>.filterNullValues(): Map<K, V> {
+    return mapNotNull { (key, value) -> if (value == null) null else key to value }.toMap()
+  }
+
   companion object {
     private val NAMES_TO_EXCLUDE = arrayOf(
       "EduTestRunner.java", GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN, LOCAL_PROPERTIES,
@@ -67,7 +80,6 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkLanguageEnvironment> 
     )
 
     private val FOLDERS_TO_EXCLUDE = arrayOf(EduNames.OUT, EduNames.BUILD, GRADLE)
+    const val ENV_SETTINGS_GRADLE_VERSION = "gradle_version"
   }
-
-  override fun getEnvironmentSettings(project: Project): Map<String, String> = jvmEnvironmentSettings(project)
 }
