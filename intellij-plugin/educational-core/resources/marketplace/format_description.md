@@ -10,6 +10,13 @@
             "null"
           ]
         },
+        "environment_settings": {
+           "description": "Requirements for the project environment. For example, the JVM version to run the course's code, the Gradle version, etc. Stored as an object with string keys and string values",
+           "type": ["object", "null"],
+           "additionalProperties": {
+              "type": "string"
+           }
+        },
         "summary": {
           "description": "Summary describing what the course is about",
           "type": "string"

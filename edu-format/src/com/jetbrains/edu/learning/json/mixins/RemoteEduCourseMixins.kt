@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.CUSTOM_NAME
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.DESCRIPTION_TEXT
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT
+import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.ENVIRONMENT_SETTINGS
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FEEDBACK_LINK
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.FILES
 import com.jetbrains.edu.learning.json.mixins.JsonMixinNames.GENERATED_EDU_ID
@@ -59,6 +60,7 @@ import java.util.*
   PROGRAMMING_LANGUAGE_ID,
   PROGRAMMING_LANGUAGE_VERSION,
   LANGUAGE,
+  ENVIRONMENT_SETTINGS,
   COURSE_TYPE,
   PLUGIN_VERSION,
   VENDOR,

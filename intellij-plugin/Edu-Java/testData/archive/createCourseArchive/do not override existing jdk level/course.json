@@ -3,6 +3,9 @@
   "title" : "Test Course",
   "programming_language_id" : "JAVA",
   "language" : "en",
+  "environment_settings" : {
+    "jvm_language_level" : "JDK_17"
+  },
   "course_type" : "PyCharm",
   "items" : [
     {
@@ -39,8 +42,5 @@
     }
   ],
   "version" : <last version>,
-  "environment_settings" : {
-    "jvm_language_level" : "JDK_17"
-  },
   "edu_plugin_version" : "yyyy.2-yyyy.1-TEST"
 }
