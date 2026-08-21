@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.jvm.environment.JdkBuildSystemSupport
 import com.jetbrains.edu.jvm.environment.JdkVersionRange
-import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.setGradleSettings
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
@@ -27,7 +26,7 @@ object GradleBuildSystemSupport : JdkBuildSystemSupport {
   }
 
   override fun getJdkVersionRange(course: Course): Result<JdkVersionRange, String> {
-    val gradleVersionFromCourse = EduGradleUtils.detectGradleVersion(course)
+    val gradleVersionFromCourse = course.gradleVersionFromEnvironmentSettings()
 
     val gradleVersion = gradleVersionFromCourse ?: if (course.courseMode == CourseMode.EDUCATOR) {
       // let educators use the latest gradle version
@@ -53,5 +52,10 @@ object GradleBuildSystemSupport : JdkBuildSystemSupport {
         latestJdkVersion
       )
     )
+  }
+
+  private fun Course.gradleVersionFromEnvironmentSettings(): GradleVersion? {
+    val versionString = environmentSettings[GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION] ?: return null
+    return runCatching { GradleVersion.version(versionString) }.getOrNull()
   }
 }

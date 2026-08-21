@@ -6,13 +6,12 @@ import com.intellij.util.lang.JavaVersion
 import com.jetbrains.edu.jvm.JVM_LANGUAGE_LEVEL
 import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironmentCatalogProvider
-import com.jetbrains.edu.jvm.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.jvm.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.learning.EnvironmentAwareCourseBuilder
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.InMemoryTextualContents
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -50,15 +49,10 @@ abstract class JdkVersionValidationTestBase(
 
   @Test
   fun `jdk validation messages`() {
-    val course = course(language = language, environment = environment) {
-      if (gradleVersion != null) {
-        additionalFile(GradleCourseBuilderBase.GRADLE_WRAPPER_PROPERTIES_PATH, InMemoryTextualContents(
-          generateGradleWrapperProperties(gradleVersion)
-        ))
-      }
-    }
+    val course = course(language = language, environment = environment) {}
     course.languageVersion = courseLanguageVersion
     course.setLanguageLevel(courseLanguageLevel)
+    course.setGradleVersion(gradleVersion)
 
     @Suppress("UNCHECKED_CAST")
     val courseBuilder = course.configurator?.courseBuilder as? EnvironmentAwareCourseBuilder<JdkLanguageEnvironment> ?: error("Course builder is absent")
@@ -92,13 +86,12 @@ abstract class JdkVersionValidationTestBase(
     }
   }
 
-  private fun generateGradleWrapperProperties(gradleVersion: String): String {
-    return """
-      |distributionUrl=https\://services.gradle.org/distributions/gradle-$gradleVersion-bin.zip
-      |distributionBase=GRADLE_USER_HOME
-      |distributionPath=wrapper/dists
-      |zipStoreBase=GRADLE_USER_HOME
-      |zipStorePath=wrapper/dists
-    """.trimMargin()
+  private fun Course.setGradleVersion(gradleVersion: String?) {
+    course.environmentSettings = if (gradleVersion == null) {
+      course.environmentSettings.minus(GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION)
+    }
+    else {
+      course.environmentSettings.plus(GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION to gradleVersion)
+    }
   }
 }
