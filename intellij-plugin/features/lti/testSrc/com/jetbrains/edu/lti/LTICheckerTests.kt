@@ -92,7 +92,7 @@ class LTICheckerTests : EduTestCase() {
     var body: String? = null
     mockLTIConnector.withResponseHandler(testRootDisposable) { request, path ->
       callPath = path
-      body = request.body.readUtf8()
+      body = request.body?.utf8().orEmpty()
       MockResponseFactory.fromString("")
     }
 

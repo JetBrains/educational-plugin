@@ -7,8 +7,8 @@ import com.intellij.openapi.progress.Task
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.*
 import kotlinx.coroutines.runBlocking
+import mockwebserver3.MockResponse
 import okhttp3.ConnectionPool
-import okhttp3.mockwebserver.MockResponse
 import org.junit.Test
 import retrofit2.Call
 import retrofit2.Response
@@ -51,7 +51,7 @@ class NetworkResultCallAdapterTest : EduTestCase() {
   @Test
   fun `test ok with empty body sync`() {
     // given
-    mockServer.addResponseHandler(testRootDisposable) { _, _ -> MockResponse().setResponseCode(HTTP_NO_CONTENT) }
+    mockServer.addResponseHandler(testRootDisposable) { _, _ -> MockResponse(code = HTTP_NO_CONTENT) }
 
     // when
     val response = api.callNoContent().execute()
@@ -80,7 +80,7 @@ class NetworkResultCallAdapterTest : EduTestCase() {
   @Test
   fun `test ok with empty body async`() {
     // given
-    mockServer.addResponseHandler(testRootDisposable) { _, _ -> MockResponse().setResponseCode(HTTP_NO_CONTENT) }
+    mockServer.addResponseHandler(testRootDisposable) { _, _ -> MockResponse(code = HTTP_NO_CONTENT) }
 
     // when
     val response = runBlocking { api.callAsyncNoContent() }

@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning
 
-import okhttp3.mockwebserver.MockResponse
+import mockwebserver3.MockResponse
 import okio.Buffer
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
@@ -17,16 +17,15 @@ object MockResponseFactory {
   fun fromString(data: String, responseCode: Int = HTTP_OK): MockResponse =
     fromStream(ByteArrayInputStream(data.toByteArray()), responseCode)
 
-  private fun fromStream(data: InputStream, responseCode: Int = HTTP_OK): MockResponse {
-    val buffer = Buffer().readFrom(data)
-    return MockResponse()
-      .setResponseCode(responseCode)
+  private fun fromStream(data: InputStream, responseCode: Int = HTTP_OK): MockResponse =
+    MockResponse.Builder()
+      .code(responseCode)
       .addHeader("Content-Type", "application/json; charset=utf-8")
-      .setBody(buffer)
-  }
+      .body(Buffer().readFrom(data))
+      .build()
 
-  fun ok(): MockResponse = MockResponse().setResponseCode(HTTP_OK)
-  fun badRequest(): MockResponse = MockResponse().setResponseCode(HTTP_BAD_REQUEST)
-  fun notFound(): MockResponse = MockResponse().setResponseCode(HTTP_NOT_FOUND)
-  fun internalError(): MockResponse = MockResponse().setResponseCode(HTTP_INTERNAL_ERROR)
+  fun ok(): MockResponse = MockResponse(code = HTTP_OK)
+  fun badRequest(): MockResponse = MockResponse(code = HTTP_BAD_REQUEST)
+  fun notFound(): MockResponse = MockResponse(code = HTTP_NOT_FOUND)
+  fun internalError(): MockResponse = MockResponse(code = HTTP_INTERNAL_ERROR)
 }

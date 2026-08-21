@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.actions.EduActionUtils
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
-import okhttp3.mockwebserver.MockResponse
+import mockwebserver3.MockResponse
 import org.apache.http.HttpStatus
 import java.io.File
 import java.io.IOException
