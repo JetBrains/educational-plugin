@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.Ok
+import mockwebserver3.MockResponse
 import okhttp3.ConnectionPool
-import okhttp3.mockwebserver.MockResponse
 import org.junit.Test
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -57,7 +57,7 @@ class RetrofitProxySettingsTest : EduTestCase() {
     proxyHelper.addResponseHandler(testRootDisposable) { request, _ ->
       val proxyAuthValue = request.headers["Proxy-Authorization"]
       if (proxyAuthValue == null) {
-        MockResponse().setResponseCode(HTTP_PROXY_AUTH)
+        MockResponse(code = HTTP_PROXY_AUTH)
       }
       else {
         MockResponseFactory.fromString("""{"value": "$proxyAuthValue"}""")

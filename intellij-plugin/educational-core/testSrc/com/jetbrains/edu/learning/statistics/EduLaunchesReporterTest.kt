@@ -9,15 +9,10 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter.Companion.LAST_UPDATE
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runCurrent
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.*
+import mockwebserver3.MockResponse
+import mockwebserver3.RecordedRequest
 import okhttp3.HttpUrl
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
 import org.junit.Test
@@ -224,8 +219,10 @@ class EduLaunchesReporterTest : EduTestCase() {
 
   private fun xmlResponse(): MockResponse = MockResponseFactory
     .ok()
+    .newBuilder()
     .setHeader("Content-Type", "application/xml")
-    .setBody("<plugin-repository/>")
+    .body("<plugin-repository/>")
+    .build()
 
   private fun RecordedRequest.checkRequestData() {
     val requestData = parseData()
@@ -235,7 +232,6 @@ class EduLaunchesReporterTest : EduTestCase() {
   }
 
   private fun RecordedRequest.parseData(): RequestData {
-    val url = requestUrl ?: error("Request url should not be null")
     return RequestData(
       pluginId = url.parameter("pluginId"),
       build = url.parameter("build"),

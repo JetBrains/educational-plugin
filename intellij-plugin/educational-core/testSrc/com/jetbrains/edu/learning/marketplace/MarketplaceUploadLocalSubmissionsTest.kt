@@ -186,7 +186,7 @@ class MarketplaceUploadLocalSubmissionsTest : SubmissionsTestBase() {
 
   private fun MockWebServerHelper.addResponseHandlerWithRequestBodyRecording(handler: ResponseHandler) {
     addResponseHandler(testRootDisposable) { request, path ->
-      requestBodies.getOrPut(path) { Collections.synchronizedList(mutableListOf()) } += request.body.readUtf8()
+      requestBodies.getOrPut(path) { Collections.synchronizedList(mutableListOf()) } += request.bodyAsString
       handler(request, path)
     }
   }

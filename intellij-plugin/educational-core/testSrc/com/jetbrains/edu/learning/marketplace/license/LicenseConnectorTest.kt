@@ -1,18 +1,14 @@
 package com.jetbrains.edu.learning.marketplace.license
 
 import com.intellij.util.application
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.MockResponseFactory
-import com.jetbrains.edu.learning.MockWebServerHelper
-import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
 import com.jetbrains.edu.learning.marketplace.license.api.LicenseConnector
-import com.jetbrains.edu.learning.mockService
 import io.mockk.coEvery
+import kotlinx.coroutines.test.runTest
+import mockwebserver3.MockResponse
 import org.intellij.lang.annotations.Language
 import kotlin.test.Test
-import kotlinx.coroutines.test.runTest
-import okhttp3.mockwebserver.MockResponse
 
 class LicenseConnectorTest : EduTestCase() {
   private lateinit var mockServer: MockWebServerHelper
@@ -90,7 +86,7 @@ class LicenseConnectorTest : EduTestCase() {
 
   private fun configureResponse(response: MockResponse) {
     mockServer.addResponseHandler(testRootDisposable) { request, path ->
-      if (request.getHeader("Authorization") != "Bearer $JWT") {
+      if (request.headers["Authorization"] != "Bearer $JWT") {
         return@addResponseHandler MockResponseFactory.badRequest()
       }
 

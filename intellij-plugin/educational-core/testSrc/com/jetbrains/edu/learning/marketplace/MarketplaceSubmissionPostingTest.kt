@@ -32,8 +32,8 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.RecordedRequest
+import mockwebserver3.MockResponse
+import mockwebserver3.RecordedRequest
 import org.junit.Test
 import java.net.HttpURLConnection.HTTP_UNAVAILABLE
 import java.util.*
@@ -130,7 +130,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
       when (path) {
         submissionRequestPath -> {
           val attempt = counter.incrementAndGet()
-          if (attempt == 1) MockResponse().setResponseCode(HTTP_UNAVAILABLE) else MockResponseFactory.fromString(SUBMISSION_RESPONSE)
+          if (attempt == 1) MockResponse(code = HTTP_UNAVAILABLE) else MockResponseFactory.fromString(SUBMISSION_RESPONSE)
         }
         else -> MockResponseFactory.badRequest()
       }
@@ -209,7 +209,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
         }
         submissionRequestPath -> {
           if (remoteAgreementState.get().pluginAgreement != ACCEPTED) {
-            MockResponse().setResponseCode(HTTP_UNAVAILABLE_FOR_LEGAL_REASONS)
+            MockResponse(code = HTTP_UNAVAILABLE_FOR_LEGAL_REASONS)
           }
           else {
             MockResponseFactory.fromString(SUBMISSION_RESPONSE)
@@ -259,7 +259,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
         }
         submissionRequestPath -> {
           submissionRequestReceived.set(true)
-          MockResponse().setResponseCode(HTTP_UNAVAILABLE_FOR_LEGAL_REASONS)
+          MockResponse(code = HTTP_UNAVAILABLE_FOR_LEGAL_REASONS)
         }
         else -> MockResponseFactory.badRequest()
       }
@@ -293,7 +293,7 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
       val requests = requestBodies.getOrPut(path) {
         Collections.synchronizedList(mutableListOf())
       }
-      requests += request.body.readUtf8()
+      requests += request.bodyAsString
 
       handler(request, path)
     }
@@ -320,7 +320,6 @@ class MarketplaceSubmissionPostingTest : EduTestCase() {
   }
   
   private fun RecordedRequest.userAgreement(): UserAgreement? {
-    val url = requestUrl ?: return null
     val pluginAgreement = url.queryParameter("pluginAgreement") ?: return null
     val aiAgreement = url.queryParameter("aiAgreement") ?: return null
     return UserAgreement(UserAgreementState.valueOf(pluginAgreement), UserAgreementState.valueOf(aiAgreement))

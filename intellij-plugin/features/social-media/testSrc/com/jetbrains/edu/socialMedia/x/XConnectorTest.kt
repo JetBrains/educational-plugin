@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.ResponseHandler
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.bodyAsString
 import com.jetbrains.edu.socialMedia.x.api.Media
 import com.jetbrains.edu.socialMedia.x.api.Tweet
 import com.jetbrains.edu.socialMedia.x.api.TweetData
@@ -146,10 +147,10 @@ class XConnectorTest : EduTestCase() {
       val requests = requestBodies.getOrPut(path) {
         Collections.synchronizedList(mutableListOf())
       }
-      requests += request.body.readUtf8()
+      requests += request.bodyAsString
 
       // Verify that we pass the proper access token here
-      if (request.getHeader("Authorization") != "Bearer $ACCESS_TOKEN") {
+      if (request.headers["Authorization"] != "Bearer $ACCESS_TOKEN") {
         return@addResponseHandler MockResponseFactory.badRequest()
       }
 
