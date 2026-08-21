@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import kotlinx.coroutines.runBlocking
-import okhttp3.mockwebserver.MockResponse
+import mockwebserver3.MockResponse
 import org.junit.Test
 import java.net.HttpURLConnection
 
@@ -142,7 +142,7 @@ class CourseValidationTest : EduTestCase() {
       when (path) {
         "/invalid" -> MockResponseFactory.notFound()
         "/valid" -> MockResponseFactory.ok()
-        else -> MockResponse().setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+        else -> MockResponse(code = HttpURLConnection.HTTP_INTERNAL_ERROR)
       }
     }
 
@@ -214,7 +214,7 @@ class CourseValidationTest : EduTestCase() {
       when {
         path.startsWith("/invalid") -> MockResponseFactory.notFound()
         path.startsWith("/valid") -> MockResponseFactory.ok()
-        else -> MockResponse().setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+        else -> MockResponse(code = HttpURLConnection.HTTP_INTERNAL_ERROR)
       }
     }
 

@@ -46,7 +46,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSettings
 import com.jetbrains.edu.rules.CustomValuesRule
 import io.mockk.clearAllMocks
-import okhttp3.mockwebserver.MockResponse
+import mockwebserver3.MockResponse
 import org.apache.http.HttpStatus
 import org.junit.Rule
 import org.junit.runner.RunWith

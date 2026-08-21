@@ -146,10 +146,10 @@ class XConnectorTest : EduTestCase() {
       val requests = requestBodies.getOrPut(path) {
         Collections.synchronizedList(mutableListOf())
       }
-      requests += request.body.readUtf8()
+      requests += request.body?.utf8().orEmpty()
 
       // Verify that we pass the proper access token here
-      if (request.getHeader("Authorization") != "Bearer $ACCESS_TOKEN") {
+      if (request.headers["Authorization"] != "Bearer $ACCESS_TOKEN") {
         return@addResponseHandler MockResponseFactory.badRequest()
       }
 

@@ -5,8 +5,8 @@ import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.MockWebServerHelper
 import com.jetbrains.edu.learning.Ok
 import kotlinx.coroutines.runBlocking
+import mockwebserver3.MockResponse
 import okhttp3.ConnectionPool
-import okhttp3.mockwebserver.MockResponse
 import org.junit.Test
 import retrofit2.Response
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -33,7 +33,7 @@ class RetryPolicyTest : EduTestCase() {
     mockServer.addResponseHandler(testRootDisposable) { _, _ ->
       val attempt = counter.incrementAndGet()
       when (attempt) {
-        1 -> MockResponse().setResponseCode(HTTP_INTERNAL_ERROR)
+        1 -> MockResponse(code = HTTP_INTERNAL_ERROR)
         else -> successfulResponse
       }
     }
@@ -56,7 +56,7 @@ class RetryPolicyTest : EduTestCase() {
     mockServer.addResponseHandler(testRootDisposable) { _, _ ->
       val attempt = counter.incrementAndGet()
       when (attempt) {
-        1 -> MockResponse().setResponseCode(HTTP_UNAVAILABLE)
+        1 -> MockResponse(code = HTTP_UNAVAILABLE)
         else -> successfulResponse
       }
     }
@@ -79,7 +79,7 @@ class RetryPolicyTest : EduTestCase() {
     mockServer.addResponseHandler(testRootDisposable) { _, _ ->
       val attempt = counter.incrementAndGet()
       when (attempt) {
-        1 -> MockResponse().setResponseCode(HTTP_UNAVAILABLE)
+        1 -> MockResponse(code = HTTP_UNAVAILABLE)
         else -> successfulResponse
       }
     }
@@ -101,7 +101,7 @@ class RetryPolicyTest : EduTestCase() {
     val counter = AtomicInteger()
     mockServer.addResponseHandler(testRootDisposable) { _, _ ->
       counter.incrementAndGet()
-      MockResponse().setResponseCode(HTTP_BAD_GATEWAY)
+      MockResponse(code = HTTP_BAD_GATEWAY)
     }
 
     // when
