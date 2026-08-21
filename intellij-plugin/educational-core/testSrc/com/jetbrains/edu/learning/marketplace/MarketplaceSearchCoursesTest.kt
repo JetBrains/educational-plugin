@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.marketplace
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.bodyAsString
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.DEFAULT_ENVIRONMENT
 import com.jetbrains.edu.learning.courseFormat.UserInfo
@@ -17,7 +18,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   private fun configureCoursesResponse() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
-      val requestBody = request.body.readUtf8()
+      val requestBody = request.bodyAsString
       when  {
         requestBody.isPluginsRequest() -> mockResponse("courses.json")
         requestBody.isUpdatesRequest() -> mockResponse("updates.json")
@@ -123,7 +124,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   fun `test all courses loaded`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
-      val requestBody = request.body.readUtf8()
+      val requestBody = request.bodyAsString
       when {
         requestBody.isPluginsRequest() && (requestBody.getOffset() == 0) -> mockResponse("courses_10.json")
         requestBody.isPluginsRequest() && (requestBody.getOffset() == 10) -> mockResponse("courses.json")
@@ -139,7 +140,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   fun `test course found by id`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
-      val requestBody = request.body.readUtf8()
+      val requestBody = request.bodyAsString
       when  {
         requestBody.isPluginsRequest() -> mockResponse("course_by_id.json")
         requestBody.isUpdatesRequest() -> mockResponse("updates.json")
@@ -166,7 +167,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   fun `test private course found`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
-      val requestBody = request.body.readUtf8()
+      val requestBody = request.bodyAsString
       when {
         requestBody.isPluginsRequest() -> mockResponse("private_course.json")
         requestBody.isUpdatesRequest() -> mockResponse("updates.json")

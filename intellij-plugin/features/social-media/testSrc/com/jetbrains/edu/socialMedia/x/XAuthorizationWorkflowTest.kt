@@ -48,7 +48,7 @@ class XAuthorizationWorkflowTest : EduTestCase() {
     helper.addResponseHandler(testRootDisposable) { request, path ->
       when (path) {
         "/2/oauth2/token" -> {
-          val rawParams = request.body.readUtf8()
+          val rawParams = request.bodyAsString
           val params = URI.create("http://localhost?$rawParams").queryParameters
 
           // Verify that we properly pass code value passed to redirect_uri
@@ -65,7 +65,7 @@ class XAuthorizationWorkflowTest : EduTestCase() {
         }
         "/2/users/me" -> {
           // Verify that we pass the proper access token here
-          if (request.getHeader("Authorization") != "Bearer $ACCESS_TOKEN") {
+          if (request.headers["Authorization"] != "Bearer $ACCESS_TOKEN") {
             return@addResponseHandler MockResponseFactory.badRequest()
           }
           //language=json

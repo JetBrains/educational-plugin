@@ -3,6 +3,7 @@ package com.jetbrains.edu.lti
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.MockResponseFactory
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.bodyAsString
 import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.mockSubmissionsConnector
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -92,7 +93,7 @@ class LTICheckerTests : EduTestCase() {
     var body: String? = null
     mockLTIConnector.withResponseHandler(testRootDisposable) { request, path ->
       callPath = path
-      body = request.body.readUtf8()
+      body = request.bodyAsString
       MockResponseFactory.fromString("")
     }
 

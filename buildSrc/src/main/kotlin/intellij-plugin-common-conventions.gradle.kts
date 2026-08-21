@@ -83,7 +83,7 @@ dependencies {
   testImplementation(libs.findLibrary("openTest4J").get())
   testImplementation(libs.findLibrary("classgraph").get())
   testImplementation(libs.findLibrary("kotlin.test.junit").get())
-  testImplementation(libs.findLibrary("mockwebserver").get())
+  testImplementation(libs.findLibrary("mockwebserver3").get())
   testImplementation(libs.findLibrary("mockk").get())
   testImplementation(libs.findLibrary("hamcrest").get())
 }

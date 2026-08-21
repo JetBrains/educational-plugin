@@ -7,10 +7,10 @@ import com.intellij.util.net.ProxyConfiguration
 import com.intellij.util.net.ProxyConfiguration.ProxyProtocol
 import com.jetbrains.edu.learning.network.USER_AGENT
 import com.jetbrains.edu.learning.network.eduToolsUserAgent
-import okhttp3.mockwebserver.Dispatcher
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
+import mockwebserver3.Dispatcher
+import mockwebserver3.MockResponse
+import mockwebserver3.MockWebServer
+import mockwebserver3.RecordedRequest
 import org.junit.Assert.assertEquals
 
 typealias ResponseHandler = (RecordedRequest, String) -> MockResponse?
@@ -18,15 +18,14 @@ typealias ResponseHandler = (RecordedRequest, String) -> MockResponse?
 class MockWebServerHelper(parentDisposable: Disposable) {
 
   private val handlers = mutableSetOf<ResponseHandler>()
-  val webSocketMockSever = MockWebServer()
 
   private val mockWebServer = MockWebServer().apply {
     dispatcher = object : Dispatcher() {
       override fun dispatch(request: RecordedRequest): MockResponse {
         if (expectEduToolsUserAgent(request)) {
-          assertEquals(eduToolsUserAgent, request.getHeader(USER_AGENT))
+          assertEquals(eduToolsUserAgent, request.headers[USER_AGENT])
         }
-        val path = request.path ?: error("Request path should not be null. Probably, `requestLine` is empty")
+        val path = request.target
         for (handler in handlers) {
           val response = handler(request, path)
           if (response != null) return response
@@ -37,8 +36,8 @@ class MockWebServerHelper(parentDisposable: Disposable) {
   }
 
   init {
-    Disposer.register(parentDisposable) { mockWebServer.shutdown() }
-    Disposer.register(parentDisposable) { webSocketMockSever.shutdown() }
+    mockWebServer.start()
+    Disposer.register(parentDisposable) { mockWebServer.close() }
     ThreadLeakTracker.longRunningThreadCreated(parentDisposable, "MockWebServer", "OkHttp TaskRunner", "Okio Watchdog")
   }
 
@@ -62,12 +61,11 @@ class MockWebServerHelper(parentDisposable: Disposable) {
 }
 
 fun RecordedRequest.hasParams(vararg params: Pair<String, String>): Boolean {
-  val url = requestUrl ?: return false
   return params.all { param -> url.queryParameter(param.first) == param.second }
 }
 
 val RecordedRequest.pathWithoutPrams: String
-  get() {
-    val requestUrl = requestUrl ?: error("Request url should not be null. Probably, `requestLine` is empty")
-    return requestUrl.toUrl().path
-  }
+  get() = url.toUrl().path
+
+val RecordedRequest.bodyAsString: String
+  get() = body?.utf8().orEmpty()
