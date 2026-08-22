@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.compatibility.CourseCompatibility
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
@@ -19,6 +20,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
@@ -170,11 +172,13 @@ private fun Course.configuratorCompatibility(): CourseCompatibility? {
   return if (configurator == null) CourseCompatibility.Unsupported else null
 }
 
+@RequiresEdt
 fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
   // The order is important here since it should preserve old values.
   // Otherwise, it may override values provided by users manually (via `course-info.yaml` file, for example)
-  val newEnvironmentSettings = configurator?.getEnvironmentSettings(project).orEmpty() + course.environmentSettings
-  course.environmentSettings = newEnvironmentSettings
+  val newEnvironmentSettings = configurator?.getEnvironmentSettings(project).orEmpty() + environmentSettings
+  environmentSettings = newEnvironmentSettings
+  YamlFormatSynchronizer.saveItem(this)
 }
 
 fun Course.visitEduFiles(visitor: (EduFile) -> Unit) {
