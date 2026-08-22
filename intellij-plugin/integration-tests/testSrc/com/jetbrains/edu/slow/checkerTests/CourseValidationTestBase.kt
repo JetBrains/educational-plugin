@@ -1,6 +1,7 @@
 package com.jetbrains.edu.slow.checkerTests
 
 import com.intellij.ide.starter.junit5.hyphenateWithClass
+import com.intellij.ide.starter.models.IdeInfo
 import com.intellij.ide.starter.models.TestCase
 import com.intellij.ide.starter.plugins.PluginConfigurator
 import com.intellij.ide.starter.project.NoProject
@@ -36,7 +37,7 @@ import kotlin.test.assertNotNull
  * ```
  * so a single test class may contain any number of test cases without configuring paths.
  */
-abstract class CourseValidationTestBase(private val testDataPrefix: String) {
+abstract class CourseValidationTestBase(private val testDataPrefix: String, private val ideInfo: IdeInfo) {
 
   private lateinit var testInfo: TestInfo
 
@@ -58,7 +59,7 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String) {
 
     val context = Starter.newContext(
       testInfo.hyphenateWithClass(),
-      TestCase(ideaUltimate(), NoProject)
+      TestCase(ideInfo, NoProject)
     ).apply {
       installPlugin(PluginConfigurator(this), pluginPath)
       applyVMOptionsPatch {
