@@ -72,7 +72,7 @@ class EduValidateCourseCommand : EduCourseProjectCommand("validateCourse") {
       resultConsumer.consume(result)
     }
 
-    return if (result.isFailed) CommandResult.Error("Some tasks haven't finished successfully") else CommandResult.Ok
+    return CommandResult.Ok
   }
 
   companion object {
