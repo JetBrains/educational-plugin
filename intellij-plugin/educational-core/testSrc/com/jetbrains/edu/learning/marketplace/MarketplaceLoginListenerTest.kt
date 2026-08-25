@@ -8,10 +8,7 @@ import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnecto
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsTestBase
-import io.mockk.coJustRun
-import io.mockk.coVerify
-import io.mockk.justRun
-import io.mockk.verify
+import io.mockk.*
 import org.junit.Test
 
 class MarketplaceLoginListenerTest : SubmissionsTestBase() {
@@ -19,15 +16,22 @@ class MarketplaceLoginListenerTest : SubmissionsTestBase() {
   @Test
   fun `test login prepares submissions content and uploads local submissions`() {
     val submissionsManager = mockService<SubmissionsManager>(project)
-    justRun { submissionsManager.prepareSubmissionsContentWhenLoggedIn(any()) }
+    every { submissionsManager.prepareSubmissionsContentWhenLoggedIn(any()) } answers {
+      firstArg<() -> Unit>().invoke()
+    }
     val connector = mockService<MarketplaceSubmissionsConnector>(application)
+    val loader = mockService<MarketplaceSolutionLoader>(project)
     coJustRun { connector.uploadLocalSubmissions(any(), any()) }
+    justRun { loader.loadSolutionsInBackground() }
     val course = createEduCourse()
 
     application.messageBus.syncPublisher(MarketplaceLoginListener.LOGIN_TOPIC).onLoginSuccess()
 
     verify(exactly = 1) { submissionsManager.prepareSubmissionsContentWhenLoggedIn(any()) }
-    coVerify(exactly = 1) { connector.uploadLocalSubmissions(project, course) }
+    coVerify(ordering = Ordering.ORDERED, timeout = 1000) {
+      connector.uploadLocalSubmissions(project, course)
+      loader.loadSolutionsInBackground()
+    }
   }
 
   private fun createEduCourse(): EduCourse = courseWithFiles(

@@ -17,11 +17,11 @@ class ProjectMarketplaceLoginListener(private val project: Project, private val 
     if (!project.isStudentProject()) return
     val course = project.course ?: return
     SubmissionsManager.getInstance(project).prepareSubmissionsContentWhenLoggedIn {
-      MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
-    }
-    scope.launch {
-      withBackgroundProgress(project, EduCoreBundle.message("marketplace.uploading.local.submissions.progress.title")) {
-        MarketplaceSubmissionsConnector.getInstance().uploadLocalSubmissions(project, course)
+      scope.launch {
+        withBackgroundProgress(project, EduCoreBundle.message("marketplace.uploading.local.submissions.progress.title")) {
+          MarketplaceSubmissionsConnector.getInstance().uploadLocalSubmissions(project, course)
+        }
+        MarketplaceSolutionLoader.getInstance(project).loadSolutionsInBackground()
       }
     }
   }
