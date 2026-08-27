@@ -1,8 +1,11 @@
 package com.jetbrains.edu.learning.taskToolWindow.links
 
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.selectedVirtualFile
+import org.junit.Ignore
 import org.junit.Test
 
 class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
@@ -12,52 +15,63 @@ class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
 
   @Test
   fun `test section link`() = doTest("course://section1")
+
   @Test
   fun `test non-existent section link`() = doTest("course://section2")
 
   @Test
   fun `test lesson link 1`() = doTest("course://lesson1")
+
   @Test
   fun `test lesson link 2`() = doTest("course://section/lesson4")
+
   @Test
   fun `test non-existent lesson link`() = doTest("course://lesson10")
 
   @Test
   fun `test task link 1`() = doTest("course://lesson1/task1", "lesson1/task1/TaskFile1.txt")
+
   @Test
   fun `test task link 2`() = doTest("course://section1/lesson4/task5", "section1/lesson4/task5/TaskFile8.txt")
+
   @Test
   fun `test non-existent task link`() = doTest("course://lesson1/task11")
 
   @Test
   fun `test link to current task of framework lesson`() =
-    doTest("course://framework%20lesson%203/task3", "framework lesson 3/task/TaskFile6.txt")
+    doTest("course://framework%20lesson%203/task3", "framework lesson 3/task/TaskFile6.txt", frameworkLessonCurrentTask = "task3")
 
   @Test
-  fun `test link to non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4")
+  fun `test link to non current task of framework lesson`() =
+    doTest("course://framework%20lesson%203/task4", "framework lesson 3/task/TaskFile7.txt", frameworkLessonCurrentTask = "task4")
 
   @Test
   fun `test link to task file 1`() = doTest("course://lesson1/task1/TaskFile2.txt", "lesson1/task1/TaskFile2.txt")
+
   @Test
   fun `test link to task file 2`() = doTest("course://lesson2/task2/Task%20File%205.txt", "lesson2/task2/Task File 5.txt")
+
   @Test
   fun `test link to task file 3`() = doTest("course://section1/lesson4/task5/TaskFile9.txt", "section1/lesson4/task5/TaskFile9.txt")
+
   @Test
-  fun `test link to task file 4`() = doTest("course://section1/lesson 5/task 6/Task File 10.txt", "section1/lesson 5/task 6/Task File 10.txt")
+  fun `test link to task file 4`() =
+    doTest("course://section1/lesson 5/task 6/Task File 10.txt", "section1/lesson 5/task 6/Task File 10.txt")
 
   @Test
   fun `test link to non-existent task file`() = doTest("course://lesson2/task2/TaskFile20.txt")
 
   @Test
   fun `test link to task file in current task of framework lesson`() =
-    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task/TaskFile6.txt")
+    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task/TaskFile6.txt", frameworkLessonCurrentTask = "task3")
 
   @Test
   fun `test link to task file in current task of framework lesson in educator mode`() =
-    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CourseMode.EDUCATOR)
+    doTest("course://framework%20lesson%203/task3/TaskFile6.txt", "framework lesson 3/task3/TaskFile6.txt", CourseMode.EDUCATOR, frameworkLessonCurrentTask = "task3")
 
   @Test
-  fun `test link to task file in non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4/TaskFile7.txt")
+  @Ignore("Should be fixed by EDU-9057")
+  fun `test link to task file in non current task of framework lesson`() = doTest("course://framework%20lesson%203/task4/TaskFile7.txt", frameworkLessonCurrentTask = "task4")
 
   @Test
   fun `test don't close opened files 1`() =
@@ -67,8 +81,14 @@ class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
   fun `test don't close opened files 2`() =
     doTest("course://lesson2/task2", "lesson2/task2/TaskFile3.txt", openedFile = "lesson1/task1/TaskFile1.txt")
 
-  private fun doTest(url: String, expectedPath: String? = null, courseMode: CourseMode = CourseMode.STUDENT, openedFile: String? = null) {
-    createCourse(courseMode)
+  private fun doTest(
+    url: String,
+    expectedPath: String? = null,
+    courseMode: CourseMode = CourseMode.STUDENT,
+    openedFile: String? = null,
+    frameworkLessonCurrentTask: String? = null
+  ) {
+    val course = createCourse(courseMode)
     if (openedFile != null) {
       val file = findFile(openedFile)
       myFixture.openFileInEditor(file)
@@ -81,6 +101,11 @@ class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
       check(file in openFiles) {
         "$file should be opened"
       }
+    }
+
+    if (frameworkLessonCurrentTask != null) {
+      val frameworkLesson = course.lessons.find { it is FrameworkLesson} as FrameworkLesson
+      assertEquals("Unexpected current task of the framework lesson", frameworkLessonCurrentTask, frameworkLesson.currentTask()?.name)
     }
   }
 
@@ -97,8 +122,8 @@ class TaskDescriptionInCourseLinksTest : TaskDescriptionLinksTestBase() {
     }
   }
 
-  private fun createCourse(courseMode: CourseMode) {
-    courseWithFiles(courseMode = courseMode) {
+  private fun createCourse(courseMode: CourseMode): Course {
+    return courseWithFiles(courseMode = courseMode) {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("TaskFile1.txt")

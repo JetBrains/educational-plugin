@@ -16,12 +16,13 @@ class CourseLink(link: String) : TaskDescriptionLink<ParsedInCourseLink<*>, Pars
     runInEdt {
       when (parsedLink) {
         is ParsedInCourseLink.ItemContainerDirectory -> OpenFileDescriptor(project, parsedLink.file).navigate(true)
-        is ParsedInCourseLink.TaskDirectory -> NavigationUtils.navigateToTask(project, parsedLink.item, closeOpenedFiles = false)
+        is ParsedInCourseLink.TaskDirectory -> NavigationUtils.navigateToTask(project, parsedLink.item, closeOpenedFiles = false, forceSpecificTaskInFrameworkLesson = true)
         is ParsedInCourseLink.FileInTask -> NavigationUtils.navigateToTask(
           project,
           parsedLink.item,
           closeOpenedFiles = false,
-          fileToActivate = parsedLink.file
+          fileToActivate = parsedLink.file,
+          forceSpecificTaskInFrameworkLesson = true
         )
       }
     }

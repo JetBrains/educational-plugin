@@ -696,6 +696,41 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
     )
 
   @Test
+  fun `navigation to framework lesson from outside opens file from current task`() {
+    val course = courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("outside.txt")
+        }
+      }
+      frameworkLesson {
+        eduTask("task1") {
+          taskFile("task1.txt", "task1")
+        }
+        eduTask("task2") {
+          taskFile("task2.txt", "task2")
+          taskFile("task1.txt", "task1")
+        }
+      }
+    }
+    val nonFrameworkTask1 = course.findTask("lesson1", "task1")
+    val frameworkTask1 = course.findTask("lesson2", "task1")
+    val frameworkTask2 = course.findTask("lesson2", "task2")
+
+    // for the framework lesson, assign the current task to be the 2nd
+    NavigationUtils.navigateToTask(project, frameworkTask2, forceSpecificTaskInFrameworkLesson = true)
+
+    // navigate outside framework lesson
+    NavigationUtils.navigateToTask(project, nonFrameworkTask1)
+
+    // navigate from outside framework lesson to framework lesson: navigation is forced to the current task, although the 1st is requested
+    NavigationUtils.navigateToTask(project, frameworkTask1)
+
+    // If the navigation correctly opens the 2nd task, it should open its first file ("task2.txt") in the editor
+    assertEquals("task2.txt", FileEditorManager.getInstance(project).selectedFiles.single().name)
+  }
+
+  @Test
   fun `navigation inside framework lesson from outside if specific task is forced must navigate to that task`() =
     testNavigateToFrameworkLessonFromOutside(
       forceSpecificTaskInFrameworkLesson = true,
