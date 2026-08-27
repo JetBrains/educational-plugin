@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.getTaskFile
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.testAction
 import org.junit.Test
 
@@ -36,8 +37,8 @@ class NavigateTaskTest : EduTestCase() {
 
   @Test
   fun `test last task`() = doNextTest(
-    initialTaskFile = TaskFileInfo(2, 4, "taskFile5.txt"),
-    expectedTaskFile = TaskFileInfo(2, 4, "taskFile5.txt")
+    initialTaskFile = TaskFileInfo(2, 6, "taskFile9.txt"),
+    expectedTaskFile = TaskFileInfo(2, 6, "taskFile9.txt")
   )
 
   @Test
@@ -68,6 +69,17 @@ class NavigateTaskTest : EduTestCase() {
   fun `test open the first task file`() = doNextTest(
     initialTaskFile = TaskFileInfo(2, 3, "taskFile4.txt"),
     expectedTaskFile = TaskFileInfo(2, 4, "taskFile5.txt"))
+
+  @Test
+  fun `navigate to task without visible task files`() {
+    val expectedTask = findTask(1, 4)
+
+    configureByTaskFile(2, 4, "taskFile5.txt")
+    testAction(NextTaskAction.ACTION_ID, shouldBeEnabled = true, shouldBeVisible = true)
+
+    assertNull(FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile)
+    assertSame(expectedTask, TaskToolWindowView.getInstance(project).currentTask)
+  }
 
   private fun doNextTest(initialTaskFile: TaskFileInfo, expectedTaskFile: TaskFileInfo) =
     doTest(NextTaskAction.ACTION_ID, initialTaskFile, expectedTaskFile)
@@ -116,6 +128,12 @@ class NavigateTaskTest : EduTestCase() {
           taskFile("taskFile5.txt", textWithPlaceholder)
           taskFile("taskFile6.txt", textWithPlaceholder)
           taskFile("taskFile7.txt")
+        }
+        eduTask {
+          taskFile("taskFile8.txt", visible = false, editable = false)
+        }
+        eduTask {
+          taskFile("taskFile9.txt")
         }
       }
     }

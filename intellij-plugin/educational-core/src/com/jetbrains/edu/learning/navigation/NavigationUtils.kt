@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.framework.FrameworkLessonManager
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.VisibleForTesting
 import javax.swing.tree.TreePath
 
@@ -234,12 +235,6 @@ object NavigationUtils {
     val taskFiles = task.taskFiles
     val taskDir = task.getDir(project.courseDir) ?: return null
 
-    if (taskFiles.isEmpty()) {
-      val selectingDir = task.findSourceDir(taskDir) ?: taskDir
-      ProjectView.getInstance(project).select(selectingDir, selectingDir, false)
-      return task
-    }
-
     // We need update dependencies before file opening to find out which placeholders are visible
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task)
 
@@ -263,9 +258,9 @@ object NavigationUtils {
     }
 
     ProjectView.getInstance(project).refresh()
-    if (fileToActivate != null) {
-      updateProjectView(project, fileToActivate)
-    }
+    val fileToSelect = fileToActivate ?: task.findSourceDir(taskDir) ?: taskDir
+    updateProjectView(project, fileToActivate, fileToSelect)
+    TaskToolWindowView.getInstance(project).currentTask = task
 
     selectFirstAnswerPlaceholder(project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
@@ -326,7 +321,8 @@ object NavigationUtils {
     }
     val firstTaskFile = getFirstTaskFile(taskDir, task)
     ProjectView.getInstance(project).refresh()
-    firstTaskFile?.let { updateProjectView(project, it) }
+    val fileToSelect = firstTaskFile ?: taskDir
+    updateProjectView(project, firstTaskFile, fileToSelect)
   }
 
   private fun selectFirstAnswerPlaceholder(project: Project) {
@@ -382,11 +378,13 @@ object NavigationUtils {
   }
 
   @RequiresEdt
-  private fun updateProjectView(project: Project, fileToActivate: VirtualFile) {
-    FileEditorManager.getInstance(project).openFile(fileToActivate, true)
+  private fun updateProjectView(project: Project, fileToActivate: VirtualFile?, fileToSelect: VirtualFile) {
+    if (fileToActivate != null) {
+      FileEditorManager.getInstance(project).openFile(fileToActivate, true)
+    }
     val viewPane = ProjectView.getInstance(project).currentProjectViewPane ?: return
     val tree = viewPane.tree
-    ProjectView.getInstance(project).selectCB(fileToActivate, fileToActivate, false).doWhenDone {
+    ProjectView.getInstance(project).selectCB(fileToSelect, fileToSelect, false).doWhenDone {
       val paths = TreeUtil.collectExpandedPaths(tree)
       val toCollapse = ArrayList<TreePath>()
       val selectedPath = tree.selectionPath
