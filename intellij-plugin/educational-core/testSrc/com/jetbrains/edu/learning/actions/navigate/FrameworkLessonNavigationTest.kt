@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTaskByEditor
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -195,7 +195,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTaskByEditor()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -251,7 +251,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTaskByEditor()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -374,7 +374,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       task.status = CheckStatus.Solved
       testAction(NextTaskAction.ACTION_ID)
 
-      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTaskByEditor()
       testAction(PreviousTaskAction.ACTION_ID)
     }
 
@@ -417,7 +417,7 @@ class FrameworkLessonNavigationTest : NavigationTestBase() {
       myFixture.type("fun bar() {}\n")
       testAction(PreviousTaskAction.ACTION_ID)
 
-      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+      TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTaskByEditor()
       testAction(NextTaskAction.ACTION_ID)
     }
 

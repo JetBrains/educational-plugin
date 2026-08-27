@@ -25,7 +25,7 @@ import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.toolWindow.ToolWindowHeadlessManagerImpl
 import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.coursecreator.yaml.createConfigFiles
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTaskByEditor
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -177,7 +177,7 @@ abstract class EduTestCase : BasePlatformTestCase() {
     val file = myFixture.findFileInTempDir(fileName)
     myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
-    TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+    TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTaskByEditor()
   }
 
   override fun getTestDataPath(): String {

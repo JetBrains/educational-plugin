@@ -113,8 +113,12 @@ object UpdateUtils {
       val currentTask = project.getCurrentTask()
       val course = project.course ?: return@invokeLater
 
-      if (currentTask != null) {
-        NavigationUtils.navigateToTask(project, currentTask)
+      // find the updated task with the same id
+      // TODO in case the task is deleted, search for the next task, next lesson, etc.
+      val newCurrentTask = course.allTasks.find { it.id == currentTask?.id }
+
+      if (newCurrentTask != null) {
+        NavigationUtils.navigateToTask(project, newCurrentTask)
       }
       else {
         NavigationUtils.openFirstTask(course, project)

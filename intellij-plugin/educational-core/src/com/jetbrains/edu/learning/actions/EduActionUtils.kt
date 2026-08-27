@@ -15,6 +15,7 @@ import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.ExecutionException
@@ -46,6 +47,13 @@ object EduActionUtils {
   }
 
   fun Project.getCurrentTask(): Task? {
+    return TaskToolWindowView.getInstance(this).currentTask
+  }
+
+  /**
+   * Examines the currently edited file to detect the task it belongs to
+   */
+  fun Project.getCurrentTaskByEditor(): Task? {
     return FileEditorManager.getInstance(this).selectedFiles
       .map { it.getContainingTask(this) }
       .firstOrNull { it != null }

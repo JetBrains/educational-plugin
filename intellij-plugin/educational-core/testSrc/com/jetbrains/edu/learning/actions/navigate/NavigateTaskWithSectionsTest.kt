@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.actions.navigate
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTaskByEditor
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
 import com.jetbrains.edu.learning.getTaskFile
@@ -191,6 +191,6 @@ class NavigateTaskWithSectionsTest : EduTestCase() {
     val file = myFixture.findFileInTempDir(fileName)
     myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
-    TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTask()
+    TaskToolWindowView.getInstance(myFixture.project).currentTask = myFixture.project.getCurrentTaskByEditor()
   }
 }

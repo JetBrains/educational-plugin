@@ -27,7 +27,7 @@ import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTaskByEditor
 import com.jetbrains.edu.learning.ai.TranslationProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TermsProjectSettings
 import com.jetbrains.edu.learning.ai.terms.TheoryLookupSettings
@@ -304,7 +304,7 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     val notificationsPanel = TaskToolWindowNotificationsPanel()
     toolWindow.component.add(notificationsPanel, BorderLayout.NORTH)
 
-    currentTask = project.getCurrentTask()
+    currentTask = project.getCurrentTaskByEditor()
     updateTabs(currentTask)
 
     val connection = project.messageBus.connect(contentDisposable)

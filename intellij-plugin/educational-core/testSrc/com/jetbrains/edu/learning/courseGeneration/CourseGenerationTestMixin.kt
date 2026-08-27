@@ -10,7 +10,7 @@ import com.intellij.platform.backend.observation.Observation
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
-import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTask
+import com.jetbrains.edu.learning.actions.EduActionUtils.getCurrentTaskByEditor
 import com.jetbrains.edu.learning.assertContentsEqual
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -47,7 +47,7 @@ interface CourseGenerationTestMixin<Settings : EduProjectSettings> {
     }
     // Important condition if you are checking workflow when a user declined user agreement
     if (project.isEduProject()) {
-      TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTask()
+      TaskToolWindowView.getInstance(project).currentTask = project.getCurrentTaskByEditor()
     }
 
     return project
