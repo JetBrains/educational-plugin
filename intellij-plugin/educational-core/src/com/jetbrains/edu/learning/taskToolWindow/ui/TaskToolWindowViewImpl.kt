@@ -99,15 +99,19 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     // TODO: move it in some separate method
     set(value) {
       if (currentTask !== null && currentTask === value) return
-      tabManager?.updateTaskDescription(value)
-      checkPanel?.isVisible = value != null
-      updateCheckPanel(value)
-      updateNavigationPanel(value)
-      updateHeaders(value)
-      updateTabs(value)
+      updateCurrentTaskUi(value)
       EduCounterUsageCollector.viewEvent(value)
       field = value
     }
+
+  private fun updateCurrentTaskUi(value: Task?) {
+    tabManager?.updateTaskDescription(value)
+    checkPanel?.isVisible = value != null
+    updateCheckPanel(value)
+    updateNavigationPanel(value)
+    updateHeaders(value)
+    updateTabs(value)
+  }
 
   override fun updateTabs(task: Task?) {
     val taskToUpdate = task ?: currentTask
@@ -304,8 +308,13 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     val notificationsPanel = TaskToolWindowNotificationsPanel()
     toolWindow.component.add(notificationsPanel, BorderLayout.NORTH)
 
-    currentTask = project.getCurrentTaskByEditor()
-    updateTabs(currentTask)
+    val newCurrentTask = currentTask ?: project.getCurrentTaskByEditor()
+    if (currentTask === newCurrentTask) {
+      updateCurrentTaskUi(newCurrentTask)
+    }
+    else {
+      currentTask = newCurrentTask // updates UI automatically
+    }
 
     val connection = project.messageBus.connect(contentDisposable)
     connection.subscribe(LafManagerListener.TOPIC, LafManagerListener {
