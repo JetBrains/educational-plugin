@@ -19,6 +19,8 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add lesson item no trailing comma`() = addLastLesson("""
     [workspace]
 
+    resolver = "3"
+
     members = [
         "lesson1/*/"
     ]
@@ -28,6 +30,8 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]    
   """, """
     [workspace]
+    
+    resolver = "3"
     
     members = [
         "lesson1/*/",
@@ -43,6 +47,8 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add lesson item trailing comma`() = addLastLesson("""
     [workspace]
 
+    resolver = "3"
+
     members = [
         "lesson1/*/",
     ]
@@ -52,6 +58,8 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]
   """, """
     [workspace]
+    
+    resolver = "3"
     
     members = [
         "lesson1/*/",
@@ -67,6 +75,8 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add lesson comments`() = addLastLesson("""
     [workspace]
 
+    resolver = "3"
+
     members = [
         "lesson1/*/" # very useful comment
     ]
@@ -76,6 +86,8 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]
   """, """
     [workspace]
+    
+    resolver = "3"
     
     members = [
         "lesson1/*/", # very useful comment
@@ -91,6 +103,8 @@ class RsCreateLessonTest : RsActionTestBase() {
   fun `test add lesson extra spaces`() = addLastLesson("""
     [workspace]
 
+    resolver = "3"
+
     members = [
         "lesson1/*/" ,
     ]
@@ -100,6 +114,8 @@ class RsCreateLessonTest : RsActionTestBase() {
     ]
   """, """
     [workspace]
+    
+    resolver = "3"
     
     members = [
         "lesson1/*/" ,
@@ -125,6 +141,8 @@ class RsCreateLessonTest : RsActionTestBase() {
       additionalFile(CargoConstants.MANIFEST_FILE, """
         [workspace]
 
+        resolver = "3"
+
         members = [
             "section1/lesson1/*/",
         ]
@@ -139,6 +157,8 @@ class RsCreateLessonTest : RsActionTestBase() {
 
     checkCargoToml("""
       [workspace]
+      
+      resolver = "3"
       
       members = [
           "section1/lesson1/*/",
@@ -161,6 +181,8 @@ class RsCreateLessonTest : RsActionTestBase() {
       additionalFile("Cargo.toml", """
         [workspace]
 
+        resolver = "3"
+
         members = [
         ]
 
@@ -174,6 +196,8 @@ class RsCreateLessonTest : RsActionTestBase() {
 
     checkCargoToml("""
       [workspace]
+      
+      resolver = "3"
       
       members = [
           "section1/lesson1/*/",
@@ -200,6 +224,8 @@ class RsCreateLessonTest : RsActionTestBase() {
       additionalFile("Cargo.toml", """
         [workspace]
 
+        resolver = "3"
+
         members = [
             "lesson1/*/",
             "lesson3/*/"
@@ -215,6 +241,8 @@ class RsCreateLessonTest : RsActionTestBase() {
 
     checkCargoToml("""
       [workspace]
+
+      resolver = "3"
 
       members = [
           "lesson1/*/",
@@ -240,6 +268,8 @@ class RsCreateLessonTest : RsActionTestBase() {
       additionalFile("Cargo.toml", """
         [workspace]
 
+        resolver = "3"
+
         members = [
             "lesson1/*/",
         ]
@@ -256,6 +286,8 @@ class RsCreateLessonTest : RsActionTestBase() {
 
     checkCargoToml("""
         [workspace]
+
+        resolver = "3"
 
         members = [
             "lesson1/*/",
@@ -279,6 +311,8 @@ class RsCreateLessonTest : RsActionTestBase() {
       additionalFile("Cargo.toml", """
         [workspace]
 
+        resolver = "3"
+
         members = [
             "lesson1/*/",
         ]
@@ -295,6 +329,8 @@ class RsCreateLessonTest : RsActionTestBase() {
 
     checkCargoToml("""
         [workspace]
+
+        resolver = "3"
 
         members = [
             "lesson1/*/",

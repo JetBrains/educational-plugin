@@ -33,6 +33,8 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsLanguageEnvironment>() {
       file("Cargo.toml", """
           [workspace]
           
+          resolver = "3"
+          
           members = [
               "lesson1/*/",
           ]

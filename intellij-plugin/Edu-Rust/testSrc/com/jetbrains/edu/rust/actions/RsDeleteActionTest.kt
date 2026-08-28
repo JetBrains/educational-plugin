@@ -16,6 +16,8 @@ class RsDeleteActionTest : RsActionTestBase() {
   fun `test delete first lesson`() = doTest(createRustCourse(), "lesson1", """
       [workspace]
       
+      resolver = "3"
+      
       members = [
           "section1/lesson2/*/",
           "section1/lesson3/*/" ,
@@ -30,6 +32,8 @@ class RsDeleteActionTest : RsActionTestBase() {
   @Test
   fun `test delete last lesson`() = doTest(createRustCourse(), "lesson4", """
       [workspace]
+      
+      resolver = "3"
       
       members = [
           "lesson1/*/",
@@ -61,6 +65,8 @@ class RsDeleteActionTest : RsActionTestBase() {
       additionalFile("Cargo.toml", """
         [workspace]
         
+        resolver = "3"
+        
         members = [
             "lesson1/*/",
             "lesson2/*/",
@@ -74,6 +80,8 @@ class RsDeleteActionTest : RsActionTestBase() {
 
     doTest(course, "lesson2", """
         [workspace]
+        
+        resolver = "3"
         
         members = [
             "lesson1/*/",
@@ -89,6 +97,8 @@ class RsDeleteActionTest : RsActionTestBase() {
   fun `test delete section`() = doTest(createRustCourse(), "section1", """
       [workspace]
       
+      resolver = "3"
+      
       members = [
           "lesson1/*/",
           "lesson4/*/"
@@ -102,6 +112,8 @@ class RsDeleteActionTest : RsActionTestBase() {
   @Test
   fun `test delete last task in lesson`() = doTest(createRustCourse(), "lesson1/task1", """
       [workspace]
+      
+      resolver = "3"
       
       members = [
           "section1/lesson2/*/",
@@ -118,6 +130,8 @@ class RsDeleteActionTest : RsActionTestBase() {
   fun `test delete non-last task in lesson`() = doTest(createRustCourse(), "lesson4/task5", """
       [workspace]
       
+      resolver = "3"
+      
       members = [
           "lesson1/*/",
           "section1/lesson2/*/",
@@ -133,6 +147,8 @@ class RsDeleteActionTest : RsActionTestBase() {
   @Test
   fun `test delete empty lesson`() = doTest(createRustCourse(), "lesson5", """
       [workspace]
+      
+      resolver = "3"
       
       members = [
           "lesson1/*/",
@@ -179,6 +195,8 @@ class RsDeleteActionTest : RsActionTestBase() {
       lesson("lesson5")
       additionalFile("Cargo.toml", """
         [workspace]
+        
+        resolver = "3"
         
         members = [
             "lesson1/*/",
