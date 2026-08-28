@@ -56,7 +56,6 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
   protected fun doTest(): List<DynamicNode> {
     val pluginPath: Path = resolvePluginPath()
     val courseLocal = resolveCourse()
-    val workspaceDir = Files.createTempDirectory("validateCourse-workspace")
 
     val context = Starter.newContext(
       testInfo.hyphenateWithClass(),
@@ -73,6 +72,7 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
       }
     }
 
+    val workspaceDir = Files.createTempDirectory(context.paths.testHome,"validateCourse-workspace")
     val reportFile = context.paths.testHome.resolve("checkTestReport/validation-report.json")
 
     // with --local option, the course opens twice, see CourseSource.kt line 6
