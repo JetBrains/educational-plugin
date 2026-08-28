@@ -1,39 +1,39 @@
 package com.jetbrains.edu.jvm.gradle
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.project.waitForSmartMode
+import com.intellij.openapi.startup.ProjectActivity
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.setupGradleProject
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.updateGradleSettings
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.invokeLater
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class GradleProjectActivity : StartupActivity.DumbAware {
+class GradleProjectActivity : ProjectActivity {
 
-  override fun runActivity(project: Project) {
+  override suspend fun execute(project: Project) {
     if (project.isDisposed || !project.isEduProject()) {
       return
     }
     if (EduGradleUtils.isConfiguredWithGradle(project)) {
-      project.invokeLater {
+      withContext(Dispatchers.EDT) {
         updateGradleSettings(project)
       }
     }
 
-    DumbService.getInstance(project).runWhenSmart {
-      val taskManager = StudyTaskManager.getInstance(project)
-      val course = taskManager.course
-      if (course == null) {
-        LOG.warn("Opened project is with null course")
-        return@runWhenSmart
-      }
+    project.waitForSmartMode()
 
-      if (EduGradleUtils.isConfiguredWithGradle(project)) {
-        setupGradleProject(project)
-      }
+    if (StudyTaskManager.getInstance(project).course == null) {
+      LOG.warn("Opened project is with null course")
+      return
+    }
+
+    if (EduGradleUtils.isConfiguredWithGradle(project)) {
+      setupGradleProject(project)
     }
   }
 
