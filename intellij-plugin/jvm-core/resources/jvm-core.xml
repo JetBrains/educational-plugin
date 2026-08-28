@@ -17,7 +17,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="com.jetbrains.edu.jvm.gradle.GradleStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.edu.jvm.gradle.GradleProjectActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

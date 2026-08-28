@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.invokeLater
 
-class GradleStartupActivity : StartupActivity.DumbAware {
+class GradleProjectActivity : StartupActivity.DumbAware {
 
   override fun runActivity(project: Project) {
     if (project.isDisposed || !project.isEduProject()) {
@@ -38,6 +38,6 @@ class GradleStartupActivity : StartupActivity.DumbAware {
   }
 
   companion object {
-    private val LOG = Logger.getInstance(GradleStartupActivity::class.java)
+    private val LOG = Logger.getInstance(GradleProjectActivity::class.java)
   }
 }
