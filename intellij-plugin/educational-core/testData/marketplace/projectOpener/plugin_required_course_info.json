@@ -5,8 +5,8 @@
       "plugins" : [
         {
           "id" : "1",
-          "name" : "Introduction to Python",
-          "description" : "Introduction course to Python",
+          "name" : "Course Requiring A Plugin",
+          "description" : "Course which requires a plugin to be installed",
           "downloads" : 2,
           "rating" : 5.0,
           "authors": [
@@ -15,7 +15,7 @@
             }
           ],
           "fields" : {
-            "programmingLanguageId" : "Python",
+            "programmingLanguageId" : "FakeGradleBasedLanguage",
             "language" : "en"
           },
           "link" : "courseLink",

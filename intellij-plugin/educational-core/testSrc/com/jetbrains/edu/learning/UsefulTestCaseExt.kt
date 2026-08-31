@@ -12,6 +12,8 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.replaceService
 import com.intellij.util.application
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
+import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
@@ -44,6 +46,18 @@ inline fun <reified T: EduConfigurator<*>> UsefulTestCase.registerConfigurator(
   extension.environment = environment
   extension.pluginDescriptor = testPluginDescriptor
   EducationalExtensionPoint.EP_NAME.point.registerExtension(extension, testRootDisposable)
+}
+
+inline fun <reified T : CourseCompatibilityProvider> UsefulTestCase.registerCompatibilityProvider(
+  language: Language,
+  environment: String = DEFAULT_ENVIRONMENT
+) {
+  val extension = CourseCompatibilityProviderEP()
+  extension.language = language.id
+  extension.implementationClass = T::class.java.name
+  extension.environment = environment
+  extension.pluginDescriptor = testPluginDescriptor
+  CourseCompatibilityProviderEP.EP_NAME.point.registerExtension(extension, testRootDisposable)
 }
 
 /**

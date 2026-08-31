@@ -2,18 +2,17 @@ package com.jetbrains.edu.learning.marketplace
 
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.MockProjectOpener
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.compatibility.FakeCourseCompatibilityProvider
+import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.ext.CourseValidationResult
 import com.jetbrains.edu.learning.courseFormat.ext.PluginsRequired
 import com.jetbrains.edu.learning.courseGeneration.ProjectOpener
-import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.api.MockMarketplaceConnector
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenCourseRequest
 import com.jetbrains.edu.learning.marketplace.courseGeneration.MarketplaceOpenInIdeRequestHandler
 import com.jetbrains.edu.learning.messages.EduCoreBundle
-import com.jetbrains.edu.learning.onError
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -77,8 +76,13 @@ class MarketplaceOpenInIdeTest : EduTestCase() {
 
   @Test
   fun `test language supported with plugin`() {
-    configureCoursesResponse("python_course_info.json")
-    doLanguageValidationTest {  assertTrue("actual: $it", it is PluginsRequired) }
+    registerCompatibilityProvider<FakeCourseCompatibilityProvider>(FakeGradleBasedLanguage)
+    configureCoursesResponse("plugin_required_course_info.json")
+    doLanguageValidationTest {
+      assertTrue("actual: $it", it is PluginsRequired)
+      val requiredPlugins = (it as PluginsRequired).pluginIds.map { plugin -> plugin.stringId }
+      assertEquals(listOf(FakeCourseCompatibilityProvider.FAKE_LANGUAGE_PLUGIN.stringId), requiredPlugins)
+    }
   }
 
   @Test
