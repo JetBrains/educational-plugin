@@ -11,6 +11,7 @@ class CourseChangeApplier(project: Project) : ItemContainerChangeApplier<Course>
     existingItem.description = deserializedItem.description
     existingItem.languageCode = deserializedItem.languageCode
     existingItem.environment = deserializedItem.environment
+    existingItem.environmentSettings = deserializedItem.environmentSettings
     existingItem.solutionsHidden = deserializedItem.solutionsHidden
     existingItem.vendor = deserializedItem.vendor
     existingItem.feedbackLink = deserializedItem.feedbackLink

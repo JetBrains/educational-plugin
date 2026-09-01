@@ -282,4 +282,31 @@ class YamlChangeApplierTest : YamlTestCase() {
     loadItemFromConfig(lesson, yamlContent)
     assertFalse(lesson.isTemplateBased)
   }
+
+  @Test
+  fun `test change environment_settings`() {
+    val course = courseWithFiles(courseMode = CourseMode.EDUCATOR) {
+      environmentSetting("key1", "value1")
+      environmentSetting("key2", "value2")
+      environmentSetting("key3", "value3")
+    }
+
+    val yamlContent = """
+      title: Test Course
+      language: Russian
+      environment_settings:
+        key1: value1-changed
+        key3: value3
+        ket4: value4
+      summary: My awesome summary
+      programming_language: Plain text
+      solutions_hidden: true
+    """.trimIndent()
+
+    loadItemFromConfig(course, yamlContent)
+    assertEquals(
+      mapOf("key1" to "value1-changed", "key3" to "value3", "ket4" to "value4"),
+      course.environmentSettings
+    )
+  }
 }
