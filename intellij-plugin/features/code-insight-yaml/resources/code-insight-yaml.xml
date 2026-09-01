@@ -56,6 +56,16 @@
                      groupKey="inspection.yaml.group.key"
                      groupPathKey="inspection.group.path.key"
                      enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.jetbrains.edu.yaml.inspections.EnvironmentSettingValueInspection"
+                     key="inspection.environment.setting.value.display.name"
+                     bundle="messages.EduYAMLBundle"/>
+
+    <localInspection language="yaml"
+                     groupBundle="messages.EduCoreBundle"
+                     groupKey="inspection.yaml.group.key"
+                     groupPathKey="inspection.group.path.key"
+                     enabledByDefault="true"
                      level="ERROR"
                      implementationClass="com.jetbrains.edu.yaml.inspections.DuplicateAdditionalFilesInspection"
                      key="inspection.duplicate.additional.file.display.name"
