@@ -1,0 +1,12 @@
+type: marketplace
+title: KotlinCourseTest
+language: English
+programming_language: Kotlin
+content:
+  - lesson1
+  - lesson2
+additional_files:
+  - name: build.gradle
+  - name: settings.gradle
+  - name: gradle/wrapper/gradle-wrapper.properties
+yaml_version: 6
