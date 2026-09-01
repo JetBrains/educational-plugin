@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEv
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
+import com.jetbrains.edu.learning.configuration.DefaultEnvironmentSettings
 import com.jetbrains.edu.scala.isScalaPluginCompatible
 import com.jetbrains.edu.scala.sbt.ScalaSbtCourseBuilder.Companion.BUILD_SBT
 import com.jetbrains.edu.scala.sbt.checker.ScalaSbtTaskCheckerProvider
@@ -68,5 +69,5 @@ class ScalaSbtConfigurator : EduConfigurator<JdkLanguageEnvironment> {
     const val MAIN_SCALA = "Main.scala"
   }
 
-  override fun getEnvironmentSettings(project: Project): Map<String, String> = jvmEnvironmentSettings(project)
+  override fun getEnvironmentSettings(project: Project): DefaultEnvironmentSettings = jvmEnvironmentSettings(project)
 }

@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProvider
 import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
+import com.jetbrains.edu.learning.configuration.with
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -174,10 +175,8 @@ private fun Course.configuratorCompatibility(): CourseCompatibility? {
 
 @RequiresEdt
 fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
-  // The order is important here since it should preserve old values.
-  // Otherwise, it may override values provided by users manually (via `course-info.yaml` file, for example)
-  val newEnvironmentSettings = configurator?.getEnvironmentSettings(project).orEmpty() + environmentSettings
-  environmentSettings = newEnvironmentSettings
+  val defaultEnvironmentSettings = configurator?.getEnvironmentSettings(project).orEmpty()
+  environmentSettings = environmentSettings.with(defaultEnvironmentSettings)
   YamlFormatSynchronizer.saveItem(this)
 }
 

@@ -224,7 +224,17 @@ interface EduConfigurator<Settings : EduProjectSettings> {
   val defaultPlaceholderText: String
     get() = CCUtils.DEFAULT_PLACEHOLDER_TEXT
 
-  fun getEnvironmentSettings(project: Project): Map<String, String> = mapOf()
+  /**
+   * Returns the default values of environment settings suitable for the project.
+   * Some values may be updated by the teacher, while others are course-specific and must be preserved,
+   * as specified by [EnvironmentSettingValueType].
+   *
+   * For example, this method might return the JVM version used in the project, but the teacher could lower the minimum required version.
+   * Conversely, the teacher should not be able to change the Gradle version directly here
+   * because it is defined in the Gradle properties file.
+   * To use a different Gradle version, the teacher should update that file instead of overriding it in the environment settings.
+   */
+  fun getEnvironmentSettings(project: Project): DefaultEnvironmentSettings = mapOf()
 }
 
 fun EduConfigurator<*>.courseFileAttributes(project: Project, file: VirtualFile): CourseFileAttributes =

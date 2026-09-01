@@ -9,7 +9,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
+import com.jetbrains.edu.learning.configuration.DefaultEnvironmentSettings
+import com.jetbrains.edu.learning.configuration.EnvironmentSettingValue
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
+import com.jetbrains.edu.learning.configuration.with
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
@@ -62,15 +65,11 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkLanguageEnvironment> 
   override val pluginRequirements: List<PluginId>
     get() = listOf(PluginId.getId("com.intellij.gradle"), PluginId.getId("JUnit"))
 
-  override fun getEnvironmentSettings(project: Project): Map<String, String> {
+  override fun getEnvironmentSettings(project: Project): DefaultEnvironmentSettings {
     val jvmSettings = jvmEnvironmentSettings(project)
     val gradleVersion = detectGradleVersion(project.courseDir)
 
-    return jvmSettings + mapOf(ENV_SETTINGS_GRADLE_VERSION to gradleVersion?.version).filterNullValues()
-  }
-
-  private fun <K, V> Map<K, V?>.filterNullValues(): Map<K, V> {
-    return mapNotNull { (key, value) -> if (value == null) null else key to value }.toMap()
+    return jvmSettings.with(ENV_SETTINGS_GRADLE_VERSION to gradleVersion?.let { EnvironmentSettingValue.course(it.version) })
   }
 
   companion object {

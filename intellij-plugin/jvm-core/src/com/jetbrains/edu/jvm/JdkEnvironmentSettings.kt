@@ -3,6 +3,9 @@ package com.jetbrains.edu.jvm
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.LanguageLevelProjectExtension
+import com.jetbrains.edu.learning.configuration.DefaultEnvironmentSettings
+import com.jetbrains.edu.learning.configuration.EnvironmentSettingValue
+import com.jetbrains.edu.learning.configuration.defaultEnvironmentSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import org.gradle.util.GradleVersion
@@ -18,9 +21,10 @@ val Course.minJvmSdkVersion: ParsedJavaVersion
     else -> ParsedJavaVersion.fromStringLanguageLevel(environmentSettings[JVM_LANGUAGE_LEVEL])
   }
 
-fun jvmEnvironmentSettings(project: Project): Map<String, String> = mapOf(
-  JVM_LANGUAGE_LEVEL to LanguageLevelProjectExtension.getInstance(project).languageLevel.toString()
-)
+fun jvmEnvironmentSettings(project: Project): DefaultEnvironmentSettings {
+  val languageLevel: String = LanguageLevelProjectExtension.getInstance(project).languageLevel.toString()
+  return defaultEnvironmentSettings(JVM_LANGUAGE_LEVEL to EnvironmentSettingValue.user(languageLevel))
+}
 
 private fun guessCCMinJdkVersion(): JavaSdkVersion {
   val defaultGradleVersion = GradleVersion.current()
