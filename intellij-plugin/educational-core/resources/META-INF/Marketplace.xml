@@ -41,6 +41,9 @@
     <action id="Educational.Student.SubmissionsServiceChangeHost"
             class="com.jetbrains.edu.learning.marketplace.changeHost.SubmissionsServiceChangeHostAction"
             internal="true"/>
+    <action id="Educational.Student.LearningCenterChangeHost"
+            class="com.jetbrains.edu.learning.marketplace.changeHost.LearningCenterChangeHostAction"
+            internal="true"/>
     <action id="Educational.Student.ReportCommunitySolution"
             class="com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction"
             icon="AllIcons.Actions.Report">

@@ -549,7 +549,7 @@ class MarketplaceSubmissionsConnector {
     }
   }
 
-  suspend fun getLicenseJWT(): Result<String, String> {
+  suspend fun getUserJWT(): Result<String, String> {
     if (!isJBALoggedIn()) {
       return Err("User is not logged in")
     }
