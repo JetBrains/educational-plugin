@@ -8,10 +8,14 @@ import com.jetbrains.edu.learning.courseFormat.CourseMode.STUDENT
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.findTask
+import com.jetbrains.edu.learning.marketplace.certificate.CourseCertificateManager
+import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.socialMedia.linkedIn.LinkedInPluginConfigurator
 import com.jetbrains.edu.socialMedia.linkedIn.LinkedInSettings
 import com.jetbrains.edu.socialMedia.x.XPluginConfigurator
 import com.jetbrains.edu.socialMedia.x.XSettings
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.verify
 import org.junit.Test
 import java.nio.file.Path
@@ -146,6 +150,28 @@ class SocialMediaMultiplePostActionTest : SocialMediaPostActionTestBase() {
     assertFalse(isDialogShown)
     assertTrue(SocialMediaPostManager.needToAskedToPost(course.id))
 
+    verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
+    verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
+  }
+
+  @Test
+  fun `test do not post for courses with certification`() {
+    // given
+    val course = createEduCourse()
+    val currentTask = course.findTask("lesson1", "task1")
+
+    // Such courses have their own dialog, see `CourseCertificateCheckListener`
+    val certificateManager = mockService<CourseCertificateManager>(project)
+    coEvery { certificateManager.hasCertification() } returns true
+
+    // when
+    val isDialogShown = launchCheckAction(currentTask)
+
+    // then
+    assertFalse(isDialogShown)
+    assertTrue(SocialMediaPostManager.needToAskedToPost(course.id))
+
+    coVerify(exactly = 1) { certificateManager.hasCertification() }
     verify(exactly = 0) { mockXConnector.tweet(any(), any()) }
     verify(exactly = 0) { mockLinkedInConnector.createPostWithMedia(any(), any(), any()) }
   }

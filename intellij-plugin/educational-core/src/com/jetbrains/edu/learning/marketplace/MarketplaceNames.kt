@@ -19,3 +19,5 @@ const val SUBMISSIONS_SERVICE_PRODUCTION_URL = "https://educational-service.labs
 const val SUBMISSIONS_SERVICE_HOST_PROPERTY = "submission.service.host"
 const val LEARNING_CENTER_PRODUCTION_URL = "https://academy.jetbrains.com"
 const val LEARNING_CENTER_STAGING_URL = "https://staging.academy.labs.jb.gg"
+
+const val LEARNING_CENTER_CERTIFICATE_PATH = "/profile"

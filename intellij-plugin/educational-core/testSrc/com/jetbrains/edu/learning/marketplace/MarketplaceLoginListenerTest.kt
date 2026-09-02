@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceLoginListener
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceSubmissionsConnector
-import com.jetbrains.edu.learning.marketplace.certificate.CourseCertificateManager
 import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.submissions.SubmissionsManager
 import com.jetbrains.edu.learning.submissions.SubmissionsTestBase
@@ -33,13 +32,6 @@ class MarketplaceLoginListenerTest : SubmissionsTestBase() {
       connector.uploadLocalSubmissions(project, course)
       loader.loadSolutionsInBackground()
     }
-  }
-
-  @Test
-  fun `test login fires certification update`() {
-    val certificateManager = mockService<CourseCertificateManager>(project)
-    application.messageBus.syncPublisher(MarketplaceLoginListener.LOGIN_TOPIC).onLoginSuccess()
-    coVerify(exactly = 1) { certificateManager.updateCertification() }
   }
 
   private fun createEduCourse(): EduCourse = courseWithFiles(

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.socialMedia
 
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.jetbrains.edu.learning.EduActionTestCase
@@ -21,6 +22,8 @@ import com.jetbrains.edu.socialMedia.x.api.TweetData
 import com.jetbrains.edu.socialMedia.x.api.TweetResponse
 import com.jetbrains.edu.socialMedia.x.create
 import io.mockk.every
+import kotlinx.coroutines.job
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class SocialMediaPostActionTestBase : EduActionTestCase() {
 
@@ -43,16 +46,23 @@ abstract class SocialMediaPostActionTestBase : EduActionTestCase() {
     val currentTask = task.lesson.asSafely<FrameworkLesson>()?.currentTask()
     NavigationUtils.navigateToTask(project, task, currentTask)
 
-    var isDialogShown = false
+    val isDialogShown = AtomicBoolean()
     withMockSuggestToPostDialogUI(object : SuggestToPostDialogUI {
       override fun showAndGet(): Boolean {
-        isDialogShown = true
+        isDialogShown.set(true)
         return true
       }
     }) {
       testAction(CheckAction(task.getUICheckLabel()))
+      waitForPostSuggestion()
     }
 
-    return isDialogShown
+    return isDialogShown.get()
+  }
+
+  private fun waitForPostSuggestion() {
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    val job = SocialMediaPostManager.getInstance().scope.coroutineContext.job
+    PlatformTestUtil.waitWhileBusy { job.children.any() }
   }
 }

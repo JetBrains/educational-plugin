@@ -8,6 +8,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
 import com.intellij.util.xmlb.annotations.XCollection
 import com.jetbrains.edu.learning.EduTestAware
+import kotlinx.coroutines.CoroutineScope
 import org.jetbrains.annotations.TestOnly
 
 /**
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.TestOnly
  */
 @Service(Service.Level.APP)
 @State(name = "SocialMediaPostManager", storages = [Storage("other.xml")])
-class SocialMediaPostManager : SimplePersistentStateComponent<SocialMediaPostManager.State>(State()), EduTestAware {
+class SocialMediaPostManager(val scope: CoroutineScope) : SimplePersistentStateComponent<SocialMediaPostManager.State>(State()), EduTestAware {
 
   @TestOnly
   override fun cleanUpState() {

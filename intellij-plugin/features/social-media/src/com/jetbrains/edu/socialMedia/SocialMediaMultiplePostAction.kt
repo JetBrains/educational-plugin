@@ -1,5 +1,6 @@
 package com.jetbrains.edu.socialMedia
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -10,12 +11,16 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.isPreview
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.marketplace.certificate.CourseCertificateManager
 import com.jetbrains.edu.learning.runInBackground
 import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector
 import com.jetbrains.edu.socialMedia.linkedIn.LinkedInPluginConfigurator
 import com.jetbrains.edu.socialMedia.messages.EduSocialMediaBundle
 import com.jetbrains.edu.socialMedia.suggestToPostDialog.createSuggestToPostDialogUI
 import com.jetbrains.edu.socialMedia.x.XPluginConfigurator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
@@ -47,25 +52,32 @@ class SocialMediaMultiplePostAction : CheckListener {
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    val course = task.course
-    // It doesn't make sense to suggest posting to social media in educator mode or for preview course
-    if (!course.isStudy || course.isPreview) return
-    if (result.status != CheckStatus.Solved) return
+    SocialMediaPostManager.getInstance().scope.launch {
+      val course = task.course
+      // It doesn't make sense to suggest posting to social media in educator mode or for preview course
+      if (!course.isStudy || course.isPreview) return@launch
+      if (result.status != CheckStatus.Solved) return@launch
 
-    val courseId = course.id
-    if (!SocialMediaPostManager.needToAskedToPost(courseId)) return
+      val courseId = course.id
+      if (!SocialMediaPostManager.needToAskedToPost(courseId)) return@launch
 
-    val previousStatus = PreviousTaskStatusService.getInstance(project).getPreviousStatus(task) ?: return
-    val activeConfigurators = listOf(XPluginConfigurator.EP_NAME, LinkedInPluginConfigurator.EP_NAME)
-      .flatMap { it.extensionList }
-      .filter { it.askToPost(project, task, previousStatus) }
-    if (activeConfigurators.all { !it.settings.askToPost }) return
-    if (activeConfigurators.isEmpty()) return
+      val previousStatus = PreviousTaskStatusService.getInstance(project).getPreviousStatus(task) ?: return@launch
+      val activeConfigurators = listOf(XPluginConfigurator.EP_NAME, LinkedInPluginConfigurator.EP_NAME)
+        .flatMap { it.extensionList }
+        .filter { it.askToPost(project, task, previousStatus) }
+      if (activeConfigurators.all { !it.settings.askToPost }) return@launch
+      if (activeConfigurators.isEmpty()) return@launch
 
-    createDialogAndShow(project, activeConfigurators, task)
+      // Courses that provide a certificate have their own dialog, see `CourseCertificateManager`
+      if (CourseCertificateManager.getInstance(project).hasCertification()) return@launch
 
-    SocialMediaPostManager.setAskedToPost(courseId)
-    sendStatistics(course)
+      withContext(Dispatchers.EDT) {
+        createDialogAndShow(project, activeConfigurators, task)
+
+        SocialMediaPostManager.setAskedToPost(courseId)
+        sendStatistics(course)
+      }
+    }
   }
 }
 
