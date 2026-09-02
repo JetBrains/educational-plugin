@@ -18,7 +18,7 @@ class LicenseConnectorTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
     val marketplaceSubmissionsConnector = mockService<MarketplaceSubmissionsConnector>(application)
-    coEvery { marketplaceSubmissionsConnector.getLicenseJWT() } returns Ok(JWT)
+    coEvery { marketplaceSubmissionsConnector.getUserJWT() } returns Ok(JWT)
     mockServer = MockWebServerHelper(testRootDisposable)
   }
 

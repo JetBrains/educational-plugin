@@ -26,7 +26,7 @@ class LicenseConnector {
    * @return Result with a boolean value indicating whether the license is active or an error message
    */
   suspend fun checkLicense(link: String): LicenseState {
-    val jwtToken = MarketplaceSubmissionsConnector.getInstance().getLicenseJWT().onError {
+    val jwtToken = MarketplaceSubmissionsConnector.getInstance().getUserJWT().onError {
       return LicenseState.ERROR
     }
     val converterFactory: JacksonConverterFactory = JacksonConverterFactory.create(objectMapper)
