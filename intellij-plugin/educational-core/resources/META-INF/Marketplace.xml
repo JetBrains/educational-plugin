@@ -9,6 +9,7 @@
                             implementation="com.jetbrains.edu.learning.marketplace.MarketplaceWidgetFactory"
                             order="before positionWidget"/>
     <postStartupActivity implementation="com.jetbrains.edu.learning.marketplace.MarketplaceStartupActivity"/>
+    <ideRootPaneNorth implementation="com.jetbrains.edu.learning.marketplace.certificate.CourseCertificateBannerExtension"/>
     <experimentalFeature id="edu.course.marketplace.show.private" percentOfUsers="0">
       <description>Enables displaying private courses in browse courses dialog</description>
     </experimentalFeature>
@@ -17,6 +18,7 @@
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.marketplace.settings.MarketplaceOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.marketplace.MarketplaceCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.marketplace.certificate.CourseCertificateCheckListener"/>
     <submissionsProvider implementation="com.jetbrains.edu.learning.marketplace.submissions.MarketplaceSubmissionsProvider"/>
     <communitySubmissionsProvider implementation="com.jetbrains.edu.learning.marketplace.submissions.MarketplaceCommunitySubmissionsProvider"/>
     <taskNavigationExtension implementation="com.jetbrains.edu.learning.marketplace.MarketplaceTaskNavigationExtension"/>
@@ -43,6 +45,9 @@
             internal="true"/>
     <action id="Educational.Student.LearningCenterChangeHost"
             class="com.jetbrains.edu.learning.marketplace.changeHost.LearningCenterChangeHostAction"
+            internal="true"/>
+    <action id="Educational.Student.SetCourseProgress"
+            class="com.jetbrains.edu.learning.marketplace.actions.SetCourseProgressAction"
             internal="true"/>
     <action id="Educational.Student.ReportCommunitySolution"
             class="com.jetbrains.edu.learning.marketplace.actions.ReportCommunitySolutionAction"
