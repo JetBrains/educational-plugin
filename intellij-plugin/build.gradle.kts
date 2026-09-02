@@ -181,6 +181,26 @@ tasks {
       }
     }
 
+    // Runs an IDE and opens a Marketplace course via `openCourse` command
+    runIde.register("openCourse") {
+      useInstaller = false
+
+      // Specify custom sandbox directory not to interfere with other run tasks
+      sandboxDirectory = intellijPlatform.sandboxContainer.dir("open-course-sandbox-$environmentName")
+
+      task {
+        args(
+          "openCourse",
+          "--marketplace=16630", // replace with necessary course ID if needed
+        )
+      }
+
+      plugins {
+        val type = baseVersion.toTypeWithVersion().type
+        plugins(idePlugins(type))
+      }
+    }
+
     runIde.register("runInSplitMode") {
       useInstaller = false
       splitMode = true
