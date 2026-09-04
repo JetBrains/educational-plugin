@@ -177,6 +177,43 @@ class PlaceholderShapeTest : EduTestCase() {
     checkPointsCyclically(expected, placeholderShape.points)
   }
 
+  @Test
+  fun `test with folded region`() {
+    // the example is taken from EDU-8974
+    val sourceText = """
+        pub mod ticket {
+                <placeholder>pub fn title(self) -> <selection>String {
+                    self.title
+                </selection>}
+
+                pub fn status(self) -> String {
+                    </placeholder>self.status
+                }
+            }
+        }
+    """.trimIndent()
+    val placeholders = getPlaceholders(sourceText, true)
+
+    val editor = myFixture.editor
+    val expandedShape = getPlaceholderShape(editor, placeholders[0].offset, placeholders[0].endOffset)
+
+    EditorTestUtil.addFoldRegion(editor, editor.selectionModel.selectionStart, editor.selectionModel.selectionEnd, "{ ... }", true)
+
+    val foldedShape = getPlaceholderShape(editor, placeholders[0].offset, placeholders[0].endOffset)
+    // to test the test, make sure folded and unfolded shapes are different
+    assertFalse("Folding should change the placeholder shape", expandedShape.points == foldedShape.points)
+
+    val foldedExpected = listOf(
+      LogicalPositionInLine(1, 8),
+      LogicalPositionInLine(0, 16, wrapped = true),
+      LogicalPositionInLine(6, 0, wrapped = true),
+      LogicalPositionInLine(6, 12, leanForward = true),
+      LogicalPositionInLine(6, 12, PositionInLine.BOTTOM, leanForward = true),
+      LogicalPositionInLine(7, 8)
+    )
+    checkPointsCyclically(foldedExpected.map { it.toPoint(editor) }, foldedShape.points)
+  }
+
   private fun checkRectangular(text: String, start: LogicalPosition, end: LogicalPosition) {
     val expected = listOf(LogicalPositionInLine(start.line, start.column),
                           LogicalPositionInLine(start.line, end.column),
@@ -212,7 +249,8 @@ class PlaceholderShapeTest : EduTestCase() {
   data class LogicalPositionInLine(private val line: Int,
                                    private val column: Int,
                                    private val position: PositionInLine = PositionInLine.TOP,
-                                   private val wrapped: Boolean = false) : LogicalPosition(line, column) {
+                                   private val wrapped: Boolean = false,
+                                   private val leanForward: Boolean = false) : LogicalPosition(line, column, leanForward) {
     fun toPoint(editor: Editor): Point {
       val point = editor.logicalPositionToXY(this)
       var y = point.y

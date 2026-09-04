@@ -170,8 +170,8 @@ fun getPlaceholderShape(editor: Editor, startOffset: Int, endOffset: Int): Place
     val endBoundary = if (endOffset == document.getLineEndOffset(endLine)) boundaries.size else boundaries.size - 1
     rightMaxBoundary = boundaries.subList(0, endBoundary).maxByOrNull { it.getVisualBoundaries(editor).second } ?: rightMaxBoundary
 
-    isLeftRectangular = editor.columnByOffset(leftMinBoundary.startOffset) >= editor.columnByOffset(startOffset)
-    isRightRectangular = editor.columnByOffset(rightMaxBoundary.endOffset) <= editor.columnByOffset(endOffset) ||
+    isLeftRectangular = editor.xByOffset(leftMinBoundary.startOffset) >= editor.xByOffset(startOffset)
+    isRightRectangular = editor.xByOffset(rightMaxBoundary.endOffset) <= editor.xByOffset(endOffset) ||
                          document.getLineEndOffset(endLine) == endOffset
   }
 
@@ -215,4 +215,4 @@ private fun LineBoundary.getVisualBoundaries(editor: Editor): Pair<Int, Int> {
   return Pair(leftXY.x, rightXY.x)
 }
 
-private fun Editor.columnByOffset(offset: Int): Int = offsetToLogicalPosition(offset).column
+private fun Editor.xByOffset(offset: Int): Int = offsetToXY(offset).x
