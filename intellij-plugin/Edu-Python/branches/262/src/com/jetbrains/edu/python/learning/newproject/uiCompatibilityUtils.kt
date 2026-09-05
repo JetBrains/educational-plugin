@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
 import com.jetbrains.edu.learning.newproject.environment.withCaching
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider.Companion.ALL_VERSIONS
-import com.jetbrains.python.PathShortener
 import com.jetbrains.python.packaging.PyVersionSpecifiers
 import com.jetbrains.python.psi.LanguageLevel
+import kotlin.io.path.absolutePathString
 
 private val SYSTEM_PYTHONS: Key<List<SystemPython>> = Key.create("edu.python.system_interpreters")
 
@@ -41,7 +41,7 @@ suspend fun SystemPython.toExisting(): PyLanguageEnvironment.Existing {
   return PyLanguageEnvironment.Existing(
     systemPython = this,
     title = "Python $version",
-    secondaryText = PathShortener.shorten(pythonBinary),
+    secondaryText = pythonBinary.absolutePathString(),
   )
 }
 
