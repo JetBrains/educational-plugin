@@ -43,4 +43,4 @@ kotlinPlugin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 osDetectorPlugin = { id = "com.google.osdetector", version = "1.7.3" }
 propertiesPlugin = { id = "net.saliman.properties", version = "1.6.0" }
-testRetryPlugin = { id = "org.gradle.test-retry", version = "1.6.4" }
+testRetryPlugin = { id = "org.gradle.test-retry", version = "1.6.5" }
