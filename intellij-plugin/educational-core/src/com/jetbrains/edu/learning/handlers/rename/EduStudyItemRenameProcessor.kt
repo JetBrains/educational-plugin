@@ -84,7 +84,7 @@ abstract class EduStudyItemRenameProcessor : RenamePsiFileProcessor() {
           super.performRename(newName)
           CCFrameworkLessonManager.getInstance(project).migrateRecordsRename(item, newName)
           item.name = newName
-          YamlFormatSynchronizer.saveItem(item.parent)
+          YamlFormatSynchronizer.requestSaveItem(item.parent)
           item.course.configurator?.courseBuilder?.refreshProject(project, RefreshCause.STRUCTURE_MODIFIED)
         }
 

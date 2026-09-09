@@ -238,8 +238,8 @@ object CCUtils {
   }
 
   private fun synchronizeChanges(project: Project, course: Course, section: Section) {
-    YamlFormatSynchronizer.saveItem(section)
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(section)
+    YamlFormatSynchronizer.requestSaveItem(course)
     ProjectView.getInstance(project).refresh()
   }
 
@@ -307,7 +307,7 @@ object CCUtils {
     processCourseVendor: suspend EduCourse.() -> VendorError? = { processVendor() }
   ): Boolean = runWithModalProgressBlocking(project, EduCoreBundle.message("marketplace.push.course.prepare.for.upload.title")) {
     val result = doPrepareForUpload(project, processCourseVendor)
-    YamlFormatSynchronizer.saveRemoteInfoSync(this@prepareForUpload)
+    YamlFormatSynchronizer.saveRemoteInfo(this@prepareForUpload)
     result
   }
 
@@ -335,7 +335,7 @@ object CCUtils {
       generatedEduId = generateEduId()
     }
 
-    YamlFormatSynchronizer.saveItemSync(course)
+    YamlFormatSynchronizer.saveItem(course)
     return true
   }
 

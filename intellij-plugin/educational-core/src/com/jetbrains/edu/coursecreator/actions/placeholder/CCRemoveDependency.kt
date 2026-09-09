@@ -9,7 +9,7 @@ class CCRemoveDependency : CCAnswerPlaceholderAction() {
   override fun performAnswerPlaceholderAction(state: EduState) {
     val answerPlaceholder = state.answerPlaceholder ?: return
     answerPlaceholder.placeholderDependency = null
-    YamlFormatSynchronizer.saveItem(state.taskFile.task)
+    YamlFormatSynchronizer.requestSaveItem(state.taskFile.task)
     EditorNotifications.getInstance(state.project).updateNotifications(state.virtualFile)
   }
 

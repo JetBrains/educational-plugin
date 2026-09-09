@@ -119,11 +119,11 @@ abstract class CCCreateStudyItemActionBase<Item : StudyItem>(
         null
       }
 
-      YamlFormatSynchronizer.saveItem(item)
+      YamlFormatSynchronizer.requestSaveItem(item)
 
       val updateParentConfig = UPDATE_PARENT_CONFIG.getData(dataContext) ?: true
       if (updateParentConfig) {
-        YamlFormatSynchronizer.saveItem(item.parent)
+        YamlFormatSynchronizer.requestSaveItem(item.parent)
       }
 
       if (itemDir != null) {

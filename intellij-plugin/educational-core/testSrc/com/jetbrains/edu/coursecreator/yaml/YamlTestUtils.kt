@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 
 fun createConfigFiles(project: Project) {
   project.putUserData(YamlFormatSettings.YAML_TEST_PROJECT_READY, true)
-  YamlFormatSynchronizer.saveAll(project)
+  YamlFormatSynchronizer.requestSaveAll(project)
   FileDocumentManager.getInstance().saveAllDocuments()
   TestYamlConfigSyncService.getInstance(project).waitForAllJobs()
   UIUtil.dispatchAllInvocationEvents()

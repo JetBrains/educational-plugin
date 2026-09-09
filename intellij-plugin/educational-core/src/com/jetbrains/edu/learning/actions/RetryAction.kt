@@ -108,7 +108,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 
     private fun resetTaskStatus() {
       task.status = CheckStatus.Unchecked
-      YamlFormatSynchronizer.saveItemWithRemoteInfo(task)
+      YamlFormatSynchronizer.requestSaveItemWithRemoteInfo(task)
     }
   }
 

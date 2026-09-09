@@ -128,7 +128,7 @@ class EduDocumentListener private constructor(
     answerPlaceholder.offset = start
     answerPlaceholder.length = length
     if (updateYaml) {
-      YamlFormatSynchronizer.saveItem(answerPlaceholder.taskFile.task)
+      YamlFormatSynchronizer.requestSaveItem(answerPlaceholder.taskFile.task)
     }
   }
 

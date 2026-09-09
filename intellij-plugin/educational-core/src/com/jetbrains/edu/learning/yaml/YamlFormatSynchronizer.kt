@@ -42,8 +42,19 @@ import javax.swing.JPanel
 object YamlFormatSynchronizer {
   val LOAD_FROM_CONFIG = Key<Boolean>("Edu.loadItem")
 
-  @Deprecated("Use `saveAllSync` instead")
-  fun saveAll(project: Project) {
+  @Deprecated("Use `saveAll` instead")
+  fun requestSaveAll(project: Project) {
+    val course = project.course ?: error("Attempt to create config files for project without course")
+    val items = course.allSubitems()
+    val mapper = course.mapper()
+    for (item in items) {
+      requestSaveItem(item, mapper)
+    }
+
+    requestSaveRemoteInfo(course)
+  }
+
+  suspend fun saveAll(project: Project) {
     val course = project.course ?: error("Attempt to create config files for project without course")
     val items = course.allSubitems()
     val mapper = course.mapper()
@@ -54,26 +65,15 @@ object YamlFormatSynchronizer {
     saveRemoteInfo(course)
   }
 
-  suspend fun saveAllSync(project: Project) {
-    val course = project.course ?: error("Attempt to create config files for project without course")
-    val items = course.allSubitems()
-    val mapper = course.mapper()
-    for (item in items) {
-      saveItemSync(item, mapper)
-    }
-
-    saveRemoteInfoSync(course)
+  @Deprecated("Use `saveItem` instead")
+  fun requestSaveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
+    val project = getProjectIfConfigFilesEnabled(item) ?: return
+    YamlConfigSyncService.getInstance(project).requestSave(item, configName, mapper)
   }
 
-  @Deprecated("Use `saveItemSync` instead")
-  fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
+  suspend fun saveItem(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
     val project = getProjectIfConfigFilesEnabled(item) ?: return
     YamlConfigSyncService.getInstance(project).save(item, configName, mapper)
-  }
-
-  suspend fun saveItemSync(item: StudyItem, mapper: ObjectMapper = item.course.mapper(), configName: String = item.configFileName) {
-    val project = getProjectIfConfigFilesEnabled(item) ?: return
-    YamlConfigSyncService.getInstance(project).saveSync(item, configName, mapper)
   }
 
   private fun getProjectIfConfigFilesEnabled(item: StudyItem): Project? {
@@ -88,42 +88,42 @@ object YamlFormatSynchronizer {
     return project
   }
 
-  @Deprecated("Use `saveRemoteInfoSync` instead")
-  fun saveRemoteInfo(item: StudyItem) {
+  @Deprecated("Use `saveRemoteInfo` instead")
+  fun requestSaveRemoteInfo(item: StudyItem) {
+    for (itemWithRemoteInfo in item.allSubitems()) {
+      requestSaveItemRemoteInfo(itemWithRemoteInfo)
+    }
+  }
+
+  suspend fun saveRemoteInfo(item: StudyItem) {
     for (itemWithRemoteInfo in item.allSubitems()) {
       saveItemRemoteInfo(itemWithRemoteInfo)
     }
   }
 
-  suspend fun saveRemoteInfoSync(item: StudyItem) {
-    for (itemWithRemoteInfo in item.allSubitems()) {
-      saveItemRemoteInfoSync(itemWithRemoteInfo)
-    }
+  @Deprecated("Use `saveItemWithRemoteInfo` instead")
+  fun requestSaveItemWithRemoteInfo(item: StudyItem) {
+    requestSaveItem(item)
+    requestSaveRemoteInfo(item)
   }
 
-  @Deprecated("Use `saveItemWithRemoteInfoSync` instead")
-  fun saveItemWithRemoteInfo(item: StudyItem) {
+  suspend fun saveItemWithRemoteInfo(item: StudyItem) {
     saveItem(item)
     saveRemoteInfo(item)
   }
 
-  suspend fun saveItemWithRemoteInfoSync(item: StudyItem) {
-    saveItemSync(item)
-    saveRemoteInfoSync(item)
-  }
-
-  @Deprecated("Use `saveItemRemoteInfoSync` instead")
-  private fun saveItemRemoteInfo(item: StudyItem) {
+  @Deprecated("Use `saveItemRemoteInfo` instead")
+  private fun requestSaveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (shouldSaveRemoteInfo(item)) {
-      saveItem(item, remoteMapper(), item.remoteConfigFileName)
+      requestSaveItem(item, remoteMapper(), item.remoteConfigFileName)
     }
   }
 
-  private suspend fun saveItemRemoteInfoSync(item: StudyItem) {
+  private suspend fun saveItemRemoteInfo(item: StudyItem) {
     // we don't want to create remote info files in local courses
     if (shouldSaveRemoteInfo(item)) {
-      saveItemSync(item, remoteMapper(), item.remoteConfigFileName)
+      saveItem(item, remoteMapper(), item.remoteConfigFileName)
     }
   }
 

@@ -70,7 +70,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
     if (task.getTaskFile(pathInTask) == null) {
       val taskFile = task.addTaskFile(pathInTask)
       taskFileCreated(taskFile, createFile)
-      YamlFormatSynchronizer.saveItem(fileInfo.task)
+      YamlFormatSynchronizer.requestSaveItem(fileInfo.task)
     }
   }
 
@@ -98,7 +98,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
       rename(oldPath, newPath)
     }
 
-    YamlFormatSynchronizer.saveItem(task)
+    YamlFormatSynchronizer.requestSaveItem(task)
   }
 
   private fun beforeFileMovement(event: VFileMoveEvent) {
@@ -132,7 +132,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : BulkFile
 
     task.taskFiles = newTaskFiles
 
-    YamlFormatSynchronizer.saveItem(task)
+    YamlFormatSynchronizer.requestSaveItem(task)
   }
 
   /**

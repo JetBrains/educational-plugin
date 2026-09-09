@@ -192,7 +192,7 @@ class AddNewItemYamlTest : YamlTestCase() {
   }
 
   private fun saveItemAndDispatchEvents(studyItem: StudyItem) {
-    YamlFormatSynchronizer.saveItem(studyItem)
+    YamlFormatSynchronizer.requestSaveItem(studyItem)
     TestYamlConfigSyncService.getInstance(project).waitForAllJobs()
   }
 }

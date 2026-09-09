@@ -76,7 +76,7 @@ class FailedToProcessEduFileAsTextualError(
       project.course ?: return
     }
 
-    YamlFormatSynchronizer.saveItem(item)
+    YamlFormatSynchronizer.requestSaveItem(item)
   }
 }
 

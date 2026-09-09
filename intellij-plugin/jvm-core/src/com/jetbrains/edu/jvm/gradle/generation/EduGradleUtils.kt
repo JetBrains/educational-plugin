@@ -300,7 +300,7 @@ object EduGradleUtils {
         course.additionalFiles += EduFile(fileName, TextualContents.EMPTY)
       }
     }
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
   }
 
   private fun detectGradleVersion(projectSettings: GradleProjectSettings): GradleVersion {

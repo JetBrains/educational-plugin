@@ -220,8 +220,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
     }
     val courseBean = uploadCourseResponse.plugin
     course.id = courseBean.id
-    YamlFormatSynchronizer.saveRemoteInfo(course)
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveRemoteInfo(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
 
     showInfoNotification(
       project,
@@ -318,7 +318,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
       val insertedCourseVersion = createAndShowCourseVersionDialog(project, course, updateActionTitle)
                                   ?: return
       course.marketplaceCourseVersion = insertedCourseVersion
-      YamlFormatSynchronizer.saveRemoteInfo(course)
+      YamlFormatSynchronizer.requestSaveRemoteInfo(course)
       val pushAction = ActionManager.getInstance().getAction(MarketplacePushCourse.ACTION_ID)
       pushAction.templatePresentation.text = updateActionTitle
       showInfoNotification(project, message("notification.course.creator.inserted.course.version", insertedCourseVersion), action = pushAction)
@@ -359,7 +359,7 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
       action = openOnMarketplaceAction(course.getMarketplaceUrl())
     )
     LOG.info("Course ${course.name} update has been successfully uploaded with version ${course.marketplaceCourseVersion}")
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
     return false
   }
 

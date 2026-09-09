@@ -51,7 +51,7 @@ class CCSolveAllTasksBeforeAction : DumbAwareAction() {
       if (lesson is FrameworkLesson && fromTask.index < lesson.currentTaskIndex) continue
       fillAnswers(project, fromTask)
       fromTask.status = CheckStatus.Solved
-      YamlFormatSynchronizer.saveItem(selectedTask)
+      YamlFormatSynchronizer.requestSaveItem(selectedTask)
       NavigationUtils.navigateToTask(project, targetTask, fromTask, false)
     }
   }

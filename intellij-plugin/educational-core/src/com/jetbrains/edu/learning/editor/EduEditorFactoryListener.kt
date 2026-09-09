@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.placeholder.PlaceholderHighlightingManager.sho
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager.updateDependentPlaceholders
 import com.jetbrains.edu.learning.projectView.CourseViewVisibleItems
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 
 class EduEditorFactoryListener : EditorFactoryListener {
   private class AnswerPlaceholderSelectionListener(private val taskFile: TaskFile) : EditorMouseListener {
@@ -38,7 +38,7 @@ class EduEditorFactoryListener : EditorFactoryListener {
       val offsets = getPlaceholderOffsets(answerPlaceholder)
       editor.selectionModel.setSelection(offsets.getFirst(), offsets.getSecond())
       answerPlaceholder.selected = true
-      saveItem(taskFile.task)
+      requestSaveItem(taskFile.task)
     }
   }
 
@@ -79,7 +79,7 @@ class EduEditorFactoryListener : EditorFactoryListener {
         }
       }
       task.status = CheckStatus.Solved
-      saveItem(task)
+      requestSaveItem(task)
       ProjectView.getInstance(project).refresh()
     }
   }

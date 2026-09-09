@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 import java.io.IOException
 
 class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.TASK_TYPE) {
@@ -59,8 +59,8 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       val targetTask = if (taskList.isEmpty()) null else taskList[taskList.size - 1]
       StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, targetVFile)
       moveTask(sourceDirectory, taskToMove, targetTask, 1, targetVFile, targetLesson)
-      saveItem(sourceLesson)
-      saveItem(targetLesson)
+      requestSaveItem(sourceLesson)
+      requestSaveItem(targetLesson)
     }
     else {
       val lessonDir = targetVFile.parent ?: return
@@ -68,8 +68,8 @@ class CCTaskMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.T
       val delta = getDelta(project, targetTask) ?: return
       StudyItemRefactoringHandler.processBeforeTaskMovement(project, taskToMove, lessonDir)
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.lesson)
-      saveItem(sourceLesson)
-      saveItem(targetTask.lesson)
+      requestSaveItem(sourceLesson)
+      requestSaveItem(targetTask.lesson)
     }
     ProjectView.getInstance(project).refresh()
   }

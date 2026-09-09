@@ -146,7 +146,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     else {
       TextualContents.EMPTY
     })
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
   }
 
   override fun fileDeleted(fileInfo: FileInfo, file: VirtualFile) {
@@ -179,7 +179,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       val name = additionalFile.name
       name != coursePath && !coursePath.isParentOf(name)
     }
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
   }
 
   override fun beforePropertyChange(event: VFilePropertyChangeEvent) {
@@ -203,7 +203,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       }
     }
 
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
   }
 
   private fun deleteLesson(info: FileInfo.LessonDirectory) {
@@ -213,11 +213,11 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     CCFrameworkLessonManager.getInstance(project).removeRecords(removedLesson)
     if (section != null) {
       section.removeLesson(removedLesson)
-      YamlFormatSynchronizer.saveItem(section)
+      YamlFormatSynchronizer.requestSaveItem(section)
     }
     else {
       course.removeLesson(removedLesson)
-      YamlFormatSynchronizer.saveItem(course)
+      YamlFormatSynchronizer.requestSaveItem(course)
     }
   }
 
@@ -226,7 +226,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     val course = removedSection.course
     course.removeSection(removedSection)
     CCFrameworkLessonManager.getInstance(project).removeRecords(removedSection)
-    YamlFormatSynchronizer.saveItem(course)
+    YamlFormatSynchronizer.requestSaveItem(course)
   }
 
   private fun deleteTask(info: FileInfo.TaskDirectory) {
@@ -235,7 +235,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     lesson.removeTask(task)
     SyncChangesStateManager.getInstance(project).taskDeleted(task)
     CCFrameworkLessonManager.getInstance(project).removeRecord(task)
-    YamlFormatSynchronizer.saveItem(lesson)
+    YamlFormatSynchronizer.requestSaveItem(lesson)
   }
 
   private fun deleteFileInTask(info: FileInfo.FileInTask, file: VirtualFile) {
@@ -252,7 +252,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
       task.removeTaskFile(pathInTask)
       SyncChangesStateManager.getInstance(project).filesDeleted(task, listOf(pathInTask))
     }
-    YamlFormatSynchronizer.saveItem(task)
+    YamlFormatSynchronizer.requestSaveItem(task)
   }
 
   override fun beforeFileDeletion(event: VFileDeleteEvent) {
@@ -363,7 +363,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     parentStudyItem.addItem(deserializedItem)
     deserializedItem.index = 1 + parentStudyItem.items.indexOf(deserializedItem)
 
-    YamlFormatSynchronizer.saveItem(parentStudyItem)
+    YamlFormatSynchronizer.requestSaveItem(parentStudyItem)
 
     return true
   }
@@ -391,7 +391,7 @@ class CCVirtualFileListener(project: Project, parentDisposable: Disposable) : Ed
     }
 
     if (additionalFilesChanged) {
-      YamlFormatSynchronizer.saveItem(course)
+      YamlFormatSynchronizer.requestSaveItem(course)
     }
   }
 

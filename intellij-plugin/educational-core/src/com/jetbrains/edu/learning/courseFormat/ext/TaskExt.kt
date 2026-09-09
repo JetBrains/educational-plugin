@@ -135,7 +135,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
       placeholder.studentAnswer = document.getText(TextRange.create(startOffset, endOffset))
     }
   }
-  YamlFormatSynchronizer.saveItem(this)
+  YamlFormatSynchronizer.requestSaveItem(this)
 }
 
 fun Task.addDefaultTaskDescription() {
@@ -245,7 +245,7 @@ fun Task.revertTaskFiles(project: Project) {
   finally {
     taskFiles.values.forEach { it.isTrackChanges = true }
 
-    YamlFormatSynchronizer.saveItem(this)
+    YamlFormatSynchronizer.requestSaveItem(this)
   }
 }
 

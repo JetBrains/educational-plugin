@@ -33,7 +33,7 @@ class MarketplaceStartupActivity : StartupActivity {
       ApplicationManager.getApplication().executeOnPooledThread {
         val generatedId = course.courseConnector.loadCourse(course.id, OTHER).generatedEduId ?: course.generateEduId()
         course.generatedEduId = generatedId
-        YamlFormatSynchronizer.saveRemoteInfo(course)
+        YamlFormatSynchronizer.requestSaveRemoteInfo(course)
       }
       return
     }

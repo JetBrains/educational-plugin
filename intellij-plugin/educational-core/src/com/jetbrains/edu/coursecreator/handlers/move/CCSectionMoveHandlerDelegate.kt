@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.isSectionDirectory
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 
 class CCSectionMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.SECTION_TYPE) {
   override fun isAvailable(directory: PsiDirectory): Boolean {
@@ -51,6 +51,6 @@ class CCSectionMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemTyp
     sourceSection.index = newItemIndex
     course.sortItems()
     ProjectView.getInstance(project).refresh()
-    saveItem(course)
+    requestSaveItem(course)
   }
 }

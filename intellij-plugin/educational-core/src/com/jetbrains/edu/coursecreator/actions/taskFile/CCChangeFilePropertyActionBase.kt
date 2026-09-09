@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.getContainingTask
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 import java.util.function.Supplier
 
 abstract class CCChangeFilePropertyActionBase(
@@ -120,9 +120,9 @@ private class ChangeFilesPropertyUndoableAction(
   private inline fun doAction(changeState: (State) -> Unit) {
     states.forEach(changeState)
     ProjectView.getInstance(project).refresh()
-    affectedTasks.forEach { saveItem(it) }
+    affectedTasks.forEach { requestSaveItem(it) }
     if (outsideTasks) {
-      saveItem(course)
+      requestSaveItem(course)
     }
   }
 

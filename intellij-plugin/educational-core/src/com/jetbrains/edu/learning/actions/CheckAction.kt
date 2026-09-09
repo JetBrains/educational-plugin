@@ -49,7 +49,7 @@ import com.jetbrains.edu.learning.statistics.EduCounterUsageCollector.Companion.
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.taskToolWindow.ui.check.CheckPanel
 import com.jetbrains.edu.learning.ui.getUICheckLabel
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -262,7 +262,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
       if (task.course.isStudy) {
         task.status = checkResult.status
         task.feedback = CheckFeedback(Date(), checkResult)
-        saveItem(task)
+        requestSaveItem(task)
       }
       if (checker != null) {
         if (checkResult.status === CheckStatus.Failed) {

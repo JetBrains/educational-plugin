@@ -17,8 +17,7 @@ import com.jetbrains.edu.learning.storage.persistEduFiles
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.configFileName
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.childrenConfigFileNames
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.mapper
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
-import com.jetbrains.edu.learning.yaml.YamlLoader.loadItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.errorHandling.*
 import com.jetbrains.edu.learning.yaml.format.YamlMixinNames.TASK
@@ -78,7 +77,7 @@ object YamlLoader {
         parentItem.addItemAsNew(project, deserializedItem)
         reopenEditors(project)
         // new item is added at the end, so we should save parent item to update items order in config file
-        saveItem(parentItem)
+        requestSaveItem(parentItem)
       }
       return
     }

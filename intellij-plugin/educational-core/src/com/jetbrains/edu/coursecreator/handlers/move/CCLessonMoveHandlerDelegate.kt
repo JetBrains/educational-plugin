@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.getLesson
 import com.jetbrains.edu.learning.isLessonDirectory
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 import java.io.IOException
 
 class CCLessonMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType.LESSON_TYPE) {
@@ -91,8 +91,8 @@ class CCLessonMoveHandlerDelegate : CCStudyItemMoveHandlerDelegate(StudyItemType
       }
     })
     ProjectView.getInstance(project).refresh()
-    saveItem(targetContainer)
-    saveItem(sourceContainer)
+    requestSaveItem(targetContainer)
+    requestSaveItem(sourceContainer)
   }
 
   companion object {

@@ -66,7 +66,7 @@ class RevertTaskAction : DumbAwareAction(), RightAlignedToolbarAction {
       task.apply {
         revertTaskFiles(project)
         revertTaskParameters()
-        YamlFormatSynchronizer.saveItem(this)
+        YamlFormatSynchronizer.requestSaveItem(this)
       }
 
       updateDependentPlaceholders(project, task)

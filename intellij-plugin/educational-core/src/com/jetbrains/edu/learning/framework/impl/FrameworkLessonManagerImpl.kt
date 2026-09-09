@@ -69,7 +69,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
       LOG.error("Failed to save solution for task `${task.name}`", e)
       currentRecord
     }
-    YamlFormatSynchronizer.saveItem(task)
+    YamlFormatSynchronizer.requestSaveItem(task)
   }
 
   override fun updateUserChanges(task: Task, newInitialState: FLTaskState) {
@@ -154,7 +154,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
     val targetTask = lesson.taskList[targetTaskIndex]
 
     lesson.currentTaskIndex = targetTaskIndex
-    YamlFormatSynchronizer.saveItem(lesson)
+    YamlFormatSynchronizer.requestSaveItem(lesson)
 
     val currentRecord = currentTask.record
     val targetRecord = targetTask.record
@@ -179,7 +179,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     // 3. Update record index to a new one.
     currentTask.record = newCurrentRecord
-    YamlFormatSynchronizer.saveItem(currentTask)
+    YamlFormatSynchronizer.requestSaveItem(currentTask)
 
     // 4. Get difference (change list) between initial and latest states of target task
     val nextUserChanges = getUserChangesFromStorage(targetTask)
@@ -205,7 +205,7 @@ class FrameworkLessonManagerImpl(private val project: Project) : FrameworkLesson
 
     // 7. Apply difference between latest states of current and target tasks on local FS
     changes.apply(project, taskDir, targetTask)
-    YamlFormatSynchronizer.saveItem(targetTask)
+    YamlFormatSynchronizer.requestSaveItem(targetTask)
   }
 
   /**

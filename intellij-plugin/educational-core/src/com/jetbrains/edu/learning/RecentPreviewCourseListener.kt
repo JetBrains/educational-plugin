@@ -15,7 +15,7 @@ class RecentPreviewCourseListener : ProjectManagerListener, AppLifecycleListener
 
   override fun projectClosing(project: Project) {
     if (!isUnitTestMode && project.isStudentProject()) {
-      YamlFormatSynchronizer.saveAll(project)
+      YamlFormatSynchronizer.requestSaveAll(project)
     }
 
     val course = StudyTaskManager.getInstance(project).course ?: return

@@ -236,7 +236,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
 
   private fun applyCheckStatus(task: Task, checkStatus: CheckStatus) {
     task.status = checkStatus
-    YamlFormatSynchronizer.saveItem(task)
+    YamlFormatSynchronizer.requestSaveItem(task)
   }
 
   override fun dispose() {
@@ -292,7 +292,7 @@ abstract class SolutionLoaderBase(protected val project: Project) : Disposable {
     ) {
       project.invokeLater {
         task.status = taskSolutions.checkStatus
-        YamlFormatSynchronizer.saveItem(task)
+        YamlFormatSynchronizer.requestSaveItem(task)
         val lesson = task.lesson
         if (task.course.isStudy && lesson is FrameworkLesson && lesson.currentTask() != task) {
           if (force || task.modifiedBefore(project, taskSolutions)) {

@@ -32,7 +32,7 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
   protected val item2SaveJob: ConcurrentMap<String, Job> = ConcurrentHashMap()
   protected val suppressedSaveKeys: ConcurrentMap<String, Int> = ConcurrentHashMap()
 
-  override fun save(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
+  override fun requestSave(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
     val saveTask = createSaveTask(studyItem, configName, mapper) ?: return
 
     val currentModality = ModalityState.defaultModalityState()
@@ -45,7 +45,7 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
     }
   }
 
-  override suspend fun saveSync(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
+  override suspend fun save(studyItem: StudyItem, configName: String, mapper: ObjectMapper) {
     val saveTask = createSaveTask(studyItem, configName, mapper) ?: return
     execute(saveTask)
   }

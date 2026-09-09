@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.messages.EduCoreBundle.message
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.isConfigFile
-import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.saveItem
+import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer.requestSaveItem
 import org.jetbrains.annotations.NonNls
 import java.io.IOException
 
@@ -61,7 +61,7 @@ class CCRemoveSection : DumbAwareAction() {
       )
       course.addLessons(lessonsFromSection)
       course.sortItems()
-      saveItem(course)
+      requestSaveItem(course)
     }
     ProjectView.getInstance(project).refresh()
   }

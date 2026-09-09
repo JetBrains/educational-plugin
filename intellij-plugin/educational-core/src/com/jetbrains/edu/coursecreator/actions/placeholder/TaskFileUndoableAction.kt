@@ -31,7 +31,7 @@ abstract class TaskFileUndoableAction(
   private fun updateConfigFiles() {
     //invokeLater here is needed because one can't change documents while redo/undo
     project.invokeLater {
-      YamlFormatSynchronizer.saveItem(taskFile.task)
+      YamlFormatSynchronizer.requestSaveItem(taskFile.task)
     }
   }
 }

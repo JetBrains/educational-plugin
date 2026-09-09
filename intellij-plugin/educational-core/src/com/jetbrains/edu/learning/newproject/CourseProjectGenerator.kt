@@ -97,7 +97,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
 
     CourseMetadataProcessor.applyProcessors(project, course, openCourseParams, CourseProjectState.CREATED_PROJECT)
 
-    YamlFormatSynchronizer.saveAll(project)
+    YamlFormatSynchronizer.requestSaveAll(project)
     YamlFormatSynchronizer.startSynchronization(project)
 
     if (!course.isStudy && !course.isPreview && !isHeadlessEnvironment && JBCefApp.isSupported()) {

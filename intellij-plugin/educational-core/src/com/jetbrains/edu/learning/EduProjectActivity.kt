@@ -117,7 +117,7 @@ class EduProjectActivity : ProjectActivity {
   @VisibleForTesting
   fun migrateYaml(project: Project, course: Course) {
     migratePropagatableYamlFields(project, course)
-    YamlFormatSynchronizer.saveAll(project)
+    YamlFormatSynchronizer.requestSaveAll(project)
   }
 
   private fun migratePropagatableYamlFields(project: Project, course: Course) {

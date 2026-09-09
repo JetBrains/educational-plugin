@@ -34,7 +34,7 @@ class StudyItemIdGenerator(private val project: Project) {
     course.loadRemoteInfoRecursively(project)
     generateMissingIds(course)
     // Dump info about new ids to `*-remote-info.yaml` files
-    YamlFormatSynchronizer.saveRemoteInfo(course)
+    YamlFormatSynchronizer.requestSaveRemoteInfo(course)
   }
 
   fun collectItemsWithDuplicateIds(course: Course): DuplicateIdMap {
@@ -75,7 +75,7 @@ class StudyItemIdGenerator(private val project: Project) {
     // TODO: convert other blocking parts into suspend function and drop `blockingContext`
     generateMissingIds(course, items = itemsToFix, bannedIds = bannedIds)
     // Dump info about new ids to `*-remote-info.yaml` files
-    YamlFormatSynchronizer.saveRemoteInfoSync(course)
+    YamlFormatSynchronizer.saveRemoteInfo(course)
 
     return itemsToFix
   }

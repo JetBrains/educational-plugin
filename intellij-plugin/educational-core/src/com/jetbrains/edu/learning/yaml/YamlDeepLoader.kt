@@ -79,7 +79,7 @@ object YamlDeepLoader {
         // and that could lead to incorrectly read YAML.
         // One of the dangerous places: the FileEditorManagerListener calls loadItem() to refresh editor notifications for
         // YAML files, and this happens right after the project is loaded.
-        YamlFormatSynchronizer.saveAll(project)
+        YamlFormatSynchronizer.requestSaveAll(project)
       }
     }
 

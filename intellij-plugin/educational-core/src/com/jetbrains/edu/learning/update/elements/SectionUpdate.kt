@@ -27,7 +27,7 @@ data class SectionCreationInfo(
       GeneratorUtils.createSection(project, remoteItem, parentDir)
     }
 
-    YamlFormatSynchronizer.saveItemWithRemoteInfoSync(remoteItem)
+    YamlFormatSynchronizer.saveItemWithRemoteInfo(remoteItem)
   }
 }
 
@@ -57,7 +57,7 @@ data class SectionUpdateInfo(
         }
       }
 
-      YamlFormatSynchronizer.saveItemWithRemoteInfoSync(localItem)
+      YamlFormatSynchronizer.saveItemWithRemoteInfo(localItem)
     }
 
   }
