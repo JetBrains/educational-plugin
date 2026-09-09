@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.REMOTE_TASK_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.SECTION_CONFIG
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings.TASK_CONFIG
-import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
+import com.jetbrains.edu.learning.yaml.TestYamlConfigSyncService
 import io.mockk.every
 import io.mockk.verify
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -130,7 +130,7 @@ class StudyItemIdGeneratorTest : EduTestCase() {
 
     // when
     StudyItemIdGenerator.getInstance(project).generateIdsIfNeeded(course)
-    YamlConfigSyncService.getInstance(project).waitForAllJobs()
+    TestYamlConfigSyncService.getInstance(project).waitForAllJobs()
 
     // then
     course.checkIds {

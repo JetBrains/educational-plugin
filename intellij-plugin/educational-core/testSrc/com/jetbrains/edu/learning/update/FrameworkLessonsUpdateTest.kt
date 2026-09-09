@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.allTasks
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
-import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
+import com.jetbrains.edu.learning.yaml.TestYamlConfigSyncService
 import org.junit.Before
 import org.junit.Test
 import java.util.*
@@ -476,7 +476,7 @@ abstract class FrameworkLessonsUpdateTest<T : Course> : UpdateTestBase<T>() {
   @Test
   fun `update task name`() {
     fun assertRenamedTaskFolder(step: Int) {
-      YamlConfigSyncService.getInstance(project).waitForAllJobs()
+      TestYamlConfigSyncService.getInstance(project).waitForAllJobs()
 
       fileTree {
         dir("lesson1") {

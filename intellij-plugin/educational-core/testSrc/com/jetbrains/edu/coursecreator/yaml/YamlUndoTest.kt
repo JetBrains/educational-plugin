@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.yaml.YamlConfigSettings
-import com.jetbrains.edu.learning.yaml.YamlConfigSyncService
+import com.jetbrains.edu.learning.yaml.TestYamlConfigSyncService
 import com.jetbrains.edu.learning.yaml.YamlDeserializer.deserializeTask
 import com.jetbrains.edu.learning.yaml.YamlMapper.basicMapper
 import com.jetbrains.edu.learning.yaml.YamlTestCase
@@ -104,7 +104,7 @@ open class YamlUndoTest : YamlTestCase() {
     expectedStartOffset: Int,
     expectedEndOffset: Int
   ) {
-    YamlConfigSyncService.getInstance(project).waitForAllJobs()
+    TestYamlConfigSyncService.getInstance(project).waitForAllJobs()
     assertEquals(expectedStartOffset, placeholder.offset)
     assertEquals(expectedEndOffset, placeholder.endOffset)
 
