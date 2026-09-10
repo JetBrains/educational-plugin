@@ -197,6 +197,7 @@ object NavigationUtils {
         navigateToTaskInternal(project, task, fromTask, showDialogIfConflict, closeOpenedFiles, fileToActivate, forceSpecificTaskInFrameworkLesson)
       }
       if (actualTaskToNavigateTo != null) {
+        TaskToolWindowView.getInstance(project).currentTask = actualTaskToNavigateTo
         TaskNavigationExtension.EP.forEachExtensionSafe {
           it.onTaskNavigation(project, actualTaskToNavigateTo, fromTask)
         }
@@ -220,8 +221,12 @@ object NavigationUtils {
       }
     }
     if (CCUtils.isCourseCreator(project)) {
-      openCCTaskFiles(project, requestedTask)
-      return requestedTask
+      return if (openCCTaskFiles(project, requestedTask)) {
+        requestedTask
+      }
+      else {
+        null
+      }
     }
 
     val task = resolveNavigationTask(
@@ -260,7 +265,6 @@ object NavigationUtils {
     ProjectView.getInstance(project).refresh()
     val fileToSelect = fileToActivate ?: task.findSourceDir(taskDir) ?: taskDir
     updateProjectView(project, fileToActivate, fileToSelect)
-    TaskToolWindowView.getInstance(project).currentTask = task
 
     selectFirstAnswerPlaceholder(project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
@@ -310,9 +314,12 @@ object NavigationUtils {
     }
   }
 
+  /**
+   * @return true if task files were opened
+   */
   @RequiresEdt
-  private fun openCCTaskFiles(project: Project, task: Task) {
-    val taskDir = task.getDir(project.courseDir) ?: return
+  private fun openCCTaskFiles(project: Project, task: Task): Boolean {
+    val taskDir = task.getDir(project.courseDir) ?: return false
     val descriptionFile = task.getDescriptionFile(project)
     descriptionFile?.let { FileEditorManager.getInstance(project).openFile(it, false) }
 
@@ -323,6 +330,7 @@ object NavigationUtils {
     ProjectView.getInstance(project).refresh()
     val fileToSelect = firstTaskFile ?: taskDir
     updateProjectView(project, firstTaskFile, fileToSelect)
+    return true
   }
 
   private fun selectFirstAnswerPlaceholder(project: Project) {
