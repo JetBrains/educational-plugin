@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TabType
 import com.jetbrains.edu.learning.taskToolWindow.ui.tab.TaskToolWindowTab
 
 class MockTaskToolWindowView(project: Project) : TaskToolWindowView(project) {
+  @Volatile
   override var currentTask: Task? = null
 
   override fun init(toolWindow: ToolWindow) {}

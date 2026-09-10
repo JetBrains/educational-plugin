@@ -23,6 +23,7 @@ import com.intellij.ui.InlineBannerBase
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.content.ContentFactory
 import com.intellij.util.asSafely
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBEmptyBorder
 import com.intellij.util.ui.JBFont
 import com.intellij.util.ui.JBUI
@@ -95,8 +96,10 @@ class TaskToolWindowViewImpl(project: Project, scope: CoroutineScope) : TaskTool
     }
   }
 
+  @Volatile
   override var currentTask: Task? = null
     // TODO: move it in some separate method
+    @RequiresEdt
     set(value) {
       if (currentTask !== null && currentTask === value) return
       updateCurrentTaskUi(value)

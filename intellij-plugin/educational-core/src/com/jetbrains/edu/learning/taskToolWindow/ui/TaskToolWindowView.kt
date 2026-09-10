@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.InlineBanner
 import com.intellij.ui.InlineBannerBase
+import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
@@ -22,6 +23,7 @@ import java.awt.Color
 abstract class TaskToolWindowView(val project: Project) : EduTestAware {
 
   abstract var currentTask: Task?
+    @RequiresEdt set
 
   abstract fun init(toolWindow: ToolWindow)
 
