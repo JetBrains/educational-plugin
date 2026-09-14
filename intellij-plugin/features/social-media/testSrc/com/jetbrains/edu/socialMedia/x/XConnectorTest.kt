@@ -167,16 +167,11 @@ class XConnectorTest : EduTestCase() {
     private const val TWEET_ID = "1912475036826448076"
     private const val MEDIA_ID = "1912475018862166016"
 
-    //language=json
     private const val TWEET_RESPONSE = """{"data":{"edit_history_tweet_ids":["$TWEET_ID"],"id":"$TWEET_ID","text":"Hello!"}}"""
 
-    //language=json
     private const val MEDIA_STATUS_RESPONSE = """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86398,"processing_info":{"state":"succeeded","progress_percent":100},"size":708679}}"""
-    //language=json
     private const val MEDIA_UPLOAD_INIT_RESPONSE = """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86400}}"""
-    //language=json
     private const val MEDIA_UPLOAD_APPEND_RESPONSE = """{"data":{"expires_at":1749908627578}}"""
-    //language=json
     private const val MEDIA_UPLOAD_FINALIZE_RESPONSE = """{"data":{"id":"$MEDIA_ID","media_key":"16_1912475018862166016","expires_after_secs":86400,"processing_info":{"state":"pending","check_after_secs":1},"size":708679}}"""
   }
 }

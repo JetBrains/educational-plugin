@@ -54,7 +54,6 @@ class XAuthorizationWorkflowTest : EduTestCase() {
           // Verify that we properly pass code value passed to redirect_uri
           if (params["code"] != CODE_VALUE) return@addResponseHandler MockResponseFactory.badRequest()
 
-          //language=json
           MockResponseFactory.fromString("""{
             "token_type" : "bearer",
             "expires_in" : 7200,
@@ -68,7 +67,6 @@ class XAuthorizationWorkflowTest : EduTestCase() {
           if (request.headers["Authorization"] != "Bearer $ACCESS_TOKEN") {
             return@addResponseHandler MockResponseFactory.badRequest()
           }
-          //language=json
           MockResponseFactory.fromString("""{
             "data": {
               "id": "2244994945",

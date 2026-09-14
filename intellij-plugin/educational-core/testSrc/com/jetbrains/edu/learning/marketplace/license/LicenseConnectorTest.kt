@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.marketplace.license.api.LicenseConnector
 import io.mockk.coEvery
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
-import org.intellij.lang.annotations.Language
 import kotlin.test.Test
 
 class LicenseConnectorTest : EduTestCase() {
@@ -26,7 +25,6 @@ class LicenseConnectorTest : EduTestCase() {
   @Test
   fun `test successful license check response`() = runTest {
     // given
-    @Language("JSON")
     val responseBody = "{}"
     configureResponse(MockResponseFactory.fromString(responseBody))
 
@@ -40,7 +38,6 @@ class LicenseConnectorTest : EduTestCase() {
   @Test
   fun `test expired license check response`() = runTest {
     // given
-    @Language("JSON")
     val responseBody = """
       {
         "trackType": "AWS"
@@ -57,7 +54,6 @@ class LicenseConnectorTest : EduTestCase() {
 
   @Test
   fun `test expired license check response with wrong track type`() = runTest {
-    @Language("JSON")
     val responseBody = """
       {
         "trackType": "CODEFORCES"

@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning
 
 import mockwebserver3.MockResponse
 import okio.Buffer
+import org.intellij.lang.annotations.Language
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.InputStream
@@ -12,9 +13,9 @@ object MockResponseFactory {
   fun fromFile(path: String, responseCode: Int = HTTP_OK): MockResponse =
     fromStream(FileInputStream(path).buffered(), responseCode)
 
-  fun fromString(data: String): MockResponse = fromStream(ByteArrayInputStream(data.toByteArray()))
+  fun fromString(@Language("JSON") data: String): MockResponse = fromStream(ByteArrayInputStream(data.toByteArray()))
 
-  fun fromString(data: String, responseCode: Int = HTTP_OK): MockResponse =
+  fun fromString(@Language("JSON") data: String, responseCode: Int = HTTP_OK): MockResponse =
     fromStream(ByteArrayInputStream(data.toByteArray()), responseCode)
 
   private fun fromStream(data: InputStream, responseCode: Int = HTTP_OK): MockResponse =
