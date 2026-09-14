@@ -155,7 +155,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     openCourseParams: Map<String, String>,
     initialLessonProducer: () -> Lesson
   ): Project? {
-    applySettings(projectSettings)
     val createdProject = createProject(location, initialLessonProducer) ?: return null
 
     withContext(Dispatchers.EDT) {
@@ -182,11 +181,6 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
       .syncPublisher(COURSE_PROJECT_CONFIGURATION)
       .onCourseProjectConfigured(createdProject)
   }
-
-  /**
-   * Applies necessary changes to [course] object before course creation
-   */
-  protected open fun applySettings(projectSettings: S) {}
 
   /**
    * Create new project in given location.

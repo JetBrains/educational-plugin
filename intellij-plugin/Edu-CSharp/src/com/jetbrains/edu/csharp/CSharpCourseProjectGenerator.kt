@@ -1,6 +1,5 @@
 package com.jetbrains.edu.csharp
 
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.util.application
@@ -11,11 +10,8 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.newproject.nameToFileSystemName
 import com.jetbrains.rd.ide.model.RdOpenSolution
 import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
-import com.jetbrains.rider.model.MonitoringStartMode
-import com.jetbrains.rider.model.dpaModel
 import com.jetbrains.rider.projectView.SolutionDescriptionFactory
 import com.jetbrains.rider.projectView.SolutionInitializerService
-import com.jetbrains.rider.projectView.solution
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -24,23 +20,6 @@ class CSharpCourseProjectGenerator(
   course: Course
 ) : CSharpCourseProjectGeneratorBase(builder, course) {
   private val solutionFileName = "${course.nameToFileSystemName()}.${SolutionFileType.defaultExtension}"
-
-  override fun applySettings(projectSettings: CSharpProjectSettings) {
-    super.applySettings(projectSettings)
-    course.languageVersion = projectSettings.version
-  }
-
-  override suspend fun afterProjectGenerated(
-    project: Project,
-    projectSettings: CSharpProjectSettings,
-    openCourseParams: Map<String, String>,
-    onConfigurationFinished: () -> Unit
-  ) {
-    runInEdt {
-      project.solution.dpaModel.monitoringStartMode.set(MonitoringStartMode.OnDebug)
-    }
-    super.afterProjectGenerated(project, projectSettings, openCourseParams, onConfigurationFinished)
-  }
 
   override fun autoCreatedAdditionalFiles(holder: CourseInfoHolder<Course>): List<EduFile> = listOf(
     EduFile(

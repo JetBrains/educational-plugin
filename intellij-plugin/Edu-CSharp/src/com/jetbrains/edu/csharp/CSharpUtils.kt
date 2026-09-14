@@ -24,6 +24,8 @@ import com.jetbrains.rider.projectView.workspace.getSolutionEntity
 
 val DEFAULT_DOT_NET = ProjectTemplateTargetFramework.latest.presentation
 
+fun supportedDotNetVersions(): List<String> = ProjectTemplateTargetFramework.allPredefinedNet.map { it.presentation }
+
 fun Task.csProjPathByTask(project: Project): String = GeneratorUtils.joinPaths(getDir(project.courseDir)?.path, getCSProjFileName())
 
 fun getDotNetVersion(version: String?): String = version ?: DEFAULT_DOT_NET

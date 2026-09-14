@@ -6,29 +6,37 @@ import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.jetbrains.edu.coursecreator.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.actions.studyItem.NewStudyItemInfo
+import com.jetbrains.edu.csharp.environment.CSharpLanguageEnvironment
+import com.jetbrains.edu.csharp.environment.CSharpLanguageEnvironmentCatalogProvider
 import com.jetbrains.edu.csharp.messages.EduCSharpBundle
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironmentCatalogProvider
+import com.jetbrains.edu.learning.newproject.ui.EnvironmentAndNewCourseSettings
+import com.jetbrains.edu.learning.newproject.ui.newCourseSettings.NewCourseSettingsUI
 import com.jetbrains.rdclient.util.idea.toIOFile
 import com.jetbrains.rider.ideaInterop.fileTypes.msbuild.CsprojFileType
-import com.jetbrains.rider.projectView.projectTemplates.components.ProjectTemplateTargetFramework
 import com.jetbrains.rider.projectView.workspace.findProjects
 
 
-class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
+class CSharpCourseBuilder : EnvironmentAwareCourseBuilder<CSharpLanguageEnvironment> {
   override fun taskTemplateName(course: Course): String = CSharpConfigurator.TASK_CS
 
   override fun testTemplateName(course: Course): String = CSharpConfigurator.TEST_CS
 
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CSharpProjectSettings> =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<CSharpLanguageEnvironment> =
     CSharpCourseProjectGenerator(this, course)
 
-  override fun getLanguageSettings(): LanguageSettings<CSharpProjectSettings> = CSharpLanguageSettings()
-
-  override suspend fun getDefaultSettings(): Result<CSharpProjectSettings, String> = Ok(CSharpProjectSettings())
+  override fun getLanguageSettings(): LanguageSettings<CSharpLanguageEnvironment> = EnvironmentAndNewCourseSettings(
+    environmentCatalogProvider = getLanguageEnvironmentCatalogProvider(),
+    newCourseSettingsUI = NewCourseSettingsUI.List(
+      CSharpNewCourseSettingsCatalog,
+      CSharpNewCourseSettingsPresentation
+    )
+  )
 
   override fun initNewTask(course: Course, task: Task, info: NewStudyItemInfo, withSources: Boolean) {
     info.putUserData(CSPROJ_NAME_PER_TASK_KEY, task.getCSProjFileNameWithoutExtension())
@@ -110,10 +118,13 @@ class CSharpCourseBuilder : EduCourseBuilder<CSharpProjectSettings> {
     CSharpBackendService.getInstance(project).addTasksCSProjectToSolution(tasksToAdd)
   }
 
-  override fun getSupportedLanguageVersions(): List<String> = ProjectTemplateTargetFramework.allPredefinedNet.map { it.presentation }
+  override fun getSupportedLanguageVersions(): List<String> = supportedDotNetVersions()
 
   override fun validateItemName(project: Project, name: String, itemType: StudyItemType): String? =
     if (name.matches(STUDY_ITEM_NAME_PATTERN)) null else EduCSharpBundle.message("error.invalid.name")
+
+  override fun getLanguageEnvironmentCatalogProvider(): LanguageEnvironmentCatalogProvider<CSharpLanguageEnvironment> =
+    CSharpLanguageEnvironmentCatalogProvider
 
   companion object {
     const val PROJECT_FILE_TEMPLATE = "ProjectWithTests.csproj"

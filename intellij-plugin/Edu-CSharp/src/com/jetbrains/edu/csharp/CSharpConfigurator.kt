@@ -2,6 +2,7 @@ package com.jetbrains.edu.csharp
 
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.csharp.checker.CSharpTaskCheckerProvider
+import com.jetbrains.edu.csharp.environment.CSharpLanguageEnvironment
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -13,8 +14,8 @@ import com.jetbrains.rider.ideaInterop.fileTypes.sln.SolutionFileType
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
-class CSharpConfigurator : EduConfigurator<CSharpProjectSettings> {
-  override val courseBuilder: EduCourseBuilder<CSharpProjectSettings>
+class CSharpConfigurator : EduConfigurator<CSharpLanguageEnvironment> {
+  override val courseBuilder: EduCourseBuilder<CSharpLanguageEnvironment>
     get() = CSharpCourseBuilder()
 
   override val testFileName: String

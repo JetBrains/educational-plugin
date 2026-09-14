@@ -1,6 +1,7 @@
 package com.jetbrains.edu.csharp
 
 import com.intellij.util.io.createDirectories
+import com.jetbrains.edu.csharp.environment.CSharpLanguageEnvironment
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
@@ -9,8 +10,8 @@ import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.io.path.notExists
 
-abstract class CSharpCourseProjectGeneratorBase(builder: EduCourseBuilder<CSharpProjectSettings>, course: Course) :
-  CourseProjectGenerator<CSharpProjectSettings>(builder, course) {
+abstract class CSharpCourseProjectGeneratorBase(builder: EduCourseBuilder<CSharpLanguageEnvironment>, course: Course) :
+  CourseProjectGenerator<CSharpLanguageEnvironment>(builder, course) {
   /**
    * Rider uses a custom .idea dir which is .idea\.idea.<project_name>
    * See [com.jetbrains.edu.csharp.CSharpCourseProjectGeneratorBase.setUpProjectLocation]
