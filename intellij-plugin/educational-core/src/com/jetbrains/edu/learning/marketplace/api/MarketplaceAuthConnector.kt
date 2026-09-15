@@ -48,7 +48,6 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
             // Send data to service as we didn't send it when we were not authorized
             UserAgreementManager.getInstance().submitCurrentAgreements()
           }
-          application.messageBus.syncPublisher(MarketplaceLoginListener.LOGIN_TOPIC).onLoginSuccess()
         })
     }
   }
@@ -101,7 +100,13 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   }
 
   fun invokeJBALogin(jbAuthService: JBAccountInfoService, postLoginActions: List<Runnable>) {
-    jbAuthService.invokeJBALogin({postLoginActions.forEach { it.run() }}, {
+    jbAuthService.invokeJBALogin({ userId ->
+      if (userId == null) {
+        return@invokeJBALogin
+      }
+      postLoginActions.forEach { it.run() }
+      application.messageBus.syncPublisher(MarketplaceLoginListener.LOGIN_TOPIC).onLoginSuccess()
+    }, {
       EduNotificationManager.showErrorNotification(
         title = EduCoreBundle.message("error.login.failed"),
         content = EduCoreBundle.message("error.failed.login.to.subsystem", JET_BRAINS_ACCOUNT)
