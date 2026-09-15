@@ -39,7 +39,7 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
 
     scope.launch(
       context = currentModality.asContextElement(),
-      start = CoroutineStart.ATOMIC // the job will start even if the scope is canceled before the start
+      start = CoroutineStart.UNDISPATCHED // the job will start immediately, so it will survive if the scope is already canceled
     ) {
       execute(saveTask)
     }
@@ -52,14 +52,19 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
 
   private suspend fun execute(saveTask: SaveTask) {
     withContext(NonCancellable) {
+
+      val jobKey = saveTask.jobKey
+
+      val currentJob = currentCoroutineContext().job
+      val previousJob = item2SaveJob.put(jobKey, currentJob)
+
       try {
-        saveTask.previous?.join()
+        previousJob?.join()
         doSave(saveTask)
       }
       finally {
-        saveTask.finished.complete()
         // An older save must not remove a newer save's marker
-        item2SaveJob.remove(saveTask.jobKey, saveTask.finished)
+        item2SaveJob.remove(saveTask.jobKey, currentJob)
       }
     }
   }
@@ -70,10 +75,7 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
 
     if (isSaveSuppressed(jobKey)) return null
 
-    val finished = Job()
-    val previous = item2SaveJob.put(jobKey, finished)
-
-    return SaveTask(studyItem, itemDir, configName, mapper, jobKey, previous, finished)
+    return SaveTask(studyItem, itemDir, configName, mapper, jobKey)
   }
 
   override fun <T> withSaveSuppressed(configFile: VirtualFile?, action: () -> T): T {
@@ -209,8 +211,5 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
     val configName: String,
     val mapper: ObjectMapper,
     val jobKey: String,
-    val previous: Job?,
-    // Independent completion marker: completed only after the actual save finishes.
-    val finished: CompletableJob,
   )
 }
