@@ -177,7 +177,7 @@ private fun Course.configuratorCompatibility(): CourseCompatibility? {
 fun Course.updateEnvironmentSettings(project: Project, configurator: EduConfigurator<*>? = this.configurator) {
   val defaultEnvironmentSettings = configurator?.getEnvironmentSettings(project).orEmpty()
   environmentSettings = environmentSettings.with(defaultEnvironmentSettings)
-  YamlFormatSynchronizer.saveItem(this)
+  YamlFormatSynchronizer.requestSaveItem(this)
 }
 
 fun Course.visitEduFiles(visitor: (EduFile) -> Unit) {
