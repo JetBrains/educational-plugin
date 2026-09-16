@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.newproject
 
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.impl.OpenProjectTask
-import com.intellij.ide.impl.TrustedPaths
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
@@ -214,8 +214,7 @@ abstract class CourseProjectGenerator<S : EduProjectSettings>(
     baseDir.putUserData(COURSE_MODE_TO_CREATE, course.courseMode)
 
     if (isCourseTrusted(course, isNewCourseCreatorCourse)) {
-      @Suppress("UnstableApiUsage")
-      TrustedPaths.getInstance().setProjectPathTrusted(location.toPath(), true)
+      TrustedProjects.setProjectTrusted(location.toPath(), true)
     }
 
     val holder = CourseInfoHolder.fromCourse(course, baseDir)
