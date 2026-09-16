@@ -20,6 +20,7 @@ import com.intellij.database.util.DataSourceUtil
 import com.intellij.database.util.SqlDialects
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.ide.trustedProjects.TrustedProjects
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressIndicator
@@ -268,7 +269,11 @@ fun executeInitScripts(project: Project, tasks: List<Task>) {
   DumbService.getInstance(project).runWhenSmart {
     setSqlMappingForInitScripts(project, notInitializedTasks)
 
-    InitScriptExecutionTask(project, notInitializedTasks).queue()
+    // It's possible to inject arbitrary code into the init SQL script.
+    // So we should execute it only if the project is trusted
+    if (TrustedProjects.isProjectTrusted(project)) {
+      InitScriptExecutionTask(project, notInitializedTasks).queue()
+    }
   }
 }
 

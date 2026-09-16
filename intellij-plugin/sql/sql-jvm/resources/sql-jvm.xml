@@ -12,6 +12,11 @@
     <module name="intellij.database.sql.core.impl"/>
   </dependencies>
 
+  <applicationListeners>
+    <listener class="com.jetbrains.edu.sql.jvm.gradle.SqlTrustedProjectsListener"
+              topic="com.intellij.ide.trustedProjects.TrustedProjectsListener"/>
+  </applicationListeners>
+
   <projectListeners>
     <listener class="com.jetbrains.edu.sql.jvm.gradle.SqlCourseUpdateListener"
               topic="com.jetbrains.edu.learning.CourseUpdateListener"/>
