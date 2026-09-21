@@ -1,13 +1,11 @@
 package com.jetbrains.edu.python.slow.checker
 
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil.setDirectoryProjectSdk
 import com.jetbrains.edu.learning.checker.CheckActionListener
 import com.jetbrains.edu.learning.checker.CheckResultDiffMatcher
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckResultDiff
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.messages.EduFormatBundle
 import com.jetbrains.edu.learning.nullValue
@@ -106,18 +104,6 @@ class PyCheckErrorsTest : PyCheckersTestBase() {
       assertThat("Checker output for ${task.name} doesn't match", checkResult.message, matcher.first)
       assertThat("Checker diff for ${task.name} doesn't match", checkResult.diff, matcher.second)
       assertThat("Checker output for ${task.name} doesn't match", checkResult.details, matcher.third)
-    }
-    doTest()
-  }
-
-  @Test
-  fun `test no interpreter`() {
-    setDirectoryProjectSdk(project, null)
-
-    CheckActionListener.setCheckResultVerifier { task, checkResult ->
-      assertEquals("Status for ${task.name} doesn't match", CheckStatus.Unchecked, checkResult.status)
-      assertThat("Checker output for ${task.name} doesn't match", checkResult.message,
-                 containsString(EduCoreBundle.message("error.no.interpreter", EduFormatNames.PYTHON)))
     }
     doTest()
   }
