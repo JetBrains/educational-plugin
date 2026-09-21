@@ -1,7 +1,6 @@
 package com.jetbrains.edu.csharp.checker
 
 import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressIndicator
@@ -10,13 +9,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.rd.util.lifetime
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.wm.ToolWindowId
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.platform.backend.workspace.WorkspaceModel
 import com.intellij.platform.backend.workspace.virtualFile
 import com.jetbrains.edu.csharp.CSharpConfigurator
 import com.jetbrains.edu.csharp.getTestName
 import com.jetbrains.edu.csharp.toProjectModelEntity
+import com.jetbrains.edu.learning.EduUtilsKt.hideExecutionToolWindows
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.fillWithIncorrect
@@ -64,9 +62,7 @@ class CSharpEduTaskChecker(task: EduTask, private val envChecker: EnvironmentChe
 
   private fun prepareEnvironment(): CheckResult? {
     if (task.course.isStudy) {
-      runInEdt {
-        ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
-      }
+      hideExecutionToolWindows(project)
     }
 
     val possibleError = envChecker.getEnvironmentError(project, task)

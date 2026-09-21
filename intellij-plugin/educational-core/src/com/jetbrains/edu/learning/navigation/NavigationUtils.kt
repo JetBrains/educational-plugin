@@ -13,12 +13,11 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.openapi.wm.ToolWindowId
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.hideExecutionToolWindows
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -267,7 +266,7 @@ object NavigationUtils {
     updateProjectView(project, fileToActivate, fileToSelect)
 
     selectFirstAnswerPlaceholder(project)
-    ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+    hideExecutionToolWindows(project)
 
     if (task.lesson is FrameworkLesson && task.course.isStudy) {
       runInEdt {

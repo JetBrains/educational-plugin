@@ -8,7 +8,6 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputType
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.Project.DIRECTORY_STORE_FOLDER
@@ -17,9 +16,8 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.isFile
-import com.intellij.openapi.wm.ToolWindowId
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
+import com.jetbrains.edu.learning.EduUtilsKt.hideExecutionToolWindows
 import com.jetbrains.edu.learning.checker.tests.SMTestResultCollector
 import com.jetbrains.edu.learning.checker.tests.TestResultCollector
 import com.jetbrains.edu.learning.checker.tests.TestResultGroup
@@ -48,9 +46,7 @@ abstract class EduTaskCheckerBase(task: EduTask, private val envChecker: Environ
 
   override fun check(indicator: ProgressIndicator): CheckResult {
     if (task.course.isStudy) {
-      runInEdt {
-        ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
-      }
+      hideExecutionToolWindows(project)
     }
 
     val possibleError = envChecker.getEnvironmentError(project, task)

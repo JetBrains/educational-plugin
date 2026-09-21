@@ -9,6 +9,7 @@ import com.intellij.ide.SaveAndSyncHandler
 import com.intellij.ide.lightEdit.LightEdit
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
@@ -20,6 +21,8 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.wm.ToolWindowId
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.PlatformUtils
 import com.intellij.util.TimeoutUtil
 import com.intellij.util.ui.UIUtil
@@ -59,6 +62,9 @@ import java.util.concurrent.ExecutionException
 import java.util.zip.ZipFile
 
 object EduUtilsKt {
+
+  private val TOOL_WINDOWS_TO_HIDE = listOf(ToolWindowId.RUN, ToolWindowId.SERVICES)
+
   fun DataContext.showPopup(htmlContent: String, position: Balloon.Position = Balloon.Position.above) {
     val balloon = JBPopupFactory.getInstance()
       .createHtmlTextBalloonBuilder(
@@ -93,6 +99,15 @@ object EduUtilsKt {
   fun updateToolWindows(project: Project) {
     TaskToolWindowView.getInstance(project).updateTaskDescription()
     updateCourseProgress(project)
+  }
+
+  fun hideExecutionToolWindows(project: Project) {
+    runInEdt {
+      val toolWindowManager = ToolWindowManager.getInstance(project)
+      for (toolWindowId in TOOL_WINDOWS_TO_HIDE) {
+        toolWindowManager.getToolWindow(toolWindowId)?.hide(null)
+      }
+    }
   }
 
   fun synchronize() {

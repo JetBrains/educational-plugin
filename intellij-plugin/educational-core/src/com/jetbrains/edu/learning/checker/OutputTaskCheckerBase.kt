@@ -6,6 +6,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduUtilsKt.hideExecutionToolWindows
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -33,6 +34,10 @@ abstract class OutputTaskCheckerBase<T: OutputTaskBase>(
   protected open fun createLatestOutputFile(testFolder: VirtualFile, actualOutput: String) {}
 
   override fun check(indicator: ProgressIndicator): CheckResult {
+    if (task.course.isStudy) {
+      hideExecutionToolWindows(project)
+    }
+
     indicator.text = EduCoreBundle.message("progress.text.output.checker.executing.tests")
 
     val possibleError = envChecker.getEnvironmentError(project, task)
