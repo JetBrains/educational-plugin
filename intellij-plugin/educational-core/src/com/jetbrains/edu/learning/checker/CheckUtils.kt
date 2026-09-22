@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.*
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.execution.dashboard.RunDashboardManager
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.impl.ExecutionManagerImpl
 import com.intellij.execution.process.*
@@ -133,10 +134,32 @@ object CheckUtils {
     val connection = project.messageBus.connect()
     try {
       testResultCollector?.startCollecting(connection)
-      return executeRunConfigurations(connection, configurations, indicator, executionListener, processListener)
+      return withExcludedDashboardConfigurations(project, configurations) {
+        executeRunConfigurations(connection, configurations, indicator, executionListener, processListener)
+      }
     }
     finally {
       connection.disconnect()
+    }
+  }
+
+  /**
+   * Do not allow the executor to open tool windows that display the execution process.
+   * This is normally the Run tool window. For Go this is the Services tool window.
+   */
+  private inline fun <T> withExcludedDashboardConfigurations(
+    project: Project,
+    configurations: List<RunnerAndConfigurationSettings>,
+    action: () -> T
+  ): T {
+    val configurationsToSuppress = configurations.map { it.configuration }
+
+    RunDashboardManager.getInstance(project).hideConfigurations(configurationsToSuppress)
+    try {
+      return action()
+    }
+    finally {
+      RunDashboardManager.getInstance(project).restoreConfigurations(configurationsToSuppress)
     }
   }
 
