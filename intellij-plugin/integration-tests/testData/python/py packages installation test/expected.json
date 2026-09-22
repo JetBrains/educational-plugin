@@ -1,0 +1,30 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "PythonPackagesInstallationTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "Edu",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

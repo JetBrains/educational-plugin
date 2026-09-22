@@ -1,0 +1,11 @@
+type: marketplace
+title: PythonPackagesInstallationTest
+language: English
+summary: PythonPackagesInstallationTest
+programming_language: Python
+environment: unittest
+content:
+  - lesson1
+additional_files:
+  - name: requirements.txt
+yaml_version: 6
