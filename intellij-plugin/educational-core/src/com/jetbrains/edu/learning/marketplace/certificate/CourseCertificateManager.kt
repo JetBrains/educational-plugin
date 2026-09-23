@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.marketplace.certificate
 
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -17,8 +18,11 @@ import com.jetbrains.edu.learning.marketplace.isFromCourseStorage
 import com.jetbrains.edu.learning.onError
 import com.jetbrains.edu.learning.projectView.ProgressUtil
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 /**
  * Keeps track of whether the current course provides a certificate and issues it as soon as the user
@@ -35,6 +39,46 @@ class CourseCertificateManager(private val project: Project, val scope: Coroutin
   @Volatile
   var state: CourseCertificationState = CourseCertificationState.Unknown
     private set
+
+  /**
+   * Shows the certificate dialog, at most once per certificate, if the user has just earned one for [course]
+   * or has completed enough of the course but isn't logged in to get it.
+   *
+   * Refreshes the state first (see [updateCertificateState]), so the dialog is shown later on [scope].
+   * Should be called whenever the progress state may have changed, for example, after a task is solved
+   */
+  fun notifyIfEarned(course: Course) {
+    scope.launch {
+      val state = updateCertificateState()
+      if (state == CourseCertificationState.Unsupported) {
+        LOG.debug("Course suddenly stopped being certifiable")
+        return@launch
+      }
+      val dialogUIFactory = CourseCertificateDialogUIFactory.getInstance(project)
+      val isLoggedIn = MarketplaceConnector.getInstance().isLoggedIn()
+      // If the user has already been notified about this certificate, the dialog shouldn't be shown again
+      if (!isLoggedIn && dialogUIFactory.isDismissed) return@launch
+
+      when (state) {
+        is CourseCertificationState.Issued -> {
+          if (state.isFirstClientRequest) {
+            val certificateId = state.certificateId
+            withContext(Dispatchers.EDT) {
+              dialogUIFactory.create(course, certificateId).show()
+            }
+          }
+        }
+
+        else -> {
+          if (isEligibleForCertificate(course)) {
+            withContext(Dispatchers.EDT) {
+              dialogUIFactory.create(course, null).show()
+            }
+          }
+        }
+      }
+    }
+  }
 
   /**
    * Whether a certificate can be obtained for the current course, i.e. its state is

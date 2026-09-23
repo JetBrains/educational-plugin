@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.getTaskFile
 import com.jetbrains.edu.learning.marketplace.api.MarketplaceConnector
+import com.jetbrains.edu.learning.marketplace.certificate.CourseCertificateManager
 import com.jetbrains.edu.learning.marketplace.markMarketplaceTheoryTaskAsCompleted
 import com.jetbrains.edu.learning.navigation.NavigationUtils.getPlaceholderOffsets
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToFirstAnswerPlaceholder
@@ -71,7 +72,8 @@ class EduEditorFactoryListener : EditorFactoryListener {
     if (task !is TheoryTask) return
     val course = task.course
     if (course.isStudy && task.postSubmissionOnOpen && task.status !== CheckStatus.Solved) {
-      if (course is EduCourse && course.isMarketplaceRemote) {
+      val isMarketplaceRemote = course is EduCourse && course.isMarketplaceRemote
+      if (isMarketplaceRemote) {
         MarketplaceConnector.getInstance().isLoggedInAsync().thenAcceptAsync { isLoggedIn ->
           if (isLoggedIn) {
             markMarketplaceTheoryTaskAsCompleted(project, task)
@@ -79,6 +81,7 @@ class EduEditorFactoryListener : EditorFactoryListener {
         }
       }
       task.status = CheckStatus.Solved
+      CourseCertificateManager.getInstance(project).notifyIfEarned(course)
       saveItem(task)
       ProjectView.getInstance(project).refresh()
     }
