@@ -5,7 +5,9 @@ import com.jetbrains.python.psi.LanguageLevel
 
 /**
  * The map with the python versions for which we know the course is not working.
- * TODO Such a map is a temporary solution until we implement the way for course authors to specify this version explicitly: See EDU-8982
+ *
+ * Such a map is a temporary solution, if a course gets the environment setting FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING,
+ * it should be removed from this map
  */
 private val FIRST_UNSUPPORTED_PYTHON_VERSION: Map<Int, LanguageLevel> = mapOf(
   28816 /* Mastering Large Language Models */ to LanguageLevel.PYTHON314,
@@ -27,4 +29,21 @@ fun isVersionTooNewForCourse(course: Course, sdkLanguageLevel: LanguageLevel): B
 /**
  * `null` means "no max version restrictions"
  */
-fun getFirstUnsupportedPythonVersion(course: Course): LanguageLevel? = FIRST_UNSUPPORTED_PYTHON_VERSION[course.id]
+fun getFirstUnsupportedPythonVersion(course: Course): LanguageLevel? {
+  val firstUnsupportedPythonVersionFromEnvironmentSettings = course
+    .environmentSettings[FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING]
+    ?.let {
+      LanguageLevel.fromPythonVersionSafe(it)
+    }
+
+  if (firstUnsupportedPythonVersionFromEnvironmentSettings != null) {
+    return firstUnsupportedPythonVersionFromEnvironmentSettings
+  }
+
+  // TODO remove after the FIRST_UNSUPPORTED_PYTHON_VERSION becomes empty
+  val firstUnsupportedPythonVersionForKnownCourses = FIRST_UNSUPPORTED_PYTHON_VERSION[course.id]
+
+  return firstUnsupportedPythonVersionForKnownCourses
+}
+
+private const val FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING = "first_unsupported_python_version"

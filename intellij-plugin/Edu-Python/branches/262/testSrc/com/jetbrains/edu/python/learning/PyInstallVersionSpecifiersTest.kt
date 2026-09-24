@@ -30,10 +30,17 @@ class PyInstallVersionSpecifiersTest(
 
   companion object {
 
-    private fun python3Course(courseId: Int, languageVersion: String = EduFormatNames.PYTHON_3_VERSION): EduCourse = EduCourse().apply {
+    private fun python3Course(
+      courseId: Int,
+      languageVersion: String = EduFormatNames.PYTHON_3_VERSION,
+      minUnsupportedEnvironmentSettings: String? = null
+    ): EduCourse = EduCourse().apply {
       id = courseId
       languageId = PythonLanguage.INSTANCE.id
       this.languageVersion = languageVersion
+      if (minUnsupportedEnvironmentSettings != null) {
+        this.environmentSettings += mapOf("first_unsupported_python_version" to minUnsupportedEnvironmentSettings)
+      }
     }
 
     @JvmStatic
@@ -43,7 +50,10 @@ class PyInstallVersionSpecifiersTest(
         arrayOf(python3Course(28816), listOf("3.11", "3.11.1", "3.12.5", "3.13", "3.13.1"), listOf("2.7", "3.14", "3.14.2", "3.15")),
         arrayOf(python3Course(42), listOf("3.11", "3.11.1", "3.12.5", "3.13", "3.13.1", "3.14", "3.14.2", "3.15"), listOf("2.7")),
         arrayOf(python3Course(42, "3.10"), listOf("3.11", "3.11.1", "3.12.5", "3.13", "3.13.1", "3.14", "3.14.2", "3.15"), listOf("2.7", "3.9")),
-        arrayOf(python3Course(28816, "3.12"), listOf("3.12.5", "3.13", "3.13.1"), listOf("2.7", "3.9", "3.11", "3.11.1", "3.14", "3.14.2", "3.15"))
+        arrayOf(python3Course(28816, "3.12"), listOf("3.12.5", "3.13", "3.13.1"), listOf("2.7", "3.9", "3.11", "3.11.1", "3.14", "3.14.2", "3.15")),
+        arrayOf(python3Course(42, minUnsupportedEnvironmentSettings = "3.13"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
+        arrayOf(python3Course(42, "3.10", minUnsupportedEnvironmentSettings = "3.13"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.9", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
+        arrayOf(python3Course(28816, minUnsupportedEnvironmentSettings = "3.13"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
       )
     }
   }
