@@ -30,8 +30,9 @@ since they suffer from exactly this problem.
 
 - The module's `test` Gradle task depends on `:intellij-plugin:buildPlugin` and passes the path
   to the resulting plugin zip to the test JVM via the `path.to.build.plugin` system property.
-- Each test (see `CourseValidationTestBase.doTest()`) downloads a real IDE build, installs that
-  plugin zip into it, and configures it for a headless run.
+- Each test (see `CourseValidationTestBase.doTest()`) uses the
+  [IntelliJ Starter](https://github.com/JetBrains/intellij-community/tree/master/tools/intellij.tools.ide.starter)
+  framework to download a real IDE build, install that plugin zip into it, and configure it for a headless run.
 - It then launches the IDE with a command line along the lines of:
   ```
   validateCourse <workspaceDir> --local <courseDir> --tests true --links false --output-format json --output <reportFile>
