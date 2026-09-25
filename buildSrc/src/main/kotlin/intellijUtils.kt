@@ -128,9 +128,14 @@ val Project.commonTestPlugins: List<String> get() = listOfNotNull(
   jcefPlugin,
 )
 
-// https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2183
-val Project.disabledTestPlugins: List<String> get() = listOf(
-  "org.jetbrains.plugins.vue"
+val Project.disabledTestPlugins: List<String> get() = listOfNotNull(
+  // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2183
+  "org.jetbrains.plugins.vue",
+  // CLion Nova (radler) plugin starts a separate backend process for each test project
+  // which leads to changed default settings on startup, logged errors, leaked processes and hanging tests.
+  // So it's disabled for all modules except `Edu-Cpp` which really needs it.
+  // See https://youtrack.jetbrains.com/issue/EDU-8999
+  if (path != ":intellij-plugin:Edu-Cpp") "org.jetbrains.plugins.clion.radler" else null,
 )
 
 /**

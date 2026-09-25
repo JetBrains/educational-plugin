@@ -102,11 +102,10 @@ tasks {
       jvmTarget = JvmTarget.JVM_25
     }
   }
+  // TODO: is it possible to use generated `prepareTestSandbox` directly in the plugin?
   withType<PrepareSandboxTask> {
-    disabledPlugins.addAll(disabledTestPlugins)
-  }
-  test {
-    // https://youtrack.jetbrains.com/issue/EDU-8999
-    enabled = !isClionIDE
+    if (name == "prepareTestSandbox") {
+      disabledPlugins.addAll(disabledTestPlugins)
+    }
   }
 }
