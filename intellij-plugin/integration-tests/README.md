@@ -99,3 +99,9 @@ These tests are intended to run on TeamCity with necessary environment.
    correct).
 3. Add a corresponding test method in the relevant test class (or create a new one) that calls `doTest(...)`.
 
+Test classes of each technology live in their own `com.jetbrains.edu.slow.checkerTests.<technologyPrefix>` package.
+TeamCity runs every technology in a separate configuration using the package pattern
+(`--tests com.jetbrains.edu.slow.checkerTests.<technologyPrefix>.*`), so new test classes in an existing package
+are picked up automatically, while a new technology requires a new TeamCity configuration.
+Keep the `slow` part of the package: the regular test configuration excludes `**/slow/**` tests.
+
