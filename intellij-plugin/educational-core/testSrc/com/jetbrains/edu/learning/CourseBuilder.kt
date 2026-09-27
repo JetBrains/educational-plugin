@@ -171,7 +171,7 @@ class CourseBuilder(course: Course) : LessonOwnerBuilder(course) {
   }
 
   fun environmentSetting(key: String, value: String) {
-    course.environmentSettings = course.environmentSettings.plus(key to value)
+    course.setEnvironmentSetting(EnvironmentSettingKey(key), value)
   }
 }
 

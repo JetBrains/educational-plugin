@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.getEnvironmentSetting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.gradle.util.GradleVersion
@@ -55,7 +56,7 @@ object GradleBuildSystemSupport : JdkBuildSystemSupport {
   }
 
   private fun Course.gradleVersionFromEnvironmentSettings(): GradleVersion? {
-    val versionString = environmentSettings[GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION] ?: return null
+    val versionString = getEnvironmentSetting(GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION) ?: return null
     return runCatching { GradleVersion.version(versionString) }.getOrNull()
   }
 }

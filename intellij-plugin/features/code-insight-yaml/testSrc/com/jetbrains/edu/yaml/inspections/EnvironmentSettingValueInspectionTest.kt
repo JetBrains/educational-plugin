@@ -1,12 +1,9 @@
 package com.jetbrains.edu.yaml.inspections
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.jetbrains.edu.learning.configuration.DefaultEnvironmentSettings
-import com.jetbrains.edu.learning.configuration.EnvironmentSettingValue
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.configuration.PlainTextConfigurator
-import com.jetbrains.edu.learning.configuration.defaultEnvironmentSettings
-import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.registerConfigurator
 import org.intellij.lang.annotations.Language
 import org.junit.Test
@@ -82,8 +79,12 @@ class EnvironmentSettingValueInspectionTest : YamlInspectionsTestBase(Environmen
 }
 
 private class EnvironmentSettingsTestConfigurator : PlainTextConfigurator() {
+
+  private val courseDefinedEnvironmentSettingKey = EnvironmentSettingKey("course_defined")
+  private val userDefinedEnvironmentSettingKey = EnvironmentSettingKey("user_defined")
+
   override fun getEnvironmentSettings(project: Project): DefaultEnvironmentSettings = defaultEnvironmentSettings(
-    "course_defined" to EnvironmentSettingValue.course("expected_course_defined"),
-    "user_defined" to EnvironmentSettingValue.user("expected_user_defined")
+    courseDefinedEnvironmentSettingKey to EnvironmentSettingValue.course("expected_course_defined"),
+    userDefinedEnvironmentSettingKey to EnvironmentSettingValue.user("expected_user_defined")
   )
 }

@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.EnvironmentAwareCourseBuilder
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.setEnvironmentSetting
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -51,8 +51,8 @@ abstract class JdkVersionValidationTestBase(
   fun `jdk validation messages`() {
     val course = course(language = language, environment = environment) {}
     course.languageVersion = courseLanguageVersion
-    course.setLanguageLevel(courseLanguageLevel)
-    course.setGradleVersion(gradleVersion)
+    course.setEnvironmentSetting(JVM_LANGUAGE_LEVEL, courseLanguageLevel)
+    course.setEnvironmentSetting(GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION, gradleVersion)
 
     @Suppress("UNCHECKED_CAST")
     val courseBuilder = course.configurator?.courseBuilder as? EnvironmentAwareCourseBuilder<JdkLanguageEnvironment> ?: error("Course builder is absent")
@@ -74,24 +74,6 @@ abstract class JdkVersionValidationTestBase(
         val parsedJdkVersion = JavaVersion.tryParse(sdkVersion) ?: error("Specify parsable JDK version: $sdkVersion")
         assertEquals("jdk version validity is not correct", expectedValidationResult.valid, jdkVersionRange.contains(parsedJdkVersion.feature))
       }
-    }
-  }
-
-  private fun Course.setLanguageLevel(languageLevel: String?) {
-    course.environmentSettings = if (languageLevel == null) {
-      course.environmentSettings.minus(JVM_LANGUAGE_LEVEL)
-    }
-    else {
-      course.environmentSettings.plus(JVM_LANGUAGE_LEVEL to languageLevel)
-    }
-  }
-
-  private fun Course.setGradleVersion(gradleVersion: String?) {
-    course.environmentSettings = if (gradleVersion == null) {
-      course.environmentSettings.minus(GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION)
-    }
-    else {
-      course.environmentSettings.plus(GradleConfiguratorBase.ENV_SETTINGS_GRADLE_VERSION to gradleVersion)
     }
   }
 }

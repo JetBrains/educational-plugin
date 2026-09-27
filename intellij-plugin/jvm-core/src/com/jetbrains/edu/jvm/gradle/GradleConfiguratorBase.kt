@@ -6,14 +6,15 @@ import com.jetbrains.edu.jvm.environment.JdkLanguageEnvironment
 import com.jetbrains.edu.jvm.gradle.generation.EduGradleUtils.detectGradleVersion
 import com.jetbrains.edu.jvm.jvmEnvironmentSettings
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.CourseViewVisibility
-import com.jetbrains.edu.learning.configuration.DefaultEnvironmentSettings
-import com.jetbrains.edu.learning.configuration.EnvironmentSettingValue
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
-import com.jetbrains.edu.learning.configuration.with
 import com.jetbrains.edu.learning.courseDir
+import com.jetbrains.edu.learning.courseFormat.DefaultEnvironmentSettings
+import com.jetbrains.edu.learning.courseFormat.EnvironmentSettingKey
+import com.jetbrains.edu.learning.courseFormat.EnvironmentSettingValue
+import com.jetbrains.edu.learning.courseFormat.with
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
@@ -79,6 +80,6 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkLanguageEnvironment> 
     )
 
     private val FOLDERS_TO_EXCLUDE = arrayOf(EduNames.OUT, EduNames.BUILD, GRADLE)
-    const val ENV_SETTINGS_GRADLE_VERSION = "gradle_version"
+    val ENV_SETTINGS_GRADLE_VERSION = EnvironmentSettingKey("gradle_version")
   }
 }

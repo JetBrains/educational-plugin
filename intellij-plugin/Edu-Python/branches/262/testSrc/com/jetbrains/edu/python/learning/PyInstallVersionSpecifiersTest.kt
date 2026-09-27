@@ -3,6 +3,8 @@ package com.jetbrains.edu.python.learning
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.setEnvironmentSetting
+import com.jetbrains.edu.python.learning.newproject.FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING
 import com.jetbrains.edu.python.learning.newproject.installVersionSpecifiers
 import com.jetbrains.python.PythonLanguage
 import org.junit.Assert
@@ -39,7 +41,7 @@ class PyInstallVersionSpecifiersTest(
       languageId = PythonLanguage.INSTANCE.id
       this.languageVersion = languageVersion
       if (minUnsupportedEnvironmentSettings != null) {
-        this.environmentSettings += mapOf("first_unsupported_python_version" to minUnsupportedEnvironmentSettings)
+        setEnvironmentSetting(FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING, minUnsupportedEnvironmentSettings)
       }
     }
 

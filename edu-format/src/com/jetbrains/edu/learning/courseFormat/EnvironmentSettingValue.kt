@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.configuration
+package com.jetbrains.edu.learning.courseFormat
 
 enum class EnvironmentSettingValueType {
   /**
@@ -19,7 +19,7 @@ data class EnvironmentSettingValue(val value: String, val valueType: Environment
   }
 }
 
-typealias DefaultEnvironmentSettings = Map<String, EnvironmentSettingValue>
+typealias DefaultEnvironmentSettings = Map<EnvironmentSettingKey, EnvironmentSettingValue>
 typealias EnvironmentSettings = Map<String, String>
 
 fun EnvironmentSettings.with(default: DefaultEnvironmentSettings): EnvironmentSettings {
@@ -29,14 +29,14 @@ fun EnvironmentSettings.with(default: DefaultEnvironmentSettings): EnvironmentSe
     when (settingValue.valueType) {
       EnvironmentSettingValueType.USER_DEFINED -> {
         // USER_DEFINED: prefer value from `this` if exists, otherwise use default
-        if (key !in result) {
-          result[key] = settingValue.value
+        if (key.name !in result) {
+          result[key.name] = settingValue.value
         }
       }
 
       EnvironmentSettingValueType.COURSE_DEFINED -> {
         // COURSE_DEFINED: always use value from default
-        result[key] = settingValue.value
+        result[key.name] = settingValue.value
       }
     }
   }
@@ -44,7 +44,7 @@ fun EnvironmentSettings.with(default: DefaultEnvironmentSettings): EnvironmentSe
   return result
 }
 
-fun DefaultEnvironmentSettings.with(vararg keyValue: Pair<String, EnvironmentSettingValue?>): DefaultEnvironmentSettings {
+fun DefaultEnvironmentSettings.with(vararg keyValue: Pair<EnvironmentSettingKey, EnvironmentSettingValue?>): DefaultEnvironmentSettings {
   val result = toMutableMap()
 
   for ((key, value) in keyValue) {
@@ -56,6 +56,6 @@ fun DefaultEnvironmentSettings.with(vararg keyValue: Pair<String, EnvironmentSet
   return result
 }
 
-fun defaultEnvironmentSettings(vararg settings: Pair<String, EnvironmentSettingValue?>): DefaultEnvironmentSettings {
-  return emptyMap<String, EnvironmentSettingValue>().with(*settings)
+fun defaultEnvironmentSettings(vararg settings: Pair<EnvironmentSettingKey, EnvironmentSettingValue?>): DefaultEnvironmentSettings {
+  return emptyMap<EnvironmentSettingKey, EnvironmentSettingValue>().with(*settings)
 }

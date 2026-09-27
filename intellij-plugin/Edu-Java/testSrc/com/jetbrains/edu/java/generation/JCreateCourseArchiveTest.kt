@@ -7,6 +7,7 @@ import com.intellij.pom.java.LanguageLevel
 import com.jetbrains.edu.coursecreator.archive.CourseArchiveTestBase
 import com.jetbrains.edu.jvm.JVM_LANGUAGE_LEVEL
 import com.jetbrains.edu.learning.courseFormat.CourseMode
+import com.jetbrains.edu.learning.courseFormat.setEnvironmentSetting
 import org.junit.Test
 
 @Suppress("NonFinalUtilityClass")
@@ -120,7 +121,7 @@ class JCreateCourseArchiveTest : CourseArchiveTestBase() {
       }
     }
 
-    course.environmentSettings = mapOf(JVM_LANGUAGE_LEVEL to LanguageLevel.JDK_17.toString())
+    course.setEnvironmentSetting(JVM_LANGUAGE_LEVEL, LanguageLevel.JDK_17.toString())
 
     withLanguageLevel(LanguageLevel.JDK_19) {
       doTest(course)

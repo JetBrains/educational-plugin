@@ -1,6 +1,8 @@
 package com.jetbrains.edu.python.learning.newproject
 
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EnvironmentSettingKey
+import com.jetbrains.edu.learning.courseFormat.getEnvironmentSetting
 import com.jetbrains.python.psi.LanguageLevel
 
 /**
@@ -30,20 +32,14 @@ fun isVersionTooNewForCourse(course: Course, sdkLanguageLevel: LanguageLevel): B
  * `null` means "no max version restrictions"
  */
 fun getFirstUnsupportedPythonVersion(course: Course): LanguageLevel? {
-  val firstUnsupportedPythonVersionFromEnvironmentSettings = course
-    .environmentSettings[FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING]
-    ?.let {
-      LanguageLevel.fromPythonVersionSafe(it)
-    }
+  val firstUnsupportedPythonVersionFromEnvironmentSettings =
+    course.getEnvironmentSetting(FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING)?.let {
+        LanguageLevel.fromPythonVersionSafe(it)
+      }
 
-  if (firstUnsupportedPythonVersionFromEnvironmentSettings != null) {
-    return firstUnsupportedPythonVersionFromEnvironmentSettings
-  }
-
-  // TODO remove after the FIRST_UNSUPPORTED_PYTHON_VERSION becomes empty
-  val firstUnsupportedPythonVersionForKnownCourses = FIRST_UNSUPPORTED_PYTHON_VERSION[course.id]
-
-  return firstUnsupportedPythonVersionForKnownCourses
+  return firstUnsupportedPythonVersionFromEnvironmentSettings ?:
+         // TODO remove after the FIRST_UNSUPPORTED_PYTHON_VERSION becomes empty
+         FIRST_UNSUPPORTED_PYTHON_VERSION[course.id]
 }
 
-private const val FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING = "first_unsupported_python_version"
+val FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING = EnvironmentSettingKey("first_unsupported_python_version")

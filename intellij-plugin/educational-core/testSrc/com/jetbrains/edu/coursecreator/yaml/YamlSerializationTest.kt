@@ -937,7 +937,7 @@ class YamlSerializationTest : YamlTestCase() {
         eduTask()
       }
     }
-    course.environmentSettings += "foo" to "bar"
+    course.setEnvironmentSetting(EnvironmentSettingKey("foo"), "bar")
     doTest(course, """
       |title: Test Course
       |language: English

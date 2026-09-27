@@ -4,17 +4,20 @@ import com.intellij.lang.Language
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
+import com.jetbrains.edu.learning.courseFormat.EnvironmentSettingKey
+import com.jetbrains.edu.learning.courseFormat.getEnvironmentSetting
+import com.jetbrains.edu.learning.courseFormat.setEnvironmentSetting
 import javax.swing.Icon
 
-const val SQL_TEST_LANGUAGE_KEY = "sql_test_language"
+val SQL_TEST_LANGUAGE_KEY = EnvironmentSettingKey("sql_test_language")
 
 var Course.sqlTestLanguage: SqlTestLanguage
   get() {
-    val languageId = environmentSettings[SQL_TEST_LANGUAGE_KEY]
+    val languageId = getEnvironmentSetting(SQL_TEST_LANGUAGE_KEY)
     return SqlTestLanguage.entries.find { it.languageId == languageId } ?: SqlTestLanguage.KOTLIN
   }
   set(value) {
-    environmentSettings += SQL_TEST_LANGUAGE_KEY to value.languageId
+    setEnvironmentSetting(SQL_TEST_LANGUAGE_KEY, value.languageId)
   }
 
 /**
@@ -26,4 +29,3 @@ enum class SqlTestLanguage(val languageId: String, val logo: Icon) {
 
   fun getLanguage(): Language? = Language.findLanguageByID(languageId)
 }
-

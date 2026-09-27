@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.compatibility.CourseCompatibilityProviderEP
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesBuilderContext
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.DefaultEnvironmentSettings
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.Companion.taskDescriptionRegex
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
