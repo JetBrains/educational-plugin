@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.TestFactory
 
 @RequiredProperty(PYTHON_INTERPRETER_PROPERTY)
-class PythonPackagesInstallationTest : CourseValidationTestBase("python", pyCharm()) {
+class PyPackagesInstallationTest : CourseValidationTestBase("python", pyCharm()) {
 
   @TestFactory
   fun `py packages installation test`(): List<DynamicNode> = doTest()

@@ -1,2 +1,2 @@
-requests
-https://github.com/hyperskill/hs-test-python/archive/release.tar.gz
+requests==2.32.5
+https://github.com/mwaskom/seaborn/archive/refs/tags/v0.13.2.tar.gz
