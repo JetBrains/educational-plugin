@@ -8,6 +8,8 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.ui.JBAccountInfoService
+import com.intellij.ui.JBAccountInfoService.AccessTokenResult
+import com.intellij.ui.JBAccountInfoService.AuthRequired
 import com.intellij.util.application
 import com.intellij.util.concurrency.annotations.RequiresBackgroundThread
 import com.intellij.util.messages.Topic
@@ -132,7 +134,15 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
   fun getJBAccessToken(jbAccountInfoService: JBAccountInfoService): String? {
     var success = false
     return try {
-      val jbAccessToken = jbAccountInfoService.getJBAuthAccessToken().get(30, TimeUnit.SECONDS)
+      val result = jbAccountInfoService.getGlobalAccessToken(JB_AUTHN_SERVICE_AUDIENCE).get(30, TimeUnit.SECONDS)
+      val jbAccessToken = when (result) {
+        AuthRequired.INSTANCE -> null
+        is AccessTokenResult.AccessToken -> result.accessToken
+        is AccessTokenResult.RequestFailed -> {
+          LOG.warn("""JB Auth token request failed with ${result.httpStatusCode} code and "${result.message}" message""")
+          null
+        }
+      }
       success = jbAccessToken != null
       jbAccessToken
     }
@@ -184,9 +194,7 @@ abstract class MarketplaceAuthConnector : EduLoginConnector<MarketplaceAccount, 
 
     private const val AUTH_TYPE_BASIC = "Basic"
 
-    // BACKCOMPAT: 2026.1. Make private and drop suppression
-    @Suppress("unused")
-    internal const val JB_AUTHN_SERVICE_AUDIENCE = "jb-authn-service"
+    private const val JB_AUTHN_SERVICE_AUDIENCE = "jb-authn-service"
   }
 
   @Service

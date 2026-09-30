@@ -10,9 +10,6 @@ import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
 
-// BACKCOMPAT: 2026.1. Drop it
-val Project.isAtLeast262: Boolean get() = environmentName.toInt() >= 262
-
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
 val Project.baseIDE: String by Properties
@@ -72,8 +69,7 @@ val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
-// BACKCOMPAT: 2026.1. Always use `jcefPlugin` property and make it non-null
-val Project.jcefPlugin: String? get() = if (isAtLeast262) resolvePluginPlaceholders(prop("jcefPlugin")) else null
+val Project.jcefPlugin: String get() = resolvePluginPlaceholders(prop("jcefPlugin"))
 val Project.testRunnerPlugin: String get() = "intellij.testRunner.plugin"
 val Project.sshPlugin: String get() = "intellij.ssh.plugin"
 
@@ -114,17 +110,17 @@ val Project.csharpPlugins: List<String> get() = listOf(
 
 // Plugins which we add to tests for all modules.
 // It's the most common plugins which affect the behavior of the plugin code
-val Project.commonTestPlugins: List<String> get() = listOfNotNull(
+val Project.commonTestPlugins: List<String> get() = listOf(
   imagesPlugin, // adds `svg` file type and makes IDE consider .svg files as text ones
   yamlPlugin,   // makes IDE consider .yaml files as text ones and affects formatting of yaml files
   jsonPlugin,   // dependency of a lot of other bundled plugin
   "com.intellij.modules.ultimate",
-  if (isAtLeast262) "intellij.structureView.plugin" else null,
-  if (isAtLeast262) "intellij.todo.plugin" else null,
-  if (isAtLeast262) "intellij.structuralSearch.plugin" else null,
-  if (isAtLeast262) "intellij.libraries.misc.plugin" else null,
-  if (isAtLeast262) "intellij.bookmarks.plugin" else null,
-  if (isAtLeast262) testRunnerPlugin else null,
+  "intellij.structureView.plugin",
+  "intellij.todo.plugin",
+  "intellij.structuralSearch.plugin",
+  "intellij.libraries.misc.plugin",
+  "intellij.bookmarks.plugin",
+  testRunnerPlugin,
   jcefPlugin,
 )
 

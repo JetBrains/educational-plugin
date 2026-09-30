@@ -110,7 +110,7 @@ private suspend fun executePackageInstallationCommand(project: Project, sdk: Sdk
 
   val packageManager = PythonPackageManager.forSdk(project, sdk)
 
-  if (!packageManager.hasRootDependencyFile()) {
+  if (packageManager.getRootDependenciesFile() == null) {
     LOG.info("No Python dependencies file found, skipping package sync")
     return PyResult.success(emptyList())
   }

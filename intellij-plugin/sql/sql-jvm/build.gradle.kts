@@ -8,12 +8,10 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(sqlPlugins)
-    if (isAtLeast262) {
-      testIntellijPlugins("intellij.grid.core.plugin")
-      testIntellijPlugins("intellij.execution.serviceView.plugin")
-      testIntellijPlugins("intellij.navbar.plugin")
-      testIntellijPlugins(testRunnerPlugin)
-    }
+    testIntellijPlugins("intellij.grid.core.plugin")
+    testIntellijPlugins("intellij.execution.serviceView.plugin")
+    testIntellijPlugins("intellij.navbar.plugin")
+    testIntellijPlugins(testRunnerPlugin)
   }
 
   api(project(":intellij-plugin:sql"))

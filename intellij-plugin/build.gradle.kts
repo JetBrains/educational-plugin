@@ -174,10 +174,10 @@ tasks {
         )
         // Force headless mode to be able to run command on CI
         systemProperty("java.awt.headless", "true")
-        // BACKCOMPAT: 2026.1. Update value to the 262 and this comment
+        // BACKCOMPAT: 2026.2. Update value to the 263 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "261")
+        environment("IDEA_BUILD_NUMBER", "262")
       }
     }
 
@@ -226,7 +226,7 @@ tasks {
 }
 
 fun idePlugins(type: IntelliJPlatformType): List<String> {
-  return ideToPlugins[type].orEmpty() + listOfNotNull(
+  return ideToPlugins[type].orEmpty() + listOf(
     psiViewerPlugin,
     jcefPlugin,
   )

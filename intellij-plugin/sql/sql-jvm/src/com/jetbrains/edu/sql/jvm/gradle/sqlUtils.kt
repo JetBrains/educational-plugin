@@ -11,6 +11,7 @@ import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigura
 import com.intellij.database.console.runConfiguration.DatabaseScriptRunConfigurationOptions
 import com.intellij.database.console.session.DatabaseSessionManager
 import com.intellij.database.dataSource.*
+import com.intellij.database.dataSource.artifacts.ArtifactFilesSource
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactContext
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactList
 import com.intellij.database.dataSource.artifacts.DatabaseArtifactLoader
@@ -196,7 +197,7 @@ private suspend fun DatabaseDriver.resolveArtifacts(project: Project): List<Data
       version.version == artifact.artifactVersion -> artifact
       else -> DatabaseDriverImpl.createArtifactRef(artifact.id, version.version, artifact.channel)!!
     }
-    if (version != null && loader.needToDownload(version)) {
+    if (version != null && loader.getFilesSource(version, DatabaseArtifactContext.getDefaultContext()) == ArtifactFilesSource.REMOTE_STORAGE) {
       toDownload += version
     }
   }

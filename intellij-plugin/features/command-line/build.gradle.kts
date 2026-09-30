@@ -6,9 +6,7 @@ dependencies {
   intellijPlatform {
     // TODO: use `baseVersion` when https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1790 is resolved
     intellijIde(ideaVersion)
-    if (isAtLeast262) {
-      intellijPlugins(testRunnerPlugin)
-    }
+    intellijPlugins(testRunnerPlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))

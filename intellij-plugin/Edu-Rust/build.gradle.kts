@@ -9,9 +9,7 @@ dependencies {
 
     intellijPlugins(rustPlugins)
 
-    if (isAtLeast262) {
-      intellijPlugins(testRunnerPlugin)
-    }
+    intellijPlugins(testRunnerPlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))

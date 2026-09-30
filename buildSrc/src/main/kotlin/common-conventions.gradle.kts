@@ -42,7 +42,7 @@ tasks {
     compilerOptions {
       languageVersion = KotlinVersion.DEFAULT
       // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#bundled-stdlib-versions
-      // BACKCOMPAT: 2026.1. Check the minimal required API version.
+      // BACKCOMPAT: 2026.2. Check the minimal required API version.
       // Update this message and api version value if needed
       apiVersion = KotlinVersion.KOTLIN_2_3
       freeCompilerArgs = listOf(

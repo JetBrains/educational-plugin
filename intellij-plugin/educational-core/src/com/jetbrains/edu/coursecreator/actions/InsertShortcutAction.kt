@@ -8,6 +8,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts
+import com.intellij.openapi.keymap.impl.ui.ActionTreeGroupUtil
 import com.intellij.openapi.keymap.impl.ui.Group
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager

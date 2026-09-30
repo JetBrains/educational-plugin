@@ -8,11 +8,8 @@ dependencies {
     intellijIde(baseVersion)
 
     bundledModules("intellij.platform.vcs.impl")
-    if (isAtLeast262) {
-      // BACKCOMPAT: 2026.1. Drop `listOfNotNull` since `jcefPlugin` should be not null
-      intellijPlugins(listOfNotNull(testRunnerPlugin, jcefPlugin))
-      bundledModules("intellij.platform.sqlite")
-    }
+    intellijPlugins(testRunnerPlugin, jcefPlugin)
+    bundledModules("intellij.platform.sqlite")
   }
 
   api(project(":edu-format"))
