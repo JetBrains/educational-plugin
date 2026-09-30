@@ -4,6 +4,9 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.python.community.services.systemPython.SystemPython
 import com.intellij.python.community.services.systemPython.SystemPythonService
+import com.jetbrains.edu.learning.Err
+import com.jetbrains.edu.learning.Ok
+import com.jetbrains.edu.learning.Result
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_2_VERSION
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames.PYTHON_3_VERSION
@@ -12,6 +15,8 @@ import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironment
 import com.jetbrains.edu.python.learning.environment.PyLanguageEnvironmentCatalogProvider.Companion.ALL_VERSIONS
 import com.jetbrains.python.packaging.PyVersionSpecifiers
 import com.jetbrains.python.psi.LanguageLevel
+import java.nio.file.Files
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 
 private val SYSTEM_PYTHONS: Key<List<SystemPython>> = Key.create("edu.python.system_interpreters")
@@ -35,7 +40,7 @@ suspend fun collectPyEnvironments(course: Course): Pair<List<PyLanguageEnvironme
   return Pair(existingEnvironments, existingEnvironments.first())
 }
 
-suspend fun SystemPython.toExisting(): PyLanguageEnvironment.Existing {
+fun SystemPython.toExisting(): PyLanguageEnvironment.Existing {
   val version = pythonInfo.languageLevel.toString()
 
   return PyLanguageEnvironment.Existing(
@@ -91,4 +96,12 @@ internal fun installVersionSpecifiers(course: Course): PyVersionSpecifiers {
   else {
     PyVersionSpecifiers(constraints.joinToString(","))
   }
+}
+
+suspend fun createDefaultSettings(sdkLocation: String): Result<PyLanguageEnvironment, String> {
+  val sdkPath = Path(sdkLocation)
+  val sdk = SystemPythonService().findSystemPythons(forceRefresh = true).firstOrNull {
+    Files.isSameFile(it.pythonBinary, sdkPath)
+  }
+  return if (sdk == null) Err("No system python found") else Ok(sdk.toExisting())
 }
