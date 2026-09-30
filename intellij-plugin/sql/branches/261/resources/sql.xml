@@ -1,5 +1,0 @@
-<idea-plugin>
-  <dependencies>
-    <plugin id="com.intellij.database"/>
-  </dependencies>
-</idea-plugin>
