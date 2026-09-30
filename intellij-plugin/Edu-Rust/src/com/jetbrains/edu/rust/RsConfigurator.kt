@@ -1,13 +1,10 @@
 package com.jetbrains.edu.rust
 
-import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.EducationalCoreIcons
 import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
-import com.jetbrains.edu.learning.courseFormat.PluginInfos
-import com.jetbrains.edu.learning.pluginVersion
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import com.jetbrains.edu.rust.environment.RsLanguageEnvironment
 import org.rust.cargo.CargoConstants
@@ -58,14 +55,6 @@ class RsConfigurator : EduConfigurator<RsLanguageEnvironment> {
       archiveInclusionPolicy(ArchiveInclusionPolicy.SHOULD_BE_INCLUDED)
     }
   }
-
-  override val isEnabled: Boolean
-    get() {
-      val rustPluginVersion = pluginVersion(PluginInfos.RUST.stringId) ?: return false
-      // Since `242.23726` `org.rust.lang.core.psi.ext.containingCargoTarget` was changed.
-      // Let's avoid runtime error because of this binary incompatibility
-      return VersionComparatorUtil.compare(rustPluginVersion, "242.23726") >= 0
-    }
 
   override val defaultPlaceholderText: String
     get() = "/* TODO */"
