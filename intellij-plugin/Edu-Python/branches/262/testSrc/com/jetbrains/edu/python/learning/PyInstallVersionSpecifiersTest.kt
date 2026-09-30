@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.EduFormatNames
 import com.jetbrains.edu.learning.courseFormat.setEnvironmentSetting
-import com.jetbrains.edu.python.learning.newproject.FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING
+import com.jetbrains.edu.python.learning.newproject.MAX_PYTHON_LANGUAGE_VERSION
 import com.jetbrains.edu.python.learning.newproject.installVersionSpecifiers
 import com.jetbrains.python.PythonLanguage
 import org.junit.Assert
@@ -35,13 +35,13 @@ class PyInstallVersionSpecifiersTest(
     private fun python3Course(
       courseId: Int,
       languageVersion: String = EduFormatNames.PYTHON_3_VERSION,
-      minUnsupportedEnvironmentSettings: String? = null
+      maxSupportedEnvironmentSettings: String? = null
     ): EduCourse = EduCourse().apply {
       id = courseId
       languageId = PythonLanguage.INSTANCE.id
       this.languageVersion = languageVersion
-      if (minUnsupportedEnvironmentSettings != null) {
-        setEnvironmentSetting(FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING, minUnsupportedEnvironmentSettings)
+      if (maxSupportedEnvironmentSettings != null) {
+        setEnvironmentSetting(MAX_PYTHON_LANGUAGE_VERSION, maxSupportedEnvironmentSettings)
       }
     }
 
@@ -53,9 +53,11 @@ class PyInstallVersionSpecifiersTest(
         arrayOf(python3Course(42), listOf("3.11", "3.11.1", "3.12.5", "3.13", "3.13.1", "3.14", "3.14.2", "3.15"), listOf("2.7")),
         arrayOf(python3Course(42, "3.10"), listOf("3.11", "3.11.1", "3.12.5", "3.13", "3.13.1", "3.14", "3.14.2", "3.15"), listOf("2.7", "3.9")),
         arrayOf(python3Course(28816, "3.12"), listOf("3.12.5", "3.13", "3.13.1"), listOf("2.7", "3.9", "3.11", "3.11.1", "3.14", "3.14.2", "3.15")),
-        arrayOf(python3Course(42, minUnsupportedEnvironmentSettings = "3.13"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
-        arrayOf(python3Course(42, "3.10", minUnsupportedEnvironmentSettings = "3.13"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.9", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
-        arrayOf(python3Course(28816, minUnsupportedEnvironmentSettings = "3.13"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
+        arrayOf(python3Course(42, maxSupportedEnvironmentSettings = "3.12"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
+        arrayOf(python3Course(42, "3.10", maxSupportedEnvironmentSettings = "3.12"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.9", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
+        arrayOf(python3Course(28816, maxSupportedEnvironmentSettings = "3.12"), listOf("3.11", "3.11.1", "3.12.5"), listOf("2.7", "3.13", "3.13.1", "3.14", "3.14.2", "3.15")),
+        // Incorrect maxSupportedEnvironmentSettings (3.12.1 is not a language level, should be 3.12) has no effect
+        arrayOf(python3Course(42, maxSupportedEnvironmentSettings = "3.12.1"), listOf("3.11", "3.11.1", "3.12.5", "3.13", "3.13.1", "3.14", "3.14.2", "3.15"), listOf("2.7")),
       )
     }
   }

@@ -8,38 +8,45 @@ import com.jetbrains.python.psi.LanguageLevel
 /**
  * The map with the python versions for which we know the course is not working.
  *
- * Such a map is a temporary solution, if a course gets the environment setting FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING,
+ * Such a map is a temporary solution, if a course gets the environment setting MAX_SUPPORTED_PYTHON_LANGUAGE_VERSION,
  * it should be removed from this map
  */
-private val FIRST_UNSUPPORTED_PYTHON_VERSION: Map<Int, LanguageLevel> = mapOf(
-  28816 /* Mastering Large Language Models */ to LanguageLevel.PYTHON314,
-  205112 /* AWS, same*/ to LanguageLevel.PYTHON314,
+private val MAX_SUPPORTED_PYTHON_LANGUAGE_VERSION: Map<Int, LanguageLevel> = mapOf(
+  28816 /* Mastering Large Language Models */ to LanguageLevel.PYTHON313,
+  205112 /* AWS, same*/ to LanguageLevel.PYTHON313,
 
-  25097 /* Building a multicomponent Flask app / Building a Flask App with Microservices */ to LanguageLevel.PYTHON313,
-  205109 /*AWS* same */ to LanguageLevel.PYTHON313,
+  25097 /* Building a multicomponent Flask app / Building a Flask App with Microservices */ to LanguageLevel.PYTHON312,
+  205109 /*AWS* same */ to LanguageLevel.PYTHON312,
 
-  27941 /* Data Visualization with Python */ to LanguageLevel.PYTHON315,
-  22686 /* Gateway to Pandas / Mastering Python Libraries – Pandas */ to LanguageLevel.PYTHON315,
-  23986 /* Master AI: Build Game Players using AlphaZero */ to LanguageLevel.PYTHON313,
+  27941 /* Data Visualization with Python */ to LanguageLevel.PYTHON314,
+  22686 /* Gateway to Pandas / Mastering Python Libraries – Pandas */ to LanguageLevel.PYTHON314,
+  23986 /* Master AI: Build Game Players using AlphaZero */ to LanguageLevel.PYTHON312,
 )
 
 fun isVersionTooNewForCourse(course: Course, sdkLanguageLevel: LanguageLevel): Boolean {
-  val maxPythonVersion = getFirstUnsupportedPythonVersion(course) ?: return false
-  return sdkLanguageLevel >= maxPythonVersion
+  val maxPythonVersion = course.getMaxSupportedPythonLanguageLevel() ?: return false
+  return sdkLanguageLevel > maxPythonVersion
 }
 
 /**
  * `null` means "no max version restrictions"
  */
-fun getFirstUnsupportedPythonVersion(course: Course): LanguageLevel? {
-  val firstUnsupportedPythonVersionFromEnvironmentSettings =
-    course.getEnvironmentSetting(FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING)?.let {
-        LanguageLevel.fromPythonVersionSafe(it)
-      }
+fun Course.getMaxSupportedPythonLanguageLevel(): LanguageLevel? {
+  val maxSupportedPythonVersionFromEnvironmentSettings =
+    getEnvironmentSetting(MAX_PYTHON_LANGUAGE_VERSION)
+    ?.parseLanguageLevel()
 
-  return firstUnsupportedPythonVersionFromEnvironmentSettings ?:
-         // TODO remove after the FIRST_UNSUPPORTED_PYTHON_VERSION becomes empty
-         FIRST_UNSUPPORTED_PYTHON_VERSION[course.id]
+  return maxSupportedPythonVersionFromEnvironmentSettings ?:
+         // TODO remove after the MAX_SUPPORTED_PYTHON_VERSION becomes empty
+         MAX_SUPPORTED_PYTHON_LANGUAGE_VERSION[course.id]
 }
 
-val FIRST_UNSUPPORTED_PYTHON_VERSION_ENVIRONMENT_SETTING = EnvironmentSettingKey("first_unsupported_python_version")
+/**
+ * Parses python language levels of the form Major.Minor, such as "3.14", does not parse other versions such as "3.14.5"
+ */
+private fun String.parseLanguageLevel(): LanguageLevel? {
+  return LanguageLevel.fromPythonVersionSafe(this)
+    ?.takeIf { it.toPythonVersion() == this }
+}
+
+val MAX_PYTHON_LANGUAGE_VERSION = EnvironmentSettingKey("max_python_language_version")

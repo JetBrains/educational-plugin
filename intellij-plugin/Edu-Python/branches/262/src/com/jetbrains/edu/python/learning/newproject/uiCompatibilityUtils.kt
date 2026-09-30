@@ -77,8 +77,11 @@ internal fun installVersionSpecifiers(course: Course): PyVersionSpecifiers {
       else -> add(">=$courseLanguageVersion")
     }
 
-    getFirstUnsupportedPythonVersion(course)?.let {
-      add("<${it.toPythonVersion()}")
+    course.getMaxSupportedPythonLanguageLevel()?.let {
+      // the language level 3.14 should allow versions such as 3.14.15, so we should compare them as "<3.15"
+      val majorVersion = it.majorVersion
+      val minorVersion = it.minorVersion + 1
+      add("<$majorVersion.$minorVersion")
     }
   }
 
