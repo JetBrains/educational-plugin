@@ -36,7 +36,7 @@ open class PyCourseBuilder : EnvironmentAwareCourseBuilder<PyLanguageEnvironment
   override fun refreshProject(project: Project, cause: RefreshCause) {
     if (cause == RefreshCause.DEPENDENCIES_UPDATED) {
       val projectSdk = ProjectRootManager.getInstance(project).projectSdk ?: return
-      installRequiredPackages(project, projectSdk)
+      requestRequiredPackagesInstallation(project, projectSdk)
     }
   }
 }

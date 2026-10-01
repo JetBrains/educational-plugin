@@ -74,24 +74,32 @@ internal fun pythonAttributesEvaluator(baseEvaluator: AttributesEvaluator): Attr
   }
 }
 
-fun installRequiredPackages(project: Project, sdk: Sdk) {
+fun requestRequiredPackagesInstallation(project: Project, sdk: Sdk) {
   EduCoroutineScopeService.getInstance(project).scope.launch {
-    val result = executePackageInstallationCommand(project, sdk)
-    if (result is Result.Failure) {
-      LOG.warn("Failed to install required packages")
-      EduNotificationManager.showErrorNotification(project, EduPythonBundle.message("installing.requirements.failed.title"), result.error.message)
-      return@launch
-    }
+    installRequiredPackages(project, sdk)
+  }
+}
 
-    withContext(Dispatchers.EDT) {
-      val editorManager = FileEditorManager.getInstance(project)
-      val analyzer = DaemonCodeAnalyzer.getInstance(project)
+suspend fun installRequiredPackages(project: Project, sdk: Sdk) {
+  val result = executePackageInstallationCommand(project, sdk)
+  if (result is Result.Failure) {
+    LOG.warn("Failed to install required packages")
+    EduNotificationManager.showErrorNotification(
+      project,
+      EduPythonBundle.message("installing.requirements.failed.title"),
+      result.error.message
+    )
+    return
+  }
 
-      if (editorManager.hasOpenFiles()) {
-        editorManager.openFiles.forEach { file ->
-          file.findPsiFile(project)?.let { psiFile ->
-            analyzer.restart(psiFile, this)
-          }
+  withContext(Dispatchers.EDT) {
+    val editorManager = FileEditorManager.getInstance(project)
+    val analyzer = DaemonCodeAnalyzer.getInstance(project)
+
+    if (editorManager.hasOpenFiles()) {
+      editorManager.openFiles.forEach { file ->
+        file.findPsiFile(project)?.let { psiFile ->
+          analyzer.restart(psiFile, this)
         }
       }
     }

@@ -25,7 +25,7 @@ class InstallDependenciesWorkaroundAction : DumbAwareAction() {
     val project = e.project ?: return
 
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk ?: return
-    installRequiredPackages(project, projectSdk)
+    requestRequiredPackagesInstallation(project, projectSdk)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
