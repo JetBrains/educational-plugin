@@ -4,6 +4,7 @@ import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.EduCoroutineScopeService
 import com.jetbrains.edu.learning.EduTestAware
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.courseFormat.CheckResult
@@ -52,7 +53,7 @@ class SocialMediaMultiplePostAction : CheckListener {
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    SocialMediaPostManager.getInstance().scope.launch {
+    EduCoroutineScopeService.getInstance(project).scope.launch {
       val course = task.course
       // It doesn't make sense to suggest posting to social media in educator mode or for preview course
       if (!course.isStudy || course.isPreview) return@launch

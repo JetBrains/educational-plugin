@@ -4,6 +4,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.application
 import com.intellij.util.asSafely
 import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.learning.EduCoroutineScopeService
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -62,7 +63,7 @@ abstract class SocialMediaPostActionTestBase : EduActionTestCase() {
 
   private fun waitForPostSuggestion() {
     PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
-    val job = SocialMediaPostManager.getInstance().scope.coroutineContext.job
+    val job = EduCoroutineScopeService.getInstance(project).scope.coroutineContext.job
     PlatformTestUtil.waitWhileBusy { job.children.any() }
   }
 }

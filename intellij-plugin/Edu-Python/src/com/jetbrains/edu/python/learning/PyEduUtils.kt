@@ -5,8 +5,6 @@ package com.jetbrains.edu.python.learning
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.edtWriteAction
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.fileLogger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -17,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.jetbrains.edu.learning.EduCoroutineScopeService
 import com.jetbrains.edu.learning.configuration.ArchiveInclusionPolicy
 import com.jetbrains.edu.learning.configuration.attributesEvaluator.AttributesEvaluator
 import com.jetbrains.edu.learning.courseDir
@@ -35,7 +34,6 @@ import com.jetbrains.python.packaging.common.PythonPackage
 import com.jetbrains.python.packaging.management.PythonPackageManager
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.isReadOnly
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,7 +75,7 @@ internal fun pythonAttributesEvaluator(baseEvaluator: AttributesEvaluator): Attr
 }
 
 fun installRequiredPackages(project: Project, sdk: Sdk) {
-  InstallPackageCoroutineScope.getCoroutineScope(project).launch {
+  EduCoroutineScopeService.getInstance(project).scope.launch {
     val result = executePackageInstallationCommand(project, sdk)
     if (result is Result.Failure) {
       LOG.warn("Failed to install required packages")
@@ -131,10 +129,3 @@ fun getSupportedVersions(): List<String> {
 private val VirtualFile.systemDependentPath: String get() = FileUtil.toSystemDependentName(path)
 
 private val FOLDERS_TO_EXCLUDE: Array<String> = arrayOf("__pycache__", "venv")
-
-@Service(Service.Level.PROJECT)
-class InstallPackageCoroutineScope(private val coroutineScope: CoroutineScope) {
-  companion object {
-    fun getCoroutineScope(project: Project): CoroutineScope =  project.service<InstallPackageCoroutineScope>().coroutineScope
-  }
-}
