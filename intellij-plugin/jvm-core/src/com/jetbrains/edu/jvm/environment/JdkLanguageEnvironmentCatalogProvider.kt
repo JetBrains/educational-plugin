@@ -206,7 +206,7 @@ open class JdkLanguageEnvironmentCatalogProvider(
 
     val incompleteSdk = runCatching {
       edtWriteAction {
-        sdkModel.createIncompleteSdk(JavaSdk.getInstance(), task, null)
+        createIncompleteSdk(sdkModel, task)
       }
     }.getOrElse { th ->
       rethrowControlFlowException(th)
