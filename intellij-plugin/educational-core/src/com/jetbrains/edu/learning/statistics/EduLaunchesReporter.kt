@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ex.ApplicationInfoEx
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.io.HttpRequests
@@ -108,7 +107,6 @@ class EduLaunchesReporter @JvmOverloads constructor(
     return false
   }
 
-  @OptIn(IntellijInternalApi::class)
   private fun getUpdateUrl(course: Course): String {
     val applicationInfo = ApplicationInfoEx.getInstanceEx()
     val buildNumber = applicationInfo.build.asString()
