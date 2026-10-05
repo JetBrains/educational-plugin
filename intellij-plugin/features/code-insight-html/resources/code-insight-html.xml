@@ -1,6 +1,5 @@
 <idea-plugin>
   <dependencies>
-    <!--suppress PluginXmlValidity -->
     <module name="code-insight-core"/>
     <plugin id="com.intellij.modules.xml"/>
   </dependencies>
@@ -11,5 +10,7 @@
                             implementationClass="com.jetbrains.edu.html.taskDescription.EduHtmlCompletionContributor"/>
     <psi.referenceContributor language="HTML"
                               implementation="com.jetbrains.edu.html.taskDescription.EduHtmlReferenceContributor"/>
+    <xml.xmlSuppressionProvider
+        implementation="com.jetbrains.edu.html.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
   </extensions>
 </idea-plugin>

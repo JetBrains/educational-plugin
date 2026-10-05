@@ -436,8 +436,6 @@
                  defaultValue="18000"/>
 
     <!--for educators-->
-    <xml.xmlSuppressionProvider
-        implementation="com.jetbrains.edu.coursecreator.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
     <fileEditorProvider implementation="com.jetbrains.edu.coursecreator.framework.editor.EduSplitFileEditorProvider" order="first"/>
 
     <!-- Rename -->

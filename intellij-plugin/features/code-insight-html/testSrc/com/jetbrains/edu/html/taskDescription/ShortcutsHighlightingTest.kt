@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.taskDescription
+package com.jetbrains.edu.html.taskDescription
 
 import com.intellij.xml.util.CheckDtdReferencesInspection
 import com.jetbrains.edu.learning.EduTestCase
