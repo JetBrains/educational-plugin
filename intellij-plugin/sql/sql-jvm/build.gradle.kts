@@ -8,7 +8,6 @@ dependencies {
 
     intellijPlugins(jvmPlugins)
     intellijPlugins(sqlPlugins)
-    testIntellijPlugins("intellij.grid.core.plugin")
     testIntellijPlugins("intellij.execution.serviceView.plugin")
     testIntellijPlugins("intellij.navbar.plugin")
     testIntellijPlugins(testRunnerPlugin)

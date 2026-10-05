@@ -118,7 +118,6 @@ val Project.commonTestPlugins: List<String> get() = listOf(
   "intellij.structureView.plugin",
   "intellij.todo.plugin",
   "intellij.structuralSearch.plugin",
-  "intellij.libraries.misc.plugin",
   "intellij.bookmarks.plugin",
   testRunnerPlugin,
   jcefPlugin,
