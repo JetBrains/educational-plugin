@@ -11,7 +11,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.PlatformUtils
-import com.intellij.util.net.*
+import com.intellij.util.net.JdkProxyCustomizer
 import com.intellij.util.net.ssl.CertificateManager
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.messages.EduCoreBundle
@@ -104,8 +104,7 @@ fun OkHttpClient.Builder.customizeClient(baseUrl: String) : OkHttpClient.Builder
 
 private val proxyAuthenticator: Authenticator
   get() = Authenticator { _, response ->
-    val provider = ProxyCredentialStore.getInstance().asProxyCredentialProvider()
-    val ideProxyCredentials = ProxySettings.getInstance().getStaticProxyCredentials(provider) ?: return@Authenticator null
+    val ideProxyCredentials = getIdeProxyCredentials() ?: return@Authenticator null
     val login = ideProxyCredentials.userName ?: return@Authenticator null
     val password = ideProxyCredentials.getPasswordAsString() ?: return@Authenticator null
 
