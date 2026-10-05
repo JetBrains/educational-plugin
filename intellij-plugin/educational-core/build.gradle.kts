@@ -8,6 +8,7 @@ dependencies {
     intellijIde(baseVersion)
 
     bundledModules(
+      "intellij.platform.vcs",
       "intellij.platform.vcs.impl",
       "intellij.platform.sqlite"
     )
