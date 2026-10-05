@@ -8,9 +8,11 @@ dependencies {
     val ideVersion = if (isRiderIDE) ideaVersion else baseVersion
     intellijIde(ideVersion)
 
-    intellijPlugins(pythonPlugin)
+    intellijPlugins(
+      pythonPlugin,
+      testRunnerPlugin
+    )
     testIntellijPlugins(tomlPlugin)
-    intellijPlugins(testRunnerPlugin)
   }
 
   implementation(project(":intellij-plugin:educational-core"))

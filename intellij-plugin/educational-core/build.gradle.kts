@@ -7,9 +7,11 @@ dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
 
-    bundledModules("intellij.platform.vcs.impl")
+    bundledModules(
+      "intellij.platform.vcs.impl",
+      "intellij.platform.sqlite"
+    )
     intellijPlugins(testRunnerPlugin, jcefPlugin)
-    bundledModules("intellij.platform.sqlite")
   }
 
   api(project(":edu-format"))
