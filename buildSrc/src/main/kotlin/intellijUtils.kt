@@ -32,8 +32,8 @@ val Project.baseVersion: String get() = when {
   else -> error("Unexpected IDE name = `$baseIDE`")
 }
 
-val Project.pythonProPlugin: String by Properties
-val Project.pythonCommunityPlugin: String by Properties
+val Project.pythonProPlugin: String by PluginProperties
+val Project.pythonCommunityPlugin: String by PluginProperties
 
 val Project.pythonPlugin: String get() = when {
   // Since 2024.2 Python Community plugin is available in paid products (like IU) together with Python Pro as its base dependency.
@@ -46,21 +46,21 @@ val Project.pythonPlugin: String get() = when {
 }
 val Project.javaPlugin: String get() = "com.intellij.java"
 val Project.kotlinPlugin: String get() = "org.jetbrains.kotlin"
-val Project.scalaPlugin: String by Properties
-val Project.rustPlugin: String by Properties
+val Project.scalaPlugin: String by PluginProperties
+val Project.rustPlugin: String by PluginProperties
 val Project.tomlPlugin: String get() = "org.toml.lang"
-val Project.nativeDebuggingSupportPlugin: String by Properties
+val Project.nativeDebuggingSupportPlugin: String by PluginProperties
 val Project.nativeDebugPlugin: String get() = when {
   isClionIDE -> "com.intellij.nativeDebug"
   else -> nativeDebuggingSupportPlugin
 }
-val Project.goPlugin: String by Properties
+val Project.goPlugin: String by PluginProperties
 val Project.sqlPlugin: String get() = "com.intellij.database"
 val Project.shellScriptPlugin: String get() = "com.jetbrains.sh"
 val Project.markdownPlugin: String get() = "org.intellij.plugins.markdown"
 val Project.githubPlugin: String get() = "org.jetbrains.plugins.github"
-val Project.psiViewerPlugin: String by Properties
-val Project.phpPlugin: String by Properties
+val Project.psiViewerPlugin: String by PluginProperties
+val Project.phpPlugin: String by PluginProperties
 val Project.intelliLangPlugin: String get() = "org.intellij.intelliLang"
 val Project.javaScriptPlugin: String get() = "JavaScript"
 val Project.nodeJsPlugin: String get() = "NodeJS"
@@ -69,7 +69,7 @@ val Project.jsonPlugin: String get() = "com.intellij.modules.json"
 val Project.yamlPlugin: String get() = "org.jetbrains.plugins.yaml"
 val Project.imagesPlugin: String get() = "com.intellij.platform.images"
 val Project.fullinePlugin: String get() = "org.jetbrains.completion.full.line"
-val Project.jcefPlugin: String get() = resolvePluginPlaceholders(prop("jcefPlugin"))
+val Project.jcefPlugin: String by PluginProperties
 val Project.testRunnerPlugin: String get() = "intellij.testRunner.plugin"
 val Project.sshPlugin: String get() = "intellij.ssh.plugin"
 
@@ -132,15 +132,6 @@ val Project.disabledTestPlugins: List<String> get() = listOfNotNull(
   // See https://youtrack.jetbrains.com/issue/EDU-8999
   if (path != ":intellij-plugin:Edu-Cpp") "org.jetbrains.plugins.clion.radler" else null,
 )
-
-/**
- * Some plugins (for example, JCEF) provide a separate artifact per OS and architecture pair,
- * so their version can't be hardcoded in `gradle-%platform.version%.properties`.
- * Instead, the notation there contains `{os}` and `{arch}` placeholders
- * which are replaced with the values for the current machine.
- */
-private fun Project.resolvePluginPlaceholders(notation: String): String =
-  notation.replace("{os}", currentOsId).replace("{arch}", currentArchId)
 
 private val Project.osDetector: OsDetector get() = extensions.getByType<OsDetector>()
 
@@ -223,4 +214,24 @@ fun IntelliJPlatformDependenciesExtension.testIntellijPlugins(notations: List<St
 // and not to duplicate property name twice: one time in Kotlin property and the second time in `prop` call
 private object Properties {
   operator fun getValue(thisRef: Project, property: KProperty<*>): String = thisRef.prop(property.name)
+}
+
+/**
+ * Similar to [Properties], but resolves placeholders in plugin version descriptions.
+ *
+ * Some plugins (for example, JCEF) provide a separate artifact per OS and architecture pair,
+ * so their version can't be hardcoded in `gradle-%platform.version%.properties`.
+ * Instead, the notation there contains `{os}` and `{arch}` placeholders
+ * which are replaced with the values for the current machine.
+ */
+private object PluginProperties {
+
+  operator fun getValue(thisRef: Project, property: KProperty<*>): String {
+    val rawValue = thisRef.prop(property.name)
+    return thisRef.resolvePluginPlaceholders(rawValue)
+  }
+
+  private fun Project.resolvePluginPlaceholders(notation: String): String =
+    notation.replace("{os}", currentOsId).replace("{arch}", currentArchId)
+
 }
