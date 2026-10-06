@@ -81,15 +81,22 @@ fun requestRequiredPackagesInstallation(project: Project, sdk: Sdk) {
 }
 
 suspend fun installRequiredPackages(project: Project, sdk: Sdk) {
+  LOG.info("Required packages installation started")
   val result = executePackageInstallationCommand(project, sdk)
-  if (result is Result.Failure) {
-    LOG.warn("Failed to install required packages")
-    EduNotificationManager.showErrorNotification(
-      project,
-      EduPythonBundle.message("installing.requirements.failed.title"),
-      result.error.message
-    )
-    return
+  when (result) {
+    is Result.Failure -> {
+      LOG.warn("Failed to install required packages: ${result.error.message}")
+      EduNotificationManager.showErrorNotification(
+        project,
+        EduPythonBundle.message("installing.requirements.failed.title"),
+        result.error.message
+      )
+      return
+    }
+
+    is Result.Success -> {
+      LOG.info("Required packages installed successfully")
+    }
   }
 
   withContext(Dispatchers.EDT) {
