@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.ApplicationRule
 import com.jetbrains.edu.csharp.environment.CSharpLanguageEnvironment
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestMixin
-import com.jetbrains.rider.test.BaseIntegrationTest
+import com.jetbrains.rider.test.junit5.base.IntegrationTestBase
 import org.junit.Rule
 import org.junit.rules.TestRule
 import java.io.File
@@ -15,7 +15,7 @@ import java.nio.file.Files
  * Rider-friendly base for C# tests that need course generation helpers but must run under Rider's
  * BaseIntegrationTest infrastructure.
  */
-abstract class CSharpCourseGenerationTestBase : BaseIntegrationTest(), CourseGenerationTestMixin<CSharpLanguageEnvironment> {
+abstract class CSharpCourseGenerationTestBase : IntegrationTestBase(), CourseGenerationTestMixin<CSharpLanguageEnvironment> {
 
   // Ensures IntelliJ Application is initialized for JUnit4-based tests
   @Rule
