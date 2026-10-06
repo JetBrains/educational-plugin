@@ -162,7 +162,7 @@ private fun Course.pluginCompatibility(): CourseCompatibility? {
     // Plugin is just installed and not loaded by IDE (i.e. it requires restart)
     pluginDescriptor == null && !pluginsState.wasInstalled(PluginId.getId(info.stringId)) ||
     // Plugin is installed but disabled
-    pluginDescriptor?.isEnabled == false
+    pluginDescriptor?.let { PluginManagerCore.isDisabled(it.pluginId) } == true
   }
 
   return if (notLoadedPlugins.isNotEmpty()) CourseCompatibility.PluginsRequired(toInstallOrEnable.map { it.first }) else null

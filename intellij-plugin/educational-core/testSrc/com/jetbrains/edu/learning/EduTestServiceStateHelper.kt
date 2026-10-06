@@ -58,8 +58,8 @@ object EduTestServiceStateHelper {
   private fun collectServices(): ServiceClasses {
     // Here we take into account that all tests in single Gradle module have the same plugin descriptor.
     // As a result, we can reuse calculated values from the previous test with the same descriptor
-    val pluginDescriptor = PluginManagerCore.plugins.find {
-      it.isEnabled && it.pluginId.idString.startsWith(BASE_PACKAGE)
+    val pluginDescriptor = PluginManagerCore.loadedPlugins.find {
+      it.pluginId.idString.startsWith(BASE_PACKAGE)
     } as? PluginMainDescriptor ?: error("Failed to find any plugin descriptor related to the plugin")
 
     return cache.getOrPut(pluginDescriptor) {
