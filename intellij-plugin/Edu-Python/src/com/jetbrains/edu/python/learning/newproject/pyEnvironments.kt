@@ -2,6 +2,7 @@ package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.platform.eel.provider.localEel
 import com.intellij.python.community.services.systemPython.SystemPython
 import com.intellij.python.community.services.systemPython.SystemPythonService
 import com.jetbrains.edu.learning.Err
@@ -24,7 +25,7 @@ private val SYSTEM_PYTHONS: Key<List<SystemPython>> = Key.create("edu.python.sys
 context(_: UserDataHolder)
 suspend fun collectPyEnvironments(course: Course): Pair<List<PyLanguageEnvironment>, PyLanguageEnvironment?> {
   val systemPythons = withCaching(SYSTEM_PYTHONS) {
-    SystemPythonService().findSystemPythons(forceRefresh = true)
+    SystemPythonService().findSystemPythons(eelApi = localEel, forceRefresh = true)
   }
 
   val existingEnvironments = systemPythons.map {
@@ -100,7 +101,7 @@ internal fun installVersionSpecifiers(course: Course): PyVersionSpecifiers {
 
 suspend fun createDefaultSettings(sdkLocation: String): Result<PyLanguageEnvironment, String> {
   val sdkPath = Path(sdkLocation)
-  val sdk = SystemPythonService().findSystemPythons(forceRefresh = true).firstOrNull {
+  val sdk = SystemPythonService().findSystemPythons(eelApi = localEel, forceRefresh = true).firstOrNull {
     Files.isSameFile(it.pythonBinary, sdkPath)
   }
   return if (sdk == null) Err("No system python found") else Ok(sdk.toExisting())
