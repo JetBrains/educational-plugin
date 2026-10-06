@@ -169,9 +169,11 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   @Test
   fun `test add one statement from a solution`() = assertCodeHint(
     functionName = "correct_inconsistency",
+    // add 'c' to make sure, comments inside the function fall inside its PSI
     currentCode = """
         def correct_inconsistency(df):
             # Correct inconsistencies in the 'Height' column by converting all values to float
+            c
     """,
     codeHint = """
         def correct_inconsistency(df):
@@ -181,6 +183,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
     """,
     expectedResult = """
         def correct_inconsistency(df):
+            # Correct inconsistencies in the 'Height' column by converting all values to float
             df_final = df.copy()
     """
   )
@@ -304,9 +307,11 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   @Test
   fun `test empty spaces in the return type`() = assertCodeHint(
     functionName = "foo",
+    // add 'k' to make sure, comments inside the function fall inside its PSI
     currentCode = """
         def foo() -> int   :
             # TODO
+            k
     """,
     codeHint = """
         def foo()     ->     int:
@@ -317,6 +322,7 @@ class PyFunctionDiffReducerTest : EduTestCase() {
     """,
     expectedResult = """
         def foo() -> int   :
+            # TODO
             csv = pd.read_csv("file.csv")
     """
   )
@@ -836,22 +842,27 @@ class PyFunctionDiffReducerTest : EduTestCase() {
   )
 
   @Test
-  fun `test function with comments`() = assertCodeHint(
+  fun `test function with comments - student comments preserved`() = assertCodeHint(
     functionName = "comments_only",
+    // add 'pu' to make sure, comments inside the function fall inside its PSI
     currentCode = """
         def comments_only():
             # This function does nothing
             # It just has comments
+            pu
     """,
     codeHint = """
         def comments_only():
             # This function does nothing
             # It just has comments
+            # These are additional comments in the code hint
             result = "Hello, World!"
             return result
     """,
     expectedResult = """
         def comments_only():
+            # This function does nothing
+            # It just has comments
             result = "Hello, World!"
     """
   )
