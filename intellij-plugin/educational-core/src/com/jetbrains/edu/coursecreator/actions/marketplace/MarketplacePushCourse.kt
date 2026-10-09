@@ -179,7 +179,7 @@ class MarketplacePushCourse(
   }
 
   private fun UserOrganization.toVendor(): Vendor {
-    return Vendor(publicName, email.takeIf { showEmail }, url)
+    return Vendor(publicName, email, url)
   }
 
   private fun doPush(project: Project, connector: MarketplaceConnector, hubToken: String, courseUploadingData: CourseUploadingData) {
