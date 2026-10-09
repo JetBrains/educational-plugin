@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.projectView;
 
 import com.intellij.concurrency.ContextAwareRunnable;
 import com.intellij.ide.TooltipTitle;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
@@ -87,7 +88,7 @@ public class SyncChangesHelpTooltip {
   private BooleanSupplier masterPopupOpenCondition;
 
   private JBPopup myPopup;
-  private final Alarm popupAlarm = new Alarm();
+  private final Alarm popupAlarm;
   private boolean isOverPopup;
   private boolean isMultiline;
   private int myInitialDelay = -1;
@@ -96,6 +97,10 @@ public class SyncChangesHelpTooltip {
   private boolean initialShowScheduled;
 
   protected MouseAdapter myMouseListener;
+
+  public SyncChangesHelpTooltip(Disposable parentDisposable) {
+    popupAlarm = new Alarm(parentDisposable);
+  }
 
   /**
    * Location of the HelpTooltip relatively to the owner component.

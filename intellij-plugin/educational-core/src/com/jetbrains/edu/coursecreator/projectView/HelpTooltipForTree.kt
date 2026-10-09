@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JTree
 import javax.swing.tree.TreeNode
 
-class HelpTooltipForTree: SyncChangesHelpTooltip() {
+class HelpTooltipForTree(parentDisposable: Disposable) : SyncChangesHelpTooltip(parentDisposable) {
   private val isTooltipEnabled = AtomicBoolean(false)
   private var currentHoveredNode: TreeNode? = null
 

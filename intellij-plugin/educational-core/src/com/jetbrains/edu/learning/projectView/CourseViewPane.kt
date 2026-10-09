@@ -92,7 +92,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPaneWithAsyncSupport
     super.createComponent()
     CourseViewPaneCustomization.customize(tree)
     if (!myProject.isStudentProject()) {
-      HelpTooltipForTree().installOnTree(this, tree) { treeNode ->
+      HelpTooltipForTree(this).installOnTree(this, tree) { treeNode ->
         tryInstallNewTooltip(myProject, treeNode)
       }
 
