@@ -31,6 +31,7 @@ class EducatorActionsPanel : Wrapper() {
     addItemsGroup.addAction(NewLessonToolbarAction())
     addItemsGroup.addAction(NewTaskToolbarAction())
     val actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.PROJECT_VIEW_TOOLBAR, addItemsGroup, true)
+    actionToolbar.targetComponent = this
     setContent(actionToolbar.component)
   }
 }
