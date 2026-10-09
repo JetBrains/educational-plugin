@@ -289,11 +289,11 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
   }
 
   @Test
-  fun `test vendor email is not set when organization showEmail is false`() {
+  fun `test vendor email is not set when organization email is null`() {
     // given
     val course = createEduCourse(vendor = Vendor(ORGANIZATION_NAME))
 
-    val organization = organization.copy(showEmail = false)
+    val organization = organization.copy(email = null)
     coEvery { mockConnector.loadUserOrganizations(HUB_TOKEN) } returns listOf(organization)
 
     mockConnector.withResponseHandler(testRootDisposable) { _, path ->
@@ -366,8 +366,7 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
     private val personalOrganization = UserOrganization(
       name = UUID.randomUUID().toString(),
       publicName = FULL_USER_NAME,
-      email = EMAIL,
-      showEmail = false,
+      email = null,
       url = null
     )
 
@@ -375,7 +374,6 @@ class MarketplacePushCourseActionTest : EduActionTestCase() {
       name = ORGANIZATION_NAME,
       publicName = ORGANIZATION_PUBLIC_NAME,
       email = ORGANIZATION_EMAIL,
-      showEmail = true,
       url = ORGANIZATION_URL
     )
   }

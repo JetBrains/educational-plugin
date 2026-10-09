@@ -291,7 +291,6 @@ class MarketplaceStateOnClosePost(id: Int, solutionText: String, format: Int = J
 data class UserOrganization(
   @JsonProperty("name") val name: String,
   @JsonProperty("publicName") val publicName: String,
-  @JsonProperty("email") val email: String,
-  @JsonProperty("showEmail") val showEmail: Boolean,
+  @JsonProperty("email") val email: String?,
   @JsonProperty("url") val url: String?
 )
