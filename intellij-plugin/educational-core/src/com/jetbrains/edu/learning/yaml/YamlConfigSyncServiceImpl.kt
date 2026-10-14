@@ -136,10 +136,17 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
         file.putUserData(LOAD_FROM_CONFIG, false)
         ensureYamlHasAssociation(file)
 
-        writeAction { VfsUtil.saveText(file, formattedYamlText) }
-
-        // make sure that there is no conflict between disk contents and ide in-memory document contents
-        FileDocumentManager.getInstance().reloadFiles(file)
+        edtWriteAction {
+          val fileDocumentManager = FileDocumentManager.getInstance()
+          val document = fileDocumentManager.getCachedDocument(file)
+          if (document == null) {
+            VfsUtil.saveText(file, formattedYamlText)
+          }
+          else {
+            document.setText(formattedYamlText)
+            fileDocumentManager.saveDocument(document)
+          }
+        }
       }
       finally {
         file.putUserData(LOAD_FROM_CONFIG, true)
