@@ -10,7 +10,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findPsiFile
@@ -31,7 +30,6 @@ import com.jetbrains.edu.python.learning.messages.EduPythonBundle
 import com.jetbrains.python.Result
 import com.jetbrains.python.errorProcessing.PyResult
 import com.jetbrains.python.packaging.common.PythonPackage
-import com.jetbrains.python.packaging.management.PythonPackageManager
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.isReadOnly
 import kotlinx.coroutines.Dispatchers
@@ -74,15 +72,15 @@ internal fun pythonAttributesEvaluator(baseEvaluator: AttributesEvaluator): Attr
   }
 }
 
-fun requestRequiredPackagesInstallation(project: Project, sdk: Sdk) {
+fun requestRequiredPackagesInstallation(project: Project) {
   EduCoroutineScopeService.getInstance(project).scope.launch {
-    installRequiredPackages(project, sdk)
+    installRequiredPackages(project, project.currentPythonInterpreter())
   }
 }
 
-suspend fun installRequiredPackages(project: Project, sdk: Sdk) {
+suspend fun installRequiredPackages(project: Project, pythonInterpreter: PythonInterpreter?) {
   LOG.info("Required packages installation started")
-  val result = executePackageInstallationCommand(project, sdk)
+  val result = executePackageInstallationCommand(project, pythonInterpreter)
   when (result) {
     is Result.Failure -> {
       LOG.warn("Failed to install required packages: ${result.error.message}")
@@ -113,9 +111,13 @@ suspend fun installRequiredPackages(project: Project, sdk: Sdk) {
   }
 }
 
-private suspend fun executePackageInstallationCommand(project: Project, sdk: Sdk): PyResult<List<PythonPackage>> {
+private suspend fun executePackageInstallationCommand(project: Project, pythonInterpreter: PythonInterpreter?): PyResult<List<PythonPackage>> {
+  if (pythonInterpreter == null) {
+    return PyResult.localizedError(EduPythonBundle.message("no.python.interpreter"))
+  }
+
   // Manually handle case with read-only python SDK to provide better error message
-  if (sdk.isReadOnly) {
+  if (pythonInterpreter.isReadOnly) {
     return PyResult.localizedError(EduPythonBundle.message("installing.requirements.failed.message.read.only.sdk"))
   }
 
@@ -123,7 +125,7 @@ private suspend fun executePackageInstallationCommand(project: Project, sdk: Sdk
     FileDocumentManager.getInstance().saveAllDocuments()
   }
 
-  val packageManager = PythonPackageManager.forSdk(project, sdk)
+  val packageManager = createPythonPackageManager(project, pythonInterpreter)
 
   if (packageManager.getRootDependenciesFile() == null) {
     LOG.info("No Python dependencies file found, skipping package sync")
