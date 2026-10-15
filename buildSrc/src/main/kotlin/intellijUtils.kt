@@ -10,6 +10,9 @@ import kotlin.reflect.KProperty
 
 val Project.environmentName: String by Properties
 
+// BACKCOMPAT: 2026.2. Drop it
+val Project.isAtLeast263: Boolean get() = environmentName.toInt() >= 263
+
 val Project.pluginVersion: String by Properties
 val Project.platformVersion: String get() = "20${StringBuilder(environmentName).insert(environmentName.length - 1, '.')}"
 val Project.baseIDE: String by Properties

@@ -1,6 +1,10 @@
 <idea-plugin>
   <resource-bundle>messages.EduAIBundle</resource-bundle>
 
+  <dependencies>
+    <module name="intellij.platform.feedback"/>
+  </dependencies>
+
   <actions>
     <action id="Educational.AITranslation"
             class="com.jetbrains.edu.ai.translation.action.AITranslation"

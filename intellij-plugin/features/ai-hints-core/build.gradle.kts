@@ -6,6 +6,7 @@ plugins {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
+    bundledModule("intellij.platform.feedback")
   }
 
   implementation(project(":intellij-plugin:educational-core"))
