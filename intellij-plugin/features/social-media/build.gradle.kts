@@ -6,6 +6,7 @@ dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
     intellijPlugins(jcefPlugin)
+    bundledModule("intellij.platform.builtInServer.impl")
   }
 
   implementation(project(":intellij-plugin:educational-core"))
