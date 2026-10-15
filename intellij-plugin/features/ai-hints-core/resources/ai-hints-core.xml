@@ -4,6 +4,7 @@
   <dependencies>
     <!--suppress PluginXmlValidity -->
     <module name="AI"/>
+    <module name="intellij.platform.feedback"/>
   </dependencies>
 
   <actions>

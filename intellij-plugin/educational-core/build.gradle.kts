@@ -10,8 +10,14 @@ dependencies {
     bundledModules(
       "intellij.platform.vcs",
       "intellij.platform.vcs.impl",
-      "intellij.platform.sqlite"
+      "intellij.platform.sqlite",
+      "intellij.platform.feedback",
     )
+
+    if (isAtLeast263) {
+      bundledModules("intellij.platform.ide.updateChecker")
+    }
+
     intellijPlugins(testRunnerPlugin, jcefPlugin)
   }
 
