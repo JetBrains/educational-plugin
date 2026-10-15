@@ -1,5 +1,9 @@
 <idea-plugin>
 
+  <dependencies>
+    <module name="intellij.platform.builtInServer.impl"/>
+  </dependencies>
+
   <resource-bundle>messages.LTIBundle</resource-bundle>
 
   <extensions defaultExtensionNs="com.intellij">

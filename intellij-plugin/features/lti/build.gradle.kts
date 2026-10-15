@@ -5,6 +5,7 @@ plugins {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
+    bundledModule("intellij.platform.builtInServer.impl")
   }
 
   implementation(project(":intellij-plugin:educational-core"))

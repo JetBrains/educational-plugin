@@ -12,7 +12,7 @@
   <!--update changes in changes.html file instead-->
   <change-notes/>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="jvm-core"/>
     <module name="AI"/>
     <module name="Edu-Java"/>
