@@ -3,7 +3,6 @@ package com.jetbrains.edu.python.learning
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.roots.ProjectRootManager
 import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.ext.languageById
@@ -24,8 +23,7 @@ class InstallDependenciesWorkaroundAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
 
-    val projectSdk = ProjectRootManager.getInstance(project).projectSdk ?: return
-    requestRequiredPackagesInstallation(project, projectSdk)
+    requestRequiredPackagesInstallation(project)
   }
 
   override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT

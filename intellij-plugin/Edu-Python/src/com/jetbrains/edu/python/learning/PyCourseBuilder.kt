@@ -1,7 +1,6 @@
 package com.jetbrains.edu.python.learning
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.jetbrains.edu.learning.EnvironmentAwareCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.RefreshCause
@@ -35,8 +34,7 @@ open class PyCourseBuilder : EnvironmentAwareCourseBuilder<PyLanguageEnvironment
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
     if (cause == RefreshCause.DEPENDENCIES_UPDATED) {
-      val projectSdk = ProjectRootManager.getInstance(project).projectSdk ?: return
-      requestRequiredPackagesInstallation(project, projectSdk)
+      requestRequiredPackagesInstallation(project)
     }
   }
 }
