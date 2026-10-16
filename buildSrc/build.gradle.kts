@@ -4,8 +4,9 @@ plugins {
 }
 
 repositories {
-  mavenCentral()
-  gradlePluginPortal() // to resolve external plugins dependencies
+  // proxies for Gradle Plugin Portal / Maven Central: direct access gets rate-limited (429) on shared CI agents
+  maven("https://cache-redirector.jetbrains.com/maven-central")
+  maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2") // to resolve external plugins dependencies
 }
 
 dependencies {

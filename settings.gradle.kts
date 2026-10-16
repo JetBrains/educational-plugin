@@ -130,8 +130,9 @@ buildCache {
 
 pluginManagement {
   repositories {
-    mavenCentral()
-    gradlePluginPortal()
+    // proxies for Gradle Plugin Portal / Maven Central: direct access gets rate-limited (429) on shared CI agents
+    maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
+    maven("https://cache-redirector.jetbrains.com/maven-central")
     maven("https://central.sonatype.com/repository/maven-snapshots/")
 
     if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
