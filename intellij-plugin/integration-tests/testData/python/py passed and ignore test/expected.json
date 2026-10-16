@@ -1,0 +1,75 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "PythonCourseTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduOutput",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduWithCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduWithIgnoredTest",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

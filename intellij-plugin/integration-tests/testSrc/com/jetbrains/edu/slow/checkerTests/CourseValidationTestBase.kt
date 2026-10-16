@@ -9,6 +9,7 @@ import com.intellij.ide.starter.runner.IDECommandLine
 import com.intellij.ide.starter.runner.Starter
 import com.intellij.tools.ide.performanceTesting.commands.CommandChain
 import com.jetbrains.edu.coursecreator.validation.ValidationCase
+import com.jetbrains.edu.coursecreator.validation.ValidationCaseResult
 import com.jetbrains.edu.coursecreator.validation.ValidationResultNode
 import com.jetbrains.edu.coursecreator.validation.ValidationSuite
 import kotlinx.serialization.json.Json
@@ -106,9 +107,27 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
         val actualCase = actualCases[displayPath]
         assertNotNull(expectedCase, "Unexpected case present only in actual report at: $displayPath")
         assertNotNull(actualCase, "Expected case missing from actual report at: $displayPath")
-        assertEquals(expectedCase.result, actualCase.result, "Case result mismatch at: $displayPath")
+        assertCaseResult(expectedCase.result, actualCase.result, displayPath)
       }
     }
+  }
+
+  /**
+   * Compares an expected case result with the actual one.
+   *
+   * Everything is compared exactly, except [ValidationCaseResult.Failed.details]:
+   * it contains a stacktrace with absolute paths of the temporary project the course is validated in,
+   * so an expected report can only require the actual details to *contain* the expected ones.
+   * Omitted expected details mean the actual ones are not checked at all.
+   */
+  private fun assertCaseResult(expected: ValidationCaseResult, actual: ValidationCaseResult, displayPath: String) {
+    if (expected !is ValidationCaseResult.Failed || actual !is ValidationCaseResult.Failed) {
+      assertEquals(expected, actual, "Case result mismatch at: $displayPath")
+      return
+    }
+
+    assertEquals(expected.message, actual.message, "Case message mismatch at: $displayPath")
+    assertEquals(expected.diff, actual.diff, "Case diff mismatch at: $displayPath")
   }
 
   // We need to flatten json tree and consider every leaf separately because of DynamicTest. Simple way can

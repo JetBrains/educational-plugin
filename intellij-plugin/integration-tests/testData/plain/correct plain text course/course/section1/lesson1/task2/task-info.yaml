@@ -1,0 +1,7 @@
+type: edu
+files:
+  - name: Task.txt
+    visible: true
+  - name: tests/Tests.txt
+    visible: false
+    propagatable: false

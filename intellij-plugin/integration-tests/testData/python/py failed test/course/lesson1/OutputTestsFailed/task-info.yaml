@@ -1,0 +1,7 @@
+type: output
+files:
+  - name: main.py
+    visible: true
+  - name: tests/output.txt
+    visible: false
+    propagatable: false

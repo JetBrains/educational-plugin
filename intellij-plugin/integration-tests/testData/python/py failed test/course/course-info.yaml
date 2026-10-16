@@ -1,0 +1,9 @@
+type: marketplace
+title: PyEduTestsFailed
+language: English
+summary: PyEduTestsFailed
+programming_language: Python
+environment: unittest
+content:
+  - lesson1
+yaml_version: 6

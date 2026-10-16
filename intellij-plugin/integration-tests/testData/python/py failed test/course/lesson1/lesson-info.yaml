@@ -1,0 +1,8 @@
+content:
+  - EduTestsFailed
+  - EduNoTestsRun
+  - SyntaxError
+  - AssertionError
+  - DoNotEscapeMessageInFailedTest
+  - OutputTestsFailed
+  - CustomRunConfiguration

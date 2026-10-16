@@ -1,0 +1,10 @@
+type: output
+files:
+  - name: Task.txt
+    visible: true
+  - name: tests/output.txt
+    visible: false
+    propagatable: false
+  - name: tests/input.txt
+    visible: false
+    propagatable: false

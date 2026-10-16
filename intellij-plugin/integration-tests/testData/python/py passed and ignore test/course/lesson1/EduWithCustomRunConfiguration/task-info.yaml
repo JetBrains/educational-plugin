@@ -1,0 +1,10 @@
+type: edu
+files:
+  - name: task.py
+    visible: true
+  - name: tests/test_task.py
+    visible: false
+    propagatable: false
+  - name: runConfigurations/CustomCheck.run.xml
+    visible: false
+    propagatable: false

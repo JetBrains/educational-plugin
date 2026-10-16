@@ -1,0 +1,132 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "PyEduTestsFailed",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTestsFailed",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "4 != 3 : error",
+                    "details": "AssertionError: 4 != 3 : error",
+                    "diff": {
+                      "expected": "4",
+                      "actual": "3"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduNoTestsRun",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "ignored",
+                    "message": "No tests have run. For more information, see <a href=\"https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html#no_tests_have_run\">the Troubleshooting guide</a>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "SyntaxError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Syntax Error",
+                    "details": "SyntaxError: invalid syntax"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "AssertionError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "False is not true : My own message",
+                    "details": "AssertionError: False is not true : My own message"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "DoNotEscapeMessageInFailedTest",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "False is not true : <br>",
+                    "details": "AssertionError: False is not true : <br>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTestsFailed",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "Hello, World!\n",
+                      "actual": "Hello, World\n"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "CustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "'Hello!' != 'Hello'",
+                    "details": "AssertionError: 'Hello!' != 'Hello'",
+                    "diff": {
+                      "expected": "Hello!",
+                      "actual": "Hello"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
