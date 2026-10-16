@@ -1,6 +1,7 @@
 <idea-plugin>
   <dependencies>
     <plugin id="org.jetbrains.plugins.go"/>
+    <module name="intellij.go.impl"/>
   </dependencies>
 
   <extensions defaultExtensionNs="Educational">
