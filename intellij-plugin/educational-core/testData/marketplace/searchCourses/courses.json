@@ -20,7 +20,9 @@
             "environment": null,
             "programmingLanguageId" : "Python",
             "language" : "en",
-            "isPrivate": false
+            "isPrivate": false,
+            "environmentSettings" : null,
+            "certification" : null
           },
           "organization" : {
             "name" : "JetBrains s.r.o.",
@@ -49,7 +51,9 @@
             "environment": null,
             "programmingLanguageId" : "JAVA",
             "language" : "ru",
-            "isPrivate": false
+            "isPrivate": false,
+            "environmentSettings": null,
+            "certification": null
           },
           "link" : "courseLink",
           "license" : "https://licenses/"
@@ -72,7 +76,9 @@
             "environment": "sbt",
             "programmingLanguageId": "Scala",
             "language": "en",
-            "isPrivate": false
+            "isPrivate": false,
+            "environmentSettings": null,
+            "certification": null
           },
           "link" : "courseLink",
           "license" : "https://licenses/"
@@ -94,11 +100,72 @@
             "environment": null,
             "programmingLanguageId" : "kotlin",
             "language" : "en",
-            "isPrivate": false
+            "isPrivate": false,
+            "environmentSettings" : null,
+            "certification" : null
           },
           "organization" : {
             "name" : "Regular User",
             "url" : "https://plugins.jetbrains.com/vendor/12345678-1234-1234-1234-123456789abc"
+          },
+          "link" : "courseLink",
+          "license" : "https://licenses/"
+        },
+        {
+          "id" : "5",
+          "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
+          "name" : "Kotlin course with environment settings",
+          "description" : "Kotlin course with environment settings",
+          "downloads" : 3,
+          "rating" : 4.5,
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
+          ],
+          "fields" : {
+            "environment": null,
+            "programmingLanguageId" : "kotlin",
+            "language" : "en",
+            "isPrivate": false,
+            "environmentSettings" : {
+              "jvm_language_level" : "JDK_21",
+              "gradle_version" : "8.14.3"
+            },
+            "certification" : null
+          },
+          "organization" : {
+            "name" : "JetBrains s.r.o.",
+            "url" : "https://plugins.jetbrains.com/vendor/JetBrains"
+          },
+          "link" : "courseLink",
+          "license" : "https://licenses/"
+        },
+        {
+          "id" : "6",
+          "lastUpdateDate": 1619697473000,
+          "cdate": 1623321716000,
+          "name" : "Course with certification",
+          "description" : "Python course with certification",
+          "downloads" : 3,
+          "rating" : 4.5,
+          "authors": [
+            {
+              "name": "FirstName LastName"
+            }
+          ],
+          "fields" : {
+            "environment": null,
+            "programmingLanguageId" : "Python",
+            "language" : "en",
+            "isPrivate": false,
+            "environmentSettings" : null,
+            "certification" : true
+          },
+          "organization" : {
+            "name" : "Example Academy",
+            "url" : "https://plugins.jetbrains.com/vendor/example-academy"
           },
           "link" : "courseLink",
           "license" : "https://licenses/"

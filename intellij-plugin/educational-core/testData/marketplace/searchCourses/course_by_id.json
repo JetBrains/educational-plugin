@@ -19,7 +19,9 @@
           "fields" : {
             "programmingLanguageId" : "Python",
             "language" : "en",
-            "isPrivate": false
+            "isPrivate": false,
+            "environmentSettings" : null,
+            "certification" : null
           },
           "link" : "courseLink",
           "license" : "https://licenses/"
