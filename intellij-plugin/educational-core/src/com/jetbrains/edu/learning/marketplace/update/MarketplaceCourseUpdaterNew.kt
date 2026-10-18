@@ -20,6 +20,7 @@ class MarketplaceCourseUpdaterNew(
     localCourse.marketplaceCourseVersion != remoteCourse.marketplaceCourseVersion -> true
     localCourse.vendor != remoteCourse.vendor -> true
     localCourse.certification != remoteCourse.certification -> true
+    localCourse.environmentSettings != remoteCourse.environmentSettings -> true
     localCourse.isChanged(remoteCourse) -> true
     else -> false
   }

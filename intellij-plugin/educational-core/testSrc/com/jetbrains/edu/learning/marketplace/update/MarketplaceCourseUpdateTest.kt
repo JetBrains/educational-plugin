@@ -222,6 +222,18 @@ class MarketplaceCourseUpdateTest : UpdateTestBase<EduCourse>() {
   }
 
   @Test
+  fun `test environment settings updated`() {
+    initiateLocalCourse()
+
+    val newEnvironmentSettings = mapOf("jvm_language_level" to "JDK_21")
+    val remoteCourse = toRemoteCourse {
+      environmentSettings = newEnvironmentSettings
+    }
+    updateCourse(remoteCourse)
+    assertEquals("Environment settings haven't been updated", newEnvironmentSettings, localCourse.environmentSettings)
+  }
+
+  @Test
   fun `test vendor updated`() {
     initiateLocalCourse()
 
