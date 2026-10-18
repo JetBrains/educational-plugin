@@ -63,6 +63,8 @@ private class MarketplaceCourseBuilder(
       }
       languageCode = fields.language
       environment = fields.environment ?: DEFAULT_ENVIRONMENT
+      environmentSettings = fields.environmentSettings.orEmpty()
+      certification = fields.certification
       marketplaceCourseVersion = version ?: 1
       if (courseOrganization != null) {
         vendor = Vendor(courseOrganization.name.orEmpty(), url = courseOrganization.url)

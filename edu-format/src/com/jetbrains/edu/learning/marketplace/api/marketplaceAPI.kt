@@ -15,11 +15,13 @@ import org.jetbrains.annotations.TestOnly
 
 const val ID = "id"
 const val NAME = "name"
+private const val CERTIFICATION = "certification"
 private const val COMPATIBILITY = "compatibility"
 private const val FORMAT_VERSION = "format_version"
 private const val UPDATE_VERSION = "update_version"
 private const val DATA = "data"
 private const val ENVIRONMENT = "environment"
+private const val ENVIRONMENT_SETTINGS = "environmentSettings"
 private const val GTE = "gte"
 private const val IS_PRIVATE = "isPrivate"
 private const val LANGUAGE = "language"
@@ -117,8 +119,14 @@ class Fields {
   @JsonProperty(ENVIRONMENT)
   var environment: String? = DEFAULT_ENVIRONMENT
 
+  @JsonProperty(ENVIRONMENT_SETTINGS)
+  var environmentSettings: Map<String, String>? = null
+
   @JsonProperty(IS_PRIVATE)
   var isPrivate: Boolean = false
+
+  @JsonProperty(CERTIFICATION)
+  var certification: Boolean? = null
 }
 
 data class Organization(

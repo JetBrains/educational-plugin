@@ -167,8 +167,8 @@ abstract class MarketplaceConnector : MarketplaceAuthConnector(), EduCourseConne
     course.disabledFeatures = unpackedCourse.disabledFeatures
     course.additionalFiles = unpackedCourse.additionalFiles
     course.marketplaceCourseVersion = unpackedCourse.marketplaceCourseVersion
-    // Will be dropped as unnecessary during EDU-8992 implementation
     course.certification = unpackedCourse.certification
+    course.environmentSettings = unpackedCourse.environmentSettings
   }
 
   override fun loadCourse(courseId: Int, downloadContext: DownloadCourseContext): EduCourse {

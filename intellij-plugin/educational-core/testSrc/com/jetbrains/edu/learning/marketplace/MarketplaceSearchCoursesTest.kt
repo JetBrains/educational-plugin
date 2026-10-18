@@ -121,6 +121,24 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
   }
 
   @Test
+  fun `test certification loaded`() {
+    configureCoursesResponse()
+    val courses = doTestCoursesLoaded()
+
+    assertNull(courses[1].certification)
+    assertEquals(true, courses[5].certification)
+  }
+
+  @Test
+  fun `test environment settings loaded`() {
+    configureCoursesResponse()
+    val courses = doTestCoursesLoaded()
+
+    assertEquals(emptyMap<String, String>(), courses[1].environmentSettings)
+    assertEquals(mapOf("jvm_language_level" to "JDK_21", "gradle_version" to "8.14.3"), courses[4].environmentSettings)
+  }
+
+  @Test
   fun `test all courses loaded`() {
     mockConnector.withResponseHandler(testRootDisposable) { request, path ->
       COURSES_REQUEST_RE.matchEntire(path) ?: return@withResponseHandler null
@@ -133,7 +151,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
       }
     }
 
-    doTestCoursesLoaded(14)
+    doTestCoursesLoaded(16)
   }
 
   @Test
@@ -247,7 +265,7 @@ class MarketplaceSearchCoursesTest : EduTestCase() {
     return contains("updates")
   }
 
-  private fun doTestCoursesLoaded(coursesNumber: Int = 4): List<EduCourse> {
+  private fun doTestCoursesLoaded(coursesNumber: Int = 6): List<EduCourse> {
     val courses = MarketplaceConnector.getInstance().searchCourses()
     assertEquals(coursesNumber, courses.size)
     return courses

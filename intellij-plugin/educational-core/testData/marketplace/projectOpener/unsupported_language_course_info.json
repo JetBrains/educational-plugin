@@ -16,7 +16,9 @@
           ],
           "fields" : {
             "programmingLanguageId" : "UnsupportedLanguage",
-            "language" : "en"
+            "language" : "en",
+            "environmentSettings" : null,
+            "certification" : null
           },
           "link" : "courseLink",
           "license" : "https://licenses/"
