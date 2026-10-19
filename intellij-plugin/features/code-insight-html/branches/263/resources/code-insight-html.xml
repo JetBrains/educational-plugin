@@ -1,7 +1,9 @@
+<!-- BACKCOMPAT: 2026.2 inline it -->
 <idea-plugin>
   <dependencies>
     <module name="code-insight-core"/>
     <module name="intellij.xml.analysis"/>
+    <plugin id="com.intellij.xml"/>
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">

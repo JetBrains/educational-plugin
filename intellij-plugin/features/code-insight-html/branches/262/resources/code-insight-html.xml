@@ -1,0 +1,16 @@
+<idea-plugin>
+  <dependencies>
+    <module name="code-insight-core"/>
+    <module name="intellij.xml.analysis"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="HTML"
+                            id="EduHtmlCompletionContributor"
+                            implementationClass="com.jetbrains.edu.html.taskDescription.EduHtmlCompletionContributor"/>
+    <psi.referenceContributor language="HTML"
+                              implementation="com.jetbrains.edu.html.taskDescription.EduHtmlReferenceContributor"/>
+    <xml.xmlSuppressionProvider
+        implementation="com.jetbrains.edu.html.taskDescription.ShortcutInTaskDescriptionSuppressionProvider"/>
+  </extensions>
+</idea-plugin>

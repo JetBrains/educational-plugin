@@ -9,6 +9,10 @@ dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
     bundledModule("intellij.xml.analysis")
+
+    if (isAtLeast263) {
+      bundledPlugin("com.intellij.xml")
+    }
   }
 
   implementation(project(":intellij-plugin:educational-core"))
