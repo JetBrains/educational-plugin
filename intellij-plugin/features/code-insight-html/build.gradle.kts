@@ -8,7 +8,7 @@ plugins {
 dependencies {
   intellijPlatform {
     intellijIde(baseVersion)
-    intellijPlugins("com.intellij.modules.xml")
+    bundledModule("intellij.xml.analysis")
   }
 
   implementation(project(":intellij-plugin:educational-core"))

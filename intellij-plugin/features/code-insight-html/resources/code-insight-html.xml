@@ -1,7 +1,7 @@
 <idea-plugin>
   <dependencies>
     <module name="code-insight-core"/>
-    <plugin id="com.intellij.modules.xml"/>
+    <module name="intellij.xml.analysis"/>
   </dependencies>
 
   <extensions defaultExtensionNs="com.intellij">
