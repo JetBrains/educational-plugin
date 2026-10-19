@@ -2,12 +2,12 @@ package com.jetbrains.edu.learning.yaml
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.application.*
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.fileTypes.UnknownFileType
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.findFile
 import com.intellij.psi.PsiFileFactory
@@ -138,13 +138,13 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
 
         edtWriteAction {
           val fileDocumentManager = FileDocumentManager.getInstance()
-          val document = fileDocumentManager.getCachedDocument(file)
-          if (document == null) {
-            VfsUtil.saveText(file, formattedYamlText)
-          }
-          else {
+          val document = fileDocumentManager.getDocument(file)
+          if (document != null) {
             document.setText(formattedYamlText)
             fileDocumentManager.saveDocument(document)
+          }
+          else {
+            LOG.error("Failed to get document for file ${file.name}")
           }
         }
       }
@@ -219,4 +219,8 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
     val mapper: ObjectMapper,
     val jobKey: String,
   )
+
+  companion object {
+    private val LOG = logger<YamlConfigSyncServiceImpl>()
+  }
 }
