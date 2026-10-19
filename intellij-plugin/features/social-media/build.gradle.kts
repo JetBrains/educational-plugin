@@ -7,6 +7,8 @@ dependencies {
     intellijIde(baseVersion)
     intellijPlugins(jcefPlugin)
     bundledModule("intellij.platform.builtInServer.impl")
+
+    testBundledModule("intellij.platform.credentialStore.impl")
   }
 
   implementation(project(":intellij-plugin:educational-core"))

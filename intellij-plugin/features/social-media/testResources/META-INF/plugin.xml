@@ -2,6 +2,10 @@
   <id>com.jetbrains.edu.socialMedia</id>
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <dependencies>
+    <module name="intellij.platform.credentialStore.impl"/>
+  </dependencies>
+
   <content>
     <module name="social-media"/>
   </content>
