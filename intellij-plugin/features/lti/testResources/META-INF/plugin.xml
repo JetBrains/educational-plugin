@@ -3,7 +3,7 @@
     <id>com.jetbrains.edu.lti</id>
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-    <content>
+    <content namespace="jetbrains">
         <module name="lti"/>
     </content>
 </idea-plugin>

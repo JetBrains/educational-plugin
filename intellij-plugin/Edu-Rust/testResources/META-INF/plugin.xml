@@ -15,7 +15,7 @@
     </extensions>
 
     <!--suppress PluginXmlValidity -->
-    <content>
+    <content namespace="jetbrains">
         <module name="Edu-Rust"/>
     </content>
 </idea-plugin>

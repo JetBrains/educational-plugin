@@ -6,7 +6,7 @@
     <module name="intellij.platform.credentialStore.impl"/>
   </dependencies>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="social-media"/>
   </content>
 </idea-plugin>

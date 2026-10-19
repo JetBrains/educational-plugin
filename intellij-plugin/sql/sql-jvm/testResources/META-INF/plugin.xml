@@ -3,7 +3,7 @@
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <!--suppress PluginXmlValidity -->
-  <content>
+  <content namespace="jetbrains">
     <module name="sql"/>
     <module name="sql-jvm"/>
     <module name="jvm-core"/>
