@@ -13,6 +13,7 @@ dependencies {
       "intellij.platform.sqlite",
       "intellij.platform.feedback",
       "intellij.platform.builtInServer.impl",
+      "intellij.platform.vcs.core",
     )
 
     if (isAtLeast263) {
