@@ -2,7 +2,7 @@
     <id>com.jetbrains.edu.uiOnboarding</id>
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-    <content>
+    <content namespace="jetbrains">
         <module name="ide-onboarding"/>
         <module name="AI"/>
     </content>

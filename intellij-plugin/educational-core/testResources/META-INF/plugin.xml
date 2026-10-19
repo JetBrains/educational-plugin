@@ -8,4 +8,6 @@
               extensions="kt"
               implementationClass="com.jetbrains.edu.learning.configurators.FakeGradleFileType"/>
   </extensions>
+
+  <content namespace="jetbrains"/>
 </idea-plugin>

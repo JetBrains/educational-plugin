@@ -2,7 +2,7 @@
   <id>com.jetbrains.edu.aiHints.kotlin</id>
   <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-  <content>
+  <content namespace="jetbrains">
     <module name="AI"/>
     <module name="ai-hints-core"/>
     <module name="ai-hints-kotlin"/>
