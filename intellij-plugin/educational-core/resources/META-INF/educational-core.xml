@@ -1,5 +1,8 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!--suppress PluginXmlValidity -->
+
+  <!-- BACKCOMPAT: 2026.2. Inline educational-core-platform.xml -->
+  <xi:include href="/META-INF/educational-core-platform.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
   <dependencies>
     <plugin id="com.intellij.modules.lang"/>
     <!-- The vcs module is needed to be sure that IgnoreFileType, PatternCache exist which are used for .courseignore support -->
