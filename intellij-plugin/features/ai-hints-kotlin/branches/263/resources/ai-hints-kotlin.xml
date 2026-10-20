@@ -1,0 +1,13 @@
+<idea-plugin>
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="ai-hints-core"/>
+    <plugin id="org.jetbrains.kotlin"/>
+    <module name="intellij.libraries.kotlinc.analysis.api"/>
+    <module name="intellij.kotlin.references"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <aiHintsProcessor implementationClass="com.jetbrains.edu.aiHints.kotlin.KtEduAiHintsProcessor" language="kotlin"/>
+  </extensions>
+</idea-plugin>
