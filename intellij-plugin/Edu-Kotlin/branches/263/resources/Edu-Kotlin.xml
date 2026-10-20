@@ -4,13 +4,10 @@
     <module name="jvm-core"/>
 
     <plugin id="org.jetbrains.kotlin"/>
+    <module name="intellij.kotlin.runConfigurations.jvm"/>
     <module name="intellij.gradle"/>
     <plugin id="JUnit"/>
   </dependencies>
-
-  <extensions defaultExtensionNs="org.jetbrains.kotlin">
-    <supportsKotlinPluginMode supportsK2="true" />
-  </extensions>
 
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>

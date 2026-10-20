@@ -1,0 +1,15 @@
+<idea-plugin>
+  <dependencies>
+    <!--suppress PluginXmlValidity -->
+    <module name="jvm-core"/>
+
+    <plugin id="org.jetbrains.kotlin"/>
+    <module name="intellij.gradle"/>
+    <plugin id="JUnit"/>
+  </dependencies>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
+    <mainFileProvider language="kotlin" implementationClass="com.jetbrains.edu.kotlin.KtMainFileProvider"/>
+  </extensions>
+</idea-plugin>
