@@ -56,15 +56,18 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
       val jobKey = saveTask.jobKey
 
       val currentJob = currentCoroutineContext().job
-      val previousJob = item2SaveJob.put(jobKey, currentJob)
+      synchronized(item2SaveJob) {
+        item2SaveJob[jobKey] = currentJob
+      }
 
       try {
-        previousJob?.join()
-        doSave(saveTask)
+        doSave(saveTask, currentJob)
       }
       finally {
         // An older save must not remove a newer save's marker
-        item2SaveJob.remove(saveTask.jobKey, currentJob)
+        synchronized(item2SaveJob) {
+          item2SaveJob.remove(saveTask.jobKey, currentJob)
+        }
       }
     }
   }
@@ -106,7 +109,7 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
     return suppressedSaveKeys.containsKey(jobKey)
   }
 
-  private suspend fun doSave(saveTask: SaveTask) {
+  private suspend fun doSave(saveTask: SaveTask, currentJob: Job) {
     val formattedYamlText = withContext(Dispatchers.IO) {
       val studyItem = saveTask.studyItem
       if (studyItem is Task) {
@@ -132,24 +135,28 @@ open class YamlConfigSyncServiceImpl(protected val project: Project, protected v
 
       if (file == null) return@withContext
 
-      try {
-        file.putUserData(LOAD_FROM_CONFIG, false)
-        ensureYamlHasAssociation(file)
+      edtWriteAction {
+        synchronized(item2SaveJob) {
+          if (item2SaveJob[saveTask.jobKey] !== currentJob) return@synchronized
 
-        edtWriteAction {
-          val fileDocumentManager = FileDocumentManager.getInstance()
-          val document = fileDocumentManager.getDocument(file)
-          if (document != null) {
-            document.setText(formattedYamlText)
-            fileDocumentManager.saveDocument(document)
+          try {
+            file.putUserData(LOAD_FROM_CONFIG, false)
+            ensureYamlHasAssociation(file)
+
+            val fileDocumentManager = FileDocumentManager.getInstance()
+            val document = fileDocumentManager.getDocument(file)
+            if (document != null) {
+              document.setText(formattedYamlText)
+              fileDocumentManager.saveDocument(document)
+            }
+            else {
+              LOG.error("Failed to get document for file ${file.name}")
+            }
           }
-          else {
-            LOG.error("Failed to get document for file ${file.name}")
+          finally {
+            file.putUserData(LOAD_FROM_CONFIG, true)
           }
         }
-      }
-      finally {
-        file.putUserData(LOAD_FROM_CONFIG, true)
       }
     }
   }
