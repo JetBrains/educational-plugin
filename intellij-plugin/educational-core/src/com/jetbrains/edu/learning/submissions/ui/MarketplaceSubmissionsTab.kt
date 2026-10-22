@@ -164,15 +164,15 @@ class MarketplaceSubmissionsTab(project: Project) : SubmissionsTab(project) {
   private fun JComponent.addGotItTooltip(segmentedButtonItem: SegmentedButtonItem) =
     addAncestorListener(object : AncestorListenerAdapter() {
       override fun ancestorAdded(e: AncestorEvent) {
-        val gotItTooltip = GotItTooltip(
-          GOT_IT_ID, EduCoreBundle.message("submissions.button.community.tooltip.text"), this@MarketplaceSubmissionsTab
-        ).withHeader(EduCoreBundle.message("submissions.button.community.tooltip.header"))
-
         val communityJComponent = UIUtil.uiTraverser(this@addGotItTooltip).filter(ActionButton::class.java).filter {
           it.action.templateText == segmentedButtonItem.text
-        }.first() as JComponent
+        }.first() ?: return
 
         if (communityJComponent.isEnabled) {
+          val gotItTooltip = GotItTooltip(
+            GOT_IT_ID, EduCoreBundle.message("submissions.button.community.tooltip.text"), this@MarketplaceSubmissionsTab
+          ).withHeader(EduCoreBundle.message("submissions.button.community.tooltip.header"))
+
           gotItTooltip.show(communityJComponent, GotItTooltip.BOTTOM_MIDDLE)
         }
       }
