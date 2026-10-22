@@ -450,6 +450,7 @@
       <scope name="Tests" level="ERROR" enabled="false" />
       <option name="REPORT_INACCESSIBLE" value="false" />
     </inspection_tool>
+    <inspection_tool class="JetBrainsInternalApiUsage" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="KotlinObjectExtensionRegistration" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="KotlinObjectRegisteredAsExtension" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LambdaUnfriendlyMethodOverload" enabled="true" level="WARNING" enabled_by_default="true" />
