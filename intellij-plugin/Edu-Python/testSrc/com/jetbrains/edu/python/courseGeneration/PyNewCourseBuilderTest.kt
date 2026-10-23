@@ -1,5 +1,7 @@
 package com.jetbrains.edu.python.courseGeneration
 
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.module.ModuleType
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -9,6 +11,7 @@ import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
 import com.jetbrains.edu.python.disablePythonProviders
 import com.jetbrains.python.PythonLanguage
+import com.jetbrains.python.PythonModuleTypeBase
 import org.junit.Test
 
 class PyNewCourseBuilderTest : CourseGenerationTestBase<LanguageEnvironment>() {
@@ -17,6 +20,12 @@ class PyNewCourseBuilderTest : CourseGenerationTestBase<LanguageEnvironment>() {
   override fun setUp() {
     super.setUp()
     disablePythonProviders()
+  }
+
+  @Test
+  fun `test python module type`() {
+    createCourseStructure(pythonCourse(CourseMode.EDUCATOR))
+    assertEquals(PythonModuleTypeBase.getInstance().id, ModuleType.get(ModuleManager.getInstance(project).modules.single()).id)
   }
 
   @Test

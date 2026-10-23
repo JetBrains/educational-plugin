@@ -30,7 +30,7 @@ open class PyCourseBuilder : EnvironmentAwareCourseBuilder<PyLanguageEnvironment
   override fun getSupportedLanguageVersions(): List<String> = getSupportedVersions()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyLanguageEnvironment>? =
-    object : CourseProjectGenerator<PyLanguageEnvironment>(this@PyCourseBuilder, course) {}
+    PyCourseProjectGenerator(this, course)
 
   override fun refreshProject(project: Project, cause: RefreshCause) {
     if (cause == RefreshCause.DEPENDENCIES_UPDATED) {
