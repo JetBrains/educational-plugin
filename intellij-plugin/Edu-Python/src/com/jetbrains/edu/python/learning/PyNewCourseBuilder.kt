@@ -34,7 +34,7 @@ class PyNewCourseBuilder : EnvironmentAwareCourseBuilder<PyLanguageEnvironment> 
   override fun getSupportedLanguageVersions(): List<String> = getSupportedVersions()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyLanguageEnvironment> {
-    return object : CourseProjectGenerator<PyLanguageEnvironment>(this@PyNewCourseBuilder, course) {}
+    return PyCourseProjectGenerator(this, course)
   }
 
   override fun getDefaultTaskTemplates(
