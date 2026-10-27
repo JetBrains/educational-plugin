@@ -19,12 +19,18 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseDir
 import com.jetbrains.edu.learning.courseFormat.CourseMode
 import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
+import com.jetbrains.edu.learning.mockService
 import com.jetbrains.edu.learning.newproject.EmptyProjectSettings
+import io.mockk.every
+import kotlinx.coroutines.Job
 import org.junit.Test
+import java.util.concurrent.ConcurrentHashMap
 
 class FixModuleForRunConfigurationsListenerTest : CourseGenerationTestBase<EmptyProjectSettings>() {
 
   override val defaultSettings: EmptyProjectSettings = EmptyProjectSettings
+
+  private val serviceJobs = ConcurrentHashMap.newKeySet<Job>()
 
   override fun setUp() {
     super.setUp()
@@ -33,33 +39,56 @@ class FixModuleForRunConfigurationsListenerTest : CourseGenerationTestBase<Empty
 
   @Test
   fun `test module is set for added task run configuration in student course`() {
+    // given
     createCourse(CourseMode.STUDENT)
+    mockFixModuleService()
+
+    // when
     val configuration = addTaskRunConfiguration()
+
+    // then
     assertEquals(taskModule(), configuration.configurationModule.module)
   }
 
   @Test
   fun `test module is set for task run configuration after roots change in student course`() {
+    // given
     createCourse(CourseMode.STUDENT)
+    mockFixModuleService()
     val configuration = addTaskRunConfiguration()
     configuration.setModule(null)
 
-    runWriteAction {
-      ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), RootsChangeRescanningInfo.NO_RESCAN_NEEDED)
-    }
+    // when
+    makeRootsChange()
 
-    val expectedModule = taskModule()
-    PlatformTestUtil.waitWithEventsDispatching(
-      "Module of task run configuration is not updated after roots change",
-      { configuration.configurationModule.module == expectedModule },
-      10
-    )
+    // then
+    assertEquals(taskModule(), configuration.configurationModule.module)
   }
 
   @Test
   fun `test module is not set for added task run configuration in educator course`() {
+    // given
     createCourse(CourseMode.EDUCATOR)
+    mockFixModuleService()
+
+    // when
     val configuration = addTaskRunConfiguration()
+
+    // then
+    assertNull(configuration.configurationModule.module)
+  }
+
+  @Test
+  fun `test module is not set for task run configuration after roots change in educator course`() {
+    // given
+    createCourse(CourseMode.EDUCATOR)
+    mockFixModuleService()
+    val configuration = addTaskRunConfiguration()
+
+    // when
+    makeRootsChange()
+
+    // then
     assertNull(configuration.configurationModule.module)
   }
 
@@ -73,6 +102,32 @@ class FixModuleForRunConfigurationsListenerTest : CourseGenerationTestBase<Empty
       }
     }
     createCourseStructure(course)
+  }
+
+  /**
+   * Mocks [FixModuleForRunConfigurationsService] to collect jobs it launches
+   * to be able to wait until all its work is done, even if it doesn't change anything
+   */
+  private fun mockFixModuleService() {
+    val service = mockService<FixModuleForRunConfigurationsService>(project)
+    every { service.fixConfigurationModules(any()) } answers {
+      callOriginal().also { serviceJobs += it }
+    }
+  }
+
+  private fun waitForService() {
+    PlatformTestUtil.waitWithEventsDispatching(
+      "Service hasn't finished its work",
+      { serviceJobs.all { it.isCompleted } },
+      10
+    )
+  }
+
+  private fun makeRootsChange() {
+    runWriteAction {
+      ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), RootsChangeRescanningInfo.NO_RESCAN_NEEDED)
+    }
+    waitForService()
   }
 
   private fun taskDirPath(): String = "${project.courseDir.path}/lesson1/task1"
@@ -91,6 +146,7 @@ class FixModuleForRunConfigurationsListenerTest : CourseGenerationTestBase<Empty
     val settings = runManager.createConfiguration(configuration, factory)
     settings.storeInArbitraryFileInProject("${taskDirPath()}/${EduNames.RUN_CONFIGURATION_DIR}/$RUN_CONFIGURATION_FILE_NAME")
     runManager.addConfiguration(settings)
+    waitForService()
     return configuration
   }
 
