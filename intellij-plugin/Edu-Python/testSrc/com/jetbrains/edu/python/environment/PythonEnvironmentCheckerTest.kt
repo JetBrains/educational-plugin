@@ -6,6 +6,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ModuleRootModificationUtil.setModuleSdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -26,8 +27,8 @@ import com.jetbrains.edu.learning.courseGeneration.CourseGenerationTestBase
 import com.jetbrains.edu.learning.messages.EduCoreBundle
 import com.jetbrains.edu.learning.newproject.environment.InstallationResult
 import com.jetbrains.edu.learning.newproject.environment.LanguageEnvironment
-import com.jetbrains.edu.python.learning.newproject.PySdkToCreateVirtualEnv
 import com.jetbrains.python.PythonLanguage
+import com.jetbrains.python.sdk.PythonSdkType
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -37,7 +38,7 @@ class PythonEnvironmentCheckerTest : CourseGenerationTestBase<LanguageEnvironmen
   override val defaultSettings: LanguageEnvironment = object : LanguageEnvironment {
     override suspend fun installIfNeeded(project: Project, course: Course): InstallationResult {
       // create mock sdk and register it
-      val mockSdk = PySdkToCreateVirtualEnv.create("MockPySdk", "", "")
+      val mockSdk = ProjectJdkImpl("MockPySdk", PythonSdkType.getInstance(), "", "")
       writeAction {
         ProjectJdkTable.getInstance().addJdk(mockSdk)
       }
