@@ -4,6 +4,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
@@ -38,7 +39,6 @@ import org.rust.ide.newProject.RsPackageNameValidator
 import org.rust.lang.RsConstants
 import org.rust.lang.core.psi.ext.childrenWithLeaves
 import org.rust.openapiext.pathAsPath
-import org.rust.openapiext.toPsiFile
 import org.toml.lang.psi.*
 import org.toml.lang.psi.ext.TomlLiteralKind
 import org.toml.lang.psi.ext.elementType
@@ -273,7 +273,7 @@ class RsCourseBuilder : EnvironmentAwareCourseBuilder<RsLanguageEnvironment> {
   }
 
   private val Project.workspaceManifest: TomlFile?
-    get() = courseDir.findChild(CargoConstants.MANIFEST_FILE)?.toPsiFile(this) as? TomlFile
+    get() = courseDir.findChild(CargoConstants.MANIFEST_FILE)?.findPsiFile(this) as? TomlFile
 
   private val TomlFile.membersArray: TomlArray?
     get() {
