@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.update
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduTestAware
+import kotlinx.serialization.Serializable
 
 @Service(Service.Level.PROJECT)
 @State(name = "EduUpdateHistory", storages = [Storage(StoragePathMacros.WORKSPACE_FILE, roamingType = RoamingType.DISABLED)])
@@ -27,6 +28,7 @@ class UpdateHistoryService : SerializablePersistentStateComponent<UpdateHistoryS
     updates = emptyList()
   }
 
+  @Serializable
   data class State(var updates: List<UpdateItem> = mutableListOf())
 
   companion object {
@@ -34,6 +36,7 @@ class UpdateHistoryService : SerializablePersistentStateComponent<UpdateHistoryS
   }
 }
 
+@Serializable
 data class UpdateItem(val versionBefore: String, val versionAfter: String, val updater: UpdaterImplementation) {
 
   override fun toString(): String {
