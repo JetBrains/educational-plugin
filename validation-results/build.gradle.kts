@@ -31,6 +31,6 @@ dependencies {
 
   testImplementation(libs.kotlinx.coroutine.test)
   testImplementation(libs.kotlinx.serialization)
-  testImplementation(libs.junit.jupiter)
-  testRuntimeOnly(libs.junit.platform.launcher)
+  testImplementation(platformLibs.junit.jupiter)
+  testRuntimeOnly(platformLibs.junit.platform.launcher)
 }

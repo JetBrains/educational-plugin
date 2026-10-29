@@ -13,8 +13,9 @@ dependencies {
 
   testImplementation(project(":validation-results"))
   testImplementation(libs.kotlinx.serialization)
-  testImplementation(libs.junit.jupiter)
-  testRuntimeOnly(libs.junit.platform.launcher)
+  // JUnit version must match the one ide-starter depends on for the current platform
+  testImplementation(platformLibs.junit.jupiter)
+  testRuntimeOnly(platformLibs.junit.platform.launcher)
 }
 
 tasks {

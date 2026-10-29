@@ -170,4 +170,10 @@ dependencyResolutionManagement {
       jetbrainsRuntime()
     }
   }
+  versionCatalogs {
+    create("platformLibs") {
+      val environmentName = settings.providers.gradleProperty("environmentName").get()
+      from(files("gradle/platform-$environmentName.versions.toml"))
+    }
+  }
 }
