@@ -1,0 +1,5 @@
+content:
+  - OutputTask
+  - OutputTaskWithWindowsLineSeparators
+  - OutputTaskWithSeveralFiles
+  - CheckEncoding

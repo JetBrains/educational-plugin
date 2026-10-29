@@ -1,0 +1,95 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "JavaCheckErrorsTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "javaCompilationError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Compilation Failed"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "testFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Task.foo() should return 42"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "comparisonTestFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "42",
+                      "actual": "0"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "escapeMessageInFailedTest",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "&lt;br&gt;"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "gradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "Hello",
+                      "actual": "Hello!"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

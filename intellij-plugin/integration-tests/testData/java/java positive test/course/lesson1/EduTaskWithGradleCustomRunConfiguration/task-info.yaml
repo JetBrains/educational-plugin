@@ -1,0 +1,10 @@
+type: edu
+files:
+  - name: src/Task.java
+    visible: true
+  - name: test/Tests.java
+    visible: false
+    propagatable: false
+  - name: runConfigurations/CustomGradleCheck.run.xml
+    visible: false
+    propagatable: false

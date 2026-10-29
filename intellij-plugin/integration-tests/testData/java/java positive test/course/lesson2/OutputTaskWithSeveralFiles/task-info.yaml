@@ -1,0 +1,9 @@
+type: output
+files:
+  - name: src/Utils.java
+    visible: true
+  - name: src/Task.java
+    visible: true
+  - name: test/output.txt
+    visible: false
+    propagatable: false

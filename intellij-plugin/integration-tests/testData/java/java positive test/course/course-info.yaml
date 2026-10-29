@@ -1,0 +1,15 @@
+type: marketplace
+title: JavaCheckCourseTest
+language: English
+programming_language: Java
+content:
+  - lesson1
+  - lesson2
+environment_settings:
+  jvm_language_level: JDK_17
+  gradle_version: 9.6.0
+additional_files:
+  - name: build.gradle
+  - name: settings.gradle
+  - name: gradle/wrapper/gradle-wrapper.properties
+yaml_version: 6

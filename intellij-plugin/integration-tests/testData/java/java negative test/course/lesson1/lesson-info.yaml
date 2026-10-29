@@ -1,0 +1,6 @@
+content:
+  - javaCompilationError
+  - testFail
+  - comparisonTestFail
+  - escapeMessageInFailedTest
+  - gradleCustomRunConfiguration

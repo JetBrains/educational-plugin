@@ -1,0 +1,114 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "JavaCheckCourseTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithIgnoredTest",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithGradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "OutputTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskWithWindowsLineSeparators",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskWithSeveralFiles",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "CheckEncoding",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
