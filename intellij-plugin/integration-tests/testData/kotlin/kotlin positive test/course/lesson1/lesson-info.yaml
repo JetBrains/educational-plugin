@@ -1,0 +1,6 @@
+content:
+  - EduTask
+  - EduTaskWithIgnoredTest
+  - EduTaskWithGradleCustomRunConfiguration
+  - task1
+  - task2

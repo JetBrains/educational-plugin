@@ -1,0 +1,5 @@
+content:
+  - OutputTask
+  - OutputTaskMainInsideTask
+  - OutputTaskWithSeveralFiles
+  - EduTaskWithSpecialà

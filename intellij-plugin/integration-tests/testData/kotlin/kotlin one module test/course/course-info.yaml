@@ -1,0 +1,16 @@
+type: marketplace
+title: KtOneModuleCheckCourseTest
+language: English
+programming_language: Kotlin
+content:
+  - lesson1
+  - lesson2
+  - Unit Testing
+environment_settings:
+  jvm_language_level: JDK_17
+  gradle_version: 9.6.0
+additional_files:
+  - name: build.gradle
+  - name: settings.gradle
+  - name: gradle/wrapper/gradle-wrapper.properties
+yaml_version: 6

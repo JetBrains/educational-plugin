@@ -1,0 +1,9 @@
+type: edu
+files:
+  - name: src/JavaClass.java
+    visible: true
+  - name: src/Task.kt
+    visible: true
+  - name: test/Tests.kt
+    visible: false
+    propagatable: false

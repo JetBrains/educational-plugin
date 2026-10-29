@@ -1,0 +1,159 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "KtCheckCourseTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithIgnoredTest",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithGradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithExclamationMark!",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTask:With;Special&Symbols?()",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "OutputTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskMainInsideTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskWithSeveralFiles",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithSpecialà",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "EduLessonWithSpecialà",
+          "children": [
+            {
+              "type": "suite",
+              "name": "task1",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "KtOneModuleCheckCourseTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithGradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "OutputTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "TheoryTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "ignored",
+                    "message": "Local check isn't available"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "Unit Testing",
+          "children": [
+            {
+              "type": "suite",
+              "name": "TheoryTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "ignored",
+                    "message": "Local check isn't available"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+type: edu
+custom_name: EduTaskWithExclamationMark!
+files:
+  - name: src/Task.kt
+    visible: true
+  - name: test/Tests.kt
+    visible: false
+    propagatable: false

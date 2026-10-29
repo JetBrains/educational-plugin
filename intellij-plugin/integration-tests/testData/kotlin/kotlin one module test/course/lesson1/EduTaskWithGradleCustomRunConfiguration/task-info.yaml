@@ -1,0 +1,10 @@
+type: edu
+files:
+  - name: src/CustomTask.kt
+    visible: true
+  - name: test/CustomTests.kt
+    visible: false
+    propagatable: false
+  - name: runConfigurations/CustomGradleCheck.run.xml
+    visible: false
+    propagatable: false

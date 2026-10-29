@@ -1,0 +1,11 @@
+content:
+  - kotlinCompilationError
+  - javaCompilationError
+  - compilationError()
+  - testFail
+  - comparisonTestFail
+  - comparisonTestWithMessageFail
+  - comparisonMultilineTestFail
+  - objectComparisonTestFail
+  - escapeMessageInFailedTest
+  - gradleCustomRunConfiguration

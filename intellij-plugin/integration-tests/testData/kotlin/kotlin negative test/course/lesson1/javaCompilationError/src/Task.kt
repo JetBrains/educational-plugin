@@ -1,0 +1,1 @@
+fun foo() = JavaClass.i

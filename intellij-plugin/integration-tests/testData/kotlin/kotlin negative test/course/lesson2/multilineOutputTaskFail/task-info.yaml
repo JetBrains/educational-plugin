@@ -1,0 +1,7 @@
+type: output
+files:
+  - name: src/Task.kt
+    visible: true
+  - name: test/output.txt
+    visible: false
+    propagatable: false

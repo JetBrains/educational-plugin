@@ -1,0 +1,237 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "KtCheckErrorsTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "kotlinCompilationError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Compilation Failed"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "javaCompilationError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Compilation Failed"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "compilationError()",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Compilation Failed"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "testFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "foo() should return 42"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "comparisonTestFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "42",
+                      "actual": "43"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "comparisonTestWithMessageFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "foo() should return 42",
+                    "diff": {
+                      "expected": "42",
+                      "actual": "43"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "comparisonMultilineTestFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Wrong Answer",
+                    "diff": {
+                      "expected": "Hello,\nWorld!",
+                      "actual": "Hello\nWorld!"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "objectComparisonTestFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "Foo<(0, 0)>",
+                      "actual": "Bar<(0, 0)>"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "escapeMessageInFailedTest",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "&lt;br&gt;"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "gradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "Hello",
+                      "actual": "Hello!"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "outputTaskFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "OK!\n",
+                      "actual": "OK\n"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "outputTaskWithNewLineFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "Line\n",
+                      "actual": "Line"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "multilineOutputTaskFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "Hello,\nWorld!\n",
+                      "actual": "Hello\nWorld\n"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

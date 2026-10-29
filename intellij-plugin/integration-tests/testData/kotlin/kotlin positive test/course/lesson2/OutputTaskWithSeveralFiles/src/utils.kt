@@ -1,0 +1,1 @@
+fun ok(): String = "OK"
