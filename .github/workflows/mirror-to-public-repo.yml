@@ -1,0 +1,39 @@
+name: Mirror to public repository
+
+on:
+  push:
+    branches:
+      - master
+      - '**-release'
+
+concurrency:
+  group: mirror-to-public-repo-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: vars.MIRROR_TO_PUBLIC_REPO == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          # Don't leave GITHUB_TOKEN in git config, the public repository is pushed with the app token
+          persist-credentials: false
+
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          client-id: ${{ secrets.MIRROR_APP_CLIENT_ID }}
+          private-key: ${{ secrets.MIRROR_APP_PRIVATE_KEY }}
+          owner: JetBrains
+          repositories: educational-plugin
+          permission-contents: write
+          permission-workflows: write
+
+      - name: Push branch to public repository
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git remote add public "https://x-access-token:${TOKEN}@github.com/JetBrains/educational-plugin.git"
+          git push --force public "${GITHUB_SHA}:${GITHUB_REF}"
