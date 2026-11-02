@@ -15,11 +15,12 @@ to hook into the IDE setup on its own, so every technology would solve the same 
   Plugin Manager (the latest version compatible with the tested IDE build), and then installs the built plugin.
 - The `protected open fun installPlugin(configurator, pluginPath)` hook of `CourseValidationTestBase` is removed.
   The annotation becomes the only way to add plugins to the tested IDE. The hook has no overrides on master.
+- `@RequiredProperty` on a test class now applies to its subclasses too: both annotations are collected by the same
+  lookup (test class, its superclasses, test method).
 - `intellij-plugin/integration-tests/README.md` describes the new annotation next to `@RequiredProperty`.
 
 Out of scope:
-- pinning a plugin version or release channel;
-- changing how `@RequiredProperty` is looked up (it still reads only the test class itself and the test method).
+- pinning a plugin version or release channel.
 
 ## Capabilities
 

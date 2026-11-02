@@ -38,16 +38,14 @@ import kotlin.test.assertNotNull
  * testData/plain/correct plain text course/expected.json - expected validation results
  * ```
  * so a single test class may contain any number of test cases without configuring paths.
+ *
+ * Besides the built plugin, all plugins declared via [RequiredPlugin] are installed into the launched IDE.
  */
 abstract class CourseValidationTestBase(private val testDataPrefix: String, private val ideInfo: IdeInfo) {
 
   private lateinit var testInfo: TestInfo
 
   protected open fun commandChain(): CommandChain = CommandChain()
-
-  protected open fun installPlugin(configurator: PluginConfigurator, pluginPath: Path) {
-    configurator.installPluginFromPath(pluginPath)
-  }
 
   @BeforeEach
   fun setUpTestInfo(testInfo: TestInfo) {
@@ -62,7 +60,11 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
       testInfo.hyphenateWithClass(),
       TestCase(ideInfo, NoProject)
     ).apply {
-      installPlugin(PluginConfigurator(this), pluginPath)
+      val pluginConfigurator = PluginConfigurator(this)
+      for (pluginId in collectAnnotationValues(RequiredPlugin::pluginId)) {
+        pluginConfigurator.installPluginFromPluginManager(pluginId, ide)
+      }
+      pluginConfigurator.installPluginFromPath(pluginPath)
       applyVMOptionsPatch {
         addSystemProperty("idea.is.internal", true)
         addSystemProperty("java.awt.headless", true)
@@ -168,13 +170,10 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
   }
 
   /**
-   * Values for all properties declared via [RequiredProperty] on the current test method and on the test class.
+   * Values for all properties declared via [RequiredProperty] on the current test method, on the test class and its superclasses.
    */
   private fun requiredProperties(): Map<String, String> {
-    val properties = linkedSetOf<String>()
-    javaClass.getAnnotationsByType(RequiredProperty::class.java).mapTo(properties) { it.property }
-    testMethod().getAnnotationsByType(RequiredProperty::class.java).mapTo(properties) { it.property }
-    return properties.associateWith {
+    return collectAnnotationValues(RequiredProperty::property).associateWith {
       val envVariable = envVariableName(it)
       val value = System.getProperty(it) ?: System.getenv(envVariable)
       checkNotNull(value) {
@@ -182,6 +181,19 @@ abstract class CourseValidationTestBase(private val testDataPrefix: String, priv
         "Pass `-D$it=<value>` to the test process or set the `$envVariable` environment variable"
       }
     }
+  }
+
+  /**
+   * Values extracted by [value] from all [A] annotations on the test class, its superclasses and the current test method,
+   * in this order and without duplicates.
+   */
+  private inline fun <reified A : Annotation, T> collectAnnotationValues(value: (A) -> T): Set<T> {
+    val values = linkedSetOf<T>()
+    for (cls in generateSequence<Class<*>>(javaClass) { it.superclass }) {
+      cls.getAnnotationsByType(A::class.java).mapTo(values, value)
+    }
+    testMethod().getAnnotationsByType(A::class.java).mapTo(values, value)
+    return values
   }
 
   private fun testMethod(): Method = testInfo.testMethod.orElseThrow {

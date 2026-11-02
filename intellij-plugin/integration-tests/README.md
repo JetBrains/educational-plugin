@@ -87,6 +87,11 @@ launched IDE can resolve an SDK/interpreter:
 - JVM tests need `-Dproject.jdk=<path to a JDK>` (or the `COM_JETBRAINS_EDU_PROJECT_JDK` environment variable).
 - Python tests need `-Dproject.python.interpreter=<path to a Python interpreter>` (or `COM_JETBRAINS_EDU_PROJECT_PYTHON_INTERPRETER`).
 
+If the launched IDE needs plugins besides the built one (for example, a language plugin not bundled into the IDE),
+declare them with `@RequiredPlugin("<plugin id>")` on a test method, a test class or its base class.
+The annotation is repeatable, and the latest plugin version compatible with the tested IDE build is downloaded
+from JetBrains Marketplace.
+
 These tests are intended to run on TeamCity with necessary environment.
 
 [ide-tests](../../out/ide-tests) directory contains all artifacts of the corresponding tests

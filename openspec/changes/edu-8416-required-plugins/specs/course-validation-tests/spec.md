@@ -43,6 +43,14 @@ of the tested IDE.
 - **WHEN** a required plugin id does not exist or has no version compatible with the tested IDE build
 - **THEN** the test fails before the IDE is launched, with an error that names the plugin id
 
+### Requirement: Required properties are inherited by test subclasses
+A required property declared on a test class SHALL also be required for all test classes extending it, in the same way
+as a required plugin.
+
+#### Scenario: Property declared on a base test class
+- **WHEN** an abstract base test class declares a required property and a concrete test class extends it
+- **THEN** the property value is required and passed into the IDE launched for every test method of the concrete class
+
 ### Requirement: Built plugin is always installed
 The built JetBrains Academy plugin SHALL be installed into the tested IDE for every test, whether or not the test
 declares required plugins.

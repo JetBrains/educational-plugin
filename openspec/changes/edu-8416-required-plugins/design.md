@@ -27,7 +27,6 @@ build, and throws `PluginNotFoundException` (the message contains the plugin id)
 - Version or channel pinning (`channel`, `pluginFileName`, `PluginWithExactVersion`). We can add them later as
   optional annotation parameters without changing callers.
 - Installing plugins from local paths or custom repositories.
-- Changing the lookup rules of `@RequiredProperty`.
 
 ## Decisions
 
@@ -51,8 +50,16 @@ annotation is `@java.lang.annotation.Inherited`. For a Kotlin `@Repeatable` anno
 to apply to the compiler-generated container, so explicit traversal is simpler and obviously correct. A language
 plugin is naturally declared once on a shared abstract base of that language's test classes.
 
-Alternative: read only `javaClass` and the method, like `@RequiredProperty`. Rejected because every concrete class
-would then have to repeat the language plugin annotation.
+Alternative: read only `javaClass` and the method, like `@RequiredProperty` did. Rejected because every concrete
+class would then have to repeat the language plugin annotation.
+
+### One lookup for all test annotations
+
+The lookup lives in a single private generic helper of `CourseValidationTestBase`, parameterized by the annotation
+type and a value extractor (e.g. `RequiredPlugin::pluginId`), returning the ordered set of values. Both
+`@RequiredPlugin` and `@RequiredProperty` use it, so `@RequiredProperty` on a base class now applies to subclasses
+too. This is intended: both annotations describe the environment of a test, and they should follow the same rules.
+Future test annotations reuse the same helper.
 
 ### Install from the Plugin Manager before the built plugin
 
@@ -82,5 +89,5 @@ point.
   first run per build downloads. Tests without the annotation are not affected.
 - [The latest compatible version can change between runs, so results can drift] → acceptable for integration tests,
   which aim to reproduce what a learner gets. Version pinning can be added later (see Non-Goals).
-- [Superclass traversal differs from `@RequiredProperty` lookup] → documented in the KDoc of both the annotation and
-  `CourseValidationTestBase`. We can align `@RequiredProperty` in a separate change if needed.
+- [`@RequiredProperty` lookup now includes superclasses] → no existing test class extends an annotated class, so the
+  set of required properties of existing tests doesn't change.
