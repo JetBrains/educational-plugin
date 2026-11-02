@@ -45,10 +45,6 @@ include(
   "intellij-plugin:integration-tests"
 )
 
-if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
-  include("fleet-plugin")
-}
-
 val secretProperties: String = "secret.properties"
 
 val isTeamCity: Boolean get() = System.getenv("TEAMCITY_VERSION") != null
@@ -134,18 +130,6 @@ pluginManagement {
     maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
     maven("https://cache-redirector.jetbrains.com/maven-central")
     maven("https://central.sonatype.com/repository/maven-snapshots/")
-
-    if (settings.providers.gradleProperty("fleetIntegration").get().toBoolean()) {
-      maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-      maven("https://packages.jetbrains.team/maven/p/teamcity-rest-client/teamcity-rest-client")
-      maven {
-        url = uri("https://packages.jetbrains.team/maven/p/fleet/fleet-sdk")
-        credentials {
-          username = settings.providers.gradleProperty("spaceUsername").orNull
-          password = settings.providers.gradleProperty("spacePassword").orNull
-        }
-      }
-    }
   }
 }
 

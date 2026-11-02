@@ -17,18 +17,6 @@ idea {
   }
 }
 
-// For some reason, `version = "$pluginVersion.0"` inside `fleet-plugin/build.gradle.kts` is not enough.
-// It seems fleet gradle plugin reads project version too early when it's not set yet.
-// This code executed before `fleet-plugin/build.gradle.kts` is evaluated,
-// so at the moment of reading version is already set.
-//
-// `.0` is needed because fleet plugin should have only `major.minor.patch` version structure
-if (prop("fleetIntegration").toBoolean()) {
-  project(":fleet-plugin") {
-    version = "$pluginVersion.0"
-  }
-}
-
 tasks {
   wrapper {
     distributionType = Wrapper.DistributionType.ALL
