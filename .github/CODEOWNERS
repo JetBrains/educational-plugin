@@ -1,0 +1,5 @@
+# Source message bundles (user-visible texts) are reviewed by technical writers.
+# Approval from any one of the listed owners is enough.
+# Translations under intellij-plugin/localization/ are Crowdin-synced and are not matched here.
+# TODO: replace individual users with the corresponding GitHub team once it exists.
+**/resources/messages/*.properties  @stephen-hero @annmer
