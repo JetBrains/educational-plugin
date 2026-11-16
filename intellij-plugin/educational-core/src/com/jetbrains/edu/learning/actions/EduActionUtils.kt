@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.util.concurrency.annotations.RequiresEdt
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtilsKt.isEduProject
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import org.jetbrains.annotations.Nls
@@ -46,7 +47,12 @@ object EduActionUtils {
     }
   }
 
+  /**
+   * Returns the task currently shown in the Task tool window or `null` if there is no such task.
+   * Always returns `null` for non-edu projects, so it's safe to call from any context, e.g., from [AnAction.update]
+   */
   fun Project.getCurrentTask(): Task? {
+    if (!isEduProject()) return null
     return TaskToolWindowView.getInstance(this).currentTask
   }
 
