@@ -151,7 +151,11 @@ class CheckPanel(private val project: Project, parentDisposable: Disposable) : J
       else -> {
         val isDefault = !(task.isChangedOnFailed && task.status == CheckStatus.Failed || task.isSolved)
         val isEnabled = !(task.isChangedOnFailed && task.status == CheckStatus.Failed)
-        val checkComponent = CheckPanelButtonComponent(CheckAction(task.getUICheckLabel()), isDefault = isDefault, isEnabled = isEnabled)
+        val checkComponent = CheckPanelButtonComponent.withProgressIcon(
+          CheckAction(task.getUICheckLabel()),
+          isDefault = isDefault,
+          isEnabled = isEnabled
+        )
         checkButtonWrapper.add(checkComponent, BorderLayout.WEST)
       }
     }
@@ -181,8 +185,8 @@ class CheckPanel(private val project: Project, parentDisposable: Disposable) : J
     if (!task.isChangedOnFailed) return
 
     if (task.status == CheckStatus.Failed) {
-      val retryComponent = CheckPanelButtonComponent(
-        EduActionUtils.getAction(RetryAction.ACTION_ID) as ActionWithProgressIcon,
+      val retryComponent = CheckPanelButtonComponent.withProgressIcon(
+        EduActionUtils.getAction(RetryAction.ACTION_ID) as RetryAction,
         isDefault = true, isEnabled = true
       )
       add(retryComponent, BorderLayout.WEST)

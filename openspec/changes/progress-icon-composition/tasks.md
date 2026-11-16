@@ -5,27 +5,27 @@ compile. Group 3 lands in a separate implementation commit.
 
 ## 1. Extract the progress icon component
 
-- [ ] 1.1 Add `learning/actions/ActionProgressIcon.kt` in `intellij-plugin/educational-core` with a lazily created `panel`
+- [x] 1.1 Add `learning/actions/ActionProgressIcon.kt` in `intellij-plugin/educational-core` with a lazily created `panel`
   (same `AsyncProcessIcon` + borders + initially invisible as `ActionWithProgressIcon.setUpSpinnerPanel` today) and
   `@RequiresEdt` `processStarted()` / `processFinished()`; verify `get_file_problems` reports no errors for the file
-- [ ] 1.2 Turn `learning/actions/ActionWithProgressIcon.kt` into an interface with a single
+- [x] 1.2 Turn `learning/actions/ActionWithProgressIcon.kt` into an interface with a single
   `val progressIcon: ActionProgressIcon` property; verify `get_file_problems` reports no errors for the file
-- [ ] 1.3 Make `CheckAction` extend `AnAction` directly and implement `ActionWithProgressIcon` with
+- [x] 1.3 Make `CheckAction` extend `AnAction` directly and implement `ActionWithProgressIcon` with
   `override val progressIcon = ActionProgressIcon(PROCESS_MESSAGE)`, remove the `setUpSpinnerPanel` call from `init` and
   switch `processStarted()` / `processFinished()` calls to `progressIcon`; verify `get_file_problems` reports no errors
   in `CheckAction.kt`
-- [ ] 1.4 Make `RetryAction` extend `AnAction` directly and implement `ActionWithProgressIcon` with
+- [x] 1.4 Make `RetryAction` extend `AnAction` directly and implement `ActionWithProgressIcon` with
   `override val progressIcon = ActionProgressIcon(processMessage)`, remove `setUpSpinnerPanel` from the secondary
   constructor (keep the constructor itself) and switch the `processStarted()` / `processFinished()` calls to
   `progressIcon`; verify `get_file_problems` reports no errors in `RetryAction.kt`
 
 ## 2. Update check panel UI
 
-- [ ] 2.1 Replace the progress-icon constructor of `CheckPanelButtonComponent` with a companion factory
+- [x] 2.1 Replace the progress-icon constructor of `CheckPanelButtonComponent` with a companion factory
   `withProgressIcon(action: T, isDefault, isEnabled) where T : AnAction, T : ActionWithProgressIcon` keeping the same
   layout (button west, `action.progressIcon.panel` center); verify `git grep -n "spinnerPanel\|setUpSpinnerPanel"` is
   empty
-- [ ] 2.2 In `CheckPanel`, create the check and retry buttons with `CheckPanelButtonComponent.withProgressIcon(...)`
+- [x] 2.2 In `CheckPanel`, create the check and retry buttons with `CheckPanelButtonComponent.withProgressIcon(...)`
   (retry: cast `EduActionUtils.getAction(RetryAction.ACTION_ID)` to `RetryAction`); verify `CheckPanel` does not
   reference `progressIcon`
 
@@ -41,11 +41,11 @@ compile. Group 3 lands in a separate implementation commit.
 
 ## 4. Verification
 
-- [ ] 4.1 Verify `./gradlew :intellij-plugin:educational-core:testClasses` succeeds
-- [ ] 4.2 Verify `./gradlew :intellij-plugin:educational-core:test --continue -PexcludeTests=**/slow/**` passes (retry
+- [x] 4.1 Verify `./gradlew :intellij-plugin:educational-core:testClasses` succeeds
+- [x] 4.2 Verify `./gradlew :intellij-plugin:educational-core:test --continue -PexcludeTests=**/slow/**` passes (retry
   failed tests up to 2 times before treating them as a regression)
-- [ ] 4.3 Verify `./gradlew testClasses` succeeds for the whole project (other modules use `CheckAction` in tests)
-- [ ] 4.4 Manually check in a sandbox IDE that the spinner appears next to the Check button while checking and next to
+- [x] 4.3 Verify `./gradlew testClasses` succeeds for the whole project (other modules use `CheckAction` in tests)
+- [x] 4.4 Manually check in a sandbox IDE that the spinner appears next to the Check button while checking and next to
   the Retry button while retrying (for a task with `isChangedOnFailed` after a failed check), and disappears afterwards
 
 ## Workflow follow-up

@@ -25,23 +25,6 @@ import javax.swing.JPanel
  */
 class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
   /**
-   * @param[action] action to execute when button is clicked. Panel will also have process icon when action is being executed.
-   * @param[isDefault] parameter specifies whether button is painted as default or not. `false` by default.
-   * @param[isEnabled] parameter for enabling/disabling button. `true` by default.
-   *
-   * @see com.jetbrains.edu.learning.actions.ActionWithProgressIcon
-   */
-  constructor(action: ActionWithProgressIcon, isDefault: Boolean = false, isEnabled: Boolean = true) : this() {
-    val buttonPanel = createButtonPanel(action = action, isDefault = isDefault, isEnabled = isEnabled)
-    add(buttonPanel, BorderLayout.WEST)
-
-    val spinnerPanel = action.spinnerPanel
-    if (spinnerPanel != null) {
-      add(spinnerPanel, BorderLayout.CENTER)
-    }
-  }
-
-  /**
    * @param[action] action to execute when button is clicked.
    * @param[isDefault] parameter specifies whether button is painted as default or not. `false` by default.
    * @param[isEnabled] parameter for enabling/disabling button. `true` by default.
@@ -99,6 +82,29 @@ class CheckPanelButtonComponent private constructor() : JPanel(BorderLayout()) {
     )
     gridBagPanel.add(buttonPanel, buttonPanelGridBagConstraints)
     return gridBagPanel
+  }
+
+  companion object {
+    /**
+     * Creates a panel with a button for [action] and the action's progress icon shown next to the button
+     * while the action is being executed.
+     *
+     * @param[action] action to execute when button is clicked.
+     * @param[isDefault] parameter specifies whether button is painted as default or not. `false` by default.
+     * @param[isEnabled] parameter for enabling/disabling button. `true` by default.
+     *
+     * @see com.jetbrains.edu.learning.actions.ActionWithProgressIcon
+     */
+    fun <T> withProgressIcon(
+      action: T,
+      isDefault: Boolean = false,
+      isEnabled: Boolean = true
+    ): CheckPanelButtonComponent where T : AnAction, T : ActionWithProgressIcon {
+      return CheckPanelButtonComponent().apply {
+        add(createButtonPanel(action = action, isDefault = isDefault, isEnabled = isEnabled), BorderLayout.WEST)
+        add(action.progressIcon.panel, BorderLayout.CENTER)
+      }
+    }
   }
 }
 

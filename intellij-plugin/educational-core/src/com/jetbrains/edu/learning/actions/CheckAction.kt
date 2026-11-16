@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.impl.NotificationSettings
 import com.intellij.notification.impl.NotificationsConfigurationImpl
 import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.ex.ActionUtil
@@ -54,14 +55,12 @@ import org.jetbrains.annotations.NonNls
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-class CheckAction() : ActionWithProgressIcon(), DumbAware {
+class CheckAction() : AnAction(), ActionWithProgressIcon, DumbAware {
+
+  override val progressIcon: ActionProgressIcon = ActionProgressIcon(PROCESS_MESSAGE)
 
   constructor(@NlsActions.ActionText checkLabel: String) : this() {
     templatePresentation.text = checkLabel
-  }
-
-  init {
-    setUpSpinnerPanel(PROCESS_MESSAGE)
   }
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -146,7 +145,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
 
     @RequiresEdt
     private fun onStarted(indicator: ProgressIndicator) {
-      processStarted()
+      progressIcon.processStarted()
       ApplicationManager.getApplication().executeOnPooledThread { showFakeProgress(indicator) }
       TaskToolWindowView.getInstance(project).checkStarted(task, false)
     }
@@ -289,7 +288,7 @@ class CheckAction() : ActionWithProgressIcon(), DumbAware {
 
     override fun onFinished() {
       checker?.clearState()
-      processFinished()
+      progressIcon.processFinished()
       CheckActionState.getInstance(project).unlock()
     }
 

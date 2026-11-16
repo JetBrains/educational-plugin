@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -29,14 +30,15 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Supplier
 
 class RetryAction(actionText: Supplier<@ActionText String>,
-                  private val processMessage: String = PROCESS_MESSAGE,
+                  processMessage: String = PROCESS_MESSAGE,
                   private val expectedTaskStatus: CheckStatus = CheckStatus.Failed
-) : ActionWithProgressIcon(actionText),
+) : AnAction(actionText),
+    ActionWithProgressIcon,
     DumbAware {
 
-  constructor() : this(EduCoreBundle.lazyMessage("retry")) {
-    setUpSpinnerPanel(processMessage)
-  }
+  override val progressIcon: ActionProgressIcon = ActionProgressIcon(processMessage)
+
+  constructor() : this(EduCoreBundle.lazyMessage("retry"))
 
  override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
@@ -80,7 +82,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
 
     override fun run(indicator: ProgressIndicator) {
       invokeAndWaitIfNeeded {
-        processStarted()
+        progressIcon.processStarted()
       }
       ApplicationManager.getApplication().executeOnPooledThread { EduActionUtils.showFakeProgress(indicator) }
       val remoteChecker = remoteCheckerForTask(project, task) ?: return
@@ -102,7 +104,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
         TaskToolWindowView.getInstance(project).updateTaskSpecificPanel()
         TaskToolWindowView.getInstance(project).updateCheckPanel(task)
       }
-      processFinished()
+      progressIcon.processFinished()
       RetryActionState.getInstance(project).unlock()
     }
 
