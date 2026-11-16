@@ -30,6 +30,13 @@ since they suffer from exactly this problem.
 
 - The module's `test` Gradle task depends on `:intellij-plugin:buildPlugin` and passes the path
   to the resulting plugin zip to the test JVM via the `path.to.build.plugin` system property.
+- The task also passes the versions of the IDEs to test in, taken from `ideaVersion`, `pycharmVersion`,
+  `clionVersion` and `riderVersion` in the Gradle properties of the current platform (`gradle-<environmentName>.properties`),
+  via the `edu.integration.tests.<product code>.version` and `edu.integration.tests.<product code>.build.type`
+  system properties (for example, `edu.integration.tests.IU.version`).
+  A release version (like `IU-2026.3`) is used as is. For an EAP version (like `IU-263.7307-EAP-CANDIDATE-SNAPSHOT`),
+  only its major version is passed (`2026.3`), so the tests use the latest EAP build of this major version
+  rather than the exact build from the properties.
 - Each test (see `CourseValidationTestBase.doTest()`) uses the
   [IntelliJ Starter](https://github.com/JetBrains/intellij-community/tree/master/tools/intellij.tools.ide.starter)
   framework to download a real IDE build, install that plugin zip into it, and configure it for a headless run.
