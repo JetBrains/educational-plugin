@@ -12,7 +12,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.NlsActions.ActionText
 import com.jetbrains.edu.learning.EduUtilsKt.showPopup
 import com.jetbrains.edu.learning.Err
 import com.jetbrains.edu.learning.Ok
@@ -27,24 +26,16 @@ import com.jetbrains.edu.learning.taskToolWindow.ui.TaskToolWindowView
 import com.jetbrains.edu.learning.yaml.YamlFormatSynchronizer
 import org.jetbrains.annotations.NonNls
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.function.Supplier
 
-class RetryAction(actionText: Supplier<@ActionText String>,
-                  processMessage: String = PROCESS_MESSAGE,
-                  private val expectedTaskStatus: CheckStatus = CheckStatus.Failed
-) : AnAction(actionText),
-    ActionWithProgressIcon,
-    DumbAware {
+class RetryAction : AnAction(), ActionWithProgressIcon, DumbAware {
 
-  override val progressIcon: ActionProgressIcon = ActionProgressIcon(processMessage)
-
-  constructor() : this(EduCoreBundle.lazyMessage("retry"))
+  override val progressIcon: ActionProgressIcon = ActionProgressIcon(PROCESS_MESSAGE)
 
  override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = project.getCurrentTask() ?: return
 
-    if (!task.isChangedOnFailed || task.status != expectedTaskStatus) {
+    if (!task.isChangedOnFailed || task.status != CheckStatus.Failed) {
       return
     }
 
@@ -70,7 +61,7 @@ class RetryAction(actionText: Supplier<@ActionText String>,
   override fun update(e: AnActionEvent) {
     val project = e.project ?: return
     val task = project.getCurrentTask() ?: return
-    if (task.status != expectedTaskStatus) return
+    if (task.status != CheckStatus.Failed) return
   }
 
   private inner class RetryTask(project: Project,

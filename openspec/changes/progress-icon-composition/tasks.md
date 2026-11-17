@@ -31,13 +31,13 @@ compile. Group 3 lands in a separate implementation commit.
 
 ## 3. Simplify `RetryAction` construction
 
-- [ ] 3.1 Remove the primary constructor parameters of `RetryAction`: use `PROCESS_MESSAGE` directly for `progressIcon`,
+- [x] 3.1 Remove the primary constructor parameters of `RetryAction`: use `PROCESS_MESSAGE` directly for `progressIcon`,
   inline `expectedTaskStatus` as `CheckStatus.Failed` and drop the secondary constructor; verify `RetryAction.kt` no
   longer mentions `expectedTaskStatus` or `processMessage`
-- [ ] 3.2 Add `action.Educational.Retry.text=Retry` to `EduCoreBundle.properties` instead of passing `actionText`; verify
+- [x] 3.2 Add `action.Educational.Retry.text=Retry` to `EduCoreBundle.properties` instead of passing `actionText`; verify
   `educational-core.xml` declares `messages.EduCoreBundle` as the plugin resource bundle, so the text is resolved by the
   action ID like for `Educational.RefreshTask`
-- [ ] 3.3 Verify `./gradlew testClasses` succeeds for the whole project
+- [x] 3.3 Verify `./gradlew testClasses` succeeds for the whole project
 
 ## 4. Verification
 
