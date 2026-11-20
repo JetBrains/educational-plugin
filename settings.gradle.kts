@@ -1,4 +1,5 @@
 import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
+import java.io.IOException
 import java.net.URL
 import java.net.UnknownHostException
 import java.nio.file.Files
@@ -56,11 +57,12 @@ fun configureSecretProperties() {
     download(URL("https://repo.labs.intellij.net/edu-tools/secret.properties"), secretProperties)
   }
   catch (_: UnknownHostException) {
-    println("repo.labs.intellij.net is not reachable")
-    val secretProperties = file(secretProperties)
-    if (!secretProperties.exists()) {
-      secretProperties.createNewFile()
-    }
+    logger.warn("repo.labs.intellij.net is not reachable")
+    createEmptySecretPropertiesIfNeeded()
+  }
+  catch (e: IOException) {
+    logger.warn("Failed to download secret.properties from repo.labs.intellij.net", e)
+    createEmptySecretPropertiesIfNeeded()
   }
 
   val secretProperties = loadProperties(secretProperties)
@@ -88,6 +90,13 @@ fun configureSecretProperties() {
     "intellij-plugin/features/lti/resources/lti/lti-auth.properties",
     "ltiServiceToken"
   )
+}
+
+fun createEmptySecretPropertiesIfNeeded() {
+  val secretProperties = file(secretProperties)
+  if (!secretProperties.exists()) {
+    secretProperties.createNewFile()
+  }
 }
 
 fun download(url: URL, dstPath: String) {
