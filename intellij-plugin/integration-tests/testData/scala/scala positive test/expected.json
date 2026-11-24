@@ -1,0 +1,145 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "ScalaGradleCheckCourseTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "section1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "lesson1",
+              "children": [
+                {
+                  "type": "suite",
+                  "name": "EduTaskInSection",
+                  "children": [
+                    {
+                      "type": "case",
+                      "name": "Tests",
+                      "result": {
+                        "type": "success"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTask",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "EduTaskWithGradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "OutputTaskWithMainMethod",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskWithApp",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskWithCompanionClass",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "OutputTaskWithInput",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson3",
+          "children": [
+            {
+              "type": "suite",
+              "name": "EduTaskInFrameworkLesson",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "success"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

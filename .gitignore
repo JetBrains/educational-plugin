@@ -74,3 +74,5 @@ intellij-plugin/educational-core/resources/style/hyperskill_task.css
 # integration tests
 out/
 allure-results/
+**/target/
+.bsp/

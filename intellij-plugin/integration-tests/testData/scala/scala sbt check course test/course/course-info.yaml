@@ -1,0 +1,17 @@
+type: marketplace
+title: ScalaSbtCheckCourseTest
+language: English
+summary: ScalaSbtCheckCourseTest
+programming_language: Scala
+environment: sbt
+content:
+  - lesson1
+  - section1
+  - lesson2
+  - lesson3
+environment_settings:
+  jvm_language_level: JDK_21
+additional_files:
+  - name: build.sbt
+  - name: project/build.properties
+yaml_version: 6

@@ -1,0 +1,10 @@
+type: edu
+files:
+  - name: src/Task.scala
+    visible: true
+  - name: test/TestSpec.scala
+    visible: false
+    propagatable: false
+  - name: build.sbt
+    visible: false
+    propagatable: false

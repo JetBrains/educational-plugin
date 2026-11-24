@@ -1,0 +1,97 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "ScalaGradleCheckErrorsTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "compilationError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Compilation Failed"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "testFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Message"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "comparisonTestFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Expected 42, but got 43"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "gradleCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Expected &quot;Hello[]&quot;, but got &quot;Hello[!]&quot;"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "outputTaskFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "OK!\n",
+                      "actual": "OK\n"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

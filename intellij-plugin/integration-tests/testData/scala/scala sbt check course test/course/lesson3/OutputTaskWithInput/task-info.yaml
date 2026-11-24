@@ -1,0 +1,13 @@
+type: output
+files:
+  - name: src/Main.scala
+    visible: true
+  - name: build.sbt
+    visible: false
+    propagatable: false
+  - name: test/output.txt
+    visible: false
+    propagatable: false
+  - name: test/input.txt
+    visible: false
+    propagatable: false

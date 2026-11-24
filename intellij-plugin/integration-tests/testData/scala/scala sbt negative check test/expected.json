@@ -1,0 +1,135 @@
+{
+  "name": "root_node",
+  "children": [
+    {
+      "type": "suite",
+      "name": "ScalaSbtNegativeCourseTest",
+      "children": [
+        {
+          "type": "suite",
+          "name": "lesson1",
+          "children": [
+            {
+              "type": "suite",
+              "name": "comparisonTestFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Expected 42, but got 43\nScalaTestFailureLocation: TestSpec at (TestSpec.scala:5)"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "compilationError",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "ignored",
+                    "message": "No tests have run. For more information, see <a href=\"https://plugins.jetbrains.com/plugin/10081-jetbrains-academy/docs/troubleshooting-guide.html#no_tests_have_run\">the Troubleshooting guide</a>"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "testFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Message\nScalaTestFailureLocation: TestSpec at (TestSpec.scala:5)"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "sbtCustomRunConfiguration",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Expected &quot;Hello[]&quot;, but got &quot;Hello[!]&quot;\nScalaTestFailureLocation: TestSpec at (TestSpec.scala:5)"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson2",
+          "children": [
+            {
+              "type": "suite",
+              "name": "outputTaskFail",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "OK!\n",
+                      "actual": "OK\n"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "suite",
+          "name": "lesson3",
+          "children": [
+            {
+              "type": "suite",
+              "name": "comparisonTestFailInFramework",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Expected 42, but got 43\nScalaTestFailureLocation: TestSpec at (TestSpec.scala:5)"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "suite",
+              "name": "outputFailInFramework",
+              "children": [
+                {
+                  "type": "case",
+                  "name": "Tests",
+                  "result": {
+                    "type": "failed",
+                    "message": "Incorrect",
+                    "diff": {
+                      "expected": "OK!\n",
+                      "actual": "OK\n"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration name="CustomSbtCheck" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+    <module name="edutaskwithcustomrunconfiguration.test" />
+    <option name="testKind" value="CLASS" />
+    <option name="testClassPath" value="TestSpec" />
+    <option name="searchTest" value="IN_SINGLE_MODULE" />
+    <option name="workingDirectory" value="$TASK_DIR$" />
+    <option name="envs">
+      <map>
+        <entry key="EXAMPLE_ENV" value="Hello!" />
+      </map>
+    </option>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,10 @@
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+import org.scalatest.FunSuite
+
+@RunWith(classOf[JUnitRunner])
+class Test extends FunSuite {
+  test("hello") {
+    assertResult("Hello!") { new Task().foo() }
+  }
+}

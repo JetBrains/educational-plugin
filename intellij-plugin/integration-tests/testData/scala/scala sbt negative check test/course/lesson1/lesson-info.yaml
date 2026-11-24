@@ -1,0 +1,5 @@
+content:
+  - comparisonTestFail
+  - compilationError
+  - testFail
+  - sbtCustomRunConfiguration
