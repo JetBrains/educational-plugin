@@ -78,6 +78,14 @@ For example, to run all tests from `CreateCourseFromZipTest` class located in `i
 ./gradlew :intellij-plugin:educational-core:test --tests "com.jetbrains.edu.learning.CreateCourseFromZipTest"
 ```
 
+Gradle build cache is enabled (`org.gradle.caching=true`), so test results may be restored from the cache (`FROM-CACHE`)
+instead of actually running the tests, even after `cleanTest`.
+To really run tests again (e.g., when checking a flaky test several times), pass `--rerun`:
+
+```shell
+./gradlew <gradle-module-path>:test --tests "<FQN or wildcard>" --rerun
+```
+
 ## Tests
 - Framework: JUnit 4.
 - Tests live under `<module>/testSrc/` (not `src/test`).
