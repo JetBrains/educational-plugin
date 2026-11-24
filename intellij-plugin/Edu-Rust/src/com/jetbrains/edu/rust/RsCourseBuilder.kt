@@ -312,7 +312,11 @@ class RsCourseBuilder : EnvironmentAwareCourseBuilder<RsLanguageEnvironment> {
     PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\n")
 
   private fun PsiElement.saveDocument() {
-    val document = PsiDocumentManager.getInstance(project).getDocument(containingFile) ?: error("Failed to find document for $containingFile")
+    val psiDocumentManager = PsiDocumentManager.getInstance(project)
+    val document = psiDocumentManager.getDocument(containingFile) ?: error("Failed to find document for $containingFile")
+    // Apply postponed PSI changes (e.g. formatting) to the document before saving.
+    // Otherwise, they are applied after the save and the document stays unsaved
+    psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
     FileDocumentManager.getInstance().saveDocument(document)
   }
 
