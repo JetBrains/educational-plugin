@@ -25,7 +25,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.platform.ide.progress.runWithModalProgressBlocking
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.Function
@@ -140,7 +139,6 @@ object CCUtils {
         else -> LOG.warn("Unknown study item type: `${item.javaClass.canonicalName}`")
       }
     }
-    VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
   }
 
   private fun initializeSectionPlaceholders(holder: CourseInfoHolder<out Course?>, section: Section) {
