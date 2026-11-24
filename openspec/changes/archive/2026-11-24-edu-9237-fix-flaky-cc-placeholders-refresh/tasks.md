@@ -27,7 +27,7 @@ assertion fails without the fix.
 ## 3. Integration checks
 
 - [x] 3.1 Run `./gradlew test --continue -PexcludeTests=**/slow/**` on 263 and verify no new failures (course generation tests of all language modules, e.g. `*CourseBuilderTest`, `JCourseGeneratorTest`, `EduCreateCourseCommandTest`, use the changed code); retry failing tests up to 2 times, and for failures that remain, check whether they also fail on master or are known flaky ones before treating them as regressions
-- [ ] 3.2 Run `./gradlew :intellij-plugin:educational-core:test --continue -PexcludeTests=**/slow/**` on 262 and verify no new failures
+- [x] 3.2 Run `./gradlew :intellij-plugin:educational-core:test --continue -PexcludeTests=**/slow/**` on 262 and verify no new failures (2 failures, `CCSyncChangesStateMoveTest.test state change after moving a folder` and `MarketplaceSubmissionsTest.test submission created after edu task check`, with the same messages as on CI; fixed in EDU-9236 and EDU-9239)
 
 ## 4. Document rerunning tests
 
